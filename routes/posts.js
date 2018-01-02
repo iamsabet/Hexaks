@@ -1,9 +1,8 @@
 const express = require('express');
-const router = express.Router();
-var userSchema = require('../models/user.model');
-var user = new userSchema();
+var postSchema = require('../models/post.model');
+var post = new postSchema();
 /* GET home page. */
-var users = {
+var posts = {
 
     getAll: function(req, res) {
         var allusers = data; // Spoof a DB call
@@ -47,4 +46,4 @@ var data = [{
     id: '3'
 }];
 
-module.exports = users;
+module.exports = posts;

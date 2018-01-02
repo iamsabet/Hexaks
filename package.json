@@ -21,6 +21,9 @@
     "bcrypt-nodejs": "latest",
     "mongoose-float": "latest",
     "passport-local": "latest",
-    "passport": "latest"
+    "passport": "latest",
+    "routes": "latest",
+    "express-session": "latest",
+    "jwt-simple": "latest"
   }
 }

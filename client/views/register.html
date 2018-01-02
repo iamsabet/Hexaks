@@ -16,8 +16,8 @@
 		<input type="text" placeholder="username" id="username"/>
 		<input type="text" placeholder="full name" id="fullName"/>
 		<input type="email" placeholder="email@example.com" id="email"/>
-		<input type="password" placeholder="username" id="password"/>
-		<input type="password" placeholder="username" id="confPassword"/>
+		<input type="password" placeholder="password" id="password"/>
+		<input type="password" placeholder="confirm password" id="confPassword"/>
 		<button id="regBtn">Register</button>
 		<p class="messageBox">
 
@@ -38,7 +38,16 @@
 
 // Events.js
 
-$('')
+$('.loginRegForm').on("click","#regBtn",function(){
+    var input = {
+        username : $("#username").val(),
+        email : $("#email").val(),
+        fullName : $("#fullName").val(),
+        password: $("#password").val()
+    };
+    requsetHandler("/register", "POST", input, "registerHandler")
+});
+
 
 
 function requsetHandler(url, method, input, caller) {
@@ -66,64 +75,16 @@ function requsetHandler(url, method, input, caller) {
 };
 
 
-// 3.Handlers
-
-// 1. Models handlers
-function reloadModelsList() {
-    requsetHandler("/Models/getModelsList", "POST", {}, "reloadModelsList");
-}
-
-function register(input) {
-    requsetHandler("/users/register", "POST", input, "createModel");
-}
-
-function login(input) {
-    requsetHandler("/Models/edit", "POST", input, "editModel");
-}
-
 
 
 
 // Response Actions Handler
 function responseActionHandler(caller, type, res) {
     switch (caller) {
-        case "" :
-            parseList(res, type);
+        case "registerHandler" :
+            window.location.href= "/login";
             break;
-            break;
     }
-}
-
-
-// 4.response action
-function parseList(list, type) {
-    console.log(list);
-    if (list.length > 0) {
-        $(`#${type}List`).html('');
-        $.each(list, function (index, data) {
-            $(`#${type}List`).append(`
-		<li class="each${type}" id="${type}-${data.id}">
-			<span>${data.name}</span>
-			<p style="display: none;">${data.id}</p>
-			<button class="removeBtn"></button>
-			<button class="editBtn"></button>
-		</li>
-	`);
-            if (home === list.length - 1) {
-                $(`#${type}List .each${type}`).slideDown(300);
-            }
-        });
-
-    }
-    else {
-
-        $(`#${type}List`).append(`
-	<li class="notFound">
-		<span>No Models Found</span>
-		<button class="reloadBtn"></button>
-	</li>
-`);
-        $(`#${type}List .notFound`).slideDown(300);
-    }
-}
-
+};
+</script>
+</html>

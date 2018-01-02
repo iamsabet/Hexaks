@@ -5,6 +5,7 @@ var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
 var userSchema = new Schema({
     name : String,
+    userId:String,
     username : String,
     email:String,
     password : String,
@@ -13,11 +14,12 @@ var userSchema = new Schema({
     rate:Float,
     details:{
         phoneNumber : String,
-        bio: String,
+        bio: String
     },
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
 
-
+    createdAt:Date,
+    updatedAt:Date
 });
 
 userSchema.methods.updateInfo = function(req,res){
@@ -38,7 +40,16 @@ userSchema.methods.updateInfo = function(req,res){
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
 };
+userSchema.methods.create = function (req,res,userObject) {
 
+    var newUser = new User(userObject);
+    newUser.createdAt = Date.now();
+    newUser.userId = random.generate();
+    newUser.save(function(err){
+        if(err) throw err;
+        res.send(newUser.userId);
+    });
+};
 userSchema.pre('save', function(next){
     if(this.updatedAt) {
         this.updatedAt = Date.now();
@@ -51,6 +62,6 @@ userSchema.pre('save', function(next){
     next();
 });
 
-var Users = mongoose.model('user', userSchema);
+var User = mongoose.model('user', userSchema);
 var user = mongoose.model('user');
 module.exports = user;
