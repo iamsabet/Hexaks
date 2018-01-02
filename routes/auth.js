@@ -1,12 +1,12 @@
 var jwt = require('jwt-simple');
-
+var userSchema = require('../models/user.model');
 var auth = {
 
     login: function(req, res) {
 
-        var username = req.body.username || '';
-        var password = req.body.password || '';
-
+        var username = req.body["username"] || '';
+        var password = req.body["password"] || '';
+        console.log(username + " --- " + password);
         if (username === '' || password === '') {
             res.status(401);
             res.json({
@@ -17,53 +17,59 @@ var auth = {
         }
 
         // Fire a query to your DB and check if the credentials are valid
-        var dbUserObj = auth.validate(username, password);
+        auth.validate(username, password,function(callback){
+            var userDbObject = callback;
 
-        if (!dbUserObj) { // If authentication fails, we send a 401 back
-            res.status(401);
-            res.json({
-                "status": 401,
-                "message": "Invalid credentials"
-            });
-            return;
-        }
+            if (!userDbObject) { // If authentication fails, we send a 401 back
+                res.status(401);
+                res.json({
+                    "status": 401,
+                    "message": "Invalid credentials"
+                });
+                return;
+            }
 
-        if (dbUserObj) {
+            if (userDbObject) {
 
-            // If authentication is success, we will generate a token
-            // and dispatch it to the client
+                res.json(genToken(userDbObject));
+            }
+        });
 
-            res.json(genToken(dbUserObj));
-        }
+
 
     },
 
-    validate: function(username, password) {
+    validate: function(username, password,callback) {
         // spoofing the DB response for simplicity
-        var dbUserObj = { // spoofing a userobject from the DB.
-            name: 'arvind',
-            role: 'admin',
-            username: 'arvind@myapp.com'
-        };
-
-        return dbUserObj;
+        userSchema.findOne({username:username,password:password},{_id:0,username:1,userId:1,fullName:1},function(err,user){
+            if(err) throw err;
+            if(user) {
+                console.log(user);
+                return callback(user);
+            }
+            else {
+                return callback(null);
+            }
+        });
     },
 
-    validateUser: function(username) {
+    validateUser: function(userId) {
         // spoofing the DB response for simplicity
-        var dbUserObj = { // spoofing a userobject from the DB.
-            name: 'arvind',
-            role: 'admin',
-            username: 'arvind@myapp.com'
-        };
-
-        return dbUserObj;
+        userSchema.findOne({userId:userId},{_id:0,username:1,userId:1,fullName:1},function(err,user){
+            if(err) throw err;
+            if(user) {
+                return user;
+            }
+            else {
+                return null;
+            }
+        });
     }
 };
 
 // private method
 function genToken(user) {
-    var expires = expiresIn(1); // 1 days
+    var expires = expiresIn(7); // 7 days
     var token = jwt.encode({
         exp: expires
     }, require('../config/secret')());

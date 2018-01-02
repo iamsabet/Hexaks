@@ -7,6 +7,7 @@ var userSchema = new Schema({
     name : String,
     userId:String,
     username : String,
+    fullName : String,
     email:String,
     password : String,
     followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
@@ -40,14 +41,15 @@ userSchema.methods.updateInfo = function(req,res){
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
 };
-userSchema.methods.create = function (req,res,userObject) {
+userSchema.methods.create = function (res,userObject) {
 
     var newUser = new User(userObject);
     newUser.createdAt = Date.now();
     newUser.userId = random.generate();
     newUser.save(function(err){
         if(err) throw err;
-        res.send(newUser.userId);
+        console.log(newUser.username);
+        res.send({result:true,value:newUser.userId});
     });
 };
 userSchema.pre('save', function(next){

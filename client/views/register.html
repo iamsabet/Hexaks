@@ -45,12 +45,12 @@ $('.loginRegForm').on("click","#regBtn",function(){
         fullName : $("#fullName").val(),
         password: $("#password").val()
     };
-    requsetHandler("/register", "POST", input, "registerHandler")
+    requsetHandler("/register", "POST", input)
 });
 
 
 
-function requsetHandler(url, method, input, caller) {
+function requsetHandler(url, method, input) {
 
     $.ajax({
         url: url || "/",
@@ -60,10 +60,10 @@ function requsetHandler(url, method, input, caller) {
 
         },
         success: function (res) {
-            responseActionHandler(caller, url.split("/")[1], res);
+            responseActionHandler(res);
         },
         timeout: function () {
-            window.alert("time out");// get from developer
+            window.alert("time out");
         },
         fail: function () {
             window.alert("failed");
@@ -72,19 +72,18 @@ function requsetHandler(url, method, input, caller) {
             window.alert("err");
         }
     });
-};
-
-
-
-
+}
 
 // Response Actions Handler
-function responseActionHandler(caller, type, res) {
-    switch (caller) {
-        case "registerHandler" :
-            window.location.href= "/login";
-            break;
-    }
-};
+function responseActionHandler(res) {
+   if(res.result===false){
+        window.alert(res.message);
+   }
+   else{
+		window.location.pathname="/login";
+   }
+
+
+}
 </script>
 </html>

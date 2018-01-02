@@ -24,14 +24,14 @@ router.get('/register', function(req,res){
 
 router.post('/login', auth.login);
 router.post('/register', function(req,res){
-    users.findOne({username:req.body["username"]},function(err,user){
+    userSchema.findOne({username:req.body["username"]},function(err,user){
        if(err)
            res.send({result:false,message:"Oops Something went wrong - please try again"});
        if(user){
            res.send({result:false,message:"user with username -> "+req.body["username"]+" already exists"});
        }
        else{
-           users.findOne({email:req.body["email"]},function(err,user) {
+           userSchema.findOne({email:req.body["email"]},function(err,user) {
                 if(err)
                     res.send({result:false,message:"Oops Something went wrong - please try again"});
                 if(user){
