@@ -7,14 +7,20 @@ var user = new userSchema();
 router.get('/', function(req, res, next) {
     res.render('index.html');
 });
-router.post('/create', function(req, res, next){
-
-    user.Create(req,res);
+router.get('/login', function(req, res, next){
+    res.render('users.html');
 });
-router.post('/edit', function(req, res, next){
-
-    user.Edit(req,res);
+router.get('/register', function(req, res, next){
+    res.render('users.html');
 });
+
+router.post('/login', function(req, res, next){
+    res.render('users.html');
+});
+router.post('/register', function(req, res, next){
+    res.render('users.html');
+});
+
 router.post('/remove', function(req, res, next){
     user.Remove(req,res);
 });
