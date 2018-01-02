@@ -1,9 +1,21 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-/* GET users listing. */
+var userSchema = require('../models/user.model');
+var user = new userSchema();
+/* GET home page. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+    res.render('index.html');
 });
+router.post('/create', function(req, res, next){
 
+    user.Create(req,res);
+});
+router.post('/edit', function(req, res, next){
+
+    user.Edit(req,res);
+});
+router.post('/remove', function(req, res, next){
+    user.Remove(req,res);
+});
 module.exports = router;
