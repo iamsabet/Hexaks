@@ -19,6 +19,7 @@
     "request-ip": "latest",
     "socket.io": "latest",
     "bcrypt-nodejs": "latest",
-    "mongoose-float": "latest"
+    "mongoose-float": "latest",
+    "passport-local": "latest"
   }
 }

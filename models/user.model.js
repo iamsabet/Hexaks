@@ -3,11 +3,12 @@ const Schema = mongoose.Schema;
 const random = require('randomstring');
 var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
+var passport = require("/config/passport");
 var userSchema = new Schema({
     name : String,
     username : String,
     email:String,
-    hashPassword : String,
+    password : String,
     followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
     followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
     rate:Float,
@@ -20,21 +21,7 @@ var userSchema = new Schema({
 
 });
 
-userSchema.methods.Create = function(req,res){
-
-    var controllerName = req.body["name"];
-    var controllerObject = req.body["controllerObject"];
-
-    user.findOne({name: controllerName},function (err, controller) {
-        if (err) throw err;
-        if(controller){
-            res.send({result:false,message:"controller with name : " + controllerName + "allready exists"});
-        }
-        console.log(controllerObject);
-
-    });
-};
-userSchema.methods.Edit = function(req,res){
+userSchema.methods.updateInfo = function(req,res){
 
     var controllerObject = req.body["controllerObject"];
     var controllerId = req.body["id"];
@@ -49,13 +36,8 @@ userSchema.methods.Edit = function(req,res){
         }
     });
 };
-
-userSchema.methods.Remove = function(req,res){
-
-    user.findOneAndRemove({id :req.body["controllerId"]},function (err,result) {
-        if(err) throw err;
-        res.send(result);
-    });
+userSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.password);
 };
 
 userSchema.pre('save', function(next){
