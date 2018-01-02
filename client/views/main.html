@@ -1,0 +1,119 @@
+<!-- 1.View -->
+<html>
+<script src="../javascripts/jquery.min.js"></script>
+<link rel="stylesheet" href="../stylesheets/style.css">
+<head>
+
+<title>Hexaks</title>
+</head>
+
+<body>
+<div id="homeContainer" class="containerDiv">
+<nav id="topNav">
+
+</nav>
+<div id="rightNav">
+
+</div>
+
+
+
+	<div class="footer">
+		<a href="/faq">FAQ</a>
+		<a href="/tutorials">Tutorials</a>
+		<a href="/about">About Us</a>
+  	</div>
+</div>
+</body>
+
+
+
+<script>
+
+function requsetHandler(url, method, input, caller) {
+
+	$.ajax({
+		url: url || "/",
+		method: method || "GET",
+		data: input || {},
+		before: function () {
+
+		},
+		success: function (res) {
+			responseActionHandler(caller, url.split("/")[1], res);
+		},
+		timeout: function () {
+			window.alert("time out");// get from developer
+		},
+		fail: function () {
+			window.alert("failed");
+		},
+		err: function () {
+			window.alert("err");
+		}
+	});
+};
+
+
+// 3.Handlers
+
+// 1. Models handlers
+function reloadModelsList() {
+	requsetHandler("/Models/getModelsList", "POST", {}, "reloadModelsList");
+}
+
+function register(input) {
+	requsetHandler("/users/register", "POST", input, "createModel");
+}
+
+function login(input) {
+	requsetHandler("/Models/edit", "POST", input, "editModel");
+}
+
+
+
+
+// Response Actions Handler
+function responseActionHandler(caller, type, res) {
+	switch (caller) {
+		case "" :
+			parseList(res, type);
+			break;
+        break;
+	}
+}
+
+
+// 4.response action
+function parseList(list, type) {
+    console.log(list);
+	if (list.length > 0) {
+		$(`#${type}List`).html('');
+		$.each(list, function (index, data) {
+			$(`#${type}List`).append(`
+		<li class="each${type}" id="${type}-${data.id}">
+			<span>${data.name}</span>
+			<p style="display: none;">${data.id}</p>
+			<button class="removeBtn"></button>
+			<button class="editBtn"></button>
+		</li>
+	`);
+			if (home === list.length - 1) {
+				$(`#${type}List .each${type}`).slideDown(300);
+			}
+		});
+
+	}
+	else {
+
+		$(`#${type}List`).append(`
+	<li class="notFound">
+		<span>No Models Found</span>
+		<button class="reloadBtn"></button>
+	</li>
+`);
+		$(`#${type}List .notFound`).slideDown(300);
+	}
+}
+
+
