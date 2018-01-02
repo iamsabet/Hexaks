@@ -1,0 +1,86 @@
+<html>
+<script src="../javascripts/jquery.min.js"></script>
+<link rel="stylesheet" href="../stylesheets/style.css">
+<link rel="stylesheet" href="../stylesheets/bootstrap.css">
+<head>
+
+<title>Hexaks</title>
+</head>
+
+<body>
+<div id="homeContainer" class="containerDiv">
+	<div class="col-sm-6 col-sm-offset-3 loginRegForm">
+
+		<h2>Login</h2>
+		<input type="text" placeholder="username" id="username"/>
+		<input type="password" placeholder="username" id="password"/>
+		<button id="logBtn">Login</button>
+		<p class="messageBox">
+
+		</p>
+	</div>
+
+	<div class="footer">
+		<a href="/faq">FAQ</a>
+		<a href="/tutorials">Tutorials</a>
+		<a href="/about">About Us</a>
+  	</div>
+</div>
+</body>
+
+
+
+<script>
+
+// Events.js
+
+	$('.loginRegForm').on("click","#logBtn",function(){
+		var input = {
+			username : $("#username").val(),
+			password: $("#password").val()
+		};
+		requsetHandler("/users/login", "POST", input, "loginHandler")
+	});
+
+
+	function requsetHandler(url, method, input, caller) {
+
+		$.ajax({
+			url: url || "/",
+			method: method || "GET",
+			data: input || {},
+			before: function () {
+
+			},
+			success: function (res) {
+				responseActionHandler(caller, url.split("/")[1], res);
+			},
+			timeout: function () {
+				window.alert("time out");// get from developer
+			},
+			fail: function () {
+				window.alert("failed");
+			},
+			err: function () {
+				window.alert("err");
+			}
+		});
+	}
+
+	// Response Actions Handler
+	function responseActionHandler(caller, res) {
+		switch (caller) {
+			case "loginHanlder" : {
+				if(res.result===false){
+
+				}
+				else {
+
+				}
+			}
+			break;
+		}
+	}
+
+</script>
+</html>

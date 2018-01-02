@@ -17,6 +17,8 @@
     "mongoose": "latest",
     "cors": "latest",
     "request-ip": "latest",
-    "socket.io": "latest"
+    "socket.io": "latest",
+    "bcrypt-nodejs": "latest",
+    "mongoose-float": "latest"
   }
 }

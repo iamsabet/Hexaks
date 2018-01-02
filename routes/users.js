@@ -8,10 +8,10 @@ router.get('/', function(req, res, next) {
     res.render('index.html');
 });
 router.get('/login', function(req, res, next){
-    res.render('users.html');
+    res.render('login.html');
 });
 router.get('/register', function(req, res, next){
-    res.render('users.html');
+    res.render('register.html');
 });
 
 router.post('/login', function(req, res, next){
