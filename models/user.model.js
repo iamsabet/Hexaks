@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 const random = require('randomstring');
 var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
-var passport = require("/config/passport");
 var userSchema = new Schema({
     name : String,
     username : String,

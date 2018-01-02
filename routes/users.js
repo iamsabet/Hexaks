@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-var passport = require('../config/passport');
+var passport = require('passport');
 var userSchema = require('../models/user.model');
 var user = new userSchema();
 /* GET home page. */
