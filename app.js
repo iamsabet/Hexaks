@@ -13,9 +13,9 @@ var routes = require('./routes/index');
 var db = mongoose.connection;
 var session = require('express-session');
 var validateRequest = require('./middleWares/validateRequest');
-mongoose.connect('mongodb://localhost:27017/hexaks_db', {autoIndex :true});
+mongoose.connect('mongodb://localhost:27017/hexaks_db', {autoIndex :true,useMongoClient : true});
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
+db.openUri("mongodb://localhost:27017/hexaks_db",function() {
     console.log("Server Listening : "+port);
     console.log("connected to hexaks_db");
 });
@@ -42,7 +42,11 @@ app.use('error404',function(req, res, next) {
     err.status = 404;
     next(err);
 });
-app.use('/*`r',routes);
+app.use('/*',function(req,res,next){
+    console.log(req.url);
+    next();
+});
+app.use('/',routes);
 
 app.all('/*', function(req, res, next) {
     // CORS headers
