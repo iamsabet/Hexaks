@@ -28,6 +28,350 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height: auto;
 	display: block;
 	float: left;
-	background-color: palevioletred;
+	background-color: #ededed;
+}
+.topNav{
+	position: fixed;
+	top:0;
+	width:100%;
+	height: 40px;
+	background-color:black;
+	padding:2px 10px;
+}
+.topNav ul{
+	width:auto;
+	height: 100%;
+	position: relative;
+	display: inline-block;
+	padding: 0;
+	margin:0;
+	list-style-type: none;
+}
+.topNav ul li{
+	position: relative;
+	display: inline-block;
+	font-size:22px;
+	color:white;
+	margin-right: 20px;
+	top:5px;
+	padding:2px 10px;
+	height: 100%;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
+	background-color: black;
+	-webkit-transition: background-color,color,top 200ms;
+	-moz-transition: background-color,color,top 200ms;
+	-ms-transition: background-color,color,top 200ms;
+	-o-transition: background-color,color,top 200ms;
+	transition: background-color,color,top 200ms;
+}
+.topNav ul li:hover,.topNav ul li.selected{
+	top:0;
+	color: black;
+	background-color: #ddd;
+	cursor: pointer;
+}
+.timeNav{
+	position: fixed;
+	top:40px;
+	background-color:#ddd;
+	width:100%;
+	display: block;
+	padding:2px 10px;
+	height: 40px;
+}
+.timeNav select{
+	width: 150px;
+	position: relative;
+	display: inline-block;
+	left: 0;
+	list-style-type: none;
+	padding: 0;
+	margin:0;
+	background-color:#ddd;
+	outline: #4cae4c;
+	font-size:19px;
+	height: 30px;
+	top:5px;
+}
+.timeNav h3{
+	position: relative;
+	display: inline-block;
+	width: auto;
+	margin-right: 20px;
+	float: left;
+	clear: left;
+	color: black;
+	bottom:10px;
+}
+.timeNav select option{
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	font-size:19px;
+	height: 100%;
+	padding:0;
+	background-color:#ddd;
+	color:black;
+	float: left;
+}
 
+.timeNav select option:hover{
+	color:white !important;
+	background-color:black !important;
+	font-weight: bold;
+	margin-bottom:-5px;
+	cursor: pointer;
+}
+.nav{
+	position: fixed;
+	width: 140px;
+	top:0;
+	z-index: 1000;
+	display: block;
+	height: 100vh;
+	background-color: black;
+	padding-top:100px;
+	-webkit-transition: background-color,left,right 500ms;
+	-moz-transition: background-color,left,right 500ms;
+	-ms-transition: background-color,left,right 500ms;
+	-o-transition: background-color,left,right 500ms;
+	transition: background-color,left,right 500ms;
+}
+.nav.leftSide{
+	left:0;
+	right: auto;
+}
+.nav.rightSide{
+	right:0;
+	left:auto;
+}
+
+.nav.leftSide.hide{
+	left:-140px;
+
+}
+.nav.rightSide.hide{
+	right:-140px;
+
+}
+.nav img{
+	position: relative;
+	width:95%;
+	left:2.5%;
+	height: auto;
+	display: inline-block;
+	float: left;
+	clear: both;
+	margin-bottom:30px;
+	margin-left:0;
+	margin-right:0;
+	-webkit-transition: background-color,margin-right,margin-left 400ms;
+	-moz-transition: background-color,margin-right,margin-left 400ms;
+	-ms-transition: background-color,margin-right,margin-left 400ms;
+	-o-transition: background-color,margin-right,margin-left 400ms;
+	transition: background-color,margin-right,margin-left 400ms;
+}
+.nav .halfLeft{
+	margin-right: -70px;
+}
+.nav .halfRight{
+	margin-left: -70px;
+}
+.nav img:hover{
+	cursor: pointer;
+}
+.nav ul{
+	width:100%;
+	height: auto;
+	padding: 0;
+	margin:0;
+	list-style-type: none;
+	display: inline-block;
+	position: relative;
+	float: left;
+	clear: both;
+}
+.nav ul li,.nav a{
+	position: relative;
+	display: inline-block;
+	width:100%;
+	left: 0;
+	padding: 5px;
+	margin-bottom:5px;
+	line-height: 25px;
+	font-size: 20px;
+	height: 28px;
+	vertical-align: middle;
+	float: left;
+	color:white;
+	clear: both;
+	text-align: left;
+	background-color: black;
+	margin-left:0;
+	-webkit-transition: background-color,color,margin-left 200ms;
+	-moz-transition: background-color,color,margin-left 200ms;
+	-ms-transition: background-color,color,margin-left 200ms;
+	-o-transition: background-color,color,margin-left 200ms;
+	transition: background-color,color,margin-left 200ms;
+}
+
+
+.nav ul li.selected{
+	background-color: #ededed;
+	color:black;
+	cursor: pointer;
+	margin-left:-5px;
+}
+.nav a.selected{
+	background-color: #ededed;
+	color:black;
+	cursor: pointer;
+	margin-left:-5px;
+}
+.nav ul li:hover,.nav a:hover ,#about:hover{
+	background-color: #ededed;
+	color:black;
+	cursor: pointer;
+	margin-left:-5px;
+}
+
+
+
+
+
+
+.postsContainer{
+	position: relative;
+	top:90px;
+	width:80%;
+	padding:0px 150px 0px 0px;
+	height: auto;
+	display: block;
+	margin:0;
+	border:1px solid black;
+}
+.postsContainer ul{
+	text-align: center;
+	position: relative;
+	display: inline-flex;
+	padding: 1px;
+	width: 100%;
+	float: left;
+	left: 0;
+	vertical-align: top;
+}
+.eachPost{
+	position: relative;
+	display: inline-block;
+	padding: 1px;
+	margin : 20px auto;
+	float:left;
+	width:400px;
+	height: auto;
+}
+.eachPost .header{
+	position: relative;
+	top:0;
+	float: right;
+	width:100%;
+	background-color: black;
+	display: inline-block;
+	height: 50px;
+	margin-right:-25px;
+}
+.eachPost .header span{
+	color:white;
+	height: 100%;
+	position: relative;
+	display: inline-block;
+	width: auto;
+	font-size:17px;
+	line-height: 50px;
+	margin-left: 10px;
+}
+.eachPost .header .username{
+	font-size:18px;
+	-webkit-transition: color,font-size 300ms;
+	-moz-transition: color,font-size 300ms;
+	-ms-transition: color,font-size 300ms;
+	-o-transition: color,font-size 300ms;
+	transition: color,font-size 300ms;
+
+}
+.eachPost .header .username:hover{
+	color:Gold;
+	cursor: pointer;
+	font-size: 19px;
+}
+.eachPost .header .profilePicture{
+
+	position: relative;
+	clear: left;
+	display: inline-block;
+	margin-left:-25px;
+	width: 50px;
+	height: 50px;
+	top:0;
+	left: 0;
+	background: url("../images/images/avatar.png") no-repeat fixed;
+	background-position-x: center;
+}
+.eachPost .header .profilePicture{
+	clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.eachPost .header .profilePicture img{
+	position: relative;
+	display: inline-block;
+	width: auto;
+	height: 100%;
+}
+.eachPost .header .curatorContainer{
+	position: relative;
+	display: inline-block;
+	clear: right;
+	padding-right: 30px;
+}
+.eachPost .header .curatorContainer{
+	position: relative;
+	display: inline-block;
+	width: auto;
+	color:white;
+}
+.eachPost .header .curatorContainer img{
+
+	position: relative;
+	display: block;
+	width:35px;
+	height: 35px;
+	top:8px;
+
+}
+
+
+.eachPost .imgContainer{
+	position: relative;
+	height: auto;
+	display: inline-block;
+	min-height: 300px;
+	max-height: 600px;
+	width: 300px;
+}
+.eachPost .imgContainer img{
+	position: relative;
+	margin: 0 auto;
+	display: inline-block;
+	height: auto;
+	width: 100%;
+}
+
+
+
+
+.eachPost .left{
+	float: left;
+}
+.eachPost .right{
+	float: right;
 }

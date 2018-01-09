@@ -2,6 +2,7 @@
 <html>
 <script src="../javascripts/jquery.min.js"></script>
 <link rel="stylesheet" href="../stylesheets/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
 
 <title>Hexaks</title>
@@ -9,23 +10,182 @@
 
 <body>
 <div id="homeContainer" class="containerDiv">
-<nav id="topNav">
-
-</nav>
-<div id="rightNav">
-
+<div class="topNav">
+	<ul>
+		<li class="selected">Latest</li>
+		<li>Top</li>
+		<li>Curated</li>
+	</ul>
 </div>
-	<div class="footer">
-		<a href="/faq">FAQ</a>
-		<a href="/tutorials">Tutorials</a>
-		<a href="/about">About Us</a>
-  	</div>
+<div class="timeNav">
+	<h3>For Last</h3>
+	<select>
+		<option value="hour"> hour</option>
+		<option value="day"> day</option>
+		<option value="3 days">  3 days</option>
+		<option value="week"> week</option>
+		<option value="month"> month</option>
+	</select>
+</div>
+<div class="nav rightSide">
+	<img id="logo" src="../images/images/LOGO.png">
+	// parse dynamicly for clients - authenticated - and role based
+	<ul>
+		<li class="selected">Home</li>
+		<li>Explore</li>
+		<li>Subscriptions</li>
+		<li>People</li>
+	</ul>
+	<a href="/settings">Settings</a>
+	<a href="/about" id="about">About</a>
+</div>
+	<!--<div class="footer">-->
+		<!--<a href="/terms">Terms Of Service</a>-->
+		<!--<a href="/faq">FAQ</a>-->
+		<!--<a href="/contact">Contact</a>-->
+  	<!--</div>-->
+	<div class="postsContainer">
+		<ul>
+			<li class="eachPost">
+				<div class="header">
+					<div class="profilePicture left">
+						<img src="../images/images/avatar.png">
+					</div>
+					<span class="username left">
+						Ektik
+					</span>
+					<div class="curatorContainer right">
+						<img src="../images/images/curatew.png">
+					</div>
+				</div>
+				<div class="imgContainer">
+					<img src="../images/sliders/slider1/1.jpg"/>
+				</div>
+				<div class="footer">
+
+					<div class="rate left">
+						<span class="left">Rate </span>
+						<img class="left" src="../images/icons/b_like_b.png">
+						<!-- SVG - Hex for Rate - 1 to 6 Dynamic Percentage fill the background of Hex -->
+						<span class="number left"> 4.7</span>
+					</div>
+					<span class="time right">
+						a minute ago
+					</span>
+				</div>
+			</li>
+
+
+			<li class="eachPost">
+				<div class="header">
+					<div class="profilePicture left">
+						<img src="../images/images/avatar.png">
+					</div>
+					<span class="username left">
+						Ektik
+					</span>
+					<div class="curatorContainer right">
+						<img src="../images/images/curatew.png">
+					</div>
+				</div>
+				<div class="imgContainer">
+					<img src="../images/sliders/slider2/2.jpg"/>
+				</div>
+				<div class="footer">
+
+					<div class="rate left">
+						<span class="left">Rate </span>
+						<img class="left" src="../images/icons/b_like_b.png">
+						<!-- SVG - Hex for Rate - 1 to 6 Dynamic Percentage fill the background of Hex -->
+						<span class="number left"> 4.7</span>
+					</div>
+					<span class="time right">
+						a minute ago
+					</span>
+				</div>
+			</li>
+
+
+			<li class="eachPost">
+				<div class="header">
+					<div class="profilePicture left">
+						<img src="../images/images/avatar.png">
+					</div>
+					<span class="username left">
+						Ektik
+					</span>
+					<div class="curatorContainer right">
+						<img src="../images/images/curatew.png">
+					</div>
+				</div>
+				<div class="imgContainer">
+					<img src="../images/sliders/slider3/3.jpg"/>
+				</div>
+				<div class="footer">
+
+					<div class="rate left">
+						<span class="left">Rate </span>
+						<img class="left" src="../images/icons/b_like_b.png">
+						<!-- SVG - Hex for Rate - 1 to 6 Dynamic Percentage fill the background of Hex -->
+						<span class="number left"> 4.7</span>
+					</div>
+					<span class="time right">
+						a minute ago
+					</span>
+				</div>
+			</li>
+		</ul>
+	</div>
 </div>
 </body>
 
 
 
 <script>
+
+	// Global Variables.JS
+
+
+	// Events.Js
+
+	$(document).ready(function(){
+
+	});
+	// TOP NAV
+    $("body").on("click",".topNav ul li",function(){
+        $(this).parents("ul").children(".selected").removeClass("selected");
+        $(this).addClass("selected");
+
+
+        getPosts();
+    });
+	$("body").on("click","#logo",function(){
+        if (window.innerWidth < 1025) {
+            if (this.className === "") {
+                if ($(".rightSide")[0]) {
+                    $(this).addClass("halfRight");
+                    $(".rightSide").addClass("hide");
+                }
+                else if ($(".leftSide")[0]) {
+                    $(this).addClass("halfLeft");
+                    $(".leftSide").addClass("hide");
+                }
+            }
+            else if (this.className === "halfLeft") {
+                $(this).removeClass("halfLeft");
+                $(".leftSide").removeClass("hide");
+            }
+            else if (this.className === "halfRight") {
+                $(this).removeClass("halfRight");
+                $(".rightSide").removeClass("hide");
+            }
+            else {
+                //
+            }
+        }
+	});
+
+
 
 function requsetHandler(url, method, input, caller) {
 
@@ -54,23 +214,23 @@ function requsetHandler(url, method, input, caller) {
 
 // 3.Handlers
 
-// 1. Models handlers
-function reloadModelsList() {
-	requsetHandler("/Models/getModelsList", "POST", {}, "reloadModelsList");
-}
+// Request handlers
 
-function register(input) {
-	requsetHandler("/users/register", "POST", input, "createModel");
+function logout(input) {
+	requsetHandler("/logout", "POST", input, "logout");
 }
 
 function login(input) {
-	requsetHandler("/Models/edit", "POST", input, "editModel");
+	requsetHandler("/login", "POST", input, "editModel");
+}
+function getPosts(){
+
 }
 
 
 
 
-// Response Actions Handler
+// Actions.js
 function responseActionHandler(caller, type, res) {
 	switch (caller) {
 		case "" :
@@ -81,36 +241,5 @@ function responseActionHandler(caller, type, res) {
 }
 
 
-// 4.response action
-function parseList(list, type) {
-    console.log(list);
-	if (list.length > 0) {
-		$(`#${type}List`).html('');
-		$.each(list, function (index, data) {
-			$(`#${type}List`).append(`
-		<li class="each${type}" id="${type}-${data.id}">
-			<span>${data.name}</span>
-			<p style="display: none;">${data.id}</p>
-			<button class="removeBtn"></button>
-			<button class="editBtn"></button>
-		</li>
-	`);
-			if (home === list.length - 1) {
-				$(`#${type}List .each${type}`).slideDown(300);
-			}
-		});
-
-	}
-	else {
-
-		$(`#${type}List`).append(`
-	<li class="notFound">
-		<span>No Models Found</span>
-		<button class="reloadBtn"></button>
-	</li>
-`);
-		$(`#${type}List .notFound`).slideDown(300);
-	}
-}
-
-
+</script>
+</html>
