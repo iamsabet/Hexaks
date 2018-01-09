@@ -1,0 +1,85 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-family: "Century Schoolbook L", sans-serif;
+	overflow-y:hidden;
+	width:100%;
+	height: 100%;
+}
+a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
+	text-decoration: none;
+	font-family: "Century Schoolbook L", sans-serif;
+	color: white;
+}
+.footer{
+	position: relative;
+	float: left;display: inline-block;
+	clear: both;
+	height: 40px;
+	background-color:black;
+	width:100%;
+
+}
+.containerDiv{
+	position: relative;
+	width: 100%;
+	padding:0;
+	margin:0;
+	height: auto;
+	display: block;
+	float: left;
+	background-color: palevioletred;
+
+}
+
+.containerDiv .loginRegForm{
+	position: relative;
+	background-color: rgba(50,50,50,0.90);
+	display: block;
+	height: 100%;
+	width: 100%;
+	max-width: 700px;
+	margin:0 auto;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.containerDiv .loginRegForm h2,.containerDiv .loginRegForm input,.containerDiv .loginRegForm button{
+	position: relative;
+	float: left;
+	clear: right;
+	text-align: center;
+	width:100%;
+	margin:10px 0;
+	top:5px;
+	display: inline-block;
+	height: 40px;
+}
+.containerDiv .loginRegForm h2{
+	margin-top:25px;
+	color:white;
+	margin-bottom:20px;
+}
+.containerDiv .loginRegForm input{
+	background-color: white;
+	left:10%;
+	width:80%;
+	color:black;
+	font-size:21px;
+
+}
+.containerDiv .loginRegForm button{
+	left:10%;
+	width:80%;
+	font-size:23px;
+	background-color: #4cae4c;
+	color:white;
+	height: 45px;
+	padding: 0;
+	margin:40px 0;
+}
+@media screen and(min-width:700px){
+	.containerDiv .loginRegForm{
+		max-width: none;
+	}
+}

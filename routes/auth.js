@@ -30,8 +30,8 @@ var auth = {
             }
 
             if (userDbObject) {
-
-                res.json(genToken(userDbObject));
+                console.log(callback);
+                res.send(genToken(userDbObject));
             }
         });
 
@@ -41,10 +41,10 @@ var auth = {
 
     validate: function(username, password,callback) {
         // spoofing the DB response for simplicity
-        userSchema.findOne({username:username,password:password},{_id:0,username:1,userId:1,fullName:1},function(err,user){
+        userSchema.findOne({username:username,password:password},{_id:0,username:1,fullName:1},function(err,user){
             if(err) throw err;
             if(user) {
-                console.log(user);
+
                 return callback(user);
             }
             else {

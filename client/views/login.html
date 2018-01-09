@@ -1,6 +1,7 @@
 <html>
 <script src="../javascripts/jquery.min.js"></script>
-<link rel="stylesheet" href="../stylesheets/style.css">
+<script src="../javascripts/cookies.js"></script>
+<link rel="stylesheet" href="../stylesheets/register-login.css">
 <link rel="stylesheet" href="../stylesheets/bootstrap.css">
 <head>
 
@@ -9,9 +10,9 @@
 
 <body>
 <div id="homeContainer" class="containerDiv">
-	<div class="col-sm-6 col-sm-offset-3 loginRegForm">
+	<div class="loginRegForm">
 
-		<h2>Login</h2>
+		<h2>Login to Hexaks </h2>
 		<input type="text" placeholder="username" id="username"/>
 		<input type="password" placeholder="username" id="password"/>
 		<button id="logBtn">Login</button>
@@ -53,7 +54,7 @@
 
 			},
 			success: function (res) {
-				responseActionHandler(caller, url.split("/")[1], res);
+				responseActionHandler(caller,res);
 			},
 			timeout: function () {
 				window.alert("time out");// get from developer
@@ -70,14 +71,9 @@
 	// Response Actions Handler
 	function responseActionHandler(caller, res) {
 		switch (caller) {
-			case "loginHanlder" : {
-				if(res.result===false){
-
-				}
-				else {
-					console.log(res["user"]);
-				    //read and write in
-				}
+			case "loginHandler" : {
+				console.log(res);
+				// write cookie
 			}
 			break;
 		}
