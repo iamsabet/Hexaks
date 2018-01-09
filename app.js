@@ -7,8 +7,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var requestIp = require('request-ip');
 var io = require("socket.io");
+var requestIp = require("request-ip");
 var routes = require('./routes/index');
 var db = mongoose.connection;
 var session = require('express-session');
@@ -16,9 +16,9 @@ var validateRequest = require('./middleWares/validateRequest');
 mongoose.connect('mongodb://localhost:27017/hexaks_db', {autoIndex :true});
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
+    console.log("Server Listening : "+port);
     console.log("connected to hexaks_db");
 });
-
 
 // routes ======================================================================
 
@@ -42,7 +42,7 @@ app.use('error404',function(req, res, next) {
     err.status = 404;
     next(err);
 });
-app.use('/',routes);
+app.use('/*`r',routes);
 
 app.all('/*', function(req, res, next) {
     // CORS headers
