@@ -28,13 +28,35 @@ module.exports = function(req, res, next) {
 
             // Authorize the user to see if s/he can access our resources
 
-            var dbUser = validateUser(key); // The key would be the logged in user's username
-            if (dbUser) {
+            var userObject = validateUser(key); // The key would be the logged in user's username
+            if (userObject) {
 
-
-                if ((req.url.indexOf('admin') >= 0 && dbUser.role == 'admin') || (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/v1/') >= 0)) {
+                console.log(req.url);
+                if ((((req.url.indexOf('admin') >= 0) || (req.url.indexOf('curator') >= 0) || (req.url.indexOf('blogger') >= 0) || (req.url.indexOf('premium') >= 0))
+                        && dbUser.role === 'admin') || (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/v1/') >= 0)) {
                     next(); // To move to next middleware
-                } else {
+                }
+                else if ((req.url.indexOf('curator') >= 0 && dbUser.role === 'curator')) {
+                    next(); // To move to next middleware
+                }
+                else if ((req.url.indexOf('blogger') >= 0 && dbUser.role === 'blogger')) {
+                    next(); // To move to next middleware
+                }
+                else if ((req.url.indexOf('premium') >= 0 && dbUser.role === 'premium')) {
+                    next(); // To move to next middleware
+                }
+
+
+
+
+
+
+
+
+
+
+
+                else {
                     res.status(403);
                     res.json({
                         "status": 403,

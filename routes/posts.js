@@ -5,6 +5,7 @@ var post = new postSchema();
 var posts = {
 
     getAll: function(req, res) {
+
         var allusers = data; // Spoof a DB call
         res.json(allusers);
     },

@@ -55,7 +55,7 @@ var auth = {
 
     validateUser: function(userId) {
         // spoofing the DB response for simplicity
-        userSchema.findOne({userId:userId},{_id:0,username:1,userId:1,fullName:1},function(err,user){
+        userSchema.findOne({userId:userId},{_id:0,username:1,userId:1,fullName:1,role:1},function(err,user){
             if(err) throw err;
             if(user) {
                 return user;
