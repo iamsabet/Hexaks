@@ -74,6 +74,9 @@
 		switch (caller) {
 			case "loginHandler" : {
 				console.log(res);
+				createCookie("X-ACCESS-TOKEN",res["token"],1);
+                createCookie("KEY",res["key"],1);
+				debugger;
 				// write cookie
 			}
 			break;

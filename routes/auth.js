@@ -41,10 +41,9 @@ var auth = {
 
     validate: function(username, password,callback) {
         // spoofing the DB response for simplicity
-        userSchema.findOne({username:username,password:password},{_id:0,username:1,fullName:1},function(err,user){
+        userSchema.findOne({username:username,password:password},{_id:0,userId:1},function(err,user){
             if(err) throw err;
             if(user) {
-
                 return callback(user);
             }
             else {
@@ -53,9 +52,9 @@ var auth = {
         });
     },
 
-    validateUser: function(userId) {
+    validateUser: function(key) {
         // spoofing the DB response for simplicity
-        userSchema.findOne({userId:userId},{_id:0,username:1,userId:1,fullName:1,role:1},function(err,user){
+        userSchema.findOne({userId:key},{},function(err,user){
             if(err) throw err;
             if(user) {
                 return user;
@@ -69,15 +68,14 @@ var auth = {
 
 // private method
 function genToken(user) {
-    var expires = expiresIn(7); // 7 days
+    var expires = expiresIn(1); // 1 days
     var token = jwt.encode({
-        exp: expires
+        exp: expires,
     }, require('../config/secret')());
 
     return {
         token: token,
-        expires: expires,
-        user: user
+        key : user["userId"]
     };
 }
 

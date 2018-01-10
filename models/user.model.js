@@ -7,11 +7,11 @@ var userSchema = new Schema({
     name : String,
     userId:String,
     username : String,
-    fullName : String,
     email:String,
     password : String,
     followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
     followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
+    posts:[], // {postId : , smallImageUrl : , ownerUserName : }
     rate:Float,
     details:{
         phoneNumber : String,

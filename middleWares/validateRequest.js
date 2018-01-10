@@ -1,7 +1,7 @@
 var jwt = require('jwt-simple');
 var validateUser = require('../routes/auth').validateUser;
 
-module.exports = function(req, res, next) {
+module.exports = function(req, res, next,data) {
 
     // When performing a cross domain request, you will recieve
     // a preflighted request first. This is to check if our the app
@@ -13,7 +13,7 @@ module.exports = function(req, res, next) {
     var token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
     var key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
 
-    if (token || key) {
+    if (token && key) {
         try {
             var decoded = jwt.decode(token, require('../config/secret.js')());
 
@@ -30,31 +30,21 @@ module.exports = function(req, res, next) {
 
             var userObject = validateUser(key); // The key would be the logged in user's username
             if (userObject) {
-
+                data = userObject;
                 console.log(req.url);
                 if ((((req.url.indexOf('admin') >= 0) || (req.url.indexOf('curator') >= 0) || (req.url.indexOf('blogger') >= 0) || (req.url.indexOf('premium') >= 0))
                         && dbUser.role === 'admin') || (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/v1/') >= 0)) {
-                    next(); // To move to next middleware
+                    next(null,{some:data}); // To move to next middleware
                 }
                 else if ((req.url.indexOf('curator') >= 0 && dbUser.role === 'curator')) {
-                    next(); // To move to next middleware
+                    next(null,{some:data}); // To move to next middleware
                 }
                 else if ((req.url.indexOf('blogger') >= 0 && dbUser.role === 'blogger')) {
-                    next(); // To move to next middleware
+                    next(null,{some:data}); // To move to next middleware
                 }
                 else if ((req.url.indexOf('premium') >= 0 && dbUser.role === 'premium')) {
-                    next(); // To move to next middleware
+                    next(null,{some:data}); // To move to next middleware
                 }
-
-
-
-
-
-
-
-
-
-
 
                 else {
                     res.status(403);

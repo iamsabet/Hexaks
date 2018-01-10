@@ -4,7 +4,9 @@ const random = require('randomstring');
 var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
 var postSchema = new Schema({
-    name : String,
+    postId : String,
+    ownerUserName : String,
+    ownerUserId : String,
     username : String,
     email:String,
     hashPassword : String,
@@ -16,8 +18,9 @@ var postSchema = new Schema({
         bio: String,
     },
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
-
-
+    isCurated : Boolean,
+    createdAt:Date,
+    updatedAt:Date
 });
 
 postSchema.methods.Create = function(req,res){
