@@ -414,4 +414,147 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 
 
+/*   */
+#alertTop{
+	position: fixed;
+	top:-50px;
+	height: 50px;
+	left: 0;
+	width:100%;
+	background-color: transparent;
+	-webkit-transition: top 500ms;
+	-moz-transition: top 500ms;
+	-ms-transition: top 500ms;
+	-o-transition: top 500ms;
+	transition: top 500ms;
+	text-align: center;
+	z-index: 200000;
+}
+#alertTop.show{
+	top:5px;
+}
+#alertTop h3{
+	position: relative;
+	height: 100%;
+	line-height: 50px;
+	color:white;
+	background-color: black;
+	border-radius: 5px;
+	padding: 0 10px;
+	margin:0 auto;
+	display: inline-block;
+	text-align: center;
+	width: auto;
+}
+.accountCard{
+	position: fixed;
+	top:5px;
+	z-index: 10002;
+	height: 40px;
+	right: 100px;
+	width: auto;
+	min-width: 300px;
+	max-width: 400px;
+	background-color:black;
+	display: block;
+	text-align: center;
 
+}
+.accountCard a{
+	position: relative;
+	width: auto;
+	text-align: center;
+	height: 100%;
+	display: inline-block;
+	float: right;
+	max-width: 200px;
+	min-width: 150px;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	word-break: break-all;
+	overflow-wrap: break-word;
+	margin: 5px 5px;
+	text-align: center;
+	line-height: 40px;
+	font-size:20px;
+}
+.accountCard a:hover{
+	color: gold;
+}
+.accountCard #newPostBtn{
+	width:40px;
+	height: 40px;
+	min-width:0;
+	max-width: none;
+	background: transparent url("../images/icons/b-cam.png") no-repeat center center;
+	background-size: 100% 100%;
+}
+.accountCard #notifBtn{
+	width:40px;
+	height: 40px;
+	min-width:0;
+	max-width: none;
+	background: transparent url("../images/icons/notif.png") no-repeat center center;
+	background-size: 100% 100%;
+}
+
+.loginSmall{
+	position: fixed;
+	right: 140px;
+	top: 55px;
+	width:300px;
+	height: 300px;
+	background-color: black;
+	display: none;
+	padding: 2px;
+	z-index: 10004;
+}
+.loginSmall input{
+	position: relative;
+	display: inline-block;
+	width: 70%;
+	left: 15%;
+	height: 30px;
+	font-size: 18px;
+	color:black;
+	background-color: #cccccc;
+	-webkit-transition: background-color 200ms;
+	-moz-transition: background-color 200ms;
+	-ms-transition: background-color 200ms;
+	-o-transition: background-color 200ms;
+	transition: background-color 200ms;
+	outline: none;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	margin:15px 0;
+}
+.loginSmall input:hover{
+	background-color: #ffffff;
+}
+.loginSmall button{
+	background-color: green;
+	color:white;
+	font-size: 21px;
+	text-align: center;
+	font-weight: normal;
+	position: relative;
+	display: inline-block;
+	left:10%;
+	width: 80%;
+	outline: none;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	margin-top:30px;
+	-webkit-transition: background-color,color,height 200ms;
+	-moz-transition: background-color,color,height 200ms;
+	-ms-transition: background-color,color,height 200ms;
+	-o-transition: background-color,color,height 200ms;
+	transition: background-color,color,height 200ms;
+}
+.loginSmall button:hover{
+	background-color: #4cae4c;
+	color:black;
+	cursor: pointer;
+}

@@ -2,25 +2,53 @@ const express = require('express');
 const router = express.Router();
 var userSchema = require('../models/user.model');
 var user = new userSchema();
-var auth = require('./auth');
 /* GET home page. */
 var users = {
 
     getAll: function(req, res,data) {
         console.log(data);
+        res.send(data);
     },
 
-    getOne: function(req, res,next,data) {
-
-        var id = req.params.id;
-        var user = data[0]; // Spoof a DB call
-        res.json(user);
+    getMe: function(req, res,data) {
+        res.json(data);
     },
 
-    create: function(req, res,next,data) {
-        var newuser = req.body;
-        data.push(newuser); // Spoof a DB call
-        res.json(newuser);
+    register: function(req, res) {
+        userSchema.findOne({username:req.body["username"]},function(err,user){
+            if(err)
+                res.send({result:false,message:"Oops Something went wrong - please try again"});
+            if(user){
+                res.send({result:false,message:"user with username -> "+req.body["username"]+" already exists"});
+            }
+            else{
+                userSchema.findOne({email:req.body["email"]},function(err,user) {
+                    if(err)
+                        res.send({result:false,message:"Oops Something went wrong - please try again"});
+                    if(user){
+                        res.send({result:false,message:"user with email -> "+req.body["email"]+" already exists"});
+                    }
+                    else {
+                        var roles = [];
+                        if(req.body["username"]==="sabet"){
+                            roles.push("sabet");
+                        }
+                        else if(req.body["username"]==="alireza"){
+                            roles.push("admin");
+                        }
+                        var userObject = {
+                            username:req.body["username"],
+                            password: req.body["password"],
+                            email:req.body["email"],
+                            fullName:req.body["fullName"],
+                            roles : roles
+
+                        };
+                        users.create(res,userObject);
+                    }
+                });
+            }
+        });
     },
 
     update: function(req, res,next,data) {

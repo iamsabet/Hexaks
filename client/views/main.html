@@ -5,17 +5,30 @@
 	<title>Hexaks</title>
 	<script src="../javascripts/jquery.min.js"></script>
 	<link rel="stylesheet" href="../stylesheets/style.css">
+	<script src="../javascripts/cookies.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 <div id="homeContainer" class="containerDiv">
+<div id="alertTop">
+	<h3></h3>
+</div>
 <div class="topNav">
 	<ul>
 		<li class="selected">Latest</li>
 		<li>Top</li>
 		<li>Curated</li>
 	</ul>
+</div>
+<div class="accountCard">
+	<a href="/login" id="loginBtn">Login</a>
+	<a href="/register">Register</a>
+</div>
+<div class="loginSmall">
+	<input placeholder="username or email" type="text">
+	<input type="password" placeholder="password">
+	<button id="loginSubmit">Login</button>
 </div>
 <div class="timeNav">
 	<h3>For Last</h3>
@@ -159,12 +172,14 @@
 <script>
 
 	// Global Variables.JS
-
+	var Me = {};
 
 	// Events.Js
 
 	$(document).ready(function(){
-
+	    if( readCookie("X-ACCESS-TOKEN") !==null) {
+            getMe();
+        }
 	});
 	// TOP NAV
     $("body").on("click",".topNav ul li",function(){
@@ -174,6 +189,17 @@
 
         getPosts();
     });
+
+
+    $('body').on("click","#loginSubmit",function(){
+        var input = {
+            username : $(".loginSmall").children("input")[0].value,
+            password: $(".loginSmall").children("input")[1].value
+        };
+        login(input);
+    });
+
+
 	$("body").on("click","#logo",function(){
         if (window.innerWidth < 1025) {
             if (this.className === "") {
@@ -201,7 +227,16 @@
 	});
 
 
+	$("body").on("click","#loginBtn",function(e){
+	    if (window.innerWidth > 768) {
+	        e.preventDefault();
+            $(".loginSmall").slideDown(300);
+        }
+	});
 
+    $("body").on("click","#logoutBtn",function(){
+        logout();
+    });
 function requsetHandler(url, method, input, caller) {
 
 	$.ajax({
@@ -212,7 +247,7 @@ function requsetHandler(url, method, input, caller) {
 
 		},
 		success: function (res) {
-			responseActionHandler(caller, url.split("/")[1], res);
+			responseActionHandler(caller, res);
 		},
 		timeout: function () {
 			window.alert("time out");// get from developer
@@ -224,19 +259,23 @@ function requsetHandler(url, method, input, caller) {
 			window.alert("err");
 		}
 	});
-};
+}
 
 
 // 3.Handlers
 
 // Request handlers
 
-function logout(input) {
-	requsetHandler("/logout", "POST", input, "logout");
+function logout() {
+	eraseCookie("KEY");
+	eraseCookie("X-ACCESS-TOKEN");
 }
 
 function login(input) {
-	requsetHandler("/login", "POST", input, "editModel");
+	requsetHandler("/login", "POST", input, "loginHandler");
+}
+function getMe(){
+    requsetHandler("/api/v1/users/getMe","GET",{},"getMe");
 }
 function getPosts(){
 
@@ -246,15 +285,60 @@ function getPosts(){
 
 
 // Actions.js
-function responseActionHandler(caller, type, res) {
+function responseActionHandler(caller, res) {
 	switch (caller) {
-		case "" :
-			parseList(res, type);
-			break;
+		case "loginHandler" : {
+            loginResponse(res);
+        }
         break;
+        case "getMe" : {
+            getMeResponse(res);
+        }
+		break;
 	}
 }
 
 
+
+
+
+
+
+
+
+
+// action functions
+function loginResponse(res){
+	if(res["token"] && res["key"] && res["username"]){
+		createCookie("X-ACCESS-TOKEN",res["token"],1);
+		createCookie("KEY",res["key"],1);
+
+		$(".loginSmall").slideUp(300);
+        alert("Wellcome To Hexas");
+        getMe();
+	}
+	else {
+	    window.location.pathname = "/login";
+	}
+}
+
+function getMeResponse(res){
+    if(res !== null) {
+        $(".accountCard").html(`
+    	<a href="" id="profileBtn">${res.username}</a>
+    	<a href="/getNotifs" id="newPostBtn"></a>
+    	<a href="" id="notifBtn"></a>
+    `);
+    }
+}
+function alert(message){
+	$("#alertTop h3").html(message);
+	$("#alertTop").addClass("show");
+    setTimeout(function (){
+        $("#alertTop").removeClass("show");
+        // Something you want delayed.
+
+    }, 3000); // 5seconds show
+}
 </script>
 </html>

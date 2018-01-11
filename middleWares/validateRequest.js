@@ -49,7 +49,9 @@ module.exports = function(req, res,fn) {
                     else if (req.url.indexOf('premium') >= 0 && rolesList.indexOf('premium') > -1) {
                         return fn(userObject);
                     }
-
+                    else if(req.url.indexOf('premium') ===-1 && req.url.indexOf('blogger') ===-1 || req.url.indexOf('curator') === -1 || req.url.indexOf('sabet') === -1 || req.url.indexOf('admin') === -1){
+                        return fn(userObject)
+                    }
                     else {
                         res.status(403);
                         res.json({
@@ -77,12 +79,8 @@ module.exports = function(req, res,fn) {
             });
         }
     } else {
-        res.status(401);
-        res.json({
-            "status": 401,
-            "message": "Invalid Token or Key"
-        });
-        return;
+
+        return fn(null); // Not Signed
     }
     function parseCookies (request) {
         var list = {},

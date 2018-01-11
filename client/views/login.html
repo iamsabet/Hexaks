@@ -8,7 +8,6 @@
 
 <title>Hexaks</title>
 </head>
-
 <body>
 <div id="homeContainer" class="containerDiv">
 	<div class="loginRegForm">
@@ -41,7 +40,7 @@
 			username : $("#username").val(),
 			password: $("#password").val()
 		};
-		requsetHandler("/login", "POST", input, "loginHandler")
+		requsetHandler("/login", "POST", input, "loginHandler");
 	});
 
 
@@ -82,6 +81,5 @@
 			break;
 		}
 	}
-
 </script>
 </html>
