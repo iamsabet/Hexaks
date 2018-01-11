@@ -6,9 +6,8 @@ var auth = require('./auth');
 /* GET home page. */
 var users = {
 
-    getAll: function(req, res,next,data) {
-        console.log(data.userId);
-        res.send("kire khar e Parandeeh ! :)))");
+    getAll: function(req, res,data) {
+        console.log(data);
     },
 
     getOne: function(req, res,next,data) {

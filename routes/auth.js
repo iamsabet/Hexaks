@@ -30,7 +30,6 @@ var auth = {
             }
 
             if (userDbObject) {
-                console.log(callback);
                 res.send(genToken(userDbObject));
             }
         });
@@ -52,12 +51,12 @@ var auth = {
         });
     },
 
-    validateUser: function(key) {
+    validateUser: function(key,callback) {
         // spoofing the DB response for simplicity
-        userSchema.findOne({userId:key},{},function(err,user){
+        userSchema.findOne({userId:key},{password:0},function(err,user){
             if(err) throw err;
             if(user) {
-                return user;
+                return callback(user);
             }
             else {
                 return null;

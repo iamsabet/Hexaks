@@ -47,7 +47,6 @@ app.use('/*',function(req,res,next){
     next();
 });
 app.use('/',routes);
-
 app.all('/*', function(req, res, next) {
     // CORS headers
     res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
@@ -62,9 +61,7 @@ app.all('/*', function(req, res, next) {
 });
 // error handler
 
-app.all('/api/v1/*', function (req,res,next){
-    validateRequest(req,res,next);
-});
+
 
 
 

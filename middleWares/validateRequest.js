@@ -1,7 +1,7 @@
 var jwt = require('jwt-simple');
 var validateUser = require('../routes/auth').validateUser;
 
-module.exports = function(req, res, next,data) {
+module.exports = function(req, res,fn) {
 
     // When performing a cross domain request, you will recieve
     // a preflighted request first. This is to check if our the app
@@ -9,13 +9,14 @@ module.exports = function(req, res, next,data) {
 
     // We skip the token outh for [OPTIONS] requests.
     if(req.method === 'OPTIONS') next();
+    var cookiesList = parseCookies(req);
 
-    var token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
-    var key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
+    var token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'] || cookiesList["X-ACCESS-TOKEN"];
+    var key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'] || cookiesList["KEY"];
 
-    if (token && key) {
+    if (token && key ) {
         try {
-            var decoded = jwt.decode(token, require('../config/secret.js')());
+            var decoded = jwt.decode(token,require('../config/secret.js')());
 
             if (decoded.exp <= Date.now()) {
                 res.status(400);
@@ -28,42 +29,45 @@ module.exports = function(req, res, next,data) {
 
             // Authorize the user to see if s/he can access our resources
 
-            var userObject = validateUser(key); // The key would be the logged in user's username
-            if (userObject) {
-                data = userObject;
-                console.log(req.url);
-                if ((((req.url.indexOf('admin') >= 0) || (req.url.indexOf('curator') >= 0) || (req.url.indexOf('blogger') >= 0) || (req.url.indexOf('premium') >= 0))
-                        && dbUser.role === 'admin') || (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/v1/') >= 0)) {
-                    next(null,{some:data}); // To move to next middleware
-                }
-                else if ((req.url.indexOf('curator') >= 0 && dbUser.role === 'curator')) {
-                    next(null,{some:data}); // To move to next middleware
-                }
-                else if ((req.url.indexOf('blogger') >= 0 && dbUser.role === 'blogger')) {
-                    next(null,{some:data}); // To move to next middleware
-                }
-                else if ((req.url.indexOf('premium') >= 0 && dbUser.role === 'premium')) {
-                    next(null,{some:data}); // To move to next middleware
-                }
+            validateUser(key,function(callback){
+                var userObject = callback;
+            // The key would be the logged in user's username
+                if (userObject) {
 
-                else {
-                    res.status(403);
+                    var rolesList = userObject.roles;
+                    console.log(req.url);
+                    if ((((req.url.indexOf('admin') >= 0) || (req.url.indexOf('curator') >= 0) || (req.url.indexOf('blogger') >= 0) || (req.url.indexOf('premium') >= 0))
+                            && (rolesList.indexOf('admin') > -1 || rolesList.indexOf('sabet') > -1 ))|| (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/v1/') >= 0)) {
+                        return fn(userObject);
+                    }
+                    else if (req.url.indexOf('curator') >= 0 && rolesList.indexOf('curator') > -1) {
+                        return fn(userObject);
+                    }
+                    else if (req.url.indexOf('blogger') >= 0 && rolesList.indexOf('blogger') > -1){
+                        return fn(userObject);
+                    }
+                    else if (req.url.indexOf('premium') >= 0 && rolesList.indexOf('premium') > -1) {
+                        return fn(userObject);
+                    }
+
+                    else {
+                        res.status(403);
+                        res.json({
+                            "status": 403,
+                            "message": "Not Authorized"
+                        });
+                        return null;
+                    }
+                } else {
+                    // No user with this name exists, respond back with a 401
+                    res.status(401);
                     res.json({
-                        "status": 403,
-                        "message": "Not Authorized"
+                        "status": 401,
+                        "message": "Invalid User"
                     });
                     return;
                 }
-            } else {
-                // No user with this name exists, respond back with a 401
-                res.status(401);
-                res.json({
-                    "status": 401,
-                    "message": "Invalid User"
-                });
-                return;
-            }
-
+            });
         } catch (err) {
             res.status(500);
             res.json({
@@ -79,5 +83,15 @@ module.exports = function(req, res, next,data) {
             "message": "Invalid Token or Key"
         });
         return;
+    }
+    function parseCookies (request) {
+        var list = {},
+            rc = request.headers.cookie;
+        rc && rc.split(';').forEach(function( cookie ) {
+            var parts = cookie.split('=');
+            list[parts.shift().trim()] = decodeURI(parts.join('='));
+        });
+
+        return list;
     }
 };

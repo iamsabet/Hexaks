@@ -18,7 +18,7 @@ var userSchema = new Schema({
         bio: String
     },
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
-
+    roles : [], // String - Sabet / Admin / Curator / Blogger / Premium
     createdAt:Date,
     updatedAt:Date
 });
