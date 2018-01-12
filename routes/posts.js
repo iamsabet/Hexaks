@@ -63,7 +63,7 @@ var posts = {
 
                 var gatheredPixels = [];
                 // Original Size --> ../../Private Files/pictures/x-large
-
+                // We Must Pass the File name through multer to here ... to use resizing
                 Jimp.read("../Private Files/x-large/"+req.body.file, function (err, image) {
                     if (err) throw err;
 
