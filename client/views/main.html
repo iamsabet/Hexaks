@@ -165,6 +165,26 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="newPostContainer">
+	<form id="uploadForm" method="post" action="/api/v1/posts/create" enctype="multipart/form-data">
+		<select name="category" id="category">
+			<option value="Nature">Nature</option>
+			<option value="Industrial">Industrial</option>
+			<option value="Society">Society</option>
+			<option value="Folan">Folan</option>
+		</select>
+		<textarea name="caption" id="caption"></textarea>
+		<input type="file" id="myfiles" name="imgUploader" multiple accept="image/*">
+		<button id="submitUpload" > Upload </button>
+	</form>
+	<div class="progress">
+		<div class="bar"></div>
+		<span class="percent">%</span>
+	</div>
+</div>
+
 </body>
 
 
@@ -172,13 +192,30 @@
 <script>
 
 	// Global Variables.JS
-	var Me = {};
+	// import * as Jimp from "jimp";
+
+    var Me = {};
+	var pageNames = ["feed","profile","settings","home","fullScreenView","newPost"];
+
+
+	// initial by url parsing
+    var currentPage = "";
+    var historyPointer = -1;
+    var historyList = [];
+
+
+	urlParser();
+
+
+
 
 	// Events.Js
 
 	$(document).ready(function(){
 	    if( readCookie("X-ACCESS-TOKEN") !==null) {
             getMe();
+
+
         }
 	});
 	// TOP NAV
@@ -199,7 +236,12 @@
         login(input);
     });
 
-
+	$("body").on("click","#forwardBtn",function(){
+	    forward();
+	});
+    $("body").on("click","#backwardBtn",function(){
+        backward();
+    });
 	$("body").on("click","#logo",function(){
         if (window.innerWidth < 1025) {
             if (this.className === "") {
@@ -233,10 +275,18 @@
             $(".loginSmall").slideDown(300);
         }
 	});
-
     $("body").on("click","#logoutBtn",function(){
         logout();
     });
+
+    $("body").on("click","#submitUpload",function(e){
+        e.preventDefault();
+        upload();
+    });
+
+
+
+
 function requsetHandler(url, method, input, caller) {
 
 	$.ajax({
@@ -263,7 +313,6 @@ function requsetHandler(url, method, input, caller) {
 
 
 // 3.Handlers
-
 // Request handlers
 
 function logout() {
@@ -300,14 +349,153 @@ function responseActionHandler(caller, res) {
 
 
 
+function urlParser(){
+   var url =  window.location.pathname;
+
+   // changePage("feed",true);
+
+}
 
 
+    // set the input element onchange to call pullfiles
 
 
+function upload(){
+
+	var bar = $('.bar');
+    var percent = $('.percent');
+	var status = $('#status');
+	var hashtags = [];
+	var sliced = $("#caption")[0].value.split(" ");
+	for (var x = 0 ;x < sliced.length ; x++){
+	    if(sliced[x].startsWith("#")){
+            hashtags.push(sliced[x].split("#")[1]);
+		}
+	    if(x === sliced.length -1){
+
+	        // Gathered Hashtags ==> Time To Upload
+            var formData = new FormData();
+            var file = $("#myFile").files;
+            formData.append('myFile', file);
+            formData.append('hashtags', hashtags.join(","));
+            formData.append('category',$("#category")[0].value);
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('post','/api/v1/posts/new', true);
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    var percentage = (e.loaded / e.total) * 100;
+                    $('div.progress div.bar').css('width', percentage + '%');
+                }
+            };
+
+            xhr.onerror = function(e) {
+                showInfo('An error occurred while submitting the form. Maybe your file is too big');
+            };
+
+            xhr.onload = function() {
+                showInfo(this.statusText);
+            };
+
+            xhr.send(formData);
+		}
+	}
+
+}
 
 
 
 // action functions
+
+	function changePage(pageName,newHistory){
+
+		if(pageName !== historyList[historyPointer]["pageName"]) {
+
+            switch (pageName) {
+                case "feed": {
+                    // show elements
+
+                    showFeedElements();
+                    hideOthers("feed");
+                    // hide elements
+                }
+                    break;
+                case "profile": {
+
+                }
+                    break;
+                case "home": {
+
+                }
+                    break;
+                case "settings": {
+
+                }
+                    break;
+                case "fullScreenView": {
+
+                }
+                    break;
+                case "newPost": {
+
+                }
+                    break;
+            }
+        }
+        else{
+            if(newHistory || false) {
+                pushHistory(pageName, window.location.pathname);
+            }
+		}
+
+	}
+
+
+function hideOthers(pageName){
+    for(var x = 0 ; x < pageNames.length ; x ++){
+        if(pageNames[x]!==pageName){
+            hidePage(pageName);
+		}
+	}
+}
+
+
+
+function pushHistory(newPageName,url){
+	historyList.push({pageName:newPageName,urlData:url});
+	historyPointer++;
+}
+
+function checkForward(){
+    if(historyPointer < historyPointer.length -1){
+        $("#forwardBtn").show(100);
+	}
+	else{
+        $("#forwardBtn").hide(100);
+	}
+}
+
+function backward(){
+    if(historyPointer > 0){
+        historyPointer--;
+		changePage(historyList[historyPointer]["pageName"],false);
+        window.history.replaceState(historyList[historyPointer]["pageName"],historyList[historyPointer]["pageName"],historyList[historyPointer]["urlData"]);
+	}
+	else{
+        window.history.back();
+	}
+}
+function forward(){
+    if(historyPointer < historyList.length -1 ){
+        historyPointer++;
+        changePage(historyList[historyPointer]["pageName"],false);
+        window.history.replaceState(historyList[historyPointer]["pageName"],historyList[historyPointer]["pageName"],historyList[historyPointer]["urlData"]);
+    }
+    else{
+        //
+	}
+}
 function loginResponse(res){
 	if(res["token"] && res["key"] && res["username"]){
 		createCookie("X-ACCESS-TOKEN",res["token"],1);

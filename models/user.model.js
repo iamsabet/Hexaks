@@ -8,11 +8,16 @@ var userSchema = new Schema({
     userId:String,
     username : String,
     email:String,
+    profilePictureUrl:String,
     password : String,
     followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
     followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
     posts:[], // {postId : , smallImageUrl : , ownerUserName : }
     rate:Float,
+    verified:{
+        email:String,
+        sms:String
+    },
     details:{
         phoneNumber : String,
         bio: String
@@ -64,6 +69,6 @@ userSchema.pre('save', function(next){
     next();
 });
 
-var User = mongoose.model('user', userSchema);
-var user = mongoose.model('user');
+var User = mongoose.model('users', userSchema);
+var user = mongoose.model('users');
 module.exports = user;

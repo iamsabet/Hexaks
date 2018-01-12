@@ -45,6 +45,6 @@ notifSchema.pre('save', function(next){
     next();
 });
 
-var Notif = mongoose.model('notification', notifSchema);
-var notif = mongoose.model('notification');
+var Notif = mongoose.model('notifs', notifSchema);
+var notif = mongoose.model('notifs');
 module.exports = notif;

@@ -56,6 +56,13 @@ router.get('/api/v1/users/getMe',function(req,res){
        }
     });
 });
+
+router.post('/api/v1/posts/new/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        posts.create(req, res, callback);
+    });
+});
+
 router.delete('/api/v1/admin/user/:id', user.delete);
 
 
