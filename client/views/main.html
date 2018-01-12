@@ -6,6 +6,20 @@
 	<script src="../javascripts/jquery.min.js"></script>
 	<link rel="stylesheet" href="../stylesheets/style.css">
 	<script src="../javascripts/cookies.js"></script>
+	<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+	<script src="../javascripts/jquery.ui.widget.js"></script>
+	<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+	<script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+	<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+	<script src="https://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+	<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+	<script src="../javascripts/jquery.iframe-transport.js"></script>
+	<!-- The basic File Upload plugin -->
+	<script src="../javascripts/jquery.fileupload.js"></script>
+	<!-- The File Upload processing plugin -->
+	<script src="../javascripts/jquery.fileupload-process.js"></script>
+	<!-- The File Upload image preview & resize plugin -->
+	<script src="../javascripts/jquery.fileupload-image.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -168,7 +182,7 @@
 
 
 <div class="newPostContainer">
-	<form id="uploadForm" method="post" action="/api/v1/posts/create" enctype="multipart/form-data">
+	<form id="upload" method="post" action="/api/v1/posts/create" enctype="multipart/form-data">
 		<select name="category" id="category">
 			<option value="Nature">Nature</option>
 			<option value="Industrial">Industrial</option>
@@ -365,42 +379,53 @@ function upload(){
 	var bar = $('.bar');
     var percent = $('.percent');
 	var status = $('#status');
-	var hashtags = [];
-	var sliced = $("#caption")[0].value.split(" ");
-	for (var x = 0 ;x < sliced.length ; x++){
-	    if(sliced[x].startsWith("#")){
-            hashtags.push(sliced[x].split("#")[1]);
-		}
-	    if(x === sliced.length -1){
 
-	        // Gathered Hashtags ==> Time To Upload
-            var formData = new FormData();
-            var file = $("#myFile").files;
-            formData.append('myFile', file);
-            formData.append('hashtags', hashtags.join(","));
-            formData.append('category',$("#category")[0].value);
-            var xhr = new XMLHttpRequest();
-
-            xhr.open('post','/api/v1/posts/new', true);
-
-            xhr.upload.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    var percentage = (e.loaded / e.total) * 100;
-                    $('div.progress div.bar').css('width', percentage + '%');
-                }
-            };
-
-            xhr.onerror = function(e) {
-                showInfo('An error occurred while submitting the form. Maybe your file is too big');
-            };
-
-            xhr.onload = function() {
-                showInfo(this.statusText);
-            };
-
-            xhr.send(formData);
-		}
-	}
+    $('#upload').fileupload({
+        url: '/ap1/v1/posts/new',
+        dataType: 'json',
+        // Enable image resizing, except for Android and Opera,
+        // which actually support image resizing, but fail to
+        // send Blob objects via XHR requests:
+        imageMaxWidth: 800,
+        imageMaxHeight: 800,
+        imageCrop: false // Force cropped images
+    })
+	// var hashtags = [];
+	// var sliced = $("#caption")[0].value.split(" ");
+	// for (var x = 0 ;x < sliced.length ; x++){
+	//     if(sliced[x].startsWith("#")){
+     //        hashtags.push(sliced[x].split("#")[1]);
+	// 	}
+	//     if(x === sliced.length -1){
+    //
+	//         // Gathered Hashtags ==> Time To Upload
+     //        var formData = new FormData();
+     //        var file = $("#myFile").files;
+     //        formData.append('myFile', file);
+     //        formData.append('hashtags', hashtags.join(","));
+     //        formData.append('category',$("#category")[0].value);
+     //        var xhr = new XMLHttpRequest();
+    //
+     //        xhr.open('post','/api/v1/posts/new', true);
+    //
+     //        xhr.upload.onprogress = function(e) {
+     //            if (e.lengthComputable) {
+     //                var percentage = (e.loaded / e.total) * 100;
+     //                $('div.progress div.bar').css('width', percentage + '%');
+     //            }
+     //        };
+    //
+     //        xhr.onerror = function(e) {
+     //            showInfo('An error occurred while submitting the form. Maybe your file is too big');
+     //        };
+    //
+     //        xhr.onload = function() {
+     //            showInfo(this.statusText);
+     //        };
+    //
+     //        xhr.send(formData);
+		// }
+	// }
 
 }
 

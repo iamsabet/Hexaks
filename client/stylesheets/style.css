@@ -565,6 +565,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height:100vh;
 	z-index: 999998;
 	background-color: #ddd998;
+	display: block;
 }
 .newPostContainer form{
 
@@ -592,6 +593,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 
 .progress{
+	display: none;
 	position: fixed;
 	z-index: 999999;
 	width:300px;

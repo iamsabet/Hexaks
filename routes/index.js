@@ -59,7 +59,12 @@ router.get('/api/v1/users/getMe',function(req,res){
 
 router.post('/api/v1/posts/new/', function(req,res){
     validateRequest(req,res,function(callback) {
-        posts.create(req, res, callback);
+        if(callback !==null) {
+            posts.create(req, res, callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
     });
 });
 
