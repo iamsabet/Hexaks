@@ -63,7 +63,16 @@ router.get('/api/v1/users/getMe',function(req,res){
 router.post('/api/v1/upload/new/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(callback !==null) {
-            uploader.onUpload(req,res,callback);
+            console.log(req.body);
+            console.log(req.headers);
+            if ( !req.file.mimetype.startsWith( 'image/' ) ) {
+                return res.status( 422 ).json( {
+                    error : 'The uploaded file must be an image'
+                } );
+            }
+            else{
+                uploader.onUpload(req,res,callback);
+            }
         }
         else{
             res.send("404 Not Found");
