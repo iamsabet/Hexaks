@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 var userSchema = require('../models/user.model');
-var user = new userSchema();
+var User = new userSchema();
 var Jimp = require("jimp");
 
 /* GET home page. */
@@ -47,7 +47,7 @@ var users = {
                             roles : roles
 
                         };
-                        user.create(res,userObject);
+                        User.create(res,userObject);
                     }
                 });
             }

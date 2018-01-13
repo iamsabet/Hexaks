@@ -34,12 +34,14 @@ router.get('/login', function(req,res){
 });
 
 router.get('/register', function(req,res){
-    if(callback){
-        res.redirect("/");
-    }
-    else {
-        res.render("register.html");
-    }
+    validateRequest(req,res,function (callback) {
+        if (callback) {
+            res.redirect("/");
+        }
+        else {
+            res.render("register.html");
+        }
+    });
 });
 
 router.get('/api/v1/admin/users/', function(req,res){
@@ -57,18 +59,6 @@ router.get('/api/v1/users/getMe',function(req,res){
        }
     });
 });
-
-router.post('/api/v1/posts/new/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            posts.create(req, res, callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-
 
 router.post('/api/v1/upload/new/', function(req,res){
     validateRequest(req,res,function(callback) {

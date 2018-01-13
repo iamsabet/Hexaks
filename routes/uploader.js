@@ -11,9 +11,9 @@ var users = require('../routes/users.js');
 var albums = require('../routes/albums.js');
 var multiparty = require('multiparty');
 var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
-    privatePath ='../Private Files/Original/',
-    publicPath ='../Static Files/pictures/',
-    profilePicPath ='../Static Files/pictures/',
+    originalPath ='/Users/sabet/Desktop/Hexaks/Hexaks/Private Files/Originals/',
+    largePath ='/Users/sabet/Desktop/Hexaks/Hexaks/Private Files/Larges/',
+    smallAndMediumPath ='/Users/sabet/Desktop/Hexaks/Hexaks/Static Files/pictures/',
     chunkDirName = "chunks",
     maxFileSize =  40000000, // in bytes, 0 for unlimited 40MB
     minFileSizeToChunk = 1000000; // in bytes 1MB
@@ -22,9 +22,10 @@ var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
 var uploader = {
 
     onUpload: function (req, res,user) {
-        var postId = req.body["postId"] || undefined;
-        var size = req.body["size"] || undefined;
+        var postId = req.headers['postId'] || undefined;
+        var size = req.headers['size'] || undefined;
         let form = new multiparty.Form();
+        console.log(req["headers"]);
         form.parse(req, function (err, fields, files) {
             if (err) throw err;
             // text/plain is required to ensure support for IE9 and older
@@ -32,7 +33,7 @@ var uploader = {
             if(postId === "" && size==="Original"){
                 // first upload --> create new post
                 posts.create(req, res, user, files[fileInputName][0],function(callback){
-                    uploader.onChunkedUpload(fields, files[fileInputName][0],callback, res);
+                    uploader.onChunkedUpload(fields, files[fileInputName][0],largePath,callback, res);
                 });
             }
             else if(postId==="Al:") {
@@ -42,7 +43,7 @@ var uploader = {
                         user.uploadingAlbum = albumeId;
                         user.uploadingQueue.push(postId);
                         user.save();
-                        uploader.onChunkedUpload(fields, files[fileInputName][0],postId, res);
+                        uploader.onChunkedUpload(fields, files[fileInputName][0],originalPath,postId, res);
                         });
                     });
                 }
@@ -52,7 +53,7 @@ var uploader = {
                     posts.create(req, res, user, files[fileInputName][0], albumId, function (postId) {
                         user.uploadingQueue.push(postId);
                         user.save();
-                        uploader.onChunkedUpload(fields, files[fileInputName][0],postId, res);
+                        uploader.onChunkedUpload(fields, files[fileInputName][0],originalPath,postId, res);
                     });
                 }
             }
@@ -64,14 +65,14 @@ var uploader = {
                     if(post !== null && user.uploadingQueue[postId]) {
                         if (this.isValid(filesize)) {
                             if ((size === "Medium" || size === "Small") && this.minChukSize(filesize)) {
-                                this.onSimpleUpload(fields, files[fileInputName][0], postId, res);
+                                this.onSimpleUpload(fields, files[fileInputName][0]+size, smallAndMediumPath,postId, res);
                             }
                             else if ((size === "Large")) {
                                 if (this.minChukSize(filesize)) {
-                                    this.onChunkedUpload(fields, files[fileInputName][0], postId, res);
+                                    this.onChunkedUpload(fields, files[fileInputName][0], largePath,postId, res);
                                 }
                                 else {
-                                    this.onSimpleUpload(fields, files[fileInputName][0], postId, res);
+                                    this.onSimpleUpload(fields, files[fileInputName][0], largePath,postId, res);
                                 }
                             }
                             else {
@@ -90,14 +91,14 @@ var uploader = {
         });
     },
 
-    onSimpleUpload: function (fields, file, fileName ,res) {
+    onSimpleUpload: function (fields, file, path,fileName ,res) {
         let uuid = fields.qquuid,
             responseData = {
                 success: false
             };
 
         file.name = fileName;
-
+        file.path = path;
         if (isValid(file.size)) {
             console.log(file.name[0]);
             this.moveUploadedFile(file, uuid, function () {
@@ -121,7 +122,7 @@ var uploader = {
             this.failWithTooBigFile(responseData, res);
         }
     },
-    onChunkedUpload:function (fields, file,newFileName,res){
+    onChunkedUpload:function (fields, file,path,newFileName,res){
 
         let size = parseInt(fields.qqtotalfilesize),
             uuid = fields.qquuid,
@@ -132,7 +133,7 @@ var uploader = {
             };
 
         file.name = newFileName;
-
+        file.path = path;
         if (this.isValid(size)) {
             this.storeChunk(file, uuid, index,postId, totalParts, function () {
                     if (index < totalParts - 1) {

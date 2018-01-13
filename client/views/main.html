@@ -5,21 +5,9 @@
 	<title>Hexaks</title>
 	<script src="../javascripts/jquery.min.js"></script>
 	<link rel="stylesheet" href="../stylesheets/style.css">
+	<link rel="stylesheet" href="../dist/dropzone.css">
 	<script src="../javascripts/cookies.js"></script>
-	<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-	<script src="../javascripts/jquery.ui.widget.js"></script>
-	<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
-	<script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
-	<!-- The Canvas to Blob plugin is included for image resizing functionality -->
-	<script src="https://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
-	<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-	<script src="../javascripts/jquery.iframe-transport.js"></script>
-	<!-- The basic File Upload plugin -->
-	<script src="../javascripts/jquery.fileupload.js"></script>
-	<!-- The File Upload processing plugin -->
-	<script src="../javascripts/jquery.fileupload-process.js"></script>
-	<!-- The File Upload image preview & resize plugin -->
-	<script src="../javascripts/jquery.fileupload-image.js"></script>
+	<script type="text/javascript" src="../dist/dropzone.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -182,7 +170,7 @@
 
 
 <div class="newPostContainer">
-	<form id="upload" method="post" action="/api/v1/posts/create" enctype="multipart/form-data">
+	<div class="newPostForm">
 		<select name="category" id="category">
 			<option value="Nature">Nature</option>
 			<option value="Industrial">Industrial</option>
@@ -190,12 +178,16 @@
 			<option value="Folan">Folan</option>
 		</select>
 		<textarea name="caption" id="caption"></textarea>
-		<input type="file" id="myfiles" name="imgUploader" multiple accept="image/*">
+		<textarea name="hashtags" id="hashtags"></textarea>
 		<button id="submitUpload" > Upload </button>
-	</form>
-	<div class="progress">
-		<div class="bar"></div>
-		<span class="percent">%</span>
+	</div>
+
+	<div id="dropezone">
+		<form id="upload-widget" method="post" action="/api/v1/upload/new" class="dropzone">
+			<div class="fallback">
+				<input name="file" type="file" />
+			</div>
+		</form>
 	</div>
 </div>
 
@@ -380,16 +372,36 @@ function upload(){
     var percent = $('.percent');
 	var status = $('#status');
 
-    $('#upload').fileupload({
-        url: '/ap1/v1/posts/new',
-        dataType: 'json',
-        // Enable image resizing, except for Android and Opera,
-        // which actually support image resizing, but fail to
-        // send Blob objects via XHR requests:
-        imageMaxWidth: 800,
-        imageMaxHeight: 800,
-        imageCrop: false // Force cropped images
-    })
+    window.Dropzone.options.uploadWidget = {
+        paramName: 'file',
+        maxFilesize: 40, // MB
+        maxFiles: 10,
+        dictDefaultMessage: 'Drag an image here to upload, or click to select one',
+        headers: {
+            'postId': "",
+			'size':"Original",
+        },
+        acceptedFiles: 'image/*',
+        init: function() {
+            this.on('success', function( file, resp ){
+                console.log( file );
+                console.log( resp );
+            });
+            this.on('thumbnail', function(file) {
+                if ( file.width < 640 || file.height < 480 ) {
+                    file.rejectDimensions();
+                } else {
+                    file.acceptDimensions();
+                }
+            });
+        },
+        accept: function(file, done) {
+            file.acceptDimensions = done;
+            file.rejectDimensions = function() {
+                done('The image must be at least 640 x 480px')
+            };
+        }
+    };
 	// var hashtags = [];
 	// var sliced = $("#caption")[0].value.split(" ");
 	// for (var x = 0 ;x < sliced.length ; x++){
@@ -554,4 +566,8 @@ function alert(message){
     }, 3000); // 5seconds show
 }
 </script>
+
+
+
+
 </html>

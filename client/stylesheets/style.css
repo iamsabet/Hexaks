@@ -567,20 +567,22 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	background-color: #ddd998;
 	display: block;
 }
-.newPostContainer form{
-
+.newPostContainer .newPostForm{
+	position: relative;
 }
-.newPostContainer form select{
+.newPostContainer .newPostForm select{
 	position: relative;
 	font-size: 20px;
+	width:200px;
+
 }
 
-.newPostContainer form textarea{
+.newPostContainer .newPostForm textarea{
 	position: relative;
 	font-size: 19px;
 	color:black;
 }
-.newPostContainer form button{
+.newPostContainer .newPostForm button{
 	height: 40px;
 	width:200px;
 	position: relative;

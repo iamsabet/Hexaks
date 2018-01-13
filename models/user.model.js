@@ -32,21 +32,6 @@ var userSchema = new Schema({
     updatedAt:Date
 });
 
-userSchema.methods.updateInfo = function(req,res){
-
-    var controllerObject = req.body["controllerObject"];
-    var controllerId = req.body["id"];
-    var controllerName = req.body["name"];
-    user.findOneAndUpdate({id: controllerId , name:controllerName},{$set:{controllerObject:controllerObject}},function (err, controller) {
-        if (err) throw err;
-        if(controller){
-            res.send(true);
-        }
-        else {
-            res.send({result: false, message: "did not update controller"});
-        }
-    });
-};
 
 userSchema.methods.create = function (res,userObject) {
 
