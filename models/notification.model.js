@@ -6,17 +6,13 @@ var Float = require('mongoose-float').loadType(mongoose);
 var notifSchema = new Schema({
     name : String,
     username : String,
-    email:String,
-    hashPassword : String,
-    followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
-    followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
-    rate:Float,
-    details:{
-        phoneNumber : String,
-        bio: String,
-    },
-    badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
-
+    notifId:String,
+    owner:String,// username
+    text:String,
+    link:String,
+    read:Boolean,
+    icon:String,
+    type:String,
 
 });
 

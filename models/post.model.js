@@ -30,16 +30,18 @@ var postSchema = new Schema({
         username:String,
         profilePicUrl:String,
     },
+    ptivate:Boolean,
+    inactivate:Boolean,
     createdAt:Date,
     updatedAt:Date
 });
 
-postSchema.methods.Create = function(req,res){
+postSchema.methods.Create = function(postObject,callback){
     var newPost = new Post(postObject);
     newPost.save(function(err){
         if(err) throw err;
         console.log(newPost.postId);
-        res.send({result:true,value:newPost.postId});
+        return callback(newPost.postId);
     });
 };
 postSchema.methods.Edit = function(req,res){

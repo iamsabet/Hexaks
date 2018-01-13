@@ -1,5 +1,6 @@
 var jwt = require('jwt-simple');
 var userSchema = require('../models/user.model');
+var bcrypt = require("bcrypt-nodejs");
 var auth = {
 
     login: function(req, res) {
@@ -40,13 +41,39 @@ var auth = {
 
     validate: function(username, password,callback) {
         // spoofing the DB response for simplicity
-        userSchema.findOne({username:username,password:password},{_id:0,userId:1,username:1,profilePictureUrl:1},function(err,user){
+
+        userSchema.findOne({username:username},{_id:0,userId:1,username:1,profilePictureUrl:1,password:1},function(err,user){
             if(err) throw err;
             if(user) {
-                return callback(user);
+                bcrypt.compare(password, user.password, function (err, res) {
+                    if (err) throw err;
+                    if (res === true) {
+                        return callback(user);
+                    }
+                    else {
+                        return callback(null);
+                    }
+                });
             }
             else {
-                return callback(null);
+                userSchema.findOne({email:username},{_id:0,userId:1,username:1,profilePictureUrl:1,password:1},function(err,user){
+                    if(err) throw err;
+                    if(user) {
+                        bcrypt.compare(password, user.password, function (err, res) {
+                            if (err) throw err;
+                            if (res === true) {
+                                return callback(user);
+                            }
+                            else {
+
+                                return callback(null);
+                            }
+                        });
+                    }
+                    else {
+                        return callback(null);
+                    }
+                });
             }
         });
     },

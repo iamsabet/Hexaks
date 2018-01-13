@@ -47,13 +47,12 @@ var users = {
                             roles : roles
 
                         };
-                        users.create(res,userObject);
+                        user.create(res,userObject);
                     }
                 });
             }
         });
     },
-
     update: function(req, res,next,data) {
         var updateuser = req.body;
         var id = req.params.id;

@@ -18,7 +18,7 @@ var albumSchema = new Schema({
         imageUrl:[], // Big and Medium Sizes for sale
     }],
     hashtags:[],
-    categories:[],
+    category:String,
     title : String,
     caption : String,
     rate:{
@@ -31,13 +31,19 @@ var albumSchema = new Schema({
         profilePicUrl:String,
     },
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
+    private:Boolean,
     isCurated : Boolean,
     createdAt:Date,
     updatedAt:Date
 });
 
-albumSchema.methods.Create = function(req,res){
-
+albumSchema.methods.Create = function(albumObject,callback){
+    var newAlbum = new Album(postObject);
+    newAlbum.save(function(err){
+        if(err) throw err;
+        console.log(newAlbum.albumId);
+        return callback(newAlbum.albumId);
+    });
 };
 albumSchema.methods.Edit = function(req,res){
 
@@ -50,11 +56,17 @@ albumSchema.methods.Remove = function(req,res){
 };
 
 albumSchema.pre('save', function(next){
-    var now = Date.now();
-    this.createdAt = now;
+    if(this.updatedAt) {
+        this.updatedAt = Date.now();
+    }
+    else{
+        var now = Date.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
     next();
 });
 
 var Album = mongoose.model('albums', albumSchema);
 var album = mongoose.model('albums');
-module.exports = post;
+module.exports = album;

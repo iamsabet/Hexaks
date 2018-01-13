@@ -18,12 +18,16 @@ var userSchema = new Schema({
         email:String,
         sms:String
     },
+    uploadingQueue:[],  // post Ids
+    uploadingAlbum:String,
     details:{
         phoneNumber : String,
         bio: String
     },
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
     roles : [], // String - Sabet / Admin / Curator / Blogger / Premium
+    inactivate:Boolean,
+    ban:Boolean,
     createdAt:Date,
     updatedAt:Date
 });
@@ -43,9 +47,7 @@ userSchema.methods.updateInfo = function(req,res){
         }
     });
 };
-userSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.password);
-};
+
 userSchema.methods.create = function (res,userObject) {
 
     var newUser = new User(userObject);
