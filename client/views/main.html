@@ -175,17 +175,13 @@
 			<option value="Society">Society</option>
 			<option value="Folan">Folan</option>
 		</select>
+		<div id="uploadArea" ondrop="drop_handler(event);" ondragover="dragover_handler(event);" ondragend="dragend_handler(event);">
+			<strong>Drag one or more files to this Drop Zone ...</strong>
+			<input type="file" accept="image/*" class="browseSingle">
+		</div>
 		<textarea name="caption" id="caption"></textarea>
 		<textarea name="hashtags" id="hashtags"></textarea>
-		<button id="submitUpload" > Upload </button>
-	</div>
-
-	<div id="dropezone">
-		<form id="upload-widget" method="post" action="/api/v1/upload/new" class="dropzone">
-			<div class="fallback">
-				<input name="file" type="file" />
-			</div>
-		</form>
+		<button id="submitPost" > Post </button>
 	</div>
 </div>
 
@@ -209,7 +205,6 @@
 
 
 	urlParser();
-	upload();
 
 
 
@@ -285,8 +280,67 @@
 
     $("body").on("click","#submitUpload",function(e){
         e.preventDefault();
-        upload();
+
     });
+
+
+
+
+
+
+    function dragend_handler(ev) {
+        console.log("dragEnd");
+        // Remove all of the drag data
+        var dt = ev.dataTransfer;
+        if (dt.items) {
+            // Use DataTransferItemList interface to remove the drag data
+            for (var i = 0; i < dt.items.length; i++) {
+                dt.items.remove(i);
+            }
+        } else {
+            // Use DataTransfer interface to remove the drag data
+            ev.dataTransfer.clearData();
+        }
+    }
+
+    function dragover_handler(ev) {
+        console.log("dragOver");
+        // Prevent default select and drag behavior
+        ev.preventDefault();
+    }
+
+    function drop_handler(ev) {
+        console.log("Drop");
+        ev.preventDefault();
+        // If dropped items aren't files, reject them
+        var dt = ev.dataTransfer;
+        if (dt.items) {
+            // Use DataTransferItemList interface to access the file(s)
+            for (var i=0; i < dt.items.length; i++) {
+                if (dt.items[i].kind == "file") {
+                    var f = dt.items[i].webkitGetAsEntry();
+                    debugger;
+                    if(f.isFile) {
+                        $("#uploadArea").append(`
+						<div class="uploadItem">
+                    		<img src="${f.fullPath}" class="thumbnail">
+                    		<button>Cancel</button>
+                    		<div class="progressBar"></div>
+                    		<span class="progressPercentage"></span>
+                    	</div>
+                    `);
+                        $("#uploadArea .uploadItem").show(300);
+                    }
+                }
+            }
+        } else {
+            // Use DataTransfer interface to access the file(s)
+            for (var i=0; i < dt.files.length; i++) {
+                console.log("... file[" + i + "].name = " + dt.files[i].name);
+            }
+        }
+    }
+
 
 
 
@@ -364,7 +418,7 @@ function urlParser(){
     // set the input element onchange to call pullfiles
 
 
-function upload(){
+function setUploder(){
 
 
 	// var hashtags = [];

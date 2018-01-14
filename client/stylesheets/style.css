@@ -569,18 +569,35 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .newPostContainer .newPostForm{
 	position: relative;
+	float: left;
+	clear: left;
+	display: inline-block;
+	top:50%;
+	left:50%;
+	width:510px;
+	height: auto;
+	-webkit-transform: translate(-50%,-50%);
+	-moz-transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	-o-transform: translate(-50%,-50%);
+	transform: translate(-50%,-50%);
 }
 .newPostContainer .newPostForm select{
 	position: relative;
 	font-size: 20px;
 	width:200px;
-
+	float: left;
+	clear: left;
+	display: inline-block;
 }
 
 .newPostContainer .newPostForm textarea{
 	position: relative;
 	font-size: 19px;
 	color:black;
+	float: left;
+	clear: left;
+	display: inline-block;
 }
 .newPostContainer .newPostForm button{
 	height: 40px;
@@ -593,8 +610,16 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	font-size: 21px;
 	font-weight: bold;
 }
-
-.progress{
+.newPostContainer #uploadArea{
+	position: relative;
+	display: inline-block;
+	clear: left;
+	float: left;
+	width:500px;
+	height: 300px;
+	background-color:white;
+}
+.uploadItem{
 	display: none;
 	position: fixed;
 	z-index: 999999;
@@ -606,16 +631,16 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	padding:0;
 	margin:0;
 }
-.progress .bar{
+.uploadItem div{
 	position: relative;
-	width:100%;
+	width:1%;
 	height: 30px;
 	display: inline-block;
 	float: left;
 	clear: left;
 	background-color: #4cae4c;
 }
-.progress .percent{
+.uploadItem span{
 	font-size: 22px;
 	color:black;
 	font-weight: bold;
