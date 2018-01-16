@@ -59,27 +59,56 @@ router.get('/api/v1/users/getMe',function(req,res){
        }
     });
 });
-
-router.post('/api/v1/upload/new/', function(req,res){
+router.post('/api/v1/upload',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback){
+            uploader.onUpload(req,res,callback)
+        }
+        else {
+            res.send(null);
+        }
+    });
+});
+router.post('/api/v1/post/initial/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(callback !==null) {
-            console.log(req.body);
-            console.log(req.headers);
-            if ( !req.file.mimetype.startsWith( 'image/' ) ) {
-                return res.status( 422 ).json( {
-                    error : 'The uploaded file must be an image'
-                } );
-            }
-            else{
-                uploader.onUpload(req,res,callback);
-            }
+            posts.addNewPost(req,res,callback);
         }
         else{
             res.send("404 Not Found");
         }
     });
 });
-
+router.post('/api/v1/album/initial/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            posts.addNewPost(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
+router.post('/api/v1/post/new/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            posts.addNewPost(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
+router.post('/api/v1/album/new/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            posts.addNewPost(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
 router.delete('/api/v1/admin/user/:id', user.delete);
 
 

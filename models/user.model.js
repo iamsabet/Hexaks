@@ -18,8 +18,11 @@ var userSchema = new Schema({
         email:String,
         sms:String
     },
-    uploadingQueue:[],  // post Ids
-    uploadingAlbum:String,
+    boughtImages:[],// {post Id}
+    isUploadingPost:Boolean,
+    uploadingPost:String,  // post id --> initial --> "initial"
+    isUploadingAlbum:Boolean,
+    uploadingAlbum:[],// max size == 10 --> post id --> initial ["initial"]
     details:{
         phoneNumber : String,
         bio: String

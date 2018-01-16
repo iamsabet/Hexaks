@@ -4,20 +4,29 @@ const random = require('randomstring');
 var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
 var postSchema = new Schema({
-    albumId:String,
+    albumId:String, // null if not
     postId : String,
     owner : {
         username: String,
         profilePicUrl:String,
     },
-    products: [{ // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
-        cost:Number,
+    originalImage:{ // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
+        cost:Number, // 0 if free
         resolution:{
             x : Number,
             y : Number,
         },
-        imageUrl:String, // XLarge and Large Sizes for sale or can be free if [i]cost === o
-    }],
+        url:String, // XLarge and Large Sizes for sale or can be free if [i]cost === o
+    },
+    largeImage:{ // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
+        cost:Number, // 0 if free
+        resolution:{
+            x : Number,
+            y : Number,
+        },
+        url:String, // XLarge and Large Sizes for sale or can be free if [i]cost === o
+    },
+    buyers:[], // user id
     hashtags:[],
     category:String,
     caption:String,

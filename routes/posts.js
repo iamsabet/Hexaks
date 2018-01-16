@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
+
 var postSchema = require('../models/post.model');
 var post = new postSchema();
+var albumSchema = require('../models/album.model');
+var album = new albumSchema();
 var Jimp = require("jimp");
 var pixelSchema = require('../models/pixel.model');
 var pixels = mongoose.model("pixels");
@@ -28,31 +31,10 @@ var posts = {
 
     },
 
-    create: function(req,res,user,fileName,albumId,callback) {
+    create: function(req,res,user,callback) {
 
-        var postId = bcrypt(fileName+Date.now().toString())+"."+fileName.split(".")[fileName.split(".").length-1];
-        postSchema.findOne({postId:postId},function(err,posts){
-            if(err) {
-                res.send({result: false, message: "Oops Something went wrong - please try again"});
-            }
-            if(posts){
-                res.send({result:false,message:"user with username -> "+req.body["username"]+" already exists"});
-            }
-            else {
+        var postId = bcrypt("alo salam sabiam"+Date.now()+" chetori ? <3");
 
-                var postObject = {
-
-
-                };
-                if(albumId){
-                    postObject.albumId = albumId;
-                }
-                posts.create(postObject,function(postId){
-                    return callback(postId);
-                })
-
-            }
-        });
 
 
     },
@@ -94,6 +76,9 @@ var posts = {
         res.json(updateuser);
     },
 
+    addNewPost:function(req,res,user){
+
+    },
     delete: function(req, res,next,data) {
         var id = req.params.id;
         data.splice(id, 1); // Spoof a DB call
