@@ -15,9 +15,9 @@ var postSchema = new Schema({
         resolution:{
             x : Number,
             y : Number,
-        },
-        url:String, // XLarge and Large Sizes for sale or can be free if [i]cost === o
+        }
     },
+    ext:String,
     largeImage:{ // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
         cost:Number, // 0 if free
         resolution:{
@@ -31,16 +31,24 @@ var postSchema = new Schema({
     category:String,
     caption:String,
     rate:{
-        number:Float,
-        counts: Number,
+        value:Float,
+        counts: Number
     },
-    viewers : [],// usernames // length
+    views : Number,// usernames // length
+    viewers : [], // String User Ids
     curator : {
         username:String,
         profilePicUrl:String,
     },
-    ptivate:Boolean,
-    inactivate:Boolean,
+    private:Boolean,
+    rejected : {
+        value: Boolean,
+        reason : String,
+    },
+    advertise:{
+        link:String,
+    },
+    activated:Boolean,
     createdAt:Date,
     updatedAt:Date
 });
@@ -48,8 +56,9 @@ var postSchema = new Schema({
 postSchema.methods.Create = function(postObject,callback){
     var newPost = new Post(postObject);
     newPost.save(function(err){
-        if(err) throw err;
-        console.log(newPost.postId);
+        if(err){
+            return callback(null);
+        }
         return callback(newPost.postId);
     });
 };

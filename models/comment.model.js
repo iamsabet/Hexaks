@@ -9,20 +9,15 @@ var commentSchema = new Schema({
         username: String,
         profilePicUrl:String,
     },
-
     hashtags:[],
-    categories:[],
-    email:String,
-    hashPassword : String,
-    followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
-    followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
-    rate:Float,
-    details:{
-        phoneNumber : String,
-        bio: String,
+    mentions:[], // username
+    fullText:String,
+    likes:Number,
+    post:{
+        postId:String,
+        owner:String,//username
     },
-    badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
-    isCurated : Boolean,
+    diactive:Boolean,
     createdAt:Date,
     updatedAt:Date
 });
@@ -41,10 +36,17 @@ commentSchema.methods.Remove = function(req,res){
 };
 
 commentSchema.pre('save', function(next){
-    var now = Date.now();
-    this.createdAt = now;
+    if(this.updatedAt) {
+        this.updatedAt = Date.now();
+    }
+    else{
+        var now = Date.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
     next();
 });
+
 
 var Comment = mongoose.model('comments', commentSchema);
 var comment = mongoose.model('comments');

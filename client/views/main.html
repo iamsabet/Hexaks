@@ -461,25 +461,74 @@ function setUploaders() {
             concurrent: {
                 enabled: false
             },
-            success: function(){
-                smallUploader = originalUploader;
-                smallUploader.customHeaders = {
-                    size:"Small"
-				};
-                smallUploader.image.maxWidth = 500;
-                smallUploader.image.maxHeight = 500;
 
-                smallUploader.uploadStoredFiles();
-
-                smallUploader = originalUploader;
-                smallUploader.customHeaders = {
-                    size:"Medium"
-                };
-                smallUploader.image.maxWidth = 1000;
-                smallUploader.image.maxHeight = 1000;
-
-                smallUploader.uploadStoredFiles();
+            success:{
 			}
+        },
+        resume: {
+            enabled: true
+        },
+        retry: {
+            enableAuto: true,
+            showButton: true
+        },
+        allowedExtensions: ['gif','jpg','jpeg','png'],
+        onSubmit: function(id, fileName){
+
+        },
+        onComplete: function(id, fileName, responseJSON){ // Customize the output sent to responseJSON in demo.php
+            resetParams();
+
+            switch(responseJSON.ext){
+                case 'gif':
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+
+                    break;
+                default:
+                    // Do nothing
+                    break;
+            }
+
+            if(uploader._filesInProgress < 1){
+                window.allert("All files have been uploaded. The page will refresh itself in 10 seconds.");
+                // var t = setTimeout('location.href = location.href;', 10000)
+            }
+        },
+        showCropTool: 1,
+		scaling: {
+            sizes: [
+                {name: "sss",maxSize: 500},
+                {name: "mmm",maxSize: 1000}
+            ]
+        },
+    });
+
+/*
+
+    smallUploader = new qq.FineUploader({
+        element: document.getElementById("uploadArea"),
+        request: {
+            endpoint: '/api/v1/upload',
+            customHeaders: {
+                size:"Small"
+            }
+        },
+        chunking: {
+            enabled: true,
+            concurrent: {
+                enabled: false
+            },
+		image:{
+			maxWidth:500,
+			maxHeight:500
+		},
+            success: function(){
+                debugger;
+                smallUploader.uploadStoredFiles();
+                mediumUploader.uploadStoredFiles();
+            }
         },
         resume: {
             enabled: true
@@ -489,6 +538,37 @@ function setUploaders() {
             showButton: true
         }
     });
+    mediumUploader = new qq.FineUploader({
+        element: document.getElementById("uploadArea"),
+        request: {
+            endpoint: '/api/v1/upload',
+            customHeaders: {
+                size:"Medium"
+            }
+        },
+        chunking: {
+            enabled: true,
+            concurrent: {
+                enabled: false
+            },
+            image:{
+                maxWidth:1000,
+                maxHeight:1000
+            },
+            success: function(){
+                debugger;
+                smallUploader.uploadStoredFiles();
+                mediumUploader.uploadStoredFiles();
+            }
+        },
+        resume: {
+            enabled: true
+        },
+        retry: {
+            enableAuto: true,
+            showButton: true
+        }
+    });*/
 
 }
 

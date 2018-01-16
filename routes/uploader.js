@@ -28,25 +28,69 @@ var uploader = {
 
     onUpload: function (req, res,user,privacy) {
 
-        var size = req["headers"]["size"];
-        console.log("image size : "+size);
         let form = new multiparty.Form();
         console.log();
         form.parse(req, function (err, fields, files) {
             if (err) throw err;
             // text/plain is required to ensure support for IE9 and older
-            if(size==="Original"){
-                if(!user.uploadingPost) {
-                    console.log();
-                    var format = files[fileInputName][0].originalFilename.split(".")[files[fileInputName][0].originalFilename.split(".").length - 1];
-                    user.uploadingPost =  random.generate(20)+"."+format;
-                    uploader.onSimpleUpload(fields, files[fileInputName][0], originalPath, user.uploadingPost, res);
-                }
-            }
-            else if (size==="Medium" || size==="Small"){
-                uploader.onSimpleUpload(fields, files[fileInputName][0]+"-"+size ,smallAndMediumPath,postId, res);
-            }
 
+            if (files) {
+                if (user.isUploadingPost === true) {
+                    var pathis = "";
+                    var size = "";
+                    if (user.uploadingPost === "") {
+
+                        if (fields.qqfilename[0].split("sss").length > 1) {
+                            size = "-Small";
+                            pathis = smallAndMediumPath;
+                        }
+                        else if (fields.qqfilename[0].split("mmm").length > 1) {
+                            size = "-Medium";
+                            pathis = smallAndMediumPath;
+                        }
+                        else {
+                            size = "";
+                            pathis = originalPath;
+                        }
+                        user.uploadingPost = random.generate(20);
+                        user.save();
+
+                        var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
+                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);
+
+                        posts.create(user,fromat,function(callback){
+                            res.send(callback);
+                        });
+                    }
+                    else {
+                        if (fields.qqfilename[0].split("sss").length > 1) {
+                            size = "--Small";
+                            pathis = smallAndMediumPath;
+                            var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
+                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);
+                        }
+                        else if (fields.qqfilename[0].split("mmm").length > 1) {
+                            size = "--Medium";
+                            pathis = smallAndMediumPath;
+                            var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
+                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);
+                        }
+                        else {
+                            size = "";
+                            pathis = originalPath;
+                            var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
+                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);
+                        }
+                    }
+                }
+                else{
+                    res.send("initial posting first");
+                }
+
+            }
+            else{
+                res.send("403 bad request");
+            }
         });
     },
 
@@ -57,15 +101,18 @@ var uploader = {
             };
 
         file.name = fields.qqfilename;
+        file.fullName = "";
+        file.fullName = fileName;
         if (uploader.isValid(file.size)) {
-            console.log(file.name);
             uploader.moveUploadedFile(file,uuid,path, function () {
                     responseData.success = true;
+                    responseData.url = fileName;
                     res.send(responseData);
 
                 },
                 function () {
                     responseData.error = "Problem copying the file!";
+                    responseData.url = fileName;
                     res.send(responseData);
                 });
         }
@@ -142,7 +189,7 @@ var uploader = {
     },
 
     moveFile:function(destinationDir, sourceFile, destinationFile, success, failure) {
-        mkdirp(destinationDir, sourceFile.name, function (error) {
+        mkdirp(destinationDir, sourceFile.fullName, function (error) {
             let sourceStream, destStream;
 
             if (error) {
@@ -170,7 +217,8 @@ var uploader = {
 
     moveUploadedFile : function(file, uuid, path,success, failure) {
     let destinationDir = path,
-        fileDestination = destinationDir + file.name;
+        fileDestination = destinationDir + file.fullName;
+        console.log(file.fullName);
         uploader.moveFile(destinationDir, file.path, fileDestination, success, failure);
     },
     storeChunk:function (file, path,uuid,index, numChunks, success, failure) {

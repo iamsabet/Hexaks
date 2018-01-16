@@ -13,6 +13,7 @@ var notifSchema = new Schema({
     read:Boolean,
     icon:String,
     type:String,
+    deactive:Boolean
 
 });
 

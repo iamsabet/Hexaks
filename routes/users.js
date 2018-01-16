@@ -44,7 +44,32 @@ var users = {
                             password: req.body["password"],
                             email:req.body["email"],
                             fullName:req.body["fullName"],
-                            roles : roles
+                            roles : roles,
+
+                            profilePictureUrl:"",
+                            followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
+                            followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
+                            posts:[], // {postId : , smallImageUrl : , ownerUserName : }
+                            rate:{
+                                number:0.0,
+                                counts:0,
+                            },
+                            verified:{
+                                email:"",
+                                sms:""
+                            },
+                            boughtImages:[],// {post Id}
+                            isUploadingPost:false,
+                            uploadingPost:"",  // post id --> initial --> "initial"
+                            isUploadingAlbum:false,
+                            uploadingAlbum:[],// max size == 10 --> post id --> initial ["initial"]
+                            details:{
+                                phoneNumber : "",
+                                bio: ""
+                            },
+                            badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
+                            inactivate:false,
+                            ban:false,
 
                         };
                         User.create(res,userObject);
@@ -52,6 +77,18 @@ var users = {
                 });
             }
         });
+    },
+
+    initialUpload:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    removeUploading:function(req,res,user){
+        user.isUploadingPost = false;
+        user.isUploadingAlbum = false;
+        user.uploadingPost = "";
+        user.uploadingAlbum = "";
+        user.save();
     },
     update: function(req, res,next,data) {
         var updateuser = req.body;

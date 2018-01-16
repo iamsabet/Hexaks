@@ -4,6 +4,7 @@ var userSchema = require('../models/user.model');
 var users = new userSchema();
 var auth = require('./auth');
 var posts = require('./posts');
+var albums = require('./albums');
 var uploader = require('./uploader');
 var user = require('./users');
 
@@ -12,14 +13,9 @@ var validateRequest = require('../middleWares/validateRequest');
  * Routes that can be accessed by any one
  */
 router.get('/', function(req,res){
-    validateRequest(req,res,function(callback){
-        if(callback){
-            res.render("main.html");
-        }
-        else {
-            res.render("main.html");
-        }
-    });
+
+    res.render("main.html");
+
 });
 router.get('/login', function(req,res){
     validateRequest(req,res,function (callback) {
@@ -44,11 +40,26 @@ router.get('/register', function(req,res){
     });
 });
 
-router.get('/api/v1/admin/users/', function(req,res){
+
+
+
+router.get('/api/v1/admin/', function(req,res){
     validateRequest(req,res,function(callback) {
-        user.getAll(req, res, callback);
+        if(callback.roles.indexOf("admin") > -1) {
+            res.render('admin.html');
+        }
+        else{
+            res.send("404 - Not Found");
+        }
     });
 });
+
+
+
+
+
+
+
 router.get('/api/v1/users/getMe',function(req,res){
     validateRequest(req,res,function(callback){
        if(callback){
@@ -59,6 +70,9 @@ router.get('/api/v1/users/getMe',function(req,res){
        }
     });
 });
+
+
+
 router.post('/api/v1/upload',function(req,res){
     validateRequest(req,res,function(callback){
         if(callback){
@@ -69,30 +83,79 @@ router.post('/api/v1/upload',function(req,res){
         }
     });
 });
+
+
+
+
+
+
+
+
+
+
+
 router.post('/api/v1/post/initial/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(callback !==null) {
-            posts.addNewPost(req,res,callback);
+            users.initialUpload(req,res,callback);
         }
         else{
             res.send("404 Not Found");
         }
     });
 });
+router.post('/api/v1/post/activate/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            posts.activate(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
+router.post('/api/v1/post/clear/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            users.removeUploading(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
+
+router.post('/api/v1/post/clear/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            users.removeUploading(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 router.post('/api/v1/album/initial/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(callback !==null) {
-            posts.addNewPost(req,res,callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-router.post('/api/v1/post/new/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            posts.addNewPost(req,res,callback);
+            albums.addNewPost(req,res,callback);
         }
         else{
             res.send("404 Not Found");

@@ -4,7 +4,6 @@ const random = require('randomstring');
 var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
 var userSchema = new Schema({
-    name : String,
     userId:String,
     username : String,
     email:String,
@@ -13,7 +12,10 @@ var userSchema = new Schema({
     followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
     followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
     posts:[], // {postId : , smallImageUrl : , ownerUserName : }
-    rate:Float,
+    rate:{
+        number:Float,
+        counts:Number,
+    },
     verified:{
         email:String,
         sms:String
