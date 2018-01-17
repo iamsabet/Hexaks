@@ -7,7 +7,7 @@ var rateSchema = new Schema({ // 9 Pixels
     value:Number, // 1 --> 6
     postId:String,
     createdAt:Date,
-    updatedAt:Date,
+    updatedAt:Date
 });
 
 rateSchema.methods.Create = function(req,res,rateObject){

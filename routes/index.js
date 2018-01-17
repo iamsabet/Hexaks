@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var userSchema = require('../models/user.model');
-var users = new userSchema();
+var Users = new userSchema();
 var auth = require('./auth');
 var posts = require('./posts');
 var albums = require('./albums');
 var uploader = require('./uploader');
-var user = require('./users');
+var users = require('./users');
 
 var validateRequest = require('../middleWares/validateRequest');
 /*
@@ -63,7 +63,7 @@ router.get('/api/v1/admin/', function(req,res){
 router.get('/api/v1/users/getMe',function(req,res){
     validateRequest(req,res,function(callback){
        if(callback){
-            user.getMe(req,res,callback)
+            users.getMe(req,res,callback)
        }
        else {
            res.send(null);
@@ -172,11 +172,12 @@ router.post('/api/v1/album/new/', function(req,res){
         }
     });
 });
-router.delete('/api/v1/admin/user/:id', user.delete);
+
+router.delete('/api/v1/admin/user/:id', users.delete);
 
 
 router.post('/login', auth.login);
-router.post('/register', user.register);
+router.post('/register', users.register);
 /*
  * Routes that can be accessed only by autheticated users
  */

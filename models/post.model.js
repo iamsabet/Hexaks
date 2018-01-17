@@ -24,7 +24,6 @@ var postSchema = new Schema({
             x : Number,
             y : Number,
         },
-        url:String, // XLarge and Large Sizes for sale or can be free if [i]cost === o
     },
     buyers:[], // user id
     hashtags:[],

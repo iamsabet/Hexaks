@@ -6,14 +6,13 @@ var albumSchema = require('../models/album.model');
 var album = new albumSchema();
 var Jimp = require("jimp");
 var pixelSchema = require('../models/pixel.model');
-var pixels = mongoose.model("pixels");
 var pixel = new pixelSchema();
-var rateSchema = mongoose.model("rates");
+var rateSchema = require('../models/rate.model');
 var rate = new rateSchema();
 var bcrypt = require("bcrypt-nodejs");
 var ExifImage = require('exif').ExifImage;
 var Float = require('mongoose-float').loadType(mongoose);
-
+var users = require('./users');
 
 /* GET home page. */
 var posts = {
@@ -48,8 +47,6 @@ var posts = {
                                 console.log('Error: '+error.message);
                             else {
                                 console.log(exifData); // Do something with your data!
-
-
 
                                 var postObject = {
                                     albumId: "", // null if not
@@ -111,60 +108,70 @@ var posts = {
         }
     },
 
-        //         Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
 
-        //                 image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
-        //                     // x, y is the position of this pixel on the image
-        //                     // idx is the position start position of this rgba tuple in the bitmap Buffer
-        //                     // this is the image
-        //                     var red = this.bitmap.data[idx];
-        //                     var green = this.bitmap.data[idx + 1];
-        //                     var blue = this.bitmap.data[idx + 2];
-        //                     var alpha = this.bitmap.data[idx + 3];
-        //                     gatheredPixels.push({postId: postId, position: idx, value: {r: red, g: green, b: blue, a: alpha}});
-        //                     // gather list of pixels --> insert many
-        //                     // rgba values run from 0 - 255
-        //                     // e.g. this.bitmap.data[idx] = 0; // removes red from this pixel
-        //                 }, function (cb) {
-        //                     pixels.collection.insertMany(gatheredPixels, [{
-        //                             ordered: true,
-        //                             rawResult: false
-        //                         }],
-        //                         function () {
-        //                             console.log(gatheredPixels.length + " inserted pixels");
-        //                         });
-        //
-        //                 });
-        //
-        //             }
-        //         });
-        //     }
-        // });
+
     activate:function(req,res,user){
         postSchema.findOne({postId:user.isUploadingPost},{albumId:0},function(err,resultPost){
                 if(err) throw err;
-                if(resultPost){
-                    resultPost.activated = true;
-                    user.isUploadingPost=false;
-                    user.uploadingPost="";
-                    resultPost.hashtags = req.body["hashtags"];
-                    resultPost.hashtags = req.body["caption"];
-                    resultPost.hashtags = req.body["hashtags"];
-                    user.save();
-                    resultPost.save();
-                    // another thread if necessary
-                    posts.imageProcessing(resultPost.postId+"--medium"+"."+resultPost.format);
-                    res.send(true);
+                if(resultPost) {
+                    var cost = req.body["cost"] || 0;
+                    if (cost < 1000000 && cost >= 0) {
+                        resultPost.activated = true;
+                        user.isUploadingPost = false;
+                        user.uploadingPost = "";
+                        resultPost.hashtags = req.body["hashtags"];
+                        resultPost.caption = req.body["caption"];
+                        resultPost.hashtags = req.body["hashtags"];
+                        // exif get resoloution //
+                        resultPost.originalImage = {
+                            cost: cost, // 0 if free
+                            resolution: {
+                                x: width,
+                                y: height,
+                            }
+                        };
+                        resultPost.save();
+                        posts.imageProcessing(resultPost.postId+"--Medium."+resultPost.format);
+                        res.send(true);
+                    }
+                    else{
+                        res.send("invalid cost");
+                    }
                 }
                 else{
                     res.send("no post found to add");
                 }
         });
-        user.save();
     },
+
     imageProcessing(imageUrl){ // image processing on medium size
 
+        Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
 
+                image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
+                    // x, y is the position of this pixel on the image
+                    // idx is the position start position of this rgba tuple in the bitmap Buffer
+                    // this is the image
+                    var red = this.bitmap.data[idx];
+                    var green = this.bitmap.data[idx + 1];
+                    var blue = this.bitmap.data[idx + 2];
+                    var alpha = this.bitmap.data[idx + 3];
+                    gatheredPixels.push({postId: postId, position: idx, value: {r: red, g: green, b: blue, a: alpha}});
+                    // gather list of pixels --> insert many
+                    // rgba values run from 0 - 255
+                    // e.g. this.bitmap.data[idx] = 0; // removes red from this pixel
+                }, function (cb) {
+                    pixels.collection.insertMany(gatheredPixels, [{
+                            ordered: true,
+                            rawResult: false
+                        }],
+                        function () {
+                            console.log(gatheredPixels.length + " inserted pixels");
+                        });
+
+                });
+
+            });
     },
     increaseViews:function(req,res,user){
         if(user) {
@@ -203,36 +210,52 @@ var posts = {
             if (user) {
                 if (err) throw err;
                 if (rate <= 6 && rate >= 1 && postId) {
-                    rateSchema.updateOne({
+                    rateSchema.findOne({
                         postId: postId,
                         value: rate,
-                        members:{$nin:[user.username]}
-                    }, {$push: {members: user.username}}, function (err, resultRate) {
+                    }, function (err, resultRate) {
                         if (err) throw err;
                         console.log(resultRate);
-                        postSchema.findOne({postId: postId}, {albumId: 0}, function (err, resultPost) {
-                            if (err) throw err;
-                            if (resultPost) {
-                                if (resultPost.rate.value >= rate) {
-                                    if (resultPost.rate.value !== rate) {
-                                        resultPost.rate.value += Float((resusltPost.rate.value - rate) / (resultPost.rate.counts + 1));
-                                        console.log(resultPost.rate.value);
-                                    }
-                                    resultPost.rate.counts += 1;
-                                    resultPost.save();
+                        if(resultRate) {
+                            if(resultRate.members.indexOf(user.username) > -1) {
+                                resultRate.members.push(user.username);
+                                resultRate.save();
+                                users.createSuggestion(user.username,rate,postId,function(callback){
+                                    if(callback)
+                                        console.log("Suggested List Updated for user "+ user.username);
+                                });
+                                postSchema.findOne({postId: postId}, {albumId: 0}, function (err, resultPost) {
+                                    if (err) throw err;
+                                    if (resultPost) {
+                                        if (resultPost.rate.value >= rate) {
+                                            if (resultPost.rate.value !== rate) {
+                                                resultPost.rate.value += Float((resusltPost.rate.value - rate) / (resultPost.rate.counts + 1));
+                                                console.log(resultPost.rate.value);
+                                            }
+                                            resultPost.rate.counts += 1;
+                                            resultPost.save();
 
-                                }
-                                else {
-                                    resultPost.rate.value -= Float((rate - resusltPost.rate.value) / (resultPost.rate.counts + 1));
-                                    console.log(resultPost.rate.value);
-                                    resultPost.rate.counts += 1;
-                                    resultPost.save();
-                                }
+                                        }
+                                        else {
+                                            resultPost.rate.value -= Float((rate - resusltPost.rate.value) / (resultPost.rate.counts + 1));
+                                            console.log(resultPost.rate.value);
+                                            resultPost.rate.counts += 1;
+                                            resultPost.save();
+                                        }
+                                    }
+                                    else {
+                                        res.send("no post found");
+                                    }
+                                });
+                                res.send(true);
                             }
-                            else {
-                                res.send("post not found");
+                            else{
+                                res.send("Already Rated !");
                             }
-                        });
+                        }
+                        else{
+                            res.send("no rate found");
+                        }
                     });
                 }
                 else {
