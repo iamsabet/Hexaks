@@ -208,7 +208,8 @@ var posts = {
                 if (rate <= 6 && rate >= 1 && postId) {
                     rateSchema.updateOne({
                         postId: postId,
-                        value: rate
+                        value: rate,
+                        members:{$nin:[user.username]}
                     }, {$push: {members: user.username}}, function (err, resultRate) {
                         if (err) throw err;
                         console.log(resultRate);
