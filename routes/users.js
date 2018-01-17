@@ -90,6 +90,43 @@ var users = {
         user.uploadingAlbum = "";
         user.save();
     },
+
+    follow:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    unfollow:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    getFollowers:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    getFollowings:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    block:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    unblock:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    getHostProfile:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    getSettingsDatas:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
+    changeSettings:function(req,res,user){
+        user.isUploadingPost = true;
+        user.save();
+    },
     update: function(req, res,next,data) {
         var updateuser = req.body;
         var id = req.params.id;

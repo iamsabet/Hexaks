@@ -109,9 +109,6 @@ var posts = {
                 }
             });
         }
-
-
-
     },
 
         //         Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
