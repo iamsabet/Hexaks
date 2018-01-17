@@ -200,53 +200,94 @@ var posts = {
         }
     },
     rate:function(req,res,user){
-        if(req.body["rate"]) {
+        if(req.body["rate"] && req.body["postId"]) {
             var rate = req.body["rate"];
             var postId = req.body["postId"];
             if (user) {
-                postSchema.findOne({postId: postId}, {albumId: 0}, function (err, resultPost) {
-                    if (err) throw err;
-                    if (resultPost && rate >= 1 && rate <= 6) {
+                if (err) throw err;
+                if (rate <= 6 && rate >= 1 && postId) {
+                    rateSchema.updateOne({
+                        postId: postId,
+                        value: rate
+                    }, {$push: {members: user.username}}, function (err, resultRate) {
+                        if (err) throw err;
+                        console.log(resultRate);
+                        postSchema.findOne({postId: postId}, {albumId: 0}, function (err, resultPost) {
+                            if (err) throw err;
+                            if (resultPost) {
+                                if (resultPost.rate.value >= rate) {
+                                    if (resultPost.rate.value !== rate) {
+                                        resultPost.rate.value += Float((resusltPost.rate.value - rate) / (resultPost.rate.counts + 1));
+                                        console.log(resultPost.rate.value);
+                                    }
+                                    resultPost.rate.counts += 1;
+                                    resultPost.save();
 
-                        rateSchema.findOne({members:[user.username],postId:postId},function(err,rate){
-                            if(err) throw err;
-                            if(rate){
-                                if(rate !== )
+                                }
+                                else {
+                                    resultPost.rate.value -= Float((rate - resusltPost.rate.value) / (resultPost.rate.counts + 1));
+                                    console.log(resultPost.rate.value);
+                                    resultPost.rate.counts += 1;
+                                    resultPost.save();
+                                }
                             }
                             else {
-                                var rateObject = {
-
-                                };
-                                rate.create(rateObject,function(callback){
-
-                                });
+                                res.send("post not found");
                             }
                         });
-                        if (resultPost.rate.value >= rate) {
-                            if (resultPost.rate.value !== rate) {
-                                resultPost.rate.value += Float((resusltPost.rate.value - rate) / (resultPost.rate.counts + 1));
-                                console.log(resultPost.rate.value);
-                            }
-                            resultPost.rate.counts += 1;
-                            resultPost.save();
-
-                        }
-                        else{
-                            resultPost.rate.value -= Float((rate - resusltPost.rate.value) / (resultPost.rate.counts + 1));
-                            console.log(resultPost.rate.value);
-                            resultPost.rate.counts += 1;
-                            resultPost.save();
-                        }
-
-                    }
-                    else {
-                        res.send("403 - bad request");
-                    }
-                });
+                    });
+                }
+                else {
+                    res.send("504 - bad request");
+                }
             }
             else {
-                res.send("404 - not found");
+                res.send("401 - not authenticated"); //
             }
+        }
+        else {
+            res.send("invalid input");
+        }
+    },
+    deRate:function(req,res,user){
+        if(req.body["postId"]) {
+            var postId = req.body["postId"];
+            if (user) {
+                if (err) throw err;
+                    rateSchema.findOne({
+                        postId: postId,
+                        members:[user.username]
+                    }, function (err, resultRate) {
+                        if (err) throw err;
+                        if(resultRate) {
+                            postSchema.findOne({postId: postId}, {albumId: 0}, function (err, resultPost) {
+                                if (err) throw err;
+                                if (resultPost) {
+                                    resultPost.rate.value += Float((resusltPost.rate.value * resultRate.rate.counts) - resultRate.value / (resultRate.rate.counts + 1));
+                                    console.log(resultPost.rate.value);
+                                    resultPost.rate.counts -= 1;
+                                    resultPost.save();
+
+                                    resultRate.members.pull(user.username);
+                                    resultRate.save();
+                                    res.send(true);
+                                }
+                                else {
+                                    res.send("post not found");
+                                }
+                            });
+                        }
+                        else{
+                            res.send("no rate found to derate");
+                        }
+                    });
+                }
+            else {
+                res.send("401 - not authenticated"); //
+            }
+        }
+        else {
+            res.send("invalid input");
         }
     },
     update: function(req, res,next,data) {
