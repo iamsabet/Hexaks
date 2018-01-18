@@ -33,8 +33,9 @@ var albumSchema = new Schema({
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
     private:Boolean,
     isCurated : Boolean,
-    createdAt:Date,
-    updatedAt:Date
+    isPrivate : Boolean,
+    createdAt : Date,
+    updatedAt : Date
 });
 
 albumSchema.methods.Create = function(albumObject,callback){

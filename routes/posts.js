@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 var postSchema = require('../models/post.model');
 var post = new postSchema();
 var albumSchema = require('../models/album.model');
@@ -17,22 +16,72 @@ var users = require('./users');
 /* GET home page. */
 var posts = {
 
-    getAll: function(req, res,data) {
-        var allusers = data; // Spoof a DB call
-        res.json(allusers);
-    },
+    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,categories,curator,rejected,activated,isPrivate,timeWindow,leftCost,rightCost,requestDate,counts,pageNumber,callback) {
 
-    getOne: function(req, res,user,postId,callback) {
-        postSchema.findOne({postId:postId},function(err,posts) {
-            if (err) throw err;
-            if(posts){
+
+        var right = rightCost || 1000000;
+        var left = leftCost || -1;
+        var orderedBy = orderBy || "createdAt";
+        var privateOrNot = isPrivate || "";
+        var reject = rejected || false;
+        var hashtagsList = hashtags || "";
+        var categoriesList = categories || "";
+        var timeEdge = timeWindow || 1;
+
+        if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.value" || orderedBy === "views" || orderedBy === "rate") {
+
+            // timeWindow
+            if ((typeof isCurated) === "boolean") {
+                if (timeEdge < 31 && timeEdge > 1) {
+                    timeEdge = (requestDate - (timeEdge * 24 * 3600 * 1000)); // time edge up to 31 days
+                }
+                else {
+                    timeEdge = (requestDate - (24 * 3600 * 1000)); // 1day
+                }
+                var query = {
+                    owner: {username: userNames},
+                    activated: activated,
+                    hashtags: hashtagsList,
+                    category: categoriesList,
+                    rejected: reject,
+                    originalImage: {cost: {$gt: left, $lt: right}},
+                    isPrivate: privateOrNot,
+                    createdAt: {$lt: timeEdge},
+                };
+                if (isCurated === true) {
+                    query.isCurated = true;
+                    query.curator = {
+                        username :curator
+                    };
+                }
+                var options = {
+                    select: 'postId owner createdAt updatedAt curator exifData originalImage views isCurated ext advertise rate albumId',
+                    sort: {date: -1},
+                    populate: 'postId',
+                    lean: true,
+                    page: pageNumber,
+                    limit: counts
+                };
+            };
+
+            if (orderBy === "originalImage.cost") {
+                options.sort = {originalImage: {cost: -1}};
+            }
+            else if (orderBy === "rate.value") {
+                options.sort = {rate: {value: -1}};
+            }
+            else if (orderBy === "rate") {
+                options.sort = {rate: -1};
+            }
+            else { // "views"
+                options.sort = {views: -1};
+            }
+
+            postSchema.paginate(query, options, function (err, posts) {
+                if (err) throw err;
                 return callback(posts);
-            }
-            else{
-                return callback(null);
-            }
-        });
-
+            });
+        }
     },
 
     create: function(user,format,callback) {
@@ -175,17 +224,18 @@ var posts = {
     },
     increaseViews:function(req,res,user){
         if(user) {
+            res.send(true);
             postSchema.findOne({postId: req.body["postId"]}, {albumId: 0}, function (err, resultPost) {
                 if (err) throw err;
                 if (!resultPost.viewers.includes(user.username)) {
                     resultPost.viewers.push(user.username);
                     resultPost.views += 1;
                     resultPost.save();
-                    res.send(true);
+
                 }
                 else {
-                    res.send(false);
-                }
+                    console.log("Already Viewed");
+                };
 
             });
         }

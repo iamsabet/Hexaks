@@ -3,7 +3,10 @@ const Schema = mongoose.Schema;
 const random = require('randomstring');
 var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
-var postSchema = new Schema({
+require('mongoose-long')(mongoose);
+var mongoosePaginate = require('mongoose-paginate');
+
+var postSchema = new mongoose.Schema({
     albumId:String, // null if not
     postId : String,
     owner : {
@@ -18,7 +21,8 @@ var postSchema = new Schema({
         }
     },
     ext:String,
-    largeImage:{ // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
+    exifData:{},
+    largeImage:{
         cost:Number, // 0 if free
         resolution:{
             x : Number,
@@ -33,7 +37,7 @@ var postSchema = new Schema({
         value:Float,
         counts: Number
     },
-    views : Number,// usernames // length
+    views : Schema.Types.Long ,// viewers.length length
     viewers : [], // String User Ids
     curator : {
         username:String,
@@ -47,6 +51,8 @@ var postSchema = new Schema({
     advertise:{
         link:String,
     },
+    isCurated : Boolean,
+    isPrivate : Boolean,
     activated:Boolean,
     createdAt:Date,
     updatedAt:Date
@@ -84,4 +90,5 @@ postSchema.pre('save', function(next){
 
 var Post = mongoose.model('posts', postSchema);
 var post = mongoose.model('posts');
+postSchema.plugin(mongoosePaginate);
 module.exports = post;
