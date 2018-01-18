@@ -16,7 +16,7 @@ var users = require('./users');
 /* GET home page. */
 var posts = {
 
-    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,categories,curator,rejected,activated,isPrivate,timeWindow,leftCost,rightCost,requestDate,counts,pageNumber,callback) {
+    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,categories,curator,rejected,activated,isPrivate,timeOrigin,leftCost,rightCost,requestDate,counts,pageNumber,callback) {
 
 
         var right = rightCost || 1000000;
@@ -26,10 +26,9 @@ var posts = {
         var reject = rejected || false;
         var hashtagsList = hashtags || "";
         var categoriesList = categories || "";
-        var timeEdge = timeWindow || 1;
+        var timeEdge = timeOrigin || 1;
 
         if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.value" || orderedBy === "views" || orderedBy === "rate") {
-
             // timeWindow
             if ((typeof isCurated) === "boolean") {
                 if (timeEdge < 31 && timeEdge > 1) {
@@ -51,36 +50,36 @@ var posts = {
                 if (isCurated === true) {
                     query.isCurated = true;
                     query.curator = {
-                        username :curator
+                        username: curator
                     };
                 }
                 var options = {
                     select: 'postId owner createdAt updatedAt curator exifData originalImage views isCurated ext advertise rate albumId',
                     sort: {date: -1},
                     populate: 'postId',
-                    lean: true,
+                    lean: true, // no fucking idea what it is :/ / - laghar :/ :))
                     page: pageNumber,
                     limit: counts
                 };
-            };
 
-            if (orderBy === "originalImage.cost") {
-                options.sort = {originalImage: {cost: -1}};
-            }
-            else if (orderBy === "rate.value") {
-                options.sort = {rate: {value: -1}};
-            }
-            else if (orderBy === "rate") {
-                options.sort = {rate: -1};
-            }
-            else { // "views"
-                options.sort = {views: -1};
-            }
+                if (orderBy === "originalImage.cost") {
+                    options.sort = {originalImage: {cost: -1}};
+                }
+                else if (orderBy === "rate.value") {
+                    options.sort = {rate: {value: -1}};
+                }
+                else if (orderBy === "rate") {
+                    options.sort = {rate: -1};
+                }
+                else { // "views"
+                    options.sort = {views: -1};
+                }
 
-            postSchema.paginate(query, options, function (err, posts) {
-                if (err) throw err;
-                return callback(posts);
-            });
+                postSchema.paginate(query, options, function (err, posts) {
+                    if (err) throw err;
+                    return callback(posts);
+                });
+            }
         }
     },
 
