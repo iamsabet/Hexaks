@@ -13,6 +13,8 @@ var routes = require('./routes/index');
 var db = mongoose.connection;
 var session = require('express-session');
 var validateRequest = require('./middleWares/validateRequest');
+
+
 mongoose.connect('mongodb://localhost:27017/hexaks_db', {autoIndex :true,useMongoClient : true});
 db.on('error', console.error.bind(console, 'connection error:'));
 db.openUri("mongodb://localhost:27017/hexaks_db",function() {

@@ -16,7 +16,7 @@ var users = require('./users');
 /* GET home page. */
 var posts = {
 
-    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,categories,curator,rejected,activated,isPrivate,timeOrigin,leftCost,rightCost,requestDate,counts,pageNumber,callback) {
+    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,counts,pageNumber,callback) {
 
 
         var right = rightCost || 1000000;
@@ -24,25 +24,25 @@ var posts = {
         var orderedBy = orderBy || "createdAt";
         var privateOrNot = isPrivate || "";
         var reject = rejected || false;
-        var hashtagsList = hashtags || "";
-        var categoriesList = categories || "";
-        var timeEdge = timeOrigin || 1;
+        var hashtags = hashtags || [];
+        var category = category || "";
+        var timeEdge = 1;
 
         if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.value" || orderedBy === "views" || orderedBy === "rate") {
             // timeWindow
             if ((typeof isCurated) === "boolean") {
                 if (timeEdge < 31 && timeEdge > 1) {
-                    timeEdge = (requestDate - (timeEdge * 24 * 3600 * 1000)); // time edge up to 31 days
+                    timeEdge = (timeOrigin - (timeEdge * 24 * 3600 * 1000)); // time edge up to 31 days
                 }
                 else {
-                    timeEdge = (requestDate - (24 * 3600 * 1000)); // 1day
+                    timeEdge = (timeOrigin - (24 * 3600 * 1000)); // 1day
                 }
                 var query = {
                     owner: {username: userNames},
                     activated: activated,
-                    hashtags: hashtagsList,
-                    category: categoriesList,
                     rejected: reject,
+                    hashtags:{$in:hashtags},
+                    category:category,
                     originalImage: {cost: {$gt: left, $lt: right}},
                     isPrivate: privateOrNot,
                     createdAt: {$lt: timeEdge},

@@ -7,11 +7,17 @@ var posts = require('./posts');
 var albums = require('./albums');
 var uploader = require('./uploader');
 var users = require('./users');
-
+var url = require("url");
 var validateRequest = require('../middleWares/validateRequest');
+var redisNode = require('redis-node');
+var redis = redisNode.createClient();    // Create the client
+redis.select(2);
+
 /*
+
  * Routes that can be accessed by any one
  */
+
 router.get('/', function(req,res){
 
     res.render("main.html");
@@ -138,7 +144,37 @@ router.post('/api/v1/post/clear/', function(req,res){
 
 
 
+router.get('/api/v1/posts/subscriptions/',async function(req,res){
 
+    validateRequest(req,res,function(user) {
+        if(user !==null) {
+            redis.get("requestOrigin:"+user.username, function (err, requestOrigin) {
+                if(err) throw err;
+                let timeOrigin ;
+                if(requestOrigin){
+                    timeOrigin = requestOrigin;
+                }
+                else{
+                    requestOrigin = Date.now().getTime();
+                    redis.set("requestOrigin:"+user.username,requestOrigin);
+                }
+                let pageNumber = req.query.pageNumber;
+                let counts = req.query.counts;
+                let isCurated = req.query.isCurated;
+                let hashtags = [req.query.hashtag];
+                let orderBy = req.query.orderBy;
+                let category = req.query.category;
+                posts.getPostsByFiltersAndOrders(req,res,user,user.followings,orderBy,isCurated,hashtags,category,false,true,false,timeOrigin,counts,pageNumber,function(posts){
+                    if(err) throw err;
+                    res.send(posts);
+                });
+            });
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
 
 
 
