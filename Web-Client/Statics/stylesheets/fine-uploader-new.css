@@ -185,7 +185,7 @@
 }
 .qq-upload-spinner {
     display: inline-block;
-    background: url("loading.gif");
+    background: url("../images/gifs/loading.gif");
     width: 15px;
     height: 15px;
     vertical-align: text-bottom;
@@ -195,7 +195,7 @@
 }
 .qq-drop-processing-spinner {
     display: inline-block;
-    background: url("processing.gif");
+    background: url("../images/gifs/processing.gif");
     width: 24px;
     height: 24px;
     vertical-align: text-bottom;
@@ -242,7 +242,6 @@
     border-top: 1px solid #FCE6E6;
 }
 .qq-progress-bar {
-    display: block;
     display: block;
     background: #00abc7;
     width: 0%;
@@ -298,7 +297,7 @@ INPUT.qq-edit-filename.qq-editing {
 
 .qq-edit-filename-icon {
     display: none;
-    background: url("edit.gif");
+    background: url("../images/gifs/edit.gif");
     width: 15px;
     height: 15px;
     vertical-align: text-bottom;

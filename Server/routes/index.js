@@ -41,13 +41,50 @@ router.get('/register', function(req,res){
             res.redirect("/");
         }
         else {
-            res.render("register.html");
+            res.render("contact.html");
         }
     });
 });
-
-
-
+router.get('/contact', function(req,res){
+    validateRequest(req,res,function (callback) {
+        if (callback) {
+            res.redirect("/");
+        }
+        else {
+            res.render("about.html");
+        }
+    });
+});
+router.get('/about', function(req,res){
+    validateRequest(req,res,function (callback) {
+        if (callback) {
+            res.redirect("/");
+        }
+        else {
+            res.render("about.html");
+        }
+    });
+});
+router.get('/policy', function(req,res){
+    validateRequest(req,res,function (callback) {
+        if (callback) {
+            res.redirect("/");
+        }
+        else {
+            res.render("policy.html");
+        }
+    });
+});
+router.get('/terms', function(req,res){
+    validateRequest(req,res,function (callback) {
+        if (callback) {
+            res.redirect("/");
+        }
+        else {
+            res.render("terms.html");
+        }
+    });
+});
 
 router.get('/api/v1/admin/', function(req,res){
     validateRequest(req,res,function(callback) {
@@ -62,8 +99,19 @@ router.get('/api/v1/admin/', function(req,res){
 
 
 
+router.get('/:uuid', function(req,res){
+    var hostUserName = req.params.uuid;
+    res.render("main.html");
+
+});
 
 
+
+router.get('/posts/:uuid', function(req,res){
+    var hostPostId = req.params.uuid;
+    res.render("slideView.html");
+
+});
 
 
 router.get('/api/v1/users/getMe',function(req,res){

@@ -244,7 +244,7 @@
 }
 .qq-gallery .qq-upload-spinner {
     display: inline-block;
-    background: url("loading.gif");
+    background: url("../images/gif/loading.gif");
     position: absolute;
     left: 50%;
     margin-left: -7px;
@@ -258,7 +258,7 @@
 }
 .qq-gallery .qq-drop-processing-spinner {
     display: inline-block;
-    background: url("processing.gif");
+    background: url("../images/gif/processing.gif");
     width: 24px;
     height: 24px;
     vertical-align: text-bottom;
@@ -357,20 +357,20 @@
 
 .qq-gallery .qq-edit-filename-icon {
     display: none;
-    background: url("edit.gif");
+    background: url("../images/gif/edit.gif");
     width: 15px;
     height: 15px;
     vertical-align: text-bottom;
 }
 .qq-gallery .qq-delete-icon {
-    background: url("trash.gif");
+    background: url("../images/gif/trash.gif");
     width: 15px;
     height: 15px;
     vertical-align: sub;
     display: inline-block;
 }
 .qq-gallery .qq-retry-icon {
-    background: url("retry.gif");
+    background: url("../images/gif/retry.gif");
     width: 15px;
     height: 15px;
     vertical-align: sub;
@@ -378,14 +378,14 @@
     float: none;
 }
 .qq-gallery .qq-continue-icon {
-    background: url("continue.gif");
+    background: url("../images/gif/continue.gif");
     width: 15px;
     height: 15px;
     vertical-align: sub;
     display: inline-block;
 }
 .qq-gallery .qq-pause-icon {
-    background: url("pause.gif");
+    background: url("../images/gif/pause.gif");
     width: 15px;
     height: 15px;
     vertical-align: sub;
