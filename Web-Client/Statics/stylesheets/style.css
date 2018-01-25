@@ -565,7 +565,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height:100vh;
 	z-index: 999998;
 	background-color: #ddd998;
-	display: block;
+	display: none;
 }
 .newPostContainer .newPostForm{
 	position: relative;
