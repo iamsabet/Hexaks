@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Server/views/main.html" afterPath="$PROJECT_DIR$/Server/views/main.html" />
       <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -28,8 +27,8 @@
       <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="650">
-              <caret line="884" column="10" lean-forward="false" selection-start-line="884" selection-start-column="10" selection-end-line="884" selection-end-column="10" />
+            <state relative-caret-position="515">
+              <caret line="875" column="4" lean-forward="false" selection-start-line="875" selection-start-column="4" selection-end-line="875" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -442,12 +441,12 @@
       <workItem from="1516913189190" duration="142000" />
       <workItem from="1516913751600" duration="1297000" />
       <workItem from="1516916864327" duration="361000" />
-      <workItem from="1516917274636" duration="23756000" />
+      <workItem from="1516917274636" duration="23828000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55237000" />
+    <option name="totallyTimeSpent" value="55309000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -647,8 +646,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="884" column="10" lean-forward="false" selection-start-line="884" selection-start-column="10" selection-end-line="884" selection-end-column="10" />
+        <state relative-caret-position="515">
+          <caret line="875" column="4" lean-forward="false" selection-start-line="875" selection-start-column="4" selection-end-line="875" selection-end-column="4" />
           <folding />
         </state>
       </provider>
