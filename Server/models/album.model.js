@@ -18,7 +18,7 @@ var albumSchema = new Schema({
         imageUrl:[], // Big and Medium Sizes for sale
     }],
     hashtags:[],
-    category:String,
+    categories:[],
     title : String,
     caption : String,
     rate:{

@@ -31,7 +31,7 @@ var postSchema = new mongoose.Schema({
     },
     buyers:[], // user id
     hashtags:[],
-    category:String,
+    categories:[],
     caption:String,
     rate:{
         value:Float,

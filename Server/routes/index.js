@@ -41,17 +41,7 @@ router.get('/register', function(req,res){
             res.redirect("/");
         }
         else {
-            res.render("contact.html");
-        }
-    });
-});
-router.get('/contact', function(req,res){
-    validateRequest(req,res,function (callback) {
-        if (callback) {
-            res.redirect("/");
-        }
-        else {
-            res.render("about.html");
+            res.render("register.html");
         }
     });
 });
@@ -62,16 +52,6 @@ router.get('/about', function(req,res){
         }
         else {
             res.render("about.html");
-        }
-    });
-});
-router.get('/policy', function(req,res){
-    validateRequest(req,res,function (callback) {
-        if (callback) {
-            res.redirect("/");
-        }
-        else {
-            res.render("policy.html");
         }
     });
 });

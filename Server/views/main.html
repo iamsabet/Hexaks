@@ -1,14 +1,13 @@
 <html>
 <head>
-    <title>Hexaks</title>
+    <meta name="viewport" content="width=window-width,initial-scale=1">
     <script src="../Statics/javascripts/jquery.min.js"></script>
     <link rel="stylesheet" href="../Statics/stylesheets/style.css">
-
-    <link rel="stylesheet" href="../Statics/javascripts/fine-uploader/all.fine-uploader/fine-uploader-gallery.min.css">
+    <link rel="stylesheet" href="../Statics/stylesheets/fine-uploader-gallery.css">
     <script src="../Statics/javascripts/cookies.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.core.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexaks</title>
 </head>
 
 <body>
@@ -33,19 +32,23 @@
         </div>
         <button id="follow">Follow</button>
         <button id="unfollow">Unfollow</button>
-        <div class="badges">
-            <ul>
-                <li class="eachBadge">
-                    <img src="../Statics/images/images/premiumBadge.png"/>
-                </li>
-                <li class="eachBadge">
-                    <img src="../Statics/images/images/premiumBadge.png"/>
-                </li>
-                <li class="eachBadge">
-                    <img src="../Statics/images/images/premiumBadge.png"/>
-                </li>
-            </ul>
-        </div>
+        <ul class="badges">
+            <li class="eachBadge">
+                <img src="../Statics/images/images/premiumBadge.png"/>
+                <p hidden> badgeId</p>
+            </li>
+            <li class="eachBadge">
+                <img src="../Statics/images/images/logoA.png"/>
+                <p hidden> badgeId</p>
+            </li>
+            <li class="eachBadge">
+                <img src="../Statics/images/images/loader6.png"/>
+                <p hidden> badgeId</p>
+            </li>
+            <li class="allBadgesBtn">
+                +5
+            </li>
+        </ul>
     </div>
     <div class="profileTopSmall" id="profileTopSmall">
     </div>
@@ -530,7 +533,7 @@
 
     function changePage(pageName,pageType,newHistory){
         var pageNames;
-        if (pageName !== historyList[historyPointer]["pageName"] || historyList.length === 0 && historyPointer ===-1 ) {
+        if (historyList.length === 0 && historyPointer ===-1 || pageName !== historyList[historyPointer]["pageName"]) {
 
             if(historyList.length === 0 && historyPointer ===-1){
                 pushHistory(pageName, window.location.pathname);

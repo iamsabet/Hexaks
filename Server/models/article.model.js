@@ -9,7 +9,7 @@ var articleSchema = new Schema({
     fullTextOnly : String,
     headerPictureUrl:String,
     hashtags:[],
-    categories:,
+    categories:[],
     pictureUrl:String,
     category:String,
     deactive:Boolean,
