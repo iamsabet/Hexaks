@@ -2,23 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/HexaksPageDesignV1.0.pdf" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/Lenzik.ai" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/accpost.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/badgepremium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/contact.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/fav.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/feedback.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/logo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/photo_2016-08-29_17-42-29.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/policy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/screenhome.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/screenimage.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/GDesigns/screensetting.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/routes/index.js" afterPath="$PROJECT_DIR$/Server/routes/index.js" />
       <change beforePath="$PROJECT_DIR$/Server/views/main.html" afterPath="$PROJECT_DIR$/Server/views/main.html" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-gallery.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-gallery.css" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-new.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-new.css" />
       <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -34,11 +18,9 @@
       <file leaf-file-name="main.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/views/main.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="23" column="79" lean-forward="false" selection-start-line="23" selection-start-column="79" selection-end-line="23" selection-end-column="79" />
-              <folding>
-                <element signature="n#style#0;n#svg#0;n#div#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="-4806">
+              <caret line="205" column="37" lean-forward="false" selection-start-line="205" selection-start-column="37" selection-end-line="205" selection-end-column="37" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -46,8 +28,8 @@
       <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="423">
-              <caret line="705" column="15" lean-forward="false" selection-start-line="705" selection-start-column="15" selection-end-line="705" selection-end-column="15" />
+            <state relative-caret-position="650">
+              <caret line="884" column="10" lean-forward="false" selection-start-line="884" selection-start-column="10" selection-end-line="884" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -153,6 +135,9 @@
       <find>redis</find>
       <find>../javascripts</find>
       <find>../stylesheets</find>
+      <find>timeNAv</find>
+      <find>logo</find>
+      <find>historyList</find>
     </findStrings>
     <replaceStrings>
       <replace>postSchema</replace>
@@ -457,12 +442,12 @@
       <workItem from="1516913189190" duration="142000" />
       <workItem from="1516913751600" duration="1297000" />
       <workItem from="1516916864327" duration="361000" />
-      <workItem from="1516917274636" duration="5703000" />
+      <workItem from="1516917274636" duration="23756000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37184000" />
+    <option name="totallyTimeSpent" value="55237000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -654,18 +639,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/views/main.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="23" column="79" lean-forward="false" selection-start-line="23" selection-start-column="79" selection-end-line="23" selection-end-column="79" />
-          <folding>
-            <element signature="n#style#0;n#svg#0;n#div#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-          </folding>
+        <state relative-caret-position="-4806">
+          <caret line="205" column="37" lean-forward="false" selection-start-line="205" selection-start-column="37" selection-end-line="205" selection-end-column="37" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="423">
-          <caret line="705" column="15" lean-forward="false" selection-start-line="705" selection-start-column="15" selection-end-line="705" selection-end-column="15" />
+        <state relative-caret-position="650">
+          <caret line="884" column="10" lean-forward="false" selection-start-line="884" selection-start-column="10" selection-end-line="884" selection-end-column="10" />
           <folding />
         </state>
       </provider>

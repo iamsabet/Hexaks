@@ -1,6 +1,4 @@
-<!-- 1.View -->
 <html>
-
 <head>
     <title>Hexaks</title>
     <script src="../Statics/javascripts/jquery.min.js"></script>
@@ -18,23 +16,39 @@
     <div id="alertTop">
         <h3></h3>
     </div>
+    <div class="homeSliders" id="homeSliders">
 
-    <div class="profileTop">
+    </div>
+    <div class="profileTop" id="profileTop">
         <div class="profPic">
-            <svg version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 483.013 483.013" style="enable-background:new 0 0 483.013 483.013;" xml:space="preserve" width="512px" height="512px" class=""><g class="hex"><path d="M477.043,219.205L378.575,48.677c-7.974-13.802-22.683-22.292-38.607-22.292H143.041c-15.923,0-30.628,8.49-38.608,22.292  L5.971,219.205c-7.961,13.801-7.961,30.785,0,44.588l98.462,170.543c7.98,13.802,22.685,22.293,38.608,22.293h196.926  c15.925,0,30.634-8.491,38.607-22.293l98.469-170.543C485.003,249.99,485.003,233.006,477.043,219.205z" data-original="#000000" class="active-path" />
-            </g> </svg>
-            <img src="../Statics/images/images/avatar.png"/>
+            <img class="hexShape" src="../Statics/images/images/hexShape200g.png">
+            <img src="../Statics/images/images/avatar.png" class="image"/>
         </div>
         <div class="userInfo">
             <span class="hostFullName">Mohammad Reza Ehsani</span>
             <a class="followersBtn">50 Followings</a>
             <a class="followingsBtn">120 Followers</a>
-            <span class="hostAge"></span>
-            <span class="hostLocation"></span>
-            <span class="hostLocation"></span>
+            <span class="hostLocation">Tehran</span>
+            <p class="username" hidden>sabet</p>
+        </div>
+        <button id="follow">Follow</button>
+        <button id="unfollow">Unfollow</button>
+        <div class="badges">
+            <ul>
+                <li class="eachBadge">
+                    <img src="../Statics/images/images/premiumBadge.png"/>
+                </li>
+                <li class="eachBadge">
+                    <img src="../Statics/images/images/premiumBadge.png"/>
+                </li>
+                <li class="eachBadge">
+                    <img src="../Statics/images/images/premiumBadge.png"/>
+                </li>
+            </ul>
         </div>
     </div>
-
+    <div class="profileTopSmall" id="profileTopSmall">
+    </div>
     <div class="topNav">
         <ul>
             <li class="selected">Latest</li>
@@ -47,9 +61,11 @@
         <a href="/register">Register</a>
     </div>
     <div class="loginSmall">
-        <input placeholder="username or email" type="text">
-        <input type="password" placeholder="password">
+        <form>
+            <input placeholder="username or email" type="text">
+            <input type="password" placeholder="password">
         <button id="loginSubmit">Login</button>
+        </form>
     </div>
     <div class="timeNav">
         <h3>For Last</h3>
@@ -78,7 +94,7 @@
     <!--<a href="/faq">FAQ</a>-->
     <!--<a href="/contact">Contact</a>-->
     <!--</div>-->
-    <div class="postsContainer">
+    <div class="postsContainer" id="postsContainer">
         <div class="eachPost">
             <div class="header">
                 <div class="profilePicture left">
@@ -187,8 +203,23 @@
     </div>
 </div>
 
+<div class="slideView" id="slideView">
 
-<div class="newPostContainer">
+
+</div>
+<div class="settingsContainer" id="settings">
+
+</div>
+
+<div class="contactContainer" id="contact">
+
+</div>
+
+<div class="policyContainer" id="policy">
+
+</div>
+
+<div class="newPostContainer" id="newPost">
     <div class="newPostForm">
         <select name="category" id="category">
             <option value="Nature">Nature</option>
@@ -293,7 +324,7 @@
     // Global Variables.JS
     // import * as Jimp from "jimp";
     var Me = {};
-    var pageNames = ["feed","profile","settings","home","fullScreenView","newPost"];
+    var pageNames = ["feed","profile","settings","home","slideView","newPost","policy"];
     var smallUploader={};
     var originalUploader = {};
     var mediumUploader = {};
@@ -301,12 +332,15 @@
     var currentPage = "";
     var historyPointer = -1;
     var historyList = [];
-    urlParser();
     // Events.Js
     $(document).ready(function(){
         if( readCookie("X-ACCESS-TOKEN") !==null) {
             getMe();
             setUploaders();
+            urlParser(true);
+        }
+        else {
+
         }
     });
     // TOP NAV
@@ -334,19 +368,23 @@
                 if ($(".rightSide")[0]) {
                     $(this).addClass("halfRight");
                     $(".rightSide").addClass("hide");
+                    $(".accountCard").css("right","5px");
                 }
                 else if ($(".leftSide")[0]) {
                     $(this).addClass("halfLeft");
                     $(".leftSide").addClass("hide");
+                    $(".accountCard").css("right","5px");
                 }
             }
             else if (this.className === "halfLeft") {
                 $(this).removeClass("halfLeft");
                 $(".leftSide").removeClass("hide");
+                $(".accountCard").css("right","100px");
             }
             else if (this.className === "halfRight") {
                 $(this).removeClass("halfRight");
                 $(".rightSide").removeClass("hide");
+                $(".accountCard").css("right","100px");
             }
             else {
                 //
@@ -416,9 +454,23 @@
                 break;
         }
     }
-    function urlParser(){
-        var url =  window.location.pathname;
-        // changePage("feed",true);
+    function urlParser(writeState){
+        var pageType ="";
+        if(window.location.pathname.split("/")[1]){
+            pageType = window.location.pathname.split("/")[1].toLowerCase();
+        }
+        if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "followings" || pageType === "followers" ||
+            pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType === "top") {
+
+                if(pageType ==="settings" || pageType==="slideView" || pageType ==="contact" || pageType==="newPost" || pageType==="policy")
+                    changePage(pageType,pageType, writeState);// Other Pages
+                else
+                    changePage("feed",pageType,writeState);// Feed
+
+        }
+        else{
+            changePage("profile",pageType,writeState);// Profile -->
+        }
     }
     // action functions
     function setUploaders() {
@@ -473,108 +525,79 @@
                 ]
             },
         });
-        /*
-            smallUploader = new qq.FineUploader({
-                element: document.getElementById("uploadArea"),
-                request: {
-                    endpoint: '/api/v1/upload',
-                    customHeaders: {
-                        size:"Small"
-                    }
-                },
-                chunking: {
-                    enabled: true,
-                    concurrent: {
-                        enabled: false
-                    },
-                image:{
-                    maxWidth:500,
-                    maxHeight:500
-                },
-                    success: function(){
-                        debugger;
-                        smallUploader.uploadStoredFiles();
-                        mediumUploader.uploadStoredFiles();
-                    }
-                },
-                resume: {
-                    enabled: true
-                },
-                retry: {
-                    enableAuto: true,
-                    showButton: true
-                }
-            });
-            mediumUploader = new qq.FineUploader({
-                element: document.getElementById("uploadArea"),
-                request: {
-                    endpoint: '/api/v1/upload',
-                    customHeaders: {
-                        size:"Medium"
-                    }
-                },
-                chunking: {
-                    enabled: true,
-                    concurrent: {
-                        enabled: false
-                    },
-                    image:{
-                        maxWidth:1000,
-                        maxHeight:1000
-                    },
-                    success: function(){
-                        debugger;
-                        smallUploader.uploadStoredFiles();
-                        mediumUploader.uploadStoredFiles();
-                    }
-                },
-                resume: {
-                    enabled: true
-                },
-                retry: {
-                    enableAuto: true,
-                    showButton: true
-                }
-            });*/
+
     }
-    function applyEvent (event) {
-        var medium = document.getElementById ("mediumUploader");
-        medium.dispatchEvent (event);
-        var small = document.getElementById ("smallUploader");
-        small.dispatchEvent (event);
-    }
-    function changePage(pageName,newHistory){
-        if(pageName !== historyList[historyPointer]["pageName"]) {
+
+    function changePage(pageName,pageType,newHistory){
+        var pageNames;
+        if (pageName !== historyList[historyPointer]["pageName"] || historyList.length === 0 && historyPointer ===-1 ) {
+
+            if(historyList.length === 0 && historyPointer ===-1){
+                pushHistory(pageName, window.location.pathname);
+            }
             switch (pageName) {
-                case "feed": {
-                    // show elements
-                    showFeedElements();
-                    hideOthers("feed");
+                case "feed" || "home" || "" : {
+                    // show feed items --> hide Others
+                    $("#postsContainer").addClass("show");
+                    if(pageName === "home" || pageName === "" ){
+                        $("#homeSliders").addClass("show");
+                        $("#postsContainer").addClass("show");
+                    }
                     // hide elements
+
+                    pageNames = ["settings","newPost" , "slideView" ,"profileTop","profileTopSmall", "contact" ,"policy"];
+                    for(var x = 0 ; x < pageNames.length ; x ++){
+                        if( pageName === pageNames[x]){
+                            $(`#${pageName}`).addClass("show");
+                        }
+                        else{
+                            if($(`#${pageName}.show`)) {
+                                $(`#${pageName}.show`).removeClass("show");
+                            }
+                        }
+                    }
                 }
                     break;
                 case "profile": {
+                    $("#postsContainer").addClass("show");
+                    $("#profileTop").addClass("show");
+                    $("#profileTop").addClass("show");
+
+                    pageNames = ["settings","newPost" , "slideView" , "homeSliders","contact" ,"policy"];
+                    for(var x = 0 ; x < pageNames.length ; x ++){
+                        if( pageName === pageNames[x]){
+                            $(`#${pageName}`).addClass("show");
+                        }
+                        else{
+                            if($(`#${pageName}.show`)) {
+                                $(`#${pageName}.show`).removeClass("show");
+                            }
+                        }
+                    }
                 }
                     break;
-                case "home": {
-                }
-                    break;
-                case "settings": {
-                }
-                    break;
-                case "fullScreenView": {
-                }
-                    break;
-                case "newPost": {
-                }
-                    break;
+                break;
+                case "settings" || "newPost" || "slideView" || "contact" || "policy": {
+                    $(`#${pageName}`).addClass("show");
+                    var pageNames = ["settings","newPost" , "slideView" , "contact" ,"policy"];
+                    for(var x = 0 ; x < pageNames.length ; x ++){
+                        if( pageName === pageNames[x]){
+                            $(`#${pageName}`).addClass("show");
+                        }
+                        else{
+                            if($(`#${pageName}.show`)) {
+                                $(`#${pageName}.show`).removeClass("show");
+                            }
+                        }
+                    }
+
+                }break;
             }
         }
-        else{
-            if(newHistory || false) {
-                pushHistory(pageName, window.location.pathname);
-            }
+        if (newHistory || false) {
+            pushHistory(pageName, window.location.pathname);
         }
+
     }
     function hideOthers(pageName){
         for(var x = 0 ; x < pageNames.length ; x ++){

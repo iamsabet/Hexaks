@@ -82,7 +82,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	top:55px;
 	background-color:#ddd;
 	width:100%;
-	display: block;
+	display: none;
 	padding:2px 10px;
 	height: 40px;
 	z-index: 101;
@@ -459,7 +459,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	background-color:black;
 	display: block;
 	text-align: center;
-
+	-webkit-transition: right 0.5s;
+	-moz-transition: right 0.5s;
+	-ms-transition: right 0.5s;
+	-o-transition: right 0.5s;
+	transition: right 0.5s;
 }
 .accountCard a{
 	position: relative;
@@ -660,29 +664,29 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 
 .profileTop {
-	position:relative;
-	top:50px;
-	width:100%;
-	padding: 50px 50px 5px 5px;
+	position: relative;
+	top: 50px;
+	width: 100%;
+	padding: 40px 50px 10px 10px;
 	text-align: center;
 	display: block;
 	z-index: 10;
 	background-color: #666;
-	height: 300px;
+	height: 220px;
 }
 .profileTop .profPic{
-	position:relative;
-	left:10px;
+	position: relative;
+	left: 10px;
 	float: left;
 	clear: left;
-	top:10px;
-	height: 210px;
-	width: 210px;
-	margin-right:10px;
+	top: 0;
+	height: 190px;
+	width: 190px;
+	margin-right: 10px;
 	display: inline-block;
 }
 
-.profileTop .profPic img{
+.profileTop .profPic .image{
 	position: relative;
 	left: 0;
 	top:0;
@@ -692,32 +696,25 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width:100%;
 	display: block;
 }
-.profileTop .profPic svg{
-	background-color:#666;
+.profileTop .profPic .hexShape{
+	background-color:rgba(70,70,70,0.2);
 	position:absolute;
 	left:0;
 	z-index: 100;
 	margin-left:0;
-	top: 2%;
-	height: 95%;
+	top:0;
+	height: 100%;
 	width:100%;
 	float:left;
 	fill:#666;
-	clear:both;
-	-webkit-transform: rotateZ(90deg);
-	-ms-transform: rotateZ(90deg);
-	transform: rotateZ(90deg);
-	transition: transform, fill-opacity, stroke-width 0.7s;
-	-webkit-transition: transform, fill-opacity, stroke-width 0.7s;
-	-moz-transition: transform, fill-opacity, stroke-width 0.7s;
-	-o-transition: transform, fill-opacity, stroke-width 0.7s;
+	clear:left;
+	transition: transform,background-color 0.7s;
+	-webkit-transition: transform,background-color 0.7s;
+	-moz-transition: transform,background-color 0.7s;
+	-o-transition: transform,background-color 0.7s;
 }
-.profileTop .profPic svg .hex {
-	cursor: pointer;
-	fill-opacity: 0.1;
-	stroke: #000;
-	stroke-width: 5;
-
+.profileTop .profPic .hexShape:hover{
+	background-color: transparent;
 }
 .profileTop .userInfo {
 	position: relative;
@@ -727,42 +724,164 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	display: inline-block;
 	height: 250px;
 	width:auto;
-	max-width:220px;
+	max-width:300px;
+	min-width: 200px;
+	top: 35px;
 }
 .profileTop .userInfo span,a{
 	position: relative;
 	display: inline-block;
 	width: auto;
 	font-size: 19px;
-	color:whitesmoke;
+	color: whitesmoke;
 	float: left;
 	clear: left;
 	text-align: left;
 	left: 0;
-	padding:1px;
-	margin:0;
-	max-width: 200px;
-	word-break: break-all;
+	padding: 1px;
+	margin: 0;
+	max-width: 250px;
 	word-wrap: break-word;
 	-webkit-transition: color 0.5s;
 	-moz-transition: color 0.5s;
 	-ms-transition: color 0.5s;
 	-o-transition: color 0.5s;
 	transition: color 0.5s;
+	line-height: 25px;
 }
 .profileTop .userInfo a:hover{
-	color:#ff0044;
+	color:#ff0055;
 	cursor: pointer;
 }
 .profileTop .userInfo span.hostFullName{
 	font-size:22px;
 }
+
 #color-fill .hex {
-	fill: #ff0044;
+	fill: #ff0055;
 }
 
 .profileTop .profPic .hex:hover {
 	fill-opacity: 0.05;
-	stroke: #ff0044;
+	stroke: #ff0055;
 	stroke-width: 8;
+}
+
+.profileTop > button{
+	position: absolute;
+	right: 100px;
+	z-index: 20;
+	bottom:20px;
+	width:100px;
+	height: 40px;
+	background-color:#ff0055;
+	color:white;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	outline: 0;
+	font-size:18px;
+	font-weight: normal;
+	-webkit-transition: background-color,right,color,font-weight,border 0.5s;
+	-moz-transition: background-color,right,color,font-weight,border 0.5s;
+	-ms-transition: background-color,right,color,font-weight,border 0.5s;
+	-o-transition: background-color,right,color,font-weight,border 0.5s;
+	transition: background-color,right,color,font-weight,border 0.5s;
+	display: none;
+}
+.profileTop > button:hover{
+	cursor: pointer;
+	background-color: #333;
+	color:#ff0055;
+	border:1px solid black;
+}
+
+.profileTopSmall{
+
+}
+
+
+
+
+.homeSliders{
+
+}
+.settingsContainer{
+
+}
+.contactContainer{
+
+}
+.policyContainer{
+
+}
+
+.slideView{
+
+}
+
+
+
+
+
+/* -->  Main Pages Positions Override to handle Page Changes */
+
+
+
+
+
+#postsContainer{
+
+}
+#homeSliders{
+
+}
+#homeSliders.show{
+
+}
+#settings{
+
+}
+#settings.show{
+
+}
+
+#contact{
+
+}
+#contact.show{
+
+}
+#policy{
+
+}
+#policy.show{
+
+}
+#newPost{
+
+}
+#newPost.show{
+
+}
+
+#profileTop{
+
+}
+#profileTop.show{
+
+}
+
+#profileTopSmall{
+
+}
+#profileTopSmall.show{
+
+}
+
+#slideView{
+
+}
+#slideView.show{
+
 }
