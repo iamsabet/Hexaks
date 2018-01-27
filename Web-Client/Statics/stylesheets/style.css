@@ -7,7 +7,7 @@ body {
 	height: 100%;
 	background-color: #ededed;
 	overflow-y: auto;
-	padding: 5px 0 0;
+	padding: 0;
 }
 a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	text-decoration: none;
@@ -34,13 +34,18 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .topNav{
 	position: fixed;
-	top:1px;
+	top:0px;
 	border:1px solid black;
 	width:100%;
 	height: 50px;
 	background-color:black;
 	padding:2px 10px;
 	z-index: 100;
+}
+@media (max-width:686px){
+	.topNav {
+		top: 40px;
+	}
 }
 .topNav ul{
 	width:auto;
@@ -61,7 +66,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	margin-right: 20px;
 	top: 0;
 	padding: 2px 10px;
-	height: 90%;
+	height: 80%;
 	line-height: 40px;
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
@@ -81,13 +86,29 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .timeNav{
 	position: fixed;
-	top:55px;
+	top:0;
+	z-index: 99;
 	background-color:#ddd;
 	width:100%;
 	display: block;
 	padding:2px 10px;
 	height: 40px;
+	opacity: 0;
+	-webkit-transition: top,z-index,opacity 0.5s;
+	-moz-transition: top,z-index,opacity 0.5s;
+	-ms-transition: top,z-index,opacity 0.5s;
+	-o-transition: top,z-index,opacity 0.5s;
+	transition: top,z-index,opacity 0.5s;
+}
+.timeNav.show {
+	top: 55px;
 	z-index: 101;
+	opacity: 1;
+}
+@media (max-width:686px) {
+	.timeNav.show {
+		top: 95px;
+	}
 }
 .timeNav select{
 	width: 150px;
@@ -157,7 +178,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .nav{
 	position: fixed;
 	width: 140px;
-	top:5px;
+	top:0;
 	z-index: 1000;
 	display: block;
 	height: 100vh;
@@ -269,7 +290,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 
 
-/* < 1020 px Mobile View*/
+
 .postsContainer{
 	position: relative;
 	top: 90px;
@@ -280,7 +301,18 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	display: inline-block;
 	text-align: center;
 }
-
+@media (max-width:686px){
+	.postsContainer{
+		position: relative;
+		top: 40px;
+		width: 100%;
+		padding: 5px 10px;
+		height: auto;
+		margin: 0;
+		display: inline-block;
+		text-align: center;
+	}
+}
 .postsContainer .eachPost {
 	position: relative;
 	display: inline-block;
@@ -299,11 +331,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	max-width:400px;
 
 }
-
-
-
-
-
 .eachPost .header{
 	position: absolute;
 	top:0;
@@ -436,9 +463,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .eachPost .right{
 	float: right;
 }
-
-
-
 /*   */
 #alertTop{
 	position: fixed;
@@ -473,7 +497,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .accountCard{
 	position: fixed;
-	top:5px;
+	top:0px;
 	z-index: 10002;
 	height: 40px;
 	right: 100px;
@@ -488,6 +512,16 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-ms-transition: right 0.5s;
 	-o-transition: right 0.5s;
 	transition: right 0.5s;
+}
+@media (max-width:686px){
+	.accountCard {
+		width: 100%;
+		top:auto;
+		bottom:0;
+		height: 50px;
+		left:0;
+		text-align: center;
+	}
 }
 .accountCard a{
 	position: relative;
@@ -693,7 +727,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width: 100%;
 	padding: 0 10px;
 	text-align: center;
-	display: block;
+	display: none;
 	z-index: 10;
 	background-color: #666;
 	height: 250px;
@@ -878,7 +912,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		width: 100%;
 		padding: 10px 0 0 0;
 		text-align: center;
-		display: block;
+		display: none;
 		z-index: 10;
 		background-color: #666;
 		height: 270px;
@@ -1031,7 +1065,50 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 
 .homeSliders{
-
+	position: relative;
+	margin : 20px auto;
+	float: left;
+	clear: both;
+	display: none;
+	background-color: transparent;
+	border:1px solid red;
+	width:90%;
+	min-width:400px;
+	padding:5px;
+	height: 92vh;
+	-webkit-transition: height 0.7s;
+	-moz-transition: height 0.7s;
+	-ms-transition: height 0.7s;
+	-o-transition: height 0.7s;
+	transition: height 0.7s;
+}
+.homeSliders .bigSlider{
+	position: relative;
+	top:0px;
+	margin:0 auto;
+	padding:0;
+	display: inline-block;
+	width: 100%;
+	max-width: 800px;
+	height: auto;
+	max-height: 400px;
+	border:1px solid white;
+	float: left;
+	clear: both;
+}
+.homeSliders .smallSlider{
+	position: relative;
+	top:0px;
+	margin:0 auto;
+	padding:0;
+	display: inline-block;
+	width: 48%;
+	max-width: 500px;
+	height: auto;
+	max-height: 400px;
+	border:1px solid white;
+	float: left;
+	clear: both;
 }
 .settingsContainer{
 
@@ -1061,42 +1138,38 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 }
 #homeSliders{
-
+	height: 0 !important;
 }
 #homeSliders.show{
-
+	height:92vh;
 }
-#settings{
-
+#settings,#contact,#policy{
+	left: 50% !important;
 }
-#settings.show{
-
-}
-
-#contact{
-
-}
-#contact.show{
-
-}
-#policy{
-
-}
-#policy.show{
-
+#settings.show,#contact.show,#policy.show{
+	transform: translate(-50%,0) !important;
 }
 #newPost{
-
+	bottom:-50% !important;
 }
 #newPost.show{
-
+	transform: translate(0,+50%) !important;
 }
 
 #profileTop{
-
+	-webkit-transition: top,z-index 0.6s;
+	-moz-transition: top,z-index  0.6s;
+	-ms-transition: top,z-index  0.6s;
+	-o-transition: top,z-index , 0.6s;
+	transition: top,z-index  0.6s;
+	position: absolute;
+	display: block;
+	top:-50%;
 }
 #profileTop.show{
-
+	position : relative;
+	top:50px;
+	padding:0;
 }
 
 #profileTopSmall{

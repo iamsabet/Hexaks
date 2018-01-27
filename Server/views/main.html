@@ -16,7 +16,15 @@
         <h3></h3>
     </div>
     <div class="homeSliders" id="homeSliders">
-
+        <div class="bigSlider">
+            <img src="../Statics/images/sliders/slider1/4.jpg"/>
+        </div>
+        <div class="smallSlider">
+            <img src="../Statics/images/sliders/slider2/1.jpg"/>
+        </div>
+        <div class="smallSlider">
+            <img src="../Statics/images/sliders/slider3/2.jpg"/>
+        </div>
     </div>
     <div class="profileTop" id="profileTop">
         <div class="profileTopContainer">
@@ -339,7 +347,9 @@
     var currentPage = "";
     var historyPointer = -1;
     var historyList = [];
+    var orderName = "";
     // Events.Js
+
     $(document).ready(function(){
         if( readCookie("X-ACCESS-TOKEN") !==null) {
             getMe();
@@ -350,11 +360,29 @@
 
         }
     });
+
     // TOP NAV
     $("body").on("click",".topNav ul li",function(){
         $(this).parents("ul").children(".selected").removeClass("selected");
         $(this).addClass("selected");
-        
+        orderName = $(this).html().toLowerCase();
+
+        if(orderName === "curated"|| orderName === "top") {
+            $(".timeNav").addClass("show");
+        }
+        else if(orderName === "latest" ){
+            if($(".timeNav.show")) {
+                $(".timeNav.show").removeClass("show");
+            }
+        }
+        else{
+            window.alert("wrong input for order");
+        }
+    });
+    $("body").on("click",".closeTimeNav",function(){
+        if($(".timeNav.show")) {
+            $(".timeNav.show").removeClass("show");
+        }
     });
     $('body').on("click","#loginSubmit",function(){
         var input = {
@@ -370,33 +398,7 @@
         backward();
     });
     $("body").on("click","#logo",function(){
-        if (window.innerWidth < 1025) {
-            if (this.className === "") {
-                if ($(".rightSide")[0]) {
-                    $(this).addClass("halfRight");
-                    $(".rightSide").addClass("hide");
-                    $(".accountCard").css("right","5px");
-                }
-                else if ($(".leftSide")[0]) {
-                    $(this).addClass("halfLeft");
-                    $(".leftSide").addClass("hide");
-                    $(".accountCard").css("right","5px");
-                }
-            }
-            else if (this.className === "halfLeft") {
-                $(this).removeClass("halfLeft");
-                $(".leftSide").removeClass("hide");
-                $(".accountCard").css("right","100px");
-            }
-            else if (this.className === "halfRight") {
-                $(this).removeClass("halfRight");
-                $(".rightSide").removeClass("hide");
-                $(".accountCard").css("right","100px");
-            }
-            else {
-                //
-            }
-        }
+        slideNav(this);
     });
     $("body").on("click","#loginBtn",function(e){
         if (window.innerWidth > 768) {
@@ -410,9 +412,16 @@
     $("body").on("click","#submitUpload",function(e){
         e.preventDefault();
     });
-    $("body").on("drop","#uploadArea .qq-upload-drop-area-selector",function(event){
-        applyEvent(event);
-    });
+
+
+
+
+
+
+
+
+
+
     function requsetHandler(url, method, input, caller) {
         $.ajax({
             url: url || "/",
@@ -467,7 +476,8 @@
             pageType = window.location.pathname.split("/")[1].toLowerCase();
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "followings" || pageType === "followers" ||
-            pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType === "top") {
+            pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" ||
+            pageType === "top" || pageType ==="contact" || pageType==="newPost" || pageType==="policy") {
 
                 if(pageType ==="settings" || pageType==="slideView" || pageType ==="contact" || pageType==="newPost" || pageType==="policy")
                     changePage(pageType,pageType, writeState);// Other Pages
@@ -568,7 +578,6 @@
                 case "profile": {
                     $("#postsContainer").addClass("show");
                     $("#profileTop").addClass("show");
-                    $("#profileTop").addClass("show");
 
                     pageNames = ["settings","newPost" , "slideView" , "homeSliders","contact" ,"policy"];
                     for(var x = 0 ; x < pageNames.length ; x ++){
@@ -666,6 +675,37 @@
     `);
         }
     }
+
+    function slideNav(element){
+        if (window.innerWidth < 1025) {
+            if (element.className === "") {
+                if ($(".rightSide")[0]) {
+                    $(element).addClass("halfRight");
+                    $(".rightSide").addClass("hide");
+                    $(".accountCard").css("right","5px");
+                }
+                else if ($(".leftSide")[0]) {
+                    $(element).addClass("halfLeft");
+                    $(".leftSide").addClass("hide");
+                    $(".accountCard").css("right","5px");
+                }
+            }
+            else if (element.className === "halfLeft") {
+                $(element).removeClass("halfLeft");
+                $(".leftSide").removeClass("hide");
+                $(".accountCard").css("right","100px");
+            }
+            else if (element.className === "halfRight") {
+                $(element).removeClass("halfRight");
+                $(".rightSide").removeClass("hide");
+                $(".accountCard").css("right","100px");
+            }
+            else {
+                //
+            }
+        }
+    }
+
     function alert(message){
         $("#alertTop h3").html(message);
         $("#alertTop").addClass("show");
