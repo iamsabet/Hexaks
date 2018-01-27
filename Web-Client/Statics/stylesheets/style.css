@@ -55,12 +55,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .topNav ul li{
 	position: relative;
 	display: inline-block;
-	font-size:22px;
-	color:white;
+	font-size: 22px;
+	color: white;
+	vertical-align: middle;
 	margin-right: 20px;
-	top:10px;
-	padding:2px 10px;
-	height: 100%;
+	top: 0;
+	padding: 2px 10px;
+	height: 90%;
+	line-height: 40px;
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
@@ -72,7 +74,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	transition: background-color,color,top 200ms;
 }
 .topNav ul li:hover,.topNav ul li.selected{
-	top:0;
+	top:10px;
 	color: black;
 	background-color: #ddd;
 	cursor: pointer;
@@ -82,7 +84,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	top:55px;
 	background-color:#ddd;
 	width:100%;
-	display: none;
+	display: block;
 	padding:2px 10px;
 	height: 40px;
 	z-index: 101;
@@ -111,6 +113,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	color: black;
 	bottom:10px;
 }
+
 .timeNav select option{
 	position: relative;
 	display: inline-block;
@@ -122,7 +125,28 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	color:black;
 	float: left;
 }
-
+.timeNav > button{
+	position: absolute;
+	right:200px;
+	height: 40px;
+	top:2px;
+	width:40px;
+	background: transparent url("../images/images/b-cross.png") no-repeat center;
+	background-size: 100% 100%;
+	-webkit-border-radius: 99px;
+	-moz-border-radius: 99px;
+	border-radius: 99px;
+	-webkit-transition: background-color,border 0.6s;
+	-moz-transition: background-color,border 0.6s;
+	-ms-transition: background-color,border 0.6s;
+	-o-transition: background-color,border 0.6s;
+	transition: background-color,border 0.6s;
+}
+.timeNav > button:hover{
+	background-color: #333;
+	border : 1px solid white;
+	cursor: pointer;
+}
 .timeNav select option:hover{
 	color:white !important;
 	background-color:black !important;
@@ -667,25 +691,46 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position: relative;
 	top: 50px;
 	width: 100%;
-	padding: 40px 50px 10px 10px;
+	padding: 0 10px;
 	text-align: center;
 	display: block;
 	z-index: 10;
 	background-color: #666;
+	height: 250px;
+}
+.profileTop .profileTopContainer{
+	position: relative;
 	height: 220px;
+	width: auto;
+	top:30px;
+	max-width:1600px;
+	min-width: 400px;
+	margin:0 auto;
 }
 .profileTop .profPic{
 	position: relative;
-	left: 10px;
+	left: 10%;
 	float: left;
 	clear: left;
 	top: 0;
 	height: 190px;
 	width: 190px;
-	margin-right: 10px;
+	margin:0 auto;
 	display: inline-block;
 }
-
+.profileTop .userInfo {
+	position: relative;
+	float: left;
+	margin: 0;
+	left:10%;
+	padding:2px;
+	display: inline-block;
+	height: 250px;
+	width:auto;
+	max-width:300px;
+	min-width: 200px;
+	top: 35px;
+}
 .profileTop .profPic .image{
 	position: relative;
 	left: 0;
@@ -719,7 +764,8 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .profileTop .userInfo {
 	position: relative;
 	float: left;
-	margin: 0 5px 0 0;
+	margin: 0;
+	left:10%;
 	padding:2px;
 	display: inline-block;
 	height: 250px;
@@ -767,9 +813,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	stroke-width: 8;
 }
 
-.profileTop > button{
+.profileTop  .profileTopContainer > button{
 	position: absolute;
-	left: 50%;
+	left: 60%;
+	float: right;
 	z-index: 20;
 	bottom:20px;
 	width:100px;
@@ -796,10 +843,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	border:1px solid black;
 }
 
-.profileTop  ul{
+.profileTop .badges{
+	left:60%;
+	top:60px;
 	position: absolute;
-	left: 10%;
-	top: 10px;
 	width: auto;
 	max-width: 300px;
 	height: 70px;
@@ -809,11 +856,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	padding: 0;
 	z-index: 500;
 }
-@media only screen and(max-width:700px) and(min-width: 1000px) {
-	.profileTop .badges{
-		left:50% !important;
-		top:60px !important;
+@media (max-width:686px){
+	.profileTop  .badges{
 		position: absolute;
+		right: 30px;
+		left:auto;
+		top: auto;
+		bottom:-60px;
 		width: auto;
 		max-width: 300px;
 		height: 70px;
@@ -822,6 +871,120 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		margin: 0;
 		padding: 0;
 		z-index: 500;
+	}
+	.profileTop {
+		position: relative;
+		top: 40px;
+		width: 100%;
+		padding: 10px 0 0 0;
+		text-align: center;
+		display: block;
+		z-index: 10;
+		background-color: #666;
+		height: 270px;
+	}
+	.profileTop .profileTopContainer{
+		position: relative;
+		height: 180px;
+		top:30px;
+		left:0;
+		width:100%;
+		margin:0;
+	}
+	.profileTop .profPic{
+		position: relative;
+		left: 1%;
+		float: left;
+		clear: left;
+		top: 0;
+		height: 170px;
+		width: 170px;
+		margin:0 0;
+		display: inline-block;
+	}
+	.profileTop .userInfo {
+		position: relative;
+		float: left;
+		margin: 0;
+		left:2%;
+		padding:2px;
+		display: inline-block;
+		height: 250px;
+		width:auto;
+		max-width:300px;
+		min-width: 200px;
+		top: 35px;
+	}
+	.profileTop .userInfo span{
+		font-size:15px;
+	}
+	.profileTop .userInfo a{
+		font-size:16px;
+	}
+	.profileTop  .profileTopContainer > button{
+		position: absolute;
+		left: 20px;
+		z-index: 20;
+		bottom:-50px;
+		width:100px;
+		height: 40px;
+		background-color:#ff0055;
+		color:white;
+		-webkit-border-radius: 3px;
+		-moz-border-radius: 3px;
+		border-radius: 3px;
+		outline: 0;
+		font-size:18px;
+		font-weight: normal;
+		-webkit-transition: background-color,right,color,font-weight,border 0.5s;
+		-moz-transition: background-color,right,color,font-weight,border 0.5s;
+		-ms-transition: background-color,right,color,font-weight,border 0.5s;
+		-o-transition: background-color,right,color,font-weight,border 0.5s;
+		transition: background-color,right,color,font-weight,border 0.5s;
+		display: block;
+	}
+}
+
+
+
+@media (max-width:439px){
+	.profileTop .userInfo span{
+		font-size:14px;
+	}
+	.profileTop .userInfo a{
+		font-size:14px !important;
+		word-break: break-all;
+	}
+	.profileTop .userInfo span.hostFullName{
+		font-size:16px;
+	}
+	.profileTop .profPic{
+		position: relative;
+		left: 2px;
+		float: left;
+		clear: left;
+		top: 0;
+		height: 140px;
+		width: 140px;
+		margin:0 0;
+		display: inline-block;
+	}
+	.profileTop .userInfo{
+		margin:0;
+		left:0;
+		top:20px;
+	}
+	.profileTop {
+
+		height: 250px;
+	}
+	.profileTop  .profileTopContainer .badges{
+		bottom:-40px;
+	}
+	.profileTop .profileTopContainer > button{
+		position: absolute;
+		left: 10px;
+		bottom:-30px;
 	}
 }
 

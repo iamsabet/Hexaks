@@ -1,8 +1,8 @@
 <html>
 <head>
-    <meta name="viewport" content="width=window-width,initial-scale=1">
     <script src="../Statics/javascripts/jquery.min.js"></script>
     <link rel="stylesheet" href="../Statics/stylesheets/style.css">
+    <meta name="viewport" content="width=window-width,initial-scale=1">
     <link rel="stylesheet" href="../Statics/stylesheets/fine-uploader-gallery.css">
     <script src="../Statics/javascripts/cookies.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.core.js"></script>
@@ -19,36 +19,38 @@
 
     </div>
     <div class="profileTop" id="profileTop">
-        <div class="profPic">
-            <img class="hexShape" src="../Statics/images/images/hexShape200g.png">
-            <img src="../Statics/images/images/avatar.png" class="image"/>
+        <div class="profileTopContainer">
+            <div class="profPic">
+                <img class="hexShape" src="../Statics/images/images/hexShape200g.png">
+                <img src="../Statics/images/images/avatar.png" class="image"/>
+            </div>
+            <div class="userInfo">
+                <span class="hostFullName">Mohammad Reza Ehsani</span>
+                <a class="followersBtn">50 Followings</a>
+                <a class="followingsBtn">120 Followers</a>
+                <span class="hostLocation">Tehran</span>
+                <p class="username" hidden>sabet</p>
+            </div>
+            <button id="follow">Follow</button>
+            <button id="unfollow">Unfollow</button>
+            <ul class="badges">
+                <li class="eachBadge">
+                    <img src="../Statics/images/images/premiumBadge.png"/>
+                    <p hidden> badgeId</p>
+                </li>
+                <li class="eachBadge">
+                    <img src="../Statics/images/images/logoA.png"/>
+                    <p hidden> badgeId</p>
+                </li>
+                <li class="eachBadge">
+                    <img src="../Statics/images/images/loader6.png"/>
+                    <p hidden> badgeId</p>
+                </li>
+                <li class="allBadgesBtn">
+                    +5
+                </li>
+            </ul>
         </div>
-        <div class="userInfo">
-            <span class="hostFullName">Mohammad Reza Ehsani</span>
-            <a class="followersBtn">50 Followings</a>
-            <a class="followingsBtn">120 Followers</a>
-            <span class="hostLocation">Tehran</span>
-            <p class="username" hidden>sabet</p>
-        </div>
-        <button id="follow">Follow</button>
-        <button id="unfollow">Unfollow</button>
-        <ul class="badges">
-            <li class="eachBadge">
-                <img src="../Statics/images/images/premiumBadge.png"/>
-                <p hidden> badgeId</p>
-            </li>
-            <li class="eachBadge">
-                <img src="../Statics/images/images/logoA.png"/>
-                <p hidden> badgeId</p>
-            </li>
-            <li class="eachBadge">
-                <img src="../Statics/images/images/loader6.png"/>
-                <p hidden> badgeId</p>
-            </li>
-            <li class="allBadgesBtn">
-                +5
-            </li>
-        </ul>
     </div>
     <div class="profileTopSmall" id="profileTopSmall">
     </div>
@@ -79,6 +81,8 @@
             <option value="week"> week</option>
             <option value="month"> month</option>
         </select>
+
+        <button class="closeTimeNav"></button>
     </div>
     <div class="nav rightSide">
         <img id="logo" src="../Statics/images/images/LOGO.png">
@@ -350,7 +354,7 @@
     $("body").on("click",".topNav ul li",function(){
         $(this).parents("ul").children(".selected").removeClass("selected");
         $(this).addClass("selected");
-        getPosts();
+        
     });
     $('body').on("click","#loginSubmit",function(){
         var input = {
