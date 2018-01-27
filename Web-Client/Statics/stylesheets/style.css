@@ -1,4 +1,11 @@
-
+html{
+	position: fixed;
+	top: 0;
+	width: 100%;
+	height: auto;
+	margin: 0;
+	padding: 0;
+}
 body {
 	margin: 0;
 	font-family: "Century Schoolbook L", sans-serif;
@@ -1183,7 +1190,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	display: block;
 	top:50px;
 	height: 0;
-	overflow-y: hidden;
+	overflow: hidden;
 
 }
 #profileTop.show{
