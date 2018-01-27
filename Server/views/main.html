@@ -518,7 +518,7 @@
             onSubmit: function(id, fileName){
             },
             onComplete: function(id, fileName, responseJSON){ // Customize the output sent to responseJSON in demo.php
-                resetParams();
+                // resetParams();
                 switch(responseJSON.ext){
                     case 'gif':
                     case 'jpg':
@@ -565,11 +565,11 @@
                     pageNames = ["settings","newPost" , "slideView" ,"profileTop","profileTopSmall", "contact" ,"policy"];
                     for(var x = 0 ; x < pageNames.length ; x ++){
                         if( pageName === pageNames[x]){
-                            $(`#${pageName}`).addClass("show");
+                            $(`#${pageNames[x]}`).addClass("show");
                         }
                         else{
-                            if($(`#${pageName}.show`)) {
-                                $(`#${pageName}.show`).removeClass("show");
+                            if($(`#${pageNames[x]}.show`)) {
+                                $(`#${pageNames[x]}.show`).removeClass("show");
                             }
                         }
                     }
@@ -582,27 +582,24 @@
                     pageNames = ["settings","newPost" , "slideView" , "homeSliders","contact" ,"policy"];
                     for(var x = 0 ; x < pageNames.length ; x ++){
                         if( pageName === pageNames[x]){
-                            $(`#${pageName}`).addClass("show");
+                            $(`#${pageNames[x]}`).addClass("show");
                         }
                         else{
-                            if($(`#${pageName}.show`)) {
-                                $(`#${pageName}.show`).removeClass("show");
+                            if($(`#${pageNames[x]}.show`)) {
+                                $(`#${pageNames[x]}.show`).removeClass("show");
                             }
                         }
                     }
-                }
-                    break;
-                break;
+                }break;
                 case "settings" || "newPost" || "slideView" || "contact" || "policy": {
-                    $(`#${pageName}`).addClass("show");
                     var pageNames = ["settings","newPost" , "slideView" , "contact" ,"policy"];
                     for(var x = 0 ; x < pageNames.length ; x ++){
                         if( pageName === pageNames[x]){
-                            $(`#${pageName}`).addClass("show");
+                            $(`#${pageNames[x]}`).addClass("show");
                         }
                         else{
-                            if($(`#${pageName}.show`)) {
-                                $(`#${pageName}.show`).removeClass("show");
+                            if($(`#${pageNames[x]}.show`)) {
+                                $(`#${pageNames[x]}.show`).removeClass("show");
                             }
                         }
                     }

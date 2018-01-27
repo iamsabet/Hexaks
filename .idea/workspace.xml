@@ -15,21 +15,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/views/main.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="372" column="41" lean-forward="true" selection-start-line="372" selection-start-column="41" selection-end-line="372" selection-end-column="41" />
+            <state relative-caret-position="164">
+              <caret line="471" column="5" lean-forward="true" selection-start-line="471" selection-start-column="5" selection-end-line="471" selection-end-column="5" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
+      <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="68" column="16" lean-forward="true" selection-start-line="68" selection-start-column="16" selection-end-line="68" selection-end-column="16" />
+            <state relative-caret-position="341">
+              <caret line="1182" column="19" lean-forward="true" selection-start-line="1182" selection-start-column="19" selection-end-line="1182" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -146,9 +146,14 @@
       <find>timenav</find>
       <find>closeTime</find>
       <find>.timeNav</find>
-      <find>closeTimeNav</find>
       <find>account</find>
+      <find>closeTimeNav</find>
+      <find>.topNav ul l</find>
       <find>.topNav ul li</find>
+      <find>urlpars</find>
+      <find>debugger</find>
+      <find>accountCar</find>
+      <find>settingsco</find>
     </findStrings>
     <replaceStrings>
       <replace>postSchema</replace>
@@ -209,8 +214,8 @@
         <option value="$PROJECT_DIR$/Server/routes/index.js" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/register-login.css" />
         <option value="$PROJECT_DIR$/Server/views/login.html" />
-        <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
         <option value="$PROJECT_DIR$/Server/views/main.html" />
+        <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
       </list>
     </option>
   </component>
@@ -489,12 +494,12 @@
       <workItem from="1516917274636" duration="29359000" />
       <workItem from="1517058183019" duration="191000" />
       <workItem from="1517059596561" duration="133000" />
-      <workItem from="1517060223091" duration="10082000" />
+      <workItem from="1517060223091" duration="11451000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71246000" />
+    <option name="totallyTimeSpent" value="72615000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -731,18 +736,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
+    <entry file="file://$PROJECT_DIR$/Server/views/main.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="68" column="16" lean-forward="true" selection-start-line="68" selection-start-column="16" selection-end-line="68" selection-end-column="16" />
+        <state relative-caret-position="164">
+          <caret line="471" column="5" lean-forward="true" selection-start-line="471" selection-start-column="5" selection-end-line="471" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/views/main.html">
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="372" column="41" lean-forward="true" selection-start-line="372" selection-start-column="41" selection-end-line="372" selection-end-column="41" />
+        <state relative-caret-position="341">
+          <caret line="1182" column="19" lean-forward="true" selection-start-line="1182" selection-start-column="19" selection-end-line="1182" selection-end-column="19" />
           <folding />
         </state>
       </provider>
