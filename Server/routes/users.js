@@ -62,6 +62,8 @@ var users = {
                             isUploadingPost:false,
                             uploadingPost:"",  // post id --> initial --> "initial"
                             isUploadingAlbum:false,
+                            followersCount:0,
+                            followingsCount:0,
                             uploadingAlbum:[],// max size == 10 --> post id --> initial ["initial"]
                             details:{
                                 phoneNumber : "",
@@ -115,9 +117,54 @@ var users = {
         user.isUploadingPost = true;
         user.save();
     },
-    getHostProfile:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
+
+    getHostProfile:function(req,res,user){ // no privacy considered !.
+        var hostUsername = req.body["hostUserName"];
+        userSchema.findOne({username:hostUsername},{fullName:1,followersCount:1,followingsCount:1,location:1,city:1,roles:1},function(err,user){
+            if(err) res.send(err);
+            if(user)
+                res.send(user);
+            else
+                res.send({result:false,message:"User with username "+ hostUsername + " Not Found"});
+        });
+    },
+    getProfileInfo:function(req,res,user){ // no privacy considered !.
+        res.send({username:user.username,fullName:user.fullName,email:user.email,bio:user.bio,city:user.city});
+    },
+    updateProfileInfo:function(req,res,user){
+
+        if(!user.ban.is){
+
+            if(user.username === req.body["username"]){
+                user.fullName = req.body["fullName"];
+                user.email = req.body["email"];
+                user.city = req.body["city"];
+                user.bio = req.body["bio"];
+                user.save();
+                res.send(true);
+            }
+            else{
+                userSchema.findOne({username:req.body["username"]},function(err,user) {
+                    if (err) res.send(err);
+                    if (user) {
+                        res.send({result:false,message:"username already token"});
+                    }
+                    else{
+                        user.fullName = req.body["fullName"];
+                        user.email = req.body["email"];
+                        user.city = req.body["city"];
+                        user.bio = req.body["bio"];
+                        user.username = req.body["username"];
+                        user.save();
+                        res.send(true);
+                    }
+                });
+            }
+
+        }
+        else{
+            res.send({result:false,false:"sorry you cant change your info till your ban expires : "+(user.ban.expire - Date.now().getTime()) });
+        }
     },
     getSettingsDatas:function(req,res,user){
         user.isUploadingPost = true;

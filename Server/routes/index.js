@@ -105,6 +105,38 @@ router.get('/api/v1/users/getMe',function(req,res){
     });
 });
 
+router.post('/api/v1/users/getHostProfile',function(req,res){
+
+    users.getHostProfile(req,res,callback)
+
+});
+
+
+router.get('/api/v1/users/getProfileInfo',function(req,res){
+
+    validateRequest(req,res,function(callback){
+        if(callback) {
+            users.getProfileInfo(req, res, callback)
+        }
+        else{
+            res.send(null);
+        }
+    });
+});
+
+router.post('/api/v1/users/updateProfileInfo',function(req,res){
+
+    validateRequest(req,res,function(callback){
+        if(callback) {
+            users.updateProfileInfo(req, res, callback)
+        }
+        else{
+            res.send(null);
+        }
+    });
+});
+
+
 
 
 router.post('/api/v1/upload',function(req,res){

@@ -10,8 +10,12 @@ var userSchema = new Schema({
     profilePictureUrl:String,
     password : String,
     followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
+    followingsCount:Number,
     followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
+    followersCount:Number,
     posts:[], // {postId : , smallImageUrl : , ownerUserName : }
+    location:String,
+    city:String,
     rate:{
         number:Float,
         counts:Number,
@@ -32,9 +36,12 @@ var userSchema = new Schema({
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
     roles : [], // String - Sabet / Admin / Curator / Blogger / Premium
     inactivate:Boolean,
-    ban:Boolean,
-    createdAt:Date,
-    updatedAt:Date
+    ban:{
+        is:Boolean,
+        expire:Number,
+    },
+    createdAt:Number,
+    updatedAt:Number
 });
 
 
@@ -48,6 +55,7 @@ userSchema.methods.create = function (res,userObject) {
         console.log(newUser.username);
         res.send({result:true,value:newUser.userId});
     });
+
 };
 userSchema.pre('save', function(next){
     if(this.updatedAt) {
