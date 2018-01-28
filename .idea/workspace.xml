@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/sabet.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/sabet.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Server/views/main.html" afterPath="$PROJECT_DIR$/Server/views/main.html" />
       <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -14,21 +17,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="main.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Server/views/main.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="471" column="5" lean-forward="true" selection-start-line="471" selection-start-column="5" selection-end-line="471" selection-end-column="5" />
+            <state relative-caret-position="195">
+              <caret line="491" column="102" lean-forward="true" selection-start-line="491" selection-start-column="102" selection-end-line="491" selection-end-column="102" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
+      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="14" lean-forward="true" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
+            <state relative-caret-position="344">
+              <caret line="1145" column="13" lean-forward="false" selection-start-line="1145" selection-start-column="13" selection-end-line="1145" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -47,7 +50,7 @@
       <file leaf-file-name="register-login.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/register-login.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
+            <state relative-caret-position="1305">
               <caret line="87" column="24" lean-forward="false" selection-start-line="87" selection-start-column="24" selection-end-line="87" selection-end-column="24" />
               <folding />
             </state>
@@ -126,7 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>users</find>
       <find>post</find>
       <find>red</find>
       <find>../ima</find>
@@ -150,9 +152,13 @@
       <find>.topNav ul l</find>
       <find>.topNav ul li</find>
       <find>urlpars</find>
-      <find>debugger</find>
       <find>accountCar</find>
       <find>settingsco</find>
+      <find>profileTop</find>
+      <find>#profileTop</find>
+      <find>d</find>
+      <find>debugger</find>
+      <find>.settingsco</find>
     </findStrings>
     <replaceStrings>
       <replace>postSchema</replace>
@@ -213,8 +219,8 @@
         <option value="$PROJECT_DIR$/Server/routes/index.js" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/register-login.css" />
         <option value="$PROJECT_DIR$/Server/views/login.html" />
-        <option value="$PROJECT_DIR$/Server/views/main.html" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
+        <option value="$PROJECT_DIR$/Server/views/main.html" />
       </list>
     </option>
   </component>
@@ -272,6 +278,7 @@
     </navigator>
     <panes>
       <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -332,7 +339,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -493,12 +499,13 @@
       <workItem from="1516917274636" duration="29359000" />
       <workItem from="1517058183019" duration="191000" />
       <workItem from="1517059596561" duration="133000" />
-      <workItem from="1517060223091" duration="11611000" />
+      <workItem from="1517060223091" duration="11812000" />
+      <workItem from="1517132892289" duration="9137000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72775000" />
+    <option name="totallyTimeSpent" value="82113000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -721,8 +728,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/register-login.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
+        <state relative-caret-position="1305">
           <caret line="87" column="24" lean-forward="false" selection-start-line="87" selection-start-column="24" selection-end-line="87" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="344">
+          <caret line="1145" column="13" lean-forward="false" selection-start-line="1145" selection-start-column="13" selection-end-line="1145" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -737,16 +752,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/views/main.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="471" column="5" lean-forward="true" selection-start-line="471" selection-start-column="5" selection-end-line="471" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="14" lean-forward="true" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
+        <state relative-caret-position="195">
+          <caret line="491" column="102" lean-forward="true" selection-start-line="491" selection-start-column="102" selection-end-line="491" selection-end-column="102" />
           <folding />
         </state>
       </provider>

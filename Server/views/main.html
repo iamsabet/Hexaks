@@ -2,7 +2,7 @@
 <head>
     <script src="../Statics/javascripts/jquery.min.js"></script>
     <link rel="stylesheet" href="../Statics/stylesheets/style.css">
-    <meta name="viewport" content="width=window-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="../Statics/stylesheets/fine-uploader-gallery.css">
     <script src="../Statics/javascripts/cookies.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.core.js"></script>
@@ -216,15 +216,39 @@
             </div>
         </div>
     </div>
+    <div class="settingsContainer" id="settings">
+        <div class="menu">
+            <h2>Account Information</h2>
+            <h2>Account Settings</h2>
+            <h2>Change Password</h2>
+            <h2>Badges</h2>
+            <h2>Deactive or Delete</h2>
+        </div>
+        <div class="formContainer">
+            <div class="accountSettings">
+                <label>Username</label>
+                <input type="text" class="username">
+                <label>Full Name</label>
+                <input type="text" class="fullName">
+                <label>Email</label>
+                <input type="text" class="email">
+                <label>City</label>
+                <input type="text" class="city">
+                <label>Bio</label>
+                <textarea type="text" class="bio">
+
+                </textarea>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="slideView" id="slideView">
 
 
 </div>
-<div class="settingsContainer" id="settings">
 
-</div>
 
 <div class="contactContainer" id="contact">
 
@@ -414,14 +438,6 @@
     });
 
 
-
-
-
-
-
-
-
-
     function requsetHandler(url, method, input, caller) {
         $.ajax({
             url: url || "/",
@@ -455,6 +471,9 @@
     function getMe(){
         requsetHandler("/api/v1/users/getMe","GET",{},"getMe");
     }
+    function loadProfileInfo(hostUserName){
+        requsetHandler("/api/v1/users/getHostProfile","POST",{host:hostUserName},"getMe");
+    }
     function getPosts(){
     }
     // Actions.js
@@ -470,7 +489,7 @@
                 break;
         }
     }
-    function urlParser(writeState){
+    function urlParser(writeState){ // --> Page Name --> Username / post Orders / category / #hashtags
         var pageType ="";
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
@@ -518,7 +537,7 @@
             onSubmit: function(id, fileName){
             },
             onComplete: function(id, fileName, responseJSON){ // Customize the output sent to responseJSON in demo.php
-                // resetParams();
+                resetParams();
                 switch(responseJSON.ext){
                     case 'gif':
                     case 'jpg':
@@ -546,82 +565,96 @@
     }
 
     function changePage(pageName,pageType,newHistory){
-        var pageNames;
-        if (historyList.length === 0 && historyPointer ===-1 || pageName !== historyList[historyPointer]["pageName"]) {
 
-            if(historyList.length === 0 && historyPointer ===-1){
-                pushHistory(pageName, window.location.pathname);
-            }
-            switch (pageName) {
-                case "feed" || "home" || "" : {
-                    // show feed items --> hide Others
+        pushHistory(pageName, window.location.pathname);
+        switch (pageName) {
+            case "feed" || "home" || "" : {
+                // show feed items --> hide Others
+                if( pageName !== currentPage ) {
                     $("#postsContainer").addClass("show");
-                    if(pageName === "home" || pageName === "" ){
+                    if (pageName === "home" || pageName === "") {
                         $("#homeSliders").addClass("show");
                         $("#postsContainer").addClass("show");
                     }
                     // hide elements
-
-                    pageNames = ["settings","newPost" , "slideView" ,"profileTop","profileTopSmall", "contact" ,"policy"];
-                    for(var x = 0 ; x < pageNames.length ; x ++){
-                        if( pageName === pageNames[x]){
+                    pageNames = ["settings", "newPost", "slideView", "profileTop", "profileTopSmall", "contact", "policy"];
+                    for (var x = 0; x < pageNames.length; x++) {
+                        if (pageName === pageNames[x]) {
                             $(`#${pageNames[x]}`).addClass("show");
                         }
-                        else{
-                            if($(`#${pageNames[x]}.show`)) {
+                        else {
+                            if ($(`#${pageNames[x]}.show`)) {
                                 $(`#${pageNames[x]}.show`).removeClass("show");
                             }
                         }
                     }
                 }
-                    break;
-                case "profile": {
+                // --> Function Calls
+
+
+
+
+            }
+                break;
+            case "profile": {
+                var hostUserName = pageType;
+                if( pageName !== currentPage ) {
                     $("#postsContainer").addClass("show");
                     $("#profileTop").addClass("show");
-
-                    pageNames = ["settings","newPost" , "slideView" , "homeSliders","contact" ,"policy"];
-                    for(var x = 0 ; x < pageNames.length ; x ++){
-                        if( pageName === pageNames[x]){
+                    pageNames = ["settings", "newPost", "slideView", "homeSliders", "contact", "policy"];
+                    for (var x = 0; x < pageNames.length; x++) {
+                        if (pageName === pageNames[x]) {
                             $(`#${pageNames[x]}`).addClass("show");
                         }
-                        else{
-                            if($(`#${pageNames[x]}.show`)) {
+                        else {
+                            if ($(`#${pageNames[x]}.show`)) {
                                 $(`#${pageNames[x]}.show`).removeClass("show");
                             }
                         }
                     }
-                }break;
-                case "settings" || "newPost" || "slideView" || "contact" || "policy": {
-                    var pageNames = ["settings","newPost" , "slideView" , "contact" ,"policy"];
-                    for(var x = 0 ; x < pageNames.length ; x ++){
-                        if( pageName === pageNames[x]){
+                }
+                loadProfileInfo(hostUserName);
+                getPostsByFilter(hostUserName);
+
+
+            }break;
+            case "settings" ||"newPost" || "slideView" || "postsContainer" || "contact" : {
+                if( pageName !== currentPage ) {
+                    var pageNames = ["settings", "newPost", "slideView", "postsContainer", "contact", "policy"];
+                    $("#profileTop").addClass("show");
+                    for (var x = 0; x < pageNames.length; x++) {
+                        if (pageName === pageNames[x]) {
                             $(`#${pageNames[x]}`).addClass("show");
                         }
-                        else{
-                            if($(`#${pageNames[x]}.show`)) {
+                        else {
+                            if ($(`#${pageNames[x]}.show`)) {
                                 $(`#${pageNames[x]}.show`).removeClass("show");
                             }
                         }
                     }
+                }
 
-                }break;
-            }
-        }
-        if (newHistory || false) {
-            pushHistory(pageName, window.location.pathname);
-        }
 
-    }
-    function hideOthers(pageName){
-        for(var x = 0 ; x < pageNames.length ; x ++){
-            if(pageNames[x]!==pageName){
-                hidePage(pageName);
-            }
+            }break;
         }
     }
+
     function pushHistory(newPageName,url){
-        historyList.push({pageName:newPageName,urlData:url});
-        historyPointer++;
+        if (historyPointer === historyList.length) {
+            historyList.push({pageName: newPageName, urlData: url , hashtag : window.location.hash});
+            currentPage = newPageName;
+            historyPointer++;
+        }
+        else if (historyPointer < historyList.length -1 ){
+            for(var x  = historyList.length -1 ; x > historyPointer ; x--){
+                historyList.pop();
+                if(x === historyPointer + 1){
+                    historyList.push({pageName: newPageName, urlData: url ,hashtag : window.location.hash});
+                    currentPage = newPageName;
+                    historyPointer++;
+                }
+            }
+        }
     }
     function checkForward(){
         if(historyPointer < historyPointer.length -1){
@@ -634,8 +667,8 @@
     function backward(){
         if(historyPointer > 0){
             historyPointer--;
-            changePage(historyList[historyPointer]["pageName"],false);
-            window.history.replaceState(historyList[historyPointer]["pageName"],historyList[historyPointer]["pageName"],historyList[historyPointer]["urlData"]);
+            changePage(historyList[historyPointer].pageName,false);
+            window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
         }
         else{
             window.history.back();
@@ -644,8 +677,8 @@
     function forward(){
         if(historyPointer < historyList.length -1 ){
             historyPointer++;
-            changePage(historyList[historyPointer]["pageName"],false);
-            window.history.replaceState(historyList[historyPointer]["pageName"],historyList[historyPointer]["pageName"],historyList[historyPointer]["urlData"]);
+            changePage(historyList[historyPointer].pageName,false);
+            window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
         }
         else{
             //

@@ -2,7 +2,9 @@ html{
 	position: fixed;
 	top: 0;
 	width: 100%;
-	height: auto;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
 	margin: 0;
 	padding: 0;
 }
@@ -742,6 +744,22 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	background-color: #666;
 	height: 250px;
 }
+.profileTop .loader{
+	position: absolute;
+	width:60px;
+	height:60px;
+	left:100px;
+	top:100px;
+	display: block;
+	-webkit-transition: height 0.5s;
+	-moz-transition: height 0.5s;
+	-ms-transition: height 0.5s;
+	-o-transition: height 0.5s;
+	transition: height 0.5s;
+}
+.profileTop.show .loader{
+	height: 0;
+}
 .profileTop .profileTopContainer{
 	position: relative;
 	height: 220px;
@@ -1121,20 +1139,17 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	clear: both;
 }
 .settingsContainer{
-	position: fixed;
-	width:98%;
+	position: relative;
+	width:100%;
 	left:-100%;
-	height: 95% !important;
-	top:1%;
+	height: auto;
+	top:50px;
 	padding:5px;
 	margin:0;
-	background-color:#c7c7c7;
 	z-index:103;
-	-webkit-transition: left 0.5s;
-	-moz-transition: left 0.5s;
-	-ms-transition: left 0.5s;
-	-o-transition: left 0.5s;
-	transition: left 0.5s;
+	background-color:#e9e9e9;
+}
+@media (max-width) {
 
 }
 .contactContainer{
@@ -1157,9 +1172,18 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 
 
-
 #postsContainer{
-
+	height: 0;
+	display: none;
+	-webkit-transition: height 0.6s;
+	-moz-transition: height 0.6s;
+	-ms-transition: height 0.6s;
+	-o-transition: height 0.6s;
+	transition: height 0.6s;
+}
+#postsContainer.show{
+	height: auto;
+	display: block;
 }
 #homeSliders{
 	height: 0 !important;
@@ -1169,9 +1193,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 #settings,#contact,#policy{
 	left: -100%;
+	-webkit-transition: left 0.5s;
+	-moz-transition: left 0.5s;
+	-ms-transition: left 0.5s;
+	-o-transition: left 0.5s;
+	transition: left 0.5s;
 }
 #settings.show,#contact.show,#policy.show{
-	left:1%;
+	left:0;
 }
 #newPost{
 	bottom:-50% !important;
@@ -1193,12 +1222,28 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	overflow: hidden;
 
 }
-#profileTop.show{
-	position : relative;
-	top:50px;
+#profileTopSettings{
+	-webkit-transition: height 0.6s;
+	-moz-transition: height  0.6s;
+	-ms-transition: height 0.6s;
+	-o-transition: height 0.6s;
+	transition: height  0.6s;
+	position: absolute;
+	display: block;
+	top:0;
+	overflow: hidden;
 	padding:0;
-	height: 270px;
+	height: 280px;
 }
+
+#profileTop.show{
+	 position : relative;
+	 top:50px;
+	 padding:0;
+	 left:0;
+	 height: 270px;
+ }
+
 @media (max-width:686px){
 	.profileTop.show {
 		height: 270px;
