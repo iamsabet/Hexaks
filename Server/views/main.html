@@ -27,17 +27,19 @@
         </div>
     </div>
     <div class="profileTop" id="profileTop">
+        <img src="../Statics/images/images/charkheshi.gif" class="loader"/>
         <div class="profileTopContainer">
             <div class="profPic">
                 <img class="hexShape" src="../Statics/images/images/hexShape200g.png">
                 <img src="../Statics/images/images/avatar.png" class="image"/>
             </div>
             <div class="userInfo">
-                <span class="hostFullName">Mohammad Reza Ehsani</span>
-                <a class="followersBtn">50 Followings</a>
-                <a class="followingsBtn">120 Followers</a>
-                <span class="hostLocation">Tehran</span>
-                <p class="username" hidden>sabet</p>
+                <span class="hostFullName"></span>
+                <a class="followersBtn"></a>
+                <a class="followingsBtn"></a>
+                <span class="hostLocation"></span>
+                <span class="roles"></span>
+                <p class="username" hidden></p>
             </div>
             <button id="follow">Follow</button>
             <button id="unfollow">Unfollow</button>
@@ -461,6 +463,7 @@
     }
     // 3.Handlers
     // Request handlers
+    // users
     function logout() {
         eraseCookie("KEY");
         eraseCookie("X-ACCESS-TOKEN");
@@ -472,7 +475,13 @@
         requsetHandler("/api/v1/users/getMe","GET",{},"getMe");
     }
     function loadProfileInfo(hostUserName){
-        requsetHandler("/api/v1/users/getHostProfile","POST",{host:hostUserName},"getMe");
+        requsetHandler("/api/v1/users/getHostProfile","POST",{host:hostUserName},"loadProfile");
+    }
+    function getProfileInfo(){
+        requsetHandler("/api/v1/users/getProfileInfo","GET",{},"getProfileInfo");
+    }
+    function updateProfileInfo(input){
+        requsetHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
     }
     function getPosts(){
     }
@@ -481,12 +490,19 @@
         switch (caller) {
             case "loginHandler" : {
                 loginResponse(res);
-            }
-                break;
+            }break;
+            case "getProfile" : {
+                placeProfileInfo(res);
+            }break;
+            case "updateProfileInfo" : {
+                updateProfileResponse(res);
+            }break;
+            case "loadProfile" : {
+                loadProfileResponse(res);
+            }break;
             case "getMe" : {
                 getMeResponse(res);
-            }
-                break;
+            }break;
         }
     }
     function urlParser(writeState){ // --> Page Name --> Username / post Orders / category / #hashtags
@@ -590,9 +606,6 @@
                     }
                 }
                 // --> Function Calls
-
-
-
 
             }
                 break;
@@ -736,6 +749,32 @@
         }
     }
 
+    function placeProfileInfo(res){
+
+    }
+    function updateProfileResponse(res) {
+
+    }
+    function loadProfileResponse(res){
+        if(res.message) {
+            alert(res.message);
+        }
+        else if(res){
+            var list = $(".profileTop .userInfo").children();
+            list[0].innerHTML = (res.fullName);
+            list[1].innerHTML = (res.followingsCount) + " Followings";
+            list[2].innerHTML = (res.followersCount) + " Followers";
+            list[3].innerHTML = (res.city) || "";
+            list[4].innerHTML = (res.roles.toString()) || "";
+            list[5].innerHTML = (res.username);
+            $(".profileTop .loader").addClass("hide");
+        }
+        else{
+            alert("Not Handled Situation");
+        }
+    }
+
+
     function alert(message){
         $("#alertTop h3").html(message);
         $("#alertTop").addClass("show");
@@ -744,6 +783,7 @@
             // Something you want delayed.
         }, 3000); // 5seconds show
     }
+
 </script>
 
 

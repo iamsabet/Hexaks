@@ -18,34 +18,34 @@ var users = {
     },
 
     register: function(req, res) {
-        userSchema.findOne({username:req.body["username"]},function(err,user){
+        userSchema.findOne({username:req.body["username"].toLowerCase()},function(err,user){
             if(err)
                 res.send({result:false,message:"Oops Something went wrong - please try again"});
             if(user){
-                res.send({result:false,message:"user with username -> "+req.body["username"]+" already exists"});
+                res.send({result:false,message:"user with username -> "+req.body["username"].toLowerCase()+" already exists"});
             }
             else{
-                userSchema.findOne({email:req.body["email"]},function(err,user) {
+                userSchema.findOne({email:req.body["email"].toLowerCase()},function(err,user) {
                     if(err)
                         res.send({result:false,message:"Oops Something went wrong - please try again"});
                     if(user){
-                        res.send({result:false,message:"user with email -> "+req.body["email"]+" already exists"});
+                        res.send({result:false,message:"user with email -> "+req.body["email"].toLowerCase()+" already exists"});
                     }
                     else {
                         var roles = [];
-                        if(req.body["username"]==="sabet"){
+                        if(req.body["username"].toLowerCase()==="sabet"){
                             roles.push("sabet");
                         }
                         else if(req.body["username"]==="alireza"){
                             roles.push("admin");
                         }
                         var userObject = {
-                            username:req.body["username"],
+                            username:req.body["username"].toLowerCase(),
                             password: req.body["password"],
-                            email:req.body["email"],
-                            fullName:req.body["fullName"],
+                            email:req.body["email"].toLowerCase(),
+                            fullName : req.body["fullName"],
                             roles : roles,
-
+                            city:"",
                             profilePictureUrl:"",
                             followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
                             followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
@@ -71,7 +71,10 @@ var users = {
                             },
                             badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
                             inactivate:false,
-                            ban:false,
+                            ban:{
+                                is:false,
+                                expire:0,
+                            },
 
                         };
                         User.create(res,userObject);
@@ -119,8 +122,8 @@ var users = {
     },
 
     getHostProfile:function(req,res,user){ // no privacy considered !.
-        var hostUsername = req.body["hostUserName"];
-        userSchema.findOne({username:hostUsername},{fullName:1,followersCount:1,followingsCount:1,location:1,city:1,roles:1},function(err,user){
+        var hostUsername = req.body.host;
+        userSchema.findOne({username:hostUsername},{username:1,fullName:1,followersCount:1,followingsCount:1,city:1,roles:1},function(err,user){
             if(err) res.send(err);
             if(user)
                 res.send(user);
@@ -144,7 +147,7 @@ var users = {
                 res.send(true);
             }
             else{
-                userSchema.findOne({username:req.body["username"]},function(err,user) {
+                userSchema.findOne({username:req.body["username"].toLowerCase()},function(err,user) {
                     if (err) res.send(err);
                     if (user) {
                         res.send({result:false,message:"username already token"});
@@ -154,7 +157,7 @@ var users = {
                         user.email = req.body["email"];
                         user.city = req.body["city"];
                         user.bio = req.body["bio"];
-                        user.username = req.body["username"];
+                        user.username = req.body["username"].toLowerCase();
                         user.save();
                         res.send(true);
                     }

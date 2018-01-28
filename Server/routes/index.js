@@ -27,7 +27,7 @@ router.get('/login', function(req,res){
     validateRequest(req,res,function (callback) {
 
     if(callback){
-        res.redirect("/");
+        res.render("main.html");
     }
     else {
         res.render("login.html");
@@ -38,13 +38,14 @@ router.get('/login', function(req,res){
 router.get('/register', function(req,res){
     validateRequest(req,res,function (callback) {
         if (callback) {
-            res.redirect("/");
+            res.render("main.html");
         }
         else {
             res.render("register.html");
         }
     });
 });
+
 router.get('/about', function(req,res){
     validateRequest(req,res,function (callback) {
         if (callback) {
@@ -107,7 +108,7 @@ router.get('/api/v1/users/getMe',function(req,res){
 
 router.post('/api/v1/users/getHostProfile',function(req,res){
 
-    users.getHostProfile(req,res,callback)
+    users.getHostProfile(req,res);
 
 });
 
@@ -116,7 +117,7 @@ router.get('/api/v1/users/getProfileInfo',function(req,res){
 
     validateRequest(req,res,function(callback){
         if(callback) {
-            users.getProfileInfo(req, res, callback)
+            users.getProfileInfo(req, res, callback);
         }
         else{
             res.send(null);

@@ -7,6 +7,7 @@ var userSchema = new Schema({
     userId:String,
     username : String,
     email:String,
+    fullName:String,
     profilePictureUrl:String,
     password : String,
     followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}

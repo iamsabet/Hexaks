@@ -54,8 +54,9 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 @media (max-width:686px){
 	.topNav {
-		top: 40px;
-		width:95%;
+		bottom: 40px;
+		top: auto;
+		width:100%;
 		left:0;
 	}
 }
@@ -118,8 +119,19 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	opacity: 1;
 }
 @media (max-width:686px) {
+	timeNav{
+		bottom:50px;
+		top:auto;
+		-webkit-transition: top,z-index,opacity 0.5s;
+		-moz-transition: top,z-index,opacity 0.5s;
+		-ms-transition: top,z-index,opacity 0.5s;
+		-o-transition: top,z-index,opacity 0.5s;
+		transition: top,z-index,opacity 0.5s;
+	}
+
 	.timeNav.show {
-		top: 95px;
+		bottom: 0;
+		top:auto;
 	}
 }
 .timeNav select{
@@ -478,7 +490,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 /*   */
 #alertTop{
 	position: fixed;
-	top:-50px;
+	top:-100px;
 	height: 50px;
 	left: 0;
 	width:100%;
@@ -525,16 +537,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-o-transition: right 0.5s;
 	transition: right 0.5s;
 }
-@media (max-width:686px){
-	.accountCard {
-		width: 100%;
-		top:auto;
-		bottom:0;
-		height: 50px;
-		left:0;
-		text-align: center;
-	}
-}
+
 .accountCard a{
 	position: relative;
 	width: auto;
@@ -556,6 +559,24 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .accountCard a:hover{
 	color: gold;
 }
+
+@media (max-width:686px){
+	.accountCard {
+		max-width: none;
+		top: 0;
+		height: 50px;
+		left: 0;
+		right:0 !important;
+		position: fixed;
+		text-align: left;
+	}
+	.accountCard a{
+		float: left;
+		clear: none;
+	}
+}
+
+
 .accountCard #newPostBtn{
 	width:40px;
 	height: 40px;
@@ -751,13 +772,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	left:100px;
 	top:100px;
 	display: block;
-	-webkit-transition: height 0.5s;
-	-moz-transition: height 0.5s;
-	-ms-transition: height 0.5s;
-	-o-transition: height 0.5s;
-	transition: height 0.5s;
+	-webkit-transition: height 0.6s;
+	-moz-transition: height 0.6s;
+	-ms-transition: height 0.6s;
+	-o-transition: height 0.6s;
+	transition: height 0.6s;
+	z-index: 150;
 }
-.profileTop.show .loader{
+.profileTop .loader.hide{
 	height: 0;
 }
 .profileTop .profileTopContainer{
@@ -1141,7 +1163,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .settingsContainer{
 	position: relative;
 	width:100%;
-	left:-100%;
+	left:-105%;
 	height: auto;
 	top:50px;
 	padding:5px;
@@ -1192,7 +1214,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height:92vh;
 }
 #settings,#contact,#policy{
-	left: -100%;
+	left: -105%;
 	-webkit-transition: left 0.5s;
 	-moz-transition: left 0.5s;
 	-ms-transition: left 0.5s;
