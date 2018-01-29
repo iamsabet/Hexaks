@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 var userSchema = require('../models/user.model');
 var User = new userSchema();
+var followSchema = require('../models/follow.model');
+var Follow = new followSchema();
 var Jimp = require("jimp");
 
 /* GET home page. */
 var users = {
 
     getAll: function(req, res,data) {
-
 
         res.send(data);
     },
@@ -77,7 +78,7 @@ var users = {
                             },
 
                         };
-                        User.create(res,userObject);
+                        User.create(req,res,userObject);
                     }
                 });
             }
@@ -97,28 +98,55 @@ var users = {
     },
 
     follow:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
+
+        var followObject = {
+            follower: user.username,
+            following: req.body.following,
+        };
+
+        userSchema.update({username:followObject.follower},{$inc: { followingsCount: 1 },$addToSet:{followings:followObject.following}},function(err,rest){
+            if(err) throw err;
+            console.log(rest);
+        });
+        userSchema.update({username:followObject.following},{$inc: { followersCount: 1 } , $addToSet:{followers:followObject.follower}},function(err,rest){
+            if (err) throw err;
+            console.log(rest);
+        });
+        Follow.Create(req, res, followObject);
+
     },
     unfollow:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
+        var index = user.followings.indexOf(req.body.following);
+        if(index > -1) {
+            var unfollowObject = {
+                follower: user.username,
+                following: req.body.following,
+            };
+            userSchema.update({username:unfollowObject.follower},{$inc: { followingsCount: -1},$pull:{followings:unfollowObject.following}},function(err,rest){
+                if(err) throw err;
+                console.log(rest);
+            });
+            userSchema.update({username:unfollowObject.following},{$inc: { followersCount: -1 },$pull:{followers:unfollowObject.follower}},function(err,rest){
+                if (err) throw err;
+                console.log(rest);
+            });
+            Follow.Remove(req, res, unfollowObject);
+        }
+        else{
+            res.send(false);
+        }
     },
     getFollowers:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
+
     },
     getFollowings:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
+
     },
     block:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
+
     },
     unblock:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
+
     },
 
     getHostProfile:function(req,res,user){ // no privacy considered !.
@@ -127,16 +155,23 @@ var users = {
             if(err) res.send(err);
             if(userx) {
                 var response = {user:userx , following:false,followed:false};
-                if(user.username === hostUsername){
+                if(user===null){
                     res.send({user:userx,following:null,followed:null});
                 }
-                if (user.followers.indexOf(hostUsername) > -1) {
-                    response.followed = true;
+                else {
+                    if (user.username === hostUsername) {
+                        res.send({user: userx, following: null, followed: null});
+                    }
+                    else {
+                        if (user.followers.indexOf(hostUsername) > -1) {
+                            response.followed = true;
+                        }
+                        if (user.followings.indexOf(hostUsername) > -1) {
+                            response.following = true;
+                        }
+                        res.send(response);
+                    }
                 }
-                if(user.followings.indexOf(hostUsername) > -1){
-                    response.following = true;
-                }
-                res.send(response);
             }
             else
                 res.send({result:false,message:"User with username "+ hostUsername + " Not Found"});
@@ -177,7 +212,7 @@ var users = {
 
         }
         else{
-            res.send({result:false,false:"sorry you cant change your info till your ban expires : "+(user.ban.expire - Date.now().getTime()) });
+            res.send({result:false,false:"sorry you cant change your info till your ban expires : "+(user.ban.expire - Date.now()) });
         }
     },
 

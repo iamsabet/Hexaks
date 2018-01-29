@@ -46,7 +46,7 @@ var userSchema = new Schema({
 });
 
 
-userSchema.methods.create = function (res,userObject) {
+userSchema.methods.create = function (req,res,userObject) {
 
     var newUser = new User(userObject);
     newUser.createdAt = Date.now();

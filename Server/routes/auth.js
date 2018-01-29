@@ -68,9 +68,11 @@ var auth = {
 
     validateUser: function(key,callback) {
         // spoofing the DB response for simplicity
-        userSchema.findOne({userId:key},{username:1,email:1,followingsCount:1,followersCount:1,password:0},function(err,user){
-            if(err) throw err;
-            if(user) {
+        userSchema.findOne({userId: key}, {
+            password: 0,
+        }, function (err, user) {
+            if (err) throw err;
+            if (user) {
                 return callback(user);
             }
             else {
@@ -79,7 +81,6 @@ var auth = {
         });
     }
 };
-
 // private method
 function genToken(user) {
     var expires = expiresIn(1); // 1 days

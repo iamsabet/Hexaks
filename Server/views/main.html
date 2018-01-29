@@ -426,6 +426,13 @@
     $("body").on("click","#logo",function(){
         slideNav(this);
     });
+
+    $("body").on("click","#follow",function(){
+        follow($(".userInfo .username").html());
+    });
+    $("body").on("click","#unfollow",function(){
+        unfollow($(".userInfo .username").html());
+    });
     $("body").on("click","#loginBtn",function(e){
         if (window.innerWidth > 768) {
             e.preventDefault();
@@ -476,19 +483,18 @@
     }
     function loadProfileInfo(hostUserName){
         requsetHandler("/api/v1/users/getHostProfile","POST",{host:hostUserName},"loadProfile");
-        if(!Me.username === hostUserName) {
-            requsetHandler("/api/v1/users/isFollowingOrFollower", "POST", {host: hostUserName}, "isFollowingOrFollowed");
-        }
-        else{
-            $("#follow").remove();
-            $("#unfollow").remove();
-        }
     }
     function getProfileInfo(){
         requsetHandler("/api/v1/users/getProfileInfo","GET",{},"getProfileInfo");
     }
     function updateProfileInfo(input){
         requsetHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
+    }
+    function follow(hostUsername){
+        requsetHandler("/api/v1/users/follow","POST",{following:hostUsername},"follow");
+    }
+    function unfollow(hostUsername){
+        requsetHandler("/api/v1/users/unfollow","POST",{following:hostUsername},"unfollow");
     }
     function getPostsByFilter(){
         alert("get posts action");
@@ -776,23 +782,23 @@
         }
         else if (res.user) {
             var list = $(".profileTop .userInfo").children();
-            list[0].innerHTML = (res.fullName);
-            list[1].innerHTML = (res.followingsCount) + " Followings";
-            list[2].innerHTML = (res.followersCount) + " Followers";
-            list[3].innerHTML = (res.city) || "";
-            list[4].innerHTML = (res.roles.toString()) || "";
-            list[5].innerHTML = (res.username);
+            list[0].innerHTML = (res.user.fullName);
+            list[1].innerHTML = (res.user.followingsCount) + " Followings";
+            list[2].innerHTML = (res.user.followersCount) + " Followers";
+            list[3].innerHTML = (res.user.city) || "";
+            list[4].innerHTML = (res.user.roles.toString()) || "";
+            list[5].innerHTML = (res.user.username);
             $(".profileTop .loader").addClass("hide");
 
             if (res.followed !== null && res.following !== null) {
-                if (res.following === true && res.follower === false) { // following but not followed
-                    $("#unfollow").addClass("show");
-                }
-                else if (res.following === false && res.follower === true) { // followed but not following
+                if (res.followed === true && res.following === false) { // following but not followed --> Follow Back
                     $("#follow").addClass("show");
                     $("#follow").html("Follow Back");
                 }
-                else if (res.following === true && res.follower === true) { // both following and followed
+                else if (res.followed === false && res.following === true) { // followed but not following
+                    $("#unfollow").addClass("show");
+                }
+                else if (res.followed === true && res.following === true) { // both following and followed
                     $("#unfollow").addClass("show");
                 }
                 else { // none

@@ -905,19 +905,20 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	bottom:20px;
 	width:100px;
 	height: 0;
+	opacity: 0;
 	background-color:#ff0055;
 	color:white;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	outline: 0;
-	font-size:18px;
+	font-size:17px;
 	font-weight: normal;
-	-webkit-transition: background-color,height,right,color,font-weight,border 0.5s;
-	-moz-transition: background-color,height,right,color,font-weight,border 0.5s;
-	-ms-transition: background-color,height,right,color,font-weight,border 0.5s;
-	-o-transition: background-color,height,right,color,font-weight,border 0.5s;
-	transition: background-color,height,right,color,font-weight,border 0.5s;
+	-webkit-transition: background-color,opacity,height,right,color,font-weight,border 0.4s;
+	-moz-transition: background-color,opacity,height,right,color,font-weight,border 0.4s;
+	-ms-transition: background-color,opacity,height,right,color,font-weight,border 0.4s;
+	-o-transition: background-color,height,opacity,right,color,font-weight,border 0.4s;
+	transition: background-color,height,right,color,opacity,font-weight,border 0.4s;
 	display: block;
 }
 .profileTop > button:hover{
@@ -928,11 +929,15 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .profileTop  .profileTopContainer #follow.show{
 	height: 40px;
+	display: block;
+	opacity: 1;
 }
 .profileTop  .profileTopContainer #unfollow.show{
-	background: #777;
+	background-color: #777 !important;
 	color:black;
 	height: 40px;
+	display: block;
+	opacity: 1;
 }
 .profileTop .badges{
 	left:60%;
@@ -1018,7 +1023,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		z-index: 20;
 		bottom:-50px;
 		width:100px;
-		height: 40px;
+		height: 0;
 		background-color:#ff0055;
 		color:white;
 		-webkit-border-radius: 3px;
