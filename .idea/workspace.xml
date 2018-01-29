@@ -57,8 +57,8 @@
       <file leaf-file-name="follow.model.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Server/models/follow.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="29" column="8" lean-forward="false" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="8" />
+            <state relative-caret-position="483">
+              <caret line="36" column="22" lean-forward="true" selection-start-line="36" selection-start-column="22" selection-end-line="36" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -116,7 +116,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.timeNav</find>
       <find>closeTimeNav</find>
       <find>.topNav ul l</find>
       <find>.topNav ul li</find>
@@ -146,6 +145,7 @@
       <find>date.now</find>
       <find>now</find>
       <find>getHostProfile</find>
+      <find>isFollow</find>
     </findStrings>
     <replaceStrings>
       <replace>postSchema</replace>
@@ -499,12 +499,12 @@
       <workItem from="1517058183019" duration="191000" />
       <workItem from="1517059596561" duration="133000" />
       <workItem from="1517060223091" duration="11812000" />
-      <workItem from="1517132892289" duration="33893000" />
+      <workItem from="1517132892289" duration="34717000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="106869000" />
+    <option name="totallyTimeSpent" value="107693000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -790,8 +790,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/models/follow.model.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="29" column="8" lean-forward="false" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="8" />
+        <state relative-caret-position="483">
+          <caret line="36" column="22" lean-forward="true" selection-start-line="36" selection-start-column="22" selection-end-line="36" selection-end-column="22" />
           <folding />
         </state>
       </provider>

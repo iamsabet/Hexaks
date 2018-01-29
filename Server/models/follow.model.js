@@ -27,7 +27,7 @@ followSchema.methods.Create = function(req,res,followObject){
             });
         }
         res.send(true);
-        
+
     });
 };
 
