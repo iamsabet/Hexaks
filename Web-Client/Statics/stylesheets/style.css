@@ -1039,6 +1039,12 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		transition: background-color,right,color,font-weight,border 0.5s;
 		display: block;
 	}
+	.profileTop > button:hover{
+		cursor: pointer;
+		background-color: #333;
+		color:#ff0055;
+		border:1px solid black;
+	}
 }
 
 

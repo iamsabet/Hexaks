@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Server/models/follow.model.js" afterPath="$PROJECT_DIR$/Server/models/follow.model.js" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,11 +24,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
+      <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-5214">
-              <caret line="914" column="19" lean-forward="true" selection-start-line="914" selection-start-column="19" selection-end-line="914" selection-end-column="19" />
+            <state relative-caret-position="-3385">
+              <caret line="1046" column="5" lean-forward="false" selection-start-line="1046" selection-start-column="5" selection-end-line="1046" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -54,11 +54,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="follow.model.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="follow.model.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/models/follow.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
-              <caret line="51" column="3" lean-forward="false" selection-start-line="51" selection-start-column="3" selection-end-line="51" selection-end-column="3" />
+            <state relative-caret-position="350">
+              <caret line="37" column="27" lean-forward="true" selection-start-line="37" selection-start-column="27" selection-end-line="37" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -207,12 +207,12 @@
         <option value="$PROJECT_DIR$/Server/views/login.html" />
         <option value="$PROJECT_DIR$/Server/middleWares/validateRequest.js" />
         <option value="$PROJECT_DIR$/Server/routes/index.js" />
-        <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
         <option value="$PROJECT_DIR$/Server/models/user.model.js" />
         <option value="$PROJECT_DIR$/Server/routes/auth.js" />
         <option value="$PROJECT_DIR$/Server/views/main.html" />
         <option value="$PROJECT_DIR$/Server/routes/users.js" />
         <option value="$PROJECT_DIR$/Server/models/follow.model.js" />
+        <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
       </list>
     </option>
   </component>
@@ -499,12 +499,12 @@
       <workItem from="1517058183019" duration="191000" />
       <workItem from="1517059596561" duration="133000" />
       <workItem from="1517060223091" duration="11812000" />
-      <workItem from="1517132892289" duration="34810000" />
+      <workItem from="1517132892289" duration="34939000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="107786000" />
+    <option name="totallyTimeSpent" value="107915000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -748,14 +748,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5214">
-          <caret line="914" column="19" lean-forward="true" selection-start-line="914" selection-start-column="19" selection-end-line="914" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/views/main.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="318">
@@ -790,8 +782,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/models/follow.model.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="51" column="3" lean-forward="false" selection-start-line="51" selection-start-column="3" selection-end-line="51" selection-end-column="3" />
+        <state relative-caret-position="350">
+          <caret line="37" column="27" lean-forward="true" selection-start-line="37" selection-start-column="27" selection-end-line="37" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3385">
+          <caret line="1046" column="5" lean-forward="false" selection-start-line="1046" selection-start-column="5" selection-end-line="1046" selection-end-column="5" />
           <folding />
         </state>
       </provider>
