@@ -50,7 +50,6 @@ followSchema.pre('save', function(next){
     }
     next();
 });
-
 var Follow = mongoose.model('follows', followSchema);
 var follow = mongoose.model('follows');
 followSchema.plugin(mongoosePaginate);
