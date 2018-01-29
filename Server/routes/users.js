@@ -123,10 +123,21 @@ var users = {
 
     getHostProfile:function(req,res,user){ // no privacy considered !.
         var hostUsername = req.body.host;
-        userSchema.findOne({username:hostUsername},{username:1,fullName:1,followersCount:1,followingsCount:1,city:1,roles:1},function(err,user){
+        userSchema.findOne({username:hostUsername},{username:1,fullName:1,followersCount:1,followingsCount:1,city:1,roles:1},function(err,userx){
             if(err) res.send(err);
-            if(user)
-                res.send(user);
+            if(userx) {
+                var response = {user:userx , following:false,followed:false};
+                if(user.username === hostUsername){
+                    res.send({user:userx,following:null,followed:null});
+                }
+                if (user.followers.indexOf(hostUsername) > -1) {
+                    response.followed = true;
+                }
+                if(user.followings.indexOf(hostUsername) > -1){
+                    response.following = true;
+                }
+                res.send(response);
+            }
             else
                 res.send({result:false,message:"User with username "+ hostUsername + " Not Found"});
         });
@@ -169,14 +180,7 @@ var users = {
             res.send({result:false,false:"sorry you cant change your info till your ban expires : "+(user.ban.expire - Date.now().getTime()) });
         }
     },
-    getSettingsDatas:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
-    },
-    changeSettings:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
-    },
+
     update: function(req, res,next,data) {
         var updateuser = req.body;
         var id = req.params.id;

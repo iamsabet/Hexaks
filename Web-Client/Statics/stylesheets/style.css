@@ -904,7 +904,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	z-index: 20;
 	bottom:20px;
 	width:100px;
-	height: 40px;
+	height: 0;
 	background-color:#ff0055;
 	color:white;
 	-webkit-border-radius: 3px;
@@ -913,11 +913,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	outline: 0;
 	font-size:18px;
 	font-weight: normal;
-	-webkit-transition: background-color,right,color,font-weight,border 0.5s;
-	-moz-transition: background-color,right,color,font-weight,border 0.5s;
-	-ms-transition: background-color,right,color,font-weight,border 0.5s;
-	-o-transition: background-color,right,color,font-weight,border 0.5s;
-	transition: background-color,right,color,font-weight,border 0.5s;
+	-webkit-transition: background-color,height,right,color,font-weight,border 0.5s;
+	-moz-transition: background-color,height,right,color,font-weight,border 0.5s;
+	-ms-transition: background-color,height,right,color,font-weight,border 0.5s;
+	-o-transition: background-color,height,right,color,font-weight,border 0.5s;
+	transition: background-color,height,right,color,font-weight,border 0.5s;
 	display: block;
 }
 .profileTop > button:hover{
@@ -926,7 +926,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	color:#ff0055;
 	border:1px solid black;
 }
-
+.profileTop  .profileTopContainer #follow.show{
+	height: 40px;
+}
+.profileTop  .profileTopContainer #unfollow.show{
+	background: #777;
+	color:black;
+	height: 40px;
+}
 .profileTop .badges{
 	left:60%;
 	top:60px;
@@ -1292,3 +1299,4 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 #slideView.show{
 
 }
+

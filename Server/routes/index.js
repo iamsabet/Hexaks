@@ -125,6 +125,7 @@ router.get('/api/v1/users/getProfileInfo',function(req,res){
     });
 });
 
+
 router.post('/api/v1/users/updateProfileInfo',function(req,res){
 
     validateRequest(req,res,function(callback){

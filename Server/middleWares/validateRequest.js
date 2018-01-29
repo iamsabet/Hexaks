@@ -6,7 +6,6 @@ module.exports = function(req, res,fn) {
     // When performing a cross domain request, you will recieve
     // a preflighted request first. This is to check if our the app
     // is safe.
-
     // We skip the token outh for [OPTIONS] requests.
     if(req.method === 'OPTIONS') next();
     var cookiesList = parseCookies(req);
@@ -26,14 +25,11 @@ module.exports = function(req, res,fn) {
                 });
                 return;
             }
-
             // Authorize the user to see if s/he can access our resources
-
             validateUser(key,function(callback){
                 var userObject = callback;
             // The key would be the logged in user's username
                 if (userObject) {
-
                     var rolesList = userObject.roles;
                     console.log(req.url);
                     if ((((req.url.indexOf('admin') >= 0) || (req.url.indexOf('curator') >= 0) || (req.url.indexOf('blogger') >= 0) || (req.url.indexOf('premium') >= 0))

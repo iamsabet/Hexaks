@@ -476,6 +476,13 @@
     }
     function loadProfileInfo(hostUserName){
         requsetHandler("/api/v1/users/getHostProfile","POST",{host:hostUserName},"loadProfile");
+        if(!Me.username === hostUserName) {
+            requsetHandler("/api/v1/users/isFollowingOrFollower", "POST", {host: hostUserName}, "isFollowingOrFollowed");
+        }
+        else{
+            $("#follow").remove();
+            $("#unfollow").remove();
+        }
     }
     function getProfileInfo(){
         requsetHandler("/api/v1/users/getProfileInfo","GET",{},"getProfileInfo");
@@ -483,7 +490,8 @@
     function updateProfileInfo(input){
         requsetHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
     }
-    function getPosts(){
+    function getPostsByFilter(){
+        alert("get posts action");
     }
     // Actions.js
     function responseActionHandler(caller, res) {
@@ -499,6 +507,12 @@
             }break;
             case "loadProfile" : {
                 loadProfileResponse(res);
+            }break;
+            case "follow" : {
+                followAction(res);
+            }break;
+            case "unfollow" : {
+                unfollowAction(res);
             }break;
             case "getMe" : {
                 getMeResponse(res);
@@ -710,6 +724,7 @@
         }
     }
     function getMeResponse(res){
+        Me = res;
         if(res !== null) {
             $(".accountCard").html(`
     	<a href="" id="profileBtn">${res.username}</a>
@@ -755,11 +770,11 @@
     function updateProfileResponse(res) {
 
     }
-    function loadProfileResponse(res){
-        if(res.message) {
+    function loadProfileResponse(res) {
+        if (res.message) {
             alert(res.message);
         }
-        else if(res){
+        else if (res.user) {
             var list = $(".profileTop .userInfo").children();
             list[0].innerHTML = (res.fullName);
             list[1].innerHTML = (res.followingsCount) + " Followings";
@@ -768,12 +783,50 @@
             list[4].innerHTML = (res.roles.toString()) || "";
             list[5].innerHTML = (res.username);
             $(".profileTop .loader").addClass("hide");
+
+            if (res.followed !== null && res.following !== null) {
+                if (res.following === true && res.follower === false) { // following but not followed
+                    $("#unfollow").addClass("show");
+                }
+                else if (res.following === false && res.follower === true) { // followed but not following
+                    $("#follow").addClass("show");
+                    $("#follow").html("Follow Back");
+                }
+                else if (res.following === true && res.follower === true) { // both following and followed
+                    $("#unfollow").addClass("show");
+                }
+                else { // none
+                    $("#follow").addClass("show");
+                }
+            }
+            else {
+                $("#unfollow").remove();
+                $("#follow").remove();
+            }
         }
-        else{
-            alert("Not Handled Situation");
+        else {
+            alert("User not found !");
         }
     }
 
+    function followAction(res){
+        if(res===true){
+            $("#follow").removeClass("show");
+            $("#unfollow").addClass("show");
+        }
+        else{
+            alert("Oops Something Went Wrong");
+        }
+    }
+    function unfollowAction(res){
+        if(res===true){
+            $("#unfollow").removeClass("show");
+            $("#follow").addClass("show");
+        }
+        else{
+            alert("Oops Something Went Wrong");
+        }
+    }
 
     function alert(message){
         $("#alertTop h3").html(message);
@@ -783,6 +836,8 @@
             // Something you want delayed.
         }, 3000); // 5seconds show
     }
+
+
 
 </script>
 
