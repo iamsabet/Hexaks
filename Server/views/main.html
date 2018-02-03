@@ -11,6 +11,17 @@
 </head>
 
 <body>
+
+<div class="ratePad">
+    <div><div class="triangle">6</div></div>
+    <div><div class="triangle">1</div></div>
+    <div><div class="triangle">2</div></div>
+    <div><div class="triangle">3</div></div>
+    <div><div class="triangle">4</div></div>
+    <div><div class="triangle">5</div></div>
+</div>
+
+
 <div id="homeContainer" class="containerDiv">
     <div id="alertTop">
         <h3></h3>
@@ -773,9 +784,11 @@
     function placeProfileInfo(res){
 
     }
+
     function updateProfileResponse(res) {
 
     }
+
     function loadProfileResponse(res) {
         if (res.message) {
             alert(res.message);
