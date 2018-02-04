@@ -11,8 +11,8 @@ var io = require("socket.io");
 var requestIp = require("request-ip");
 var routes = require('./routes/index');
 var db = mongoose.connection;
-var session = require('express-session');
-var validateRequest = require('./middleWares/validateRequest');
+var redis = require('redis');
+var client = redis.createClient(6379, 'localhost', {no_ready_check: true});
 
 
 mongoose.connect('mongodb://localhost:27017/hexaks_db', {autoIndex :true,useMongoClient : true});
@@ -21,7 +21,13 @@ db.openUri("mongodb://localhost:27017/hexaks_db",function() {
     console.log("Server Listening : "+port);
     console.log("connected to hexaks_db");
 });
+client.auth('c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna', function (err) {
+    if (err) throw err;
+});
 
+client.on('connect', function() {
+    console.log('Connected to Redis');
+});
 // routes ======================================================================
 
 // view engine setup

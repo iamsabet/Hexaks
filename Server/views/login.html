@@ -38,9 +38,9 @@
             username : $("#username").val(),
             password: $("#password").val()
         };
-        requsetHandler("/login", "POST", input, "loginHandler");
+        requestHandler("/login", "POST", input, "loginHandler");
     });
-    function requsetHandler(url, method, input, caller) {
+    function requestHandler(url, method, input, caller) {
         $.ajax({
             url: url || "/",
             method: method || "GET",

@@ -1,18 +1,19 @@
-const express = require('express');
-const router = express.Router();
 var userSchema = require('../models/user.model');
 var User = new userSchema();
 var followSchema = require('../models/follow.model');
 var Follow = new followSchema();
-var Jimp = require("jimp");
+var redis = require('redis');
+var redisClient = redis.createClient({
+    password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
+
+});    // Create the client
+redisClient.select(2,function(){
+    console.log("Connected to redis Database");
+});
+
 
 /* GET home page. */
 var users = {
-
-    getAll: function(req, res,data) {
-
-        res.send(data);
-    },
 
     getMe: function(req, res,data) {
         res.json(data);
@@ -59,18 +60,21 @@ var users = {
                                 email:"",
                                 sms:""
                             },
-                            boughtImages:[],// {post Id}
+                            boughtImages:[],// {post Id,receipt Id}
                             isUploadingPost:false,
                             uploadingPost:"",  // post id --> initial --> "initial"
+                            uploadingFormat : "",
                             isUploadingAlbum:false,
                             followersCount:0,
                             followingsCount:0,
                             uploadingAlbum:[],// max size == 10 --> post id --> initial ["initial"]
+                            viedPosts:[],
                             details:{
                                 phoneNumber : "",
                                 bio: ""
                             },
                             badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
+                            isPrivate:false,
                             inactivate:false,
                             ban:{
                                 is:false,
@@ -79,6 +83,9 @@ var users = {
 
                         };
                         User.create(req,res,userObject);
+                        if(userObject.isPrivate) {
+                            redisClient.hmset("user::" + userObject.username, "privacy", userObject.isPrivate);
+                        }
                     }
                 });
             }
@@ -112,6 +119,7 @@ var users = {
             if (err) throw err;
             console.log(rest);
         });
+        redis.HGetAll("user::"+followObject.following,);
         Follow.Create(req, res, followObject);
 
     },
@@ -223,10 +231,9 @@ var users = {
         res.json(updateuser);
     },
 
-    delete: function(req, res,next,data) {
-        var id = req.params.id;
-        data.splice(id, 1); // Spoof a DB call
-        res.json(true);
+    delete: function(req, res,next) {
+
+        res.send(false);
     }
 };
 

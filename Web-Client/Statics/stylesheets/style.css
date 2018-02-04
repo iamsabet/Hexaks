@@ -203,7 +203,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position: fixed;
 	width: 140px;
 	top:0;
-	z-index: 1000;
+	z-index: 999999;
 	display: block;
 	height: 100vh;
 	background-color: black;
@@ -522,7 +522,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .accountCard{
 	position: fixed;
 	top:0px;
-	z-index: 10002;
+	z-index: 10000000;
 	height: 50px;
 	right: 100px;
 	width: auto;
@@ -660,7 +660,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width:100vw;
 	height:100vh;
 	z-index: 999998;
-	background-color: #ddd998;
+	background-color: rgba(231, 237, 203,0.93);
 	display: none;
 }
 .newPostContainer .newPostForm{
@@ -1150,9 +1150,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-o-transition: height 0.7s;
 	transition: height 0.7s;
 }
+
 .homeSliders .bigSlider{
 	position: relative;
-	top:0px;
+	top:0;
 	margin:0 auto;
 	padding:0;
 	display: inline-block;
@@ -1164,9 +1165,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	float: left;
 	clear: both;
 }
+
 .homeSliders .smallSlider{
 	position: relative;
-	top:0px;
+	top:0;
 	margin:0 auto;
 	padding:0;
 	display: inline-block;
@@ -1243,10 +1245,17 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	left:0;
 }
 #newPost{
-	bottom:-50% !important;
+	top:-100%;
+	left:0;
+	display: block;
+	-webkit-transition: all 0.4s;
+	-moz-transition: all 0.4s;
+	-ms-transition: all 0.4s;
+	-o-transition: all 0.4s;
+	transition: all 0.4s;
 }
 #newPost.show{
-	transform: translate(0,+50%) !important;
+	top:0;
 }
 
 #profileTop{
@@ -1300,8 +1309,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 
 }
-#profileTopSmall.show{
-
+#profileTopSmall.show {
 }
 
 #slideView{
@@ -1310,6 +1318,19 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 #slideView.show{
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .ratePad{
 	position:fixed;
@@ -1320,12 +1341,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	padding:1px;
 	left:50%;
 	top:50%;
-	-webkit-transform: translate(-50%,-50%);
-	-moz-transform: translate(-50%,-50%);
-	-ms-transform: translate(-50%,-50%);
-	-o-transform: translate(-50%,-50%);
-	transform: translate(-50%,-50%);
+	-webkit-transform: translate(-50%,-50%) rotate(90deg);
+	-moz-transform: translate(-50%,-50%) rotate(90deg);
+	-ms-transform: translate(-50%,-50%) rotate(90deg);
+	-o-transform: translate(-50%,-50%) rotate(90deg);
+	transform: translate(-50%,-50%) rotate(90deg);
 	display: block;
+
 }
 
 
@@ -1333,31 +1355,36 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position:absolute;
 	top:50%;
 	left:50%;
-	width: 222px;
-	height: 192px;
+	width: 100px;
+	height: 85px;
 	overflow:hidden;
-
 	transform-origin:0 0;
 	-ms-transform-origin:0 0;
 	-webkit-transform-origin:0 0;
-
 	-ms-transform: skewX(30deg);
 	-webkit-transform: skewX(30deg);
 	transform: skewX(30deg);
+	-webkit-transition: all 0.5s ease-in;
+	-moz-transition: all 0.5s ease-in;
+	-ms-transition: all 0.5s ease-in;
+	-o-transition: all 0.5s ease-in;
+	transition: all 0.5s ease-in;
 }
 .ratePad div .triangle {
 	position:absolute;
 	top:43px;
 	left:-49px;
-	width: 0px;
-	height: 0px;
+	width: 0;
+	height: 0;
 	border-style: solid;
 	border-width: 0 50px 86px 50px;
 	border-color: transparent transparent #999 transparent;
 	-webkit-backface-visibility: hidden;
-	transition:all 1s;
-	-webkit-transition:all 1s;
-	-moz-transition:all 1s;
+	-webkit-transition:all 0.5s ease-in-out;
+	-moz-transition:all 0.5s ease-in-out;
+	-ms-transition: all 0.5s ease-in-out;
+	-o-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
 	cursor:pointer;
 	font-weight: bold;
 	font-size:20px;
@@ -1370,42 +1397,51 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-ms-transform: skewX(-30deg) rotate(-60deg) scale(0.98);
 	-webkit-transform: skewX(-30deg) rotate(-60deg) scale(0.98);
 	transform: skewX(-30deg) rotate(-60deg) scale(0.98);
+	margin: 2px;
 }
 .ratePad div .triangle:hover {
 	border-color: transparent transparent #ff0044 transparent;
 	color:#ff0044;
-	transform:  skewX(-30deg) rotate(-60deg) translate(0, 20%);
-	-webkit-transform:  skewX(-30deg) rotate(-60deg) translate(0, 20%);
-	-moz-transform:  skewX(-30deg) rotate(-60deg) translate(0, 20%);
+	transform:  skewX(-30deg) rotate(-60deg) translate(0, 10%);
+	-webkit-transform:  skewX(-30deg) rotate(-60deg) translate(0, 10%);
+	-moz-transform:  skewX(-30deg) rotate(-60deg) translate(0, 10%);
 }
 
-.ratePad > div:nth-child(1){
+.ratePad div .triangle.selected {
+	border-color: transparent transparent #ff0044 transparent;
+	color:#ff0044;
+	transform:  skewX(-30deg) rotate(-60deg) translate(0, 10%);
+	-webkit-transform:  skewX(-30deg) rotate(-60deg) translate(0, 10%);
+	-moz-transform:  skewX(-30deg) rotate(-60deg) translate(0, 10%);
+}
+
+.ratePad.show > div:nth-child(1){
 	-ms-transform: skewX(30deg);
 	-webkit-transform: skewX(30deg);
 	transform: skewX(30deg);
 }
-.ratePad > div:nth-child(2){
+.ratePad.show > div:nth-child(2){
 	-ms-transform: rotate(60deg) skewX(30deg);
 	-webkit-transform: rotate(60deg) skewX(30deg);
 	transform: rotate(60deg) skewX(30deg);
 }
-.ratePad > div:nth-child(3){
+.ratePad.show > div:nth-child(3){
 	-ms-transform: rotate(120deg) skewX(30deg);
 	-webkit-transform: rotate(120deg) skewX(30deg);
 	transform: rotate(120deg) skewX(30deg);
 }
-.ratePad > div:nth-child(4){
-	-ms-transform: rotate(-60deg) skewX(30deg);
-	-webkit-transform: rotate(-60deg) skewX(30deg);
-	transform: rotate(-60deg) skewX(30deg);
+.ratePad.show > div:nth-child(4){
+	-ms-transform: rotate(180deg) skewX(30deg);
+	-webkit-transform: rotate(180deg) skewX(30deg);
+	transform: rotate(180deg) skewX(30deg);
 }
-.ratePad > div:nth-child(5){
-	-ms-transform: rotate(-120deg) skewX(30deg);
-	-webkit-transform: rotate(-120deg) skewX(30deg);
-	transform: rotate(-120deg) skewX(30deg);
+.ratePad.show > div:nth-child(5){
+	-ms-transform: rotate(240deg) skewX(30deg);
+	-webkit-transform: rotate(240deg) skewX(30deg);
+	transform: rotate(240deg) skewX(30deg);
 }
-.ratePad > div:nth-child(6){
-	-ms-transform: rotate(-180deg) skewX(30deg);
-	-webkit-transform: rotate(-180deg) skewX(30deg);
-	transform: rotate(-180deg) skewX(30deg);
+.ratePad.show > div:nth-child(6){
+	-ms-transform: rotate(300deg) skewX(30deg);
+	-webkit-transform: rotate(300deg) skewX(30deg);
+	transform: rotate(300deg) skewX(30deg);
 }

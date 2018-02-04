@@ -38,7 +38,6 @@ var postSchema = new mongoose.Schema({
         counts: Number
     },
     views : Schema.Types.Long ,// viewers.length length
-    viewers : [], // String User Ids
     curator : {
         username:String,
         profilePicUrl:String,

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 var postSchema = require('../models/post.model');
 var post = new postSchema();
 var albumSchema = require('../models/album.model');
@@ -12,8 +13,15 @@ var bcrypt = require("bcrypt-nodejs");
 var ExifImage = require('exif').ExifImage;
 var Float = require('mongoose-float').loadType(mongoose);
 var users = require('./users');
+var redis = require("redis");
+var redisClient = redis.createClient({
+    password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
-/* GET home page. */
+});    // Create the client
+redisClient.select(2,function(){
+    console.log("Connected to redis Database");
+});
+
 var posts = {
 
     getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,counts,pageNumber,callback) {
@@ -57,7 +65,7 @@ var posts = {
                     select: 'postId owner createdAt updatedAt curator exifData originalImage views isCurated ext advertise rate albumId',
                     sort: {date: -1},
                     populate: 'postId',
-                    lean: true, // no fucking idea what it is :/ / - laghar :/ :))
+                    lean: true, // no fucking idea what this is exactly :/ / - laghar :/ :))
                     page: pageNumber,
                     limit: counts
                 };
@@ -104,6 +112,7 @@ var posts = {
                                         profilePicUrl: user.profilePictureUrl,
                                     },
                                     ext: format,
+                                    exifData:exifData,
                                     originalImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
                                         cost: 0, // 0 if free
                                         resolution: {
@@ -142,7 +151,7 @@ var posts = {
                                     }
 
                                 });
-
+                                redisClient.zadd(["viewsZset",0,postObject.postId]);
                             }
                         });
                     } catch (error) {
@@ -192,7 +201,7 @@ var posts = {
         });
     },
 
-    imageProcessing(imageUrl){ // image processing on medium size
+    imageProcessing:function(imageUrl){ // image processing on medium size
 
         Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
 
@@ -223,20 +232,17 @@ var posts = {
     },
     increaseViews:function(req,res,user){
         if(user) {
-            res.send(true);
-            postSchema.findOne({postId: req.body["postId"]}, {albumId: 0}, function (err, resultPost) {
-                if (err) throw err;
-                if (!resultPost.viewers.includes(user.username)) {
-                    resultPost.viewers.push(user.username);
-                    resultPost.views += 1;
-                    resultPost.save();
+            if (!user.viewedPosts.includes(req.body.postId)) {
+                if(user.viewedPosts.length === 1000)
+                    user.viewedPosts
 
-                }
-                else {
-                    console.log("Already Viewed");
-                };
+                res.send(true);
+            }
+            else {
+                console.log("Already Viewed");
+                res.send(false);
 
-            });
+            }
         }
         else {
             postSchema.findOne({postId: req.body["postId"]}, {albumId: 0}, function (err, resultPost) {
@@ -278,7 +284,7 @@ var posts = {
                                     if (resultPost) {
                                         if (resultPost.rate.value >= rate) {
                                             if (resultPost.rate.value !== rate) {
-                                                resultPost.rate.value += Float((resusltPost.rate.value - rate) / (resultPost.rate.counts + 1));
+                                                resultPost.rate.value += Float((resultPost.rate.value - rate) / (resultPost.rate.counts + 1));
                                                 console.log(resultPost.rate.value);
                                             }
                                             resultPost.rate.counts += 1;
@@ -319,53 +325,38 @@ var posts = {
             res.send("invalid input");
         }
     },
-    deRate:function(req,res,user){
-        if(req.body["postId"]) {
-            var postId = req.body["postId"];
-            if (user) {
-                if (err) throw err;
-                    rateSchema.findOne({
-                        postId: postId,
-                        members:[user.username]
-                    }, function (err, resultRate) {
-                        if (err) throw err;
-                        if(resultRate) {
-                            postSchema.findOne({postId: postId}, {albumId: 0}, function (err, resultPost) {
-                                if (err) throw err;
-                                if (resultPost) {
-                                    resultPost.rate.value += Float((resusltPost.rate.value * resultRate.rate.counts) - resultRate.value / (resultRate.rate.counts + 1));
-                                    console.log(resultPost.rate.value);
-                                    resultPost.rate.counts -= 1;
-                                    resultPost.save();
+    view:function(req,res,user,postId,redisClient) {
+        if(user) {
+            if (req.body.postId) {
+                redisClient.hsetnx("viewd::" + user.username, req.body.postId, function (err, result) {
+                    if(err) throw err;
+                    if(result === 1){
+                        redisClient.hkeys("viewd::" + user.username, req.body.postId,function(err,keys){
+                            if(err) throw err;
+                            if(keys.length > 100) {
 
-                                    resultRate.members.pull(user.username);
-                                    resultRate.save();
-                                    res.send(true);
-                                }
-                                else {
-                                    res.send("post not found");
-                                }
-                            });
-                        }
-                        else{
-                            res.send("no rate found to derate");
-                        }
-                    });
-                }
+                                redisClient.hdel("viewd::" + user.username, keys[x]);
+                            }
+                        });
+                        redisClient.mset("incr")
+                    }
+                    else if(result === 0){
+                        res.send(false);
+                    }
+                    else{
+                        res.send(false);
+                    }
+                });
+            }
             else {
-                res.send("401 - not authenticated"); //
+                res.send(false);
             }
         }
-        else {
-            res.send("invalid input");
+        else{
+            redisClient.hget("anonymos::" + req.body.user.username, 1);
         }
     },
-    update: function(req, res,next,data) {
-        var updateuser = req.body;
-        var id = req.params.id;
-        data[id] = updateuser; // Spoof a DB call
-        res.json(updateuser);
-    },
+
     delete: function(req, res,next,data) {
         var id = req.params.id;
         data.splice(id, 1); // Spoof a DB call

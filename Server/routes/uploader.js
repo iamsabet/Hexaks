@@ -1,11 +1,12 @@
-var express = require('express'),
-    fs = require("fs"),
+var fs = require("fs"),
     rimraf = require("rimraf"),
     mkdirp = require("mkdirp");
 
 var postSchema = require('../models/post.model');
 var post = new postSchema();
-var albumSchema = require('../models/post.model');
+var userSchema = require('../models/user.model');
+var user = new userSchema();
+var albumSchema = require('../models/album.model');
 var album = new albumSchema();
 var posts = require('../routes/posts.js');
 var users = require('../routes/users.js');
@@ -16,7 +17,7 @@ var random = require("randomstring");
 
 
 var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
-    originalPath ='/Users/sabet/Desktop/Hexaks/Hexaks/Pictures/Originals/',
+    originalPath ='/Users/Shared/Hexaks/Server/Pictures/',
     largePath ='/Users/sabet/Desktop/Hexaks/Hexaks/Pictures/Originals/',
     smallAndMediumPath ='/Users/sabet/Desktop/Hexaks/Hexaks/Pictures/Statics/',
     chunkDirName = "chunks",
@@ -52,8 +53,20 @@ var uploader = {
                             size = "";
                             pathis = originalPath;
                         }
-                        user.uploadingPost = random.generate(20);
-                        user.save();
+                        userSchema.findOneAndUpdate({username:user.username},{
+                            $set:{
+                                uploadingPost:random.generate(32),
+                                uploadingFormat : format
+                            }
+                        });
+                        setTimeout(function(){
+                            userSchema.findOneAndUpdate({username:user.username},{
+                                $set:{
+                                    isUploadingAlbum : false,
+                                    isUploadingPost : false,
+                                }
+                            });
+                        },10000);
 
                         var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
                         uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);

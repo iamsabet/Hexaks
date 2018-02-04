@@ -44,9 +44,9 @@
             fullName : $("#fullName").val(),
             password: $("#password").val()
         };
-        requsetHandler("/register", "POST", input)
+        requestHandler("/register", "POST", input)
     });
-    function requsetHandler(url, method, input) {
+    function requestHandler(url, method, input) {
         $.ajax({
             url: url || "/",
             method: method || "GET",

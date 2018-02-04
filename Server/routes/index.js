@@ -7,16 +7,16 @@ var posts = require('./posts');
 var albums = require('./albums');
 var uploader = require('./uploader');
 var users = require('./users');
-var url = require("url");
 var validateRequest = require('../middleWares/validateRequest');
-var redisNode = require('redis-node');
-var redis = redisNode.createClient();    // Create the client
-redis.select(2);
+var redis = require('redis');
+var redisClient = redis.createClient({
+    password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
-/*
+});    // Create the client
+redisClient.select(2,function(){
+    console.log("Connected to redis Database");
+});
 
- * Routes that can be accessed by any one
- */
 
 router.get('/', function(req,res){
 

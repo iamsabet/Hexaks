@@ -9,6 +9,7 @@ var followSchema = new Schema({ // 9 Pixels
     follower : String, // username
     following : String , // username
     deactive : Boolean,
+    accepted : Boolean,
     createdAt:Date
 });
 

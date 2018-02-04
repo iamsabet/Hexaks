@@ -37,6 +37,8 @@ var userSchema = new Schema({
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
     roles : [], // String - Sabet / Admin / Curator / Blogger / Premium
     inactivate:Boolean,
+    isPrivate:Boolean,
+    viewedPosts:[], // last 1000s
     ban:{
         is:Boolean,
         expire:Number,

@@ -13,12 +13,7 @@
 <body>
 
 <div class="ratePad">
-    <div><div class="triangle">6</div></div>
-    <div><div class="triangle">1</div></div>
-    <div><div class="triangle">2</div></div>
-    <div><div class="triangle">3</div></div>
-    <div><div class="triangle">4</div></div>
-    <div><div class="triangle">5</div></div>
+
 </div>
 
 
@@ -51,6 +46,7 @@
                 <span class="hostLocation"></span>
                 <span class="roles"></span>
                 <p class="username" hidden></p>
+                <p class="private" hidden></p>
             </div>
             <button id="follow">Follow</button>
             <button id="unfollow">Unfollow</button>
@@ -123,111 +119,7 @@
     <!--<a href="/contact">Contact</a>-->
     <!--</div>-->
     <div class="postsContainer" id="postsContainer">
-        <div class="eachPost">
-            <div class="header">
-                <div class="profilePicture left">
-                    <img src="../Statics/images/images/avatar.png">
-                </div>
-                <span class="username left">
-						Ektik
-					</span>
-                <div class="curatorContainer right">
-                    <img src="../Statics/images/images/curatew.png">
-                </div>
-            </div>
-            <div class="imgContainer">
-                <img src="../Statics/images/sliders/slider2/3.jpg"/>
-            </div>
-            <div class="footer">
-                <div class="rate left">
-                    <img class="left rateBtn" src="../Statics/images/icons/b_like_p.png">
-                    <!-- SVG - Hex for Rate - 1 to 6 Dynamic Percentage fill the background of Hex -->
-                    <span class="number left"> 5.2</span>
-                </div>
-                <span class="time right">
-						1h
-					</span>
-            </div>
-        </div>
-        <div class="eachPost">
-            <div class="header">
-                <div class="profilePicture left">
-                    <img src="../Statics/images/images/avatar.png">
-                </div>
-                <span class="username left">
-						Ektik
-					</span>
-                <div class="curatorContainer right">
-                    <img src="../Statics/images/images/curatew.png">
-                </div>
-            </div>
-            <div class="imgContainer">
-                <img src="../Statics/images/sliders/slider3/3.jpg"/>
-            </div>
-            <div class="footer">
-                <div class="rate left">
-                    <img class="left rateBtn" src="../Statics/images/icons/b_like_p.png">
-                    <!-- SVG - Hex for Rate - 1 to 6 Dynamic Percentage fill the background of Hex -->
-                    <span class="number left"> 5.2</span>
-                </div>
-                <span class="time right">
-						1h
-					</span>
-            </div>
-        </div>
-        <div class="eachPost">
-            <div class="header">
-                <div class="profilePicture left">
-                    <img src="../Statics/images/images/avatar.png">
-                </div>
-                <span class="username left">
-						Ektik
-					</span>
-                <div class="curatorContainer right">
-                    <img src="../Statics/images/images/curatew.png">
-                </div>
-            </div>
-            <div class="imgContainer">
-                <img src="../Statics/images/sliders/slider1/1.jpg"/>
-            </div>
-            <div class="footer">
-                <div class="rate left">
-                    <img class="left rateBtn" src="../Statics/images/icons/b_like_p.png">
-                    <!-- SVG - Hex for Rate - 1 to 6 Dynamic Percentage fill the background of Hex -->
-                    <span class="number left"> 5.2</span>
-                </div>
-                <span class="time right">
-						1h
-					</span>
-            </div>
-        </div>
 
-        <div class="eachPost">
-            <div class="header">
-                <div class="profilePicture left">
-                    <img src="../Statics/images/images/avatar.png">
-                </div>
-                <span class="username left">
-						Ektik
-					</span>
-                <div class="curatorContainer right">
-                    <img src="../Statics/images/images/curatew.png">
-                </div>
-            </div>
-            <div class="imgContainer">
-                <img src="../Statics/images/sliders/slider3/4.jpg"/>
-            </div>
-            <div class="footer">
-                <div class="rate left">
-                    <img class="left rateBtn" src="../Statics/images/icons/b_like_p.png">
-                    <!-- SVG - Hex for Rate - 1 to 6 Dynamic Percentage fill the background of Hex -->
-                    <span class="number left"> 5.2</span>
-                </div>
-                <span class="time right">
-						1h
-					</span>
-            </div>
-        </div>
     </div>
     <div class="settingsContainer" id="settings">
         <div class="menu">
@@ -376,10 +268,18 @@
     // Global Variables.JS
     // import * as Jimp from "jimp";
     var Me = {};
+    var currentPost = {
+        postId:"",
+        info:{
+
+        }
+    };
+    var currentPostItterator = 1;
+    var postsList = [ /* current post schema */ ];
+
     var pageNames = ["feed","profile","settings","home","slideView","newPost","policy"];
-    var smallUploader={};
+
     var originalUploader = {};
-    var mediumUploader = {};
     // initial by url parsing
     var currentPage = "";
     var historyPointer = -1;
@@ -391,6 +291,7 @@
         if( readCookie("X-ACCESS-TOKEN") !==null) {
             getMe();
             setUploaders();
+            ratePadInitial();
             urlParser(true);
         }
         else {
@@ -458,7 +359,7 @@
     });
 
 
-    function requsetHandler(url, method, input, caller) {
+    function requestHandler(url, method, input, caller) {
         $.ajax({
             url: url || "/",
             method: method || "GET",
@@ -466,16 +367,25 @@
             before: function () {
             },
             success: function (res) {
-                responseActionHandler(caller, res);
+                if(res.message && res.result===false){
+                    alert(res.message);
+                }
+                else if(res.message && res.result===true){
+                    alert(res.message);
+                    responseActionHandler(caller, res);
+                }
+                else{
+                    responseActionHandler(caller, res);
+                }
             },
             timeout: function () {
-                window.alert("time out");// get from developer
+                alert("Request Time Out");// get from developer
             },
             fail: function () {
-                window.alert("failed");
+                alert("Oops Something Went wrong");
             },
             err: function () {
-                window.alert("err");
+                alert("Oops Something Went Wrong");
             }
         });
     }
@@ -487,28 +397,54 @@
         eraseCookie("X-ACCESS-TOKEN");
     }
     function login(input) {
-        requsetHandler("/login", "POST", input, "loginHandler");
+        requestHandler("/login", "POST", input, "loginHandler");
     }
     function getMe(){
-        requsetHandler("/api/v1/users/getMe","GET",{},"getMe");
+        requestHandler("/api/v1/users/getMe","GET",{},"getMe");
     }
     function loadProfileInfo(hostUserName){
-        requsetHandler("/api/v1/users/getHostProfile","POST",{host:hostUserName},"loadProfile");
+        requestHandler("/api/v1/users/getHostProfile","POST",{host:hostUserName},"loadProfile");
     }
     function getProfileInfo(){
-        requsetHandler("/api/v1/users/getProfileInfo","GET",{},"getProfileInfo");
+        requestHandler("/api/v1/users/getProfileInfo","GET",{},"getProfileInfo");
     }
     function updateProfileInfo(input){
-        requsetHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
+        requestHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
     }
     function follow(hostUsername){
-        requsetHandler("/api/v1/users/follow","POST",{following:hostUsername},"follow");
+        requestHandler("/api/v1/users/follow","POST",{following:hostUsername},"follow");
     }
     function unfollow(hostUsername){
-        requsetHandler("/api/v1/users/unfollow","POST",{following:hostUsername},"unfollow");
+        requestHandler("/api/v1/users/unfollow","POST",{following:hostUsername},"unfollow");
     }
-    function getPostsByFilter(){
-        alert("get posts action");
+
+
+
+
+    // Post(Picture) Handlers
+    function getPostsByFilter(input){
+        if(input.isPrivate && input.following)
+        requestHandler("/api/v1/posts/getPostsByFilter","POST",{/* ? */},"getPostsByFilter");
+    }
+
+    function getPostInfos(){
+        requestHandler("/api/v1/posts/getPostInfos/"+currentPostId,"GET",{},"getPostInfos");
+    }
+
+
+
+    function rate(postId,rateNumber){
+        requestHandler("/api/v1/posts/rate","POST",{postId:postId,rateNumber:rateNumber},"rate");
+    }
+
+
+
+
+
+
+
+    function sendPagesInitialRequest(pageName){
+        requestHandler("/api/v1/"+pageName,"GET",{},pageName);
     }
     // Actions.js
     function responseActionHandler(caller, res) {
@@ -534,6 +470,17 @@
             case "getMe" : {
                 getMeResponse(res);
             }break;
+            case "rate":{
+                rateResponseHandler(res);
+            }break;
+            case "newPost":{
+                rateResponseHandler(res);
+            }break;
+            case "slideView":{
+                rateResponseHandler(res);
+            }break;
+
+
         }
     }
     function urlParser(writeState){ // --> Page Name --> Username / post Orders / category / #hashtags
@@ -543,9 +490,9 @@
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "followings" || pageType === "followers" ||
             pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" ||
-            pageType === "top" || pageType ==="contact" || pageType==="newPost" || pageType==="policy") {
+            pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
 
-                if(pageType ==="settings" || pageType==="slideView" || pageType ==="contact" || pageType==="newPost" || pageType==="policy")
+                if(pageType ==="settings" || pageType==="slideview" || pageType ==="contact" || pageType==="newpost" || pageType==="policy")
                     changePage(pageType,pageType, writeState);// Other Pages
                 else
                     changePage("feed",pageType,writeState);// Feed
@@ -595,8 +542,8 @@
                         // Do nothing
                         break;
                 }
-                if(uploader._filesInProgress < 1){
-                    window.allert("All files have been uploaded. The page will refresh itself in 10 seconds.");
+                if(originalUploader._filesInProgress < 1){
+                    alert("Files Uploaded Successfuly");
                     // var t = setTimeout('location.href = location.href;', 10000)
                 }
             },
@@ -613,79 +560,97 @@
 
     function changePage(pageName,pageType,newHistory){
 
-        pushHistory(pageName, window.location.pathname);
-        switch (pageName) {
-            case "feed" || "home" || "" : {
-                // show feed items --> hide Others
-                if( pageName !== currentPage ) {
-                    $("#postsContainer").addClass("show");
-                    if (pageName === "home" || pageName === "") {
-                        $("#homeSliders").addClass("show");
+        setTimeout(function(){
+
+            console.log(pageName);
+
+                if(pageName=== "feed" || pageName=== "home" || pageName=== ""){
+                    // show feed items --> hide Others
+                    if( pageName !== currentPage ) {
                         $("#postsContainer").addClass("show");
-                    }
-                    // hide elements
-                    pageNames = ["settings", "newPost", "slideView", "profileTop", "profileTopSmall", "contact", "policy"];
-                    for (var x = 0; x < pageNames.length; x++) {
-                        if (pageName === pageNames[x]) {
-                            $(`#${pageNames[x]}`).addClass("show");
+                        if (pageName === "home" || pageName === "") {
+                            $("#homeSliders").addClass("show");
+                            $("#postsContainer").addClass("show");
+
+
                         }
-                        else {
-                            if ($(`#${pageNames[x]}.show`)) {
-                                $(`#${pageNames[x]}.show`).removeClass("show");
+                        // hide elements
+                        pageNames = ["settings", "newPost", "slideView", "profileTop", "profileTopSmall", "contact", "policy"];
+                        for (var x = 0; x < pageNames.length; x++) {
+                            if (pageName === pageNames[x].toLowerCase()) {
+                                $(`#${pageNames[x]}`).addClass("show");
+                            }
+                            else {
+                                if ($(`#${pageNames[x]}.show`)) {
+                                    $(`#${pageNames[x]}.show`).removeClass("show");
+                                }
                             }
                         }
                     }
+                    // --> Function Calls
+                    if(newHistory || false) {
+                        pushHistory(pageName,window.location.pathname,pageType);
+                    }
                 }
-                // --> Function Calls
-
-            }
-                break;
-            case "profile": {
-                var hostUserName = pageType;
-                if( pageName !== currentPage ) {
-                    $("#postsContainer").addClass("show");
-                    $("#profileTop").addClass("show");
-                    pageNames = ["settings", "newPost", "slideView", "homeSliders", "contact", "policy"];
-                    for (var x = 0; x < pageNames.length; x++) {
-                        if (pageName === pageNames[x]) {
-                            $(`#${pageNames[x]}`).addClass("show");
-                        }
-                        else {
-                            if ($(`#${pageNames[x]}.show`)) {
-                                $(`#${pageNames[x]}.show`).removeClass("show");
+                else if(pageName === "profile"){
+                    var hostUserName = pageType;
+                    if( pageName !== currentPage ) {
+                        $("#postsContainer").addClass("show");
+                        $("#profileTop").addClass("show");
+                        pageNames = ["settings", "newPost", "slideView", "homeSliders", "contact", "policy"];
+                        for (var x = 0; x < pageNames.length; x++) {
+                            if (pageName === pageNames[x]) {
+                                $(`#${pageNames[x]}`).addClass("show");
+                            }
+                            else {
+                                if ($(`#${pageNames[x]}.show`)) {
+                                    $(`#${pageNames[x]}.show`).removeClass("show");
+                                }
                             }
                         }
                     }
+                    loadProfileInfo(hostUserName);
+                    getPostsByFilter(hostUserName);
+                    if(newHistory || false) {
+                        pushHistory(pageName,window.location.pathname,pageType);
+                    }
                 }
-                loadProfileInfo(hostUserName);
-                getPostsByFilter(hostUserName);
+                else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="postscontainer" || pageName==="contact"){
+                    if( pageName !== currentPage ) {
+                        var pageNames = ["settings", "newPost", "slideView", "postsContainer", "contact", "policy"];
+
+                        for (var x = 0; x < pageNames.length; x++) {
+
+                            if (pageName === pageNames[x].toLowerCase()) {
+                                $(`#${pageNames[x]}`).addClass("show");
+
+                                sendPagesInitialRequest(pageNames[x]);
 
 
-            }break;
-            case "settings" ||"newPost" || "slideView" || "postsContainer" || "contact" : {
-                if( pageName !== currentPage ) {
-                    var pageNames = ["settings", "newPost", "slideView", "postsContainer", "contact", "policy"];
-                    $("#profileTop").addClass("show");
-                    for (var x = 0; x < pageNames.length; x++) {
-                        if (pageName === pageNames[x]) {
-                            $(`#${pageNames[x]}`).addClass("show");
-                        }
-                        else {
-                            if ($(`#${pageNames[x]}.show`)) {
-                                $(`#${pageNames[x]}.show`).removeClass("show");
+                            }
+                            else {
+                                if ($(`#${pageNames[x]}.show`)) {
+                                    $(`#${pageNames[x]}.show`).removeClass("show");
+                                }
                             }
                         }
                     }
+                    if(newHistory || false) {
+                        pushHistory(pageName,window.location.pathname,pageType);
+                    }
+                }
+                else {
+                    alert("Oops , Page Name Not Defined !");
                 }
 
 
-            }break;
-        }
+        },50);
+
     }
 
-    function pushHistory(newPageName,url){
+    function pushHistory(newPageName,url,data){
         if (historyPointer === historyList.length) {
-            historyList.push({pageName: newPageName, urlData: url , hashtag : window.location.hash});
+            historyList.push({pageName: newPageName, urlData: url ,data:data, hashtag : window.location.hash});
             currentPage = newPageName;
             historyPointer++;
         }
@@ -693,7 +658,7 @@
             for(var x  = historyList.length -1 ; x > historyPointer ; x--){
                 historyList.pop();
                 if(x === historyPointer + 1){
-                    historyList.push({pageName: newPageName, urlData: url ,hashtag : window.location.hash});
+                    historyList.push({pageName: newPageName, urlData: url,data:data ,hashtag : window.location.hash});
                     currentPage = newPageName;
                     historyPointer++;
                 }
@@ -801,12 +766,17 @@
             list[3].innerHTML = (res.user.city) || "";
             list[4].innerHTML = (res.user.roles.toString()) || "";
             list[5].innerHTML = (res.user.username);
+            list[6].innerHTML = (res.user.isPrivate);
+
             $(".profileTop .loader").addClass("hide");
 
             if (res.followed !== null && res.following !== null) {
                 if (res.followed === true && res.following === false) { // following but not followed --> Follow Back
                     $("#follow").addClass("show");
                     $("#follow").html("Follow Back");
+                    if(res.user.isPrivate===false){
+                        getPostsByFilter({username:res.user.username});
+                    }
                 }
                 else if (res.followed === false && res.following === true) { // followed but not following
                     $("#unfollow").addClass("show");
@@ -822,6 +792,8 @@
                 $("#unfollow").remove();
                 $("#follow").remove();
             }
+
+            getPostsByFilter({username:res.user.username,followed:res.followed , following:res.following,isPrivate:res.isPrivate});
         }
         else {
             alert("User not found !");
@@ -847,6 +819,43 @@
         }
     }
 
+
+    function ratePadInitial(){
+        for(var x = 1 ; x < 7 ; x++) {
+            $(".ratePad").append(`
+                 <div><div class="triangle" id="peace-${x}">
+                    <span>
+                        ${x}
+                    </span>
+                </div></div>
+            `);
+        }
+
+        setTimeout(function(){$(".ratePad").addClass("show")},200);
+
+        $("body").on("mouseenter",".ratePad > div .triangle",function(event){
+            var number = parseInt($(this).children("span").html());
+            if($(".triangle.selected")){
+                $(".triangle.selected").removeClass("selected");
+            }
+            for(var x = 1 ; x < number ; x++){
+                $(`peace-${x}`).addClass("selected");
+            }
+        });
+
+        $("body").on("mouseenter",".ratePad > div .triangle",function(event){
+            var rateNumber = $(this).children("span").html();
+            var postId = "" ;// post id from list Or from template
+
+            rate(rateNumber,postId);
+        });
+    }
+
+
+    function rateResponseHandler(res){
+        console.log(res);
+    }
+
     function alert(message){
         $("#alertTop h3").html(message);
         $("#alertTop").addClass("show");
@@ -855,6 +864,7 @@
             // Something you want delayed.
         }, 3000); // 5seconds show
     }
+
 
 
 
