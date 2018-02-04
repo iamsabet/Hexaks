@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 var postSchema = require('../models/post.model');
 var post = new postSchema();
+var userSchema = require('../models/user.model');
+var User = new userSchema();
 var albumSchema = require('../models/album.model');
 var album = new albumSchema();
 var Jimp = require("jimp");
@@ -14,6 +16,8 @@ var ExifImage = require('exif').ExifImage;
 var Float = require('mongoose-float').loadType(mongoose);
 var users = require('./users');
 var redis = require("redis");
+var requestIp = require("request-ip");
+
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -328,32 +332,46 @@ var posts = {
     view:function(req,res,user,postId,redisClient) {
         if(user) {
             if (req.body.postId) {
-                redisClient.hsetnx("viewd::" + user.username, req.body.postId, function (err, result) {
-                    if(err) throw err;
-                    if(result === 1){
-                        redisClient.hkeys("viewd::" + user.username, req.body.postId,function(err,keys){
-                            if(err) throw err;
-                            if(keys.length > 100) {
+                if (!user.viewedPosts.includes(req.body.postId)) {
+                    if (user.viewedPosts.length === 200) {
+                        userSchema.findOneAndUpdate({username:user.username},{$pop:{viewedPosts:-1}});
+                    }
+                    userSchema.findOneAndUpdate({username:user.username},{$push:{viewedPosts:req.body.postId}});
+                    postSchema.findOneAndUpdate({postId:req.body.postId},{$inc:{views:1}});
+                    res.send(true);
+                }
+                else {
+                    res.send(false);
+                }
 
-                                redisClient.hdel("viewd::" + user.username, keys[x]);
-                            }
-                        });
-                        redisClient.mset("incr")
-                    }
-                    else if(result === 0){
-                        res.send(false);
-                    }
-                    else{
-                        res.send(false);
-                    }
-                });
             }
             else {
                 res.send(false);
             }
         }
-        else{
-            redisClient.hget("anonymos::" + req.body.user.username, 1);
+        else {
+            var anonymosIp = requestIp.getClientIp(req);
+            redisClient.lrange("anonymosViews::" + anonymosIp, 0, -1, function (err, result) { // 24 hour delete
+                if(err) throw err;
+                if(result.length > 0){
+                    if(result.indexOf(req.body.postId) > -1){
+                        res.send(false);
+                    }
+                    else{
+                        if(result.length === 100){
+                            redisClient.rpop("anonymosViews::" + anonymosIp);
+                        }
+                        redisClient.lpush("anonymosViews::" + anonymosIp , req.body.postId); // 24 hour delete
+                        redisClient.hincrby("post::"+req.body.postId,"views" , +1,function(err,number){ // cach view numbers
+                            if(number === 10){
+                                redisClient.hincrby("post::"+req.body.postId,"views",-10);
+                                postSchema.update({postId:req.body.postId},{$inc:{views:10}});
+                            }
+                        });
+
+                    }
+                }
+            });
         }
     },
 

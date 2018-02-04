@@ -38,7 +38,7 @@ var userSchema = new Schema({
     roles : [], // String - Sabet / Admin / Curator / Blogger / Premium
     inactivate:Boolean,
     isPrivate:Boolean,
-    viewedPosts:[], // last 1000s
+    viewedPosts:[], // last 100s
     ban:{
         is:Boolean,
         expire:Number,

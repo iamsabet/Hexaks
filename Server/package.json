@@ -32,6 +32,7 @@
     "rimraf": "^2.6.2",
     "routes": "latest",
     "serve-favicon": "^2.4.5",
-    "redis": "latest"
+    "redis": "latest",
+    "socket.io": "latest"
   }
 }
