@@ -358,7 +358,7 @@
     });
     $("body").on("click","#submitPost",function(e){
         e.preventDefault();
-        requestHandler("/")
+        requestHandler("/api/v1/post/submit","POST",{},"submitPost");
     });
 
 
@@ -493,6 +493,9 @@
             case "getPostsByFilter":{
 
             }
+            case "submitPost":{
+
+            }break;
         }
     }
     function urlParser(writeState){ // --> Page Name --> Username / post Orders / category / #hashtags
