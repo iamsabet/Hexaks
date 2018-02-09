@@ -17,12 +17,12 @@
       <file leaf-file-name="main.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Server/views/main.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="619">
-              <caret line="495" column="31" lean-forward="true" selection-start-line="495" selection-start-column="31" selection-end-line="495" selection-end-column="31" />
+            <state relative-caret-position="475">
+              <caret line="456" column="23" lean-forward="false" selection-start-line="456" selection-start-column="13" selection-end-line="456" selection-end-column="23" />
               <folding>
-                <marker date="1518202410530" expanded="true" signature="30253:30404" ph="..." />
-                <marker date="1518202410530" expanded="true" signature="30291:30398" ph="..." />
-                <marker date="1518202410530" expanded="true" signature="30318:30375" ph="..." />
+                <marker date="1518202462475" expanded="true" signature="30254:30405" ph="..." />
+                <marker date="1518202462475" expanded="true" signature="30292:30399" ph="..." />
+                <marker date="1518202462475" expanded="true" signature="30319:30376" ph="..." />
               </folding>
             </state>
           </provider>
@@ -130,7 +130,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>date.now</find>
       <find>now</find>
       <find>getHostProfile</find>
       <find>isFollow</find>
@@ -160,6 +159,7 @@
       <find>submitUpload</find>
       <find>newPost</find>
       <find>submitPost</find>
+      <find>responseAC</find>
     </findStrings>
     <replaceStrings>
       <replace>postSchema</replace>
@@ -536,12 +536,12 @@
       <workItem from="1517409163990" duration="1592000" />
       <workItem from="1517690509823" duration="4840000" />
       <workItem from="1517745271158" duration="25952000" />
-      <workItem from="1518183532383" duration="10402000" />
+      <workItem from="1518183532383" duration="11073000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="154988000" />
+    <option name="totallyTimeSpent" value="155659000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -858,12 +858,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/views/main.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="619">
-          <caret line="495" column="31" lean-forward="true" selection-start-line="495" selection-start-column="31" selection-end-line="495" selection-end-column="31" />
+        <state relative-caret-position="475">
+          <caret line="456" column="23" lean-forward="false" selection-start-line="456" selection-start-column="13" selection-end-line="456" selection-end-column="23" />
           <folding>
-            <marker date="1518202410530" expanded="true" signature="30253:30404" ph="..." />
-            <marker date="1518202410530" expanded="true" signature="30291:30398" ph="..." />
-            <marker date="1518202410530" expanded="true" signature="30318:30375" ph="..." />
+            <marker date="1518202462475" expanded="true" signature="30254:30405" ph="..." />
+            <marker date="1518202462475" expanded="true" signature="30292:30399" ph="..." />
+            <marker date="1518202462475" expanded="true" signature="30319:30376" ph="..." />
           </folding>
         </state>
       </provider>
