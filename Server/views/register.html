@@ -13,13 +13,14 @@
     <div class="loginRegForm">
 
         <h2>Register</h2>
-
-        <input type="text" placeholder="username" id="username"/>
-        <input type="text" placeholder="full name" id="fullName"/>
-        <input type="email" placeholder="email@example.com" id="email"/>
-        <input type="password" placeholder="password" id="password"/>
-        <input type="password" placeholder="confirm password" id="confPassword"/>
-        <button id="regBtn">Register</button>
+            <form action="/register">
+                <input type="text" placeholder="username" id="username"/>
+                <input type="text" placeholder="full name" id="fullName"/>
+                <input type="email" placeholder="email@example.com" id="email"/>
+                <input type="password" placeholder="password" id="password"/>
+                <input type="password" placeholder="confirm password" id="confPassword"/>
+                <button id="regBtn">Register</button>
+            <form>
         <p class="messageBox">
 
         </p>
@@ -37,6 +38,9 @@
 
 <script>
     // Events.js
+    $('.loginRegForm').on("submit",".loginRegForm form",function(event) {
+        event.preventDefault();
+    });
     $('.loginRegForm').on("click","#regBtn",function(){
         var input = {
             username : $("#username").val(),

@@ -273,8 +273,17 @@ router.get('/api/v1/posts/subscriptions/',async function(req,res){
 
 
 
-
-router.post('/api/v1/album/initial/', function(req,res){
+router.post('/api/v1/post/submit/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            posts.submitPost(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
+router.post('/api/v1/post/initial/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(callback !==null) {
             albums.addNewPost(req,res,callback);
@@ -284,10 +293,10 @@ router.post('/api/v1/album/initial/', function(req,res){
         }
     });
 });
-router.post('/api/v1/album/new/', function(req,res){
+router.post('/api/v1/album/initial/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(callback !==null) {
-            posts.addNewPost(req,res,callback);
+            albums.submitAlbum(req,res,callback);
         }
         else{
             res.send("404 Not Found");
@@ -295,6 +304,16 @@ router.post('/api/v1/album/new/', function(req,res){
     });
 });
 
+router.post('/api/v1/album/submit/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            albums.submitAlbum(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
 router.delete('/api/v1/admin/user/:id', users.delete);
 
 

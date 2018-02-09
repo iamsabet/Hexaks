@@ -374,7 +374,28 @@ var posts = {
             });
         }
     },
+    submitPost:function(req,res,user){
+        redisClient.get(user.username + "::uploadingPost", function (err, value) {
+            if(err) throw err;
+            if(value===true) {
+                redisClient.get(user.username + "::uploadingPost", function (err, value) {
+                    if (err) throw err;
+                    if (value) {
 
+                        postSchema.findOneAndUpdate({postId:value},{$set:{deactive:false}})
+
+                        users.removeUploading(user);
+                    }
+                    else {
+                        res.send({result: false, message: "No image uploaded to post"});
+                    }
+                });
+            }
+            else{
+                res.send({result:false,message:"initial uploads first"});
+            }
+        });
+    },
     delete: function(req, res,next,data) {
         var id = req.params.id;
         data.splice(id, 1); // Spoof a DB call

@@ -17,6 +17,7 @@ var userSchema = new Schema({
     posts:[], // {postId : , smallImageUrl : , ownerUserName : }
     location:String,
     city:String,
+    country:String,
     rate:{
         number:Float,
         counts:Number,
@@ -26,10 +27,6 @@ var userSchema = new Schema({
         sms:String
     },
     boughtImages:[],// {post Id}
-    isUploadingPost:Boolean,
-    uploadingPost:String,  // post id --> initial --> "initial"
-    isUploadingAlbum:Boolean,
-    uploadingAlbum:[],// max size == 10 --> post id --> initial ["initial"]
     details:{
         phoneNumber : String,
         bio: String

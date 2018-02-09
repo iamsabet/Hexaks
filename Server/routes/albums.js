@@ -109,7 +109,17 @@ var albums = {
         data[id] = updateuser; // Spoof a DB call
         res.json(updateuser);
     },
+    submitAlbum:function(req,res,user){
+        redisClient.get(user.username + "::uploadingPost", function (err, value) {
+            if(err) throw err;
+            if(value){
 
+            }
+            else{
+
+            }
+        });
+    },
     delete: function(req, res,next,data) {
         var id = req.params.id;
         data.splice(id, 1); // Spoof a DB call

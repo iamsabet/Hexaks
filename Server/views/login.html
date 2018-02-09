@@ -11,13 +11,13 @@
 <body>
 <div id="homeContainer" class="containerDiv">
     <div class="loginRegForm">
-
         <h2>Login to Hexaks </h2>
-        <input type="text" placeholder="username" id="username"/>
-        <input type="password" placeholder="username" id="password"/>
-        <button id="logBtn">Login</button>
-        <p class="messageBox">
-
+        <form action="/login">
+            <input type="text" placeholder="username" id="username"/>
+            <input type="password" placeholder="username" id="password"/>
+            <button id="logBtn">Login</button>
+            <p class="messageBox">
+        </form>
         </p>
     </div>
 
@@ -33,6 +33,9 @@
 
 <script>
     // Events.js
+    $('.loginRegForm').on("submit",".loginRegForm form",function(event) {
+        event.preventDefault();
+    });
     $('.loginRegForm').on("click","#logBtn",function(){
         var input = {
             username : $("#username").val(),

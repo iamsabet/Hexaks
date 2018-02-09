@@ -16,7 +16,7 @@ redisClient.select(2,function(){
 var users = {
 
     getMe: function(req, res,data) {
-        res.json(data);
+        res.send(data);
     },
 
     register: function(req, res) {
@@ -61,13 +61,8 @@ var users = {
                                 sms:""
                             },
                             boughtImages:[],// {post Id,receipt Id}
-                            isUploadingPost:false,
-                            uploadingPost:"",  // post id --> initial --> "initial"
-                            uploadingFormat : "",
-                            isUploadingAlbum:false,
                             followersCount:0,
                             followingsCount:0,
-                            uploadingAlbum:[],// max size == 10 --> post id --> initial ["initial"]
                             viedPosts:[],
                             details:{
                                 phoneNumber : "",
@@ -93,15 +88,41 @@ var users = {
     },
 
     initialUpload:function(req,res,user){
-        user.isUploadingPost = true;
-        user.save();
+
+        if(req.body.type="post") {
+            redisClient.get(user.username+"::uploadingPost",function(err,postId){
+                if(err) throw err;
+                if(postId){
+                    res.send(postId);
+                }
+                else {
+                    redisClient.set(user.username+"::isUploadingPost",true);
+                    redisClient.set(user.username+"::isUploadingAlbum",false);
+                    res.send(true);
+                }
+            });
+        }
+        else if(req.body.type="album") {
+            redisClient.get(user.username+"::uploadingAlbum",function(err,albumId){
+                if(err) throw err;
+                if(albumId) {
+                    res.send(albumId);
+                }
+                else{
+                    redisClient.set(user.username+"::isUploadingAlbum",true);
+                    redisClient.set(user.username+"::isUploadingPost",false);
+                    res.send(true);
+                }
+            });
+        }
     },
-    removeUploading:function(req,res,user){
-        user.isUploadingPost = false;
-        user.isUploadingAlbum = false;
-        user.uploadingPost = "";
-        user.uploadingAlbum = "";
-        user.save();
+
+
+    removeUploading:function(user){
+        redisClient.del(user.username+"::isUploadingAlbum");
+        redisClient.del(user.username+"::isUploadingPost");
+        redisClient.del(user.username+"::uploadingAlbum");
+        redisClient.del(user.username+"::uploadingPost");
     },
 
     follow:function(req,res,user){

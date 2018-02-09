@@ -83,7 +83,7 @@
         <a href="/register">Register</a>
     </div>
     <div class="loginSmall">
-        <form>
+        <form action="/login">
             <input placeholder="username or email" type="text">
             <input type="password" placeholder="password">
         <button id="loginSubmit">Login</button>
@@ -166,10 +166,10 @@
 <div class="newPostContainer" id="newPost">
     <div class="newPostForm">
         <select name="category" id="category">
-            <option value="Nature">Nature</option>
-            <option value="Industrial">Industrial</option>
-            <option value="Society">Society</option>
-            <option value="Folan">Folan</option>
+            <!--<option value="Nature">Nature</option>-->
+            <!--<option value="Industrial">Industrial</option>-->
+            <!--<option value="Society">Society</option>-->
+            <!--<option value="Folan">Folan</option>-->
         </select>
         <div id="uploadArea" >
             <strong>Drag one or more files to this Drop Zone ...</strong>
@@ -298,7 +298,9 @@
 
         }
     });
-
+    $("body").on("submit",".loginSmall form",function(event){
+        event.preventDefault();
+    });
     // TOP NAV
     $("body").on("click",".topNav ul li",function(){
         $(this).parents("ul").children(".selected").removeClass("selected");
@@ -354,8 +356,9 @@
     $("body").on("click","#logoutBtn",function(){
         logout();
     });
-    $("body").on("click","#submitUpload",function(e){
+    $("body").on("click","#submitPost",function(e){
         e.preventDefault();
+        requestHandler("/")
     });
 
 
@@ -428,7 +431,7 @@
     }
 
     function getPostInfos(){
-        requestHandler("/api/v1/posts/getPostInfos/"+currentPostId,"GET",{},"getPostInfos");
+        requestHandler("/api/v1/posts/getPostInfos/"+currentPost.postId,"GET",{},"getPostInfos");
     }
 
 
@@ -437,14 +440,18 @@
         requestHandler("/api/v1/posts/rate","POST",{postId:postId,rateNumber:rateNumber},"rate");
     }
 
-
-
-
-
-
-
-    function sendPagesInitialRequest(pageName){
-        requestHandler("/api/v1/"+pageName,"GET",{},pageName);
+    function sendPagesInitialRequest(pageName,albumOrPost){
+        if(pageName === "newPost"){
+            if(albumOrPost === "post"){
+                requestHandler("/api/v1/post/initial","POST",{},pageName);
+            }
+            else if(albumOrPost === "album"){
+                requestHandler("/api/v1/album/initial","POST",{},pageName);
+            }
+            else{
+                alert("invalid post type");
+            }
+        }
     }
     // Actions.js
     function responseActionHandler(caller, res) {
@@ -468,19 +475,24 @@
                 unfollowAction(res);
             }break;
             case "getMe" : {
-                getMeResponse(res);
+                getMeResponseAction(res);
             }break;
             case "rate":{
                 rateResponseHandler(res);
             }break;
             case "newPost":{
-                rateResponseHandler(res);
+                newPostPageAction(res);
             }break;
             case "slideView":{
-                rateResponseHandler(res);
+                slideViewPageAction(res);
             }break;
 
+            case  "getPostInfos":{
 
+            }break;
+            case "getPostsByFilter":{
+
+            }
         }
     }
     function urlParser(writeState){ // --> Page Name --> Username / post Orders / category / #hashtags
@@ -623,10 +635,7 @@
 
                             if (pageName === pageNames[x].toLowerCase()) {
                                 $(`#${pageNames[x]}`).addClass("show");
-
-                                sendPagesInitialRequest(pageNames[x]);
-
-
+                                sendPagesInitialRequest(pageNames[x],"post");
                             }
                             else {
                                 if ($(`#${pageNames[x]}.show`)) {
@@ -705,7 +714,7 @@
             window.location.pathname = "/login";
         }
     }
-    function getMeResponse(res){
+    function getMeResponseAction(res){
         Me = res;
         if(res !== null) {
             $(".accountCard").html(`

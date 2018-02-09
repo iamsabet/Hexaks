@@ -1,6 +1,7 @@
 var jwt = require('jwt-simple');
 var validateUser = require('../routes/auth').validateUser;
 
+
 module.exports = function(req, res,fn) {
 
     // When performing a cross domain request, you will recieve

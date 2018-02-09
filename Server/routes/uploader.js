@@ -13,13 +13,19 @@ var users = require('../routes/users.js');
 var albums = require('../routes/albums.js');
 var multiparty = require('multiparty');
 var random = require("randomstring");
+var redis = require('redis');
+var redisClient = redis.createClient({
+    password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
+});    // Create the client
+redisClient.select(2,function(){
+    console.log("Connected to redis Database");
+});
 
 
 var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
     originalPath ='/Users/Shared/Hexaks/Server/Pictures/',
-    largePath ='/Users/sabet/Desktop/Hexaks/Hexaks/Pictures/Originals/',
-    smallAndMediumPath ='/Users/sabet/Desktop/Hexaks/Hexaks/Pictures/Statics/',
+    smallAndMediumPath ='/Users/Shared/Hexaks/Hexaks/Pictures/Statics/',
     chunkDirName = "chunks",
     maxFileSize =  40000000, // in bytes, 0 for unlimited 40MB
     minFileSizeToChunk = 1000000; // in bytes 1MB
@@ -27,7 +33,7 @@ var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
 /* GET home page. */
 var uploader = {
 
-    onUpload: function (req, res,user,privacy) {
+    onUpload: function (req, res,user) {
 
         var form = new multiparty.Form();
         console.log();
@@ -36,72 +42,57 @@ var uploader = {
             // text/plain is required to ensure support for IE9 and older
 
             if (files) {
-                if (user.isUploadingPost === true) {
-                    var pathis = "";
-                    var size = "";
-                    if (user.uploadingPost === "") {
+                redisClient.get(user.username + "::isUploadingPost", function (err, isPost) {
+                    redisClient.get(user.username + "::isUploadingAlbum", function (err, isAlbum) {
+                        if (isPost || isAlbum) {
+                            var pathis = "";
+                            var size = "";
+                            if (isAlbum) {
 
-                        if (fields.qqfilename[0].split("sss").length > 1) {
-                            size = "-Small";
-                            pathis = smallAndMediumPath;
-                        }
-                        else if (fields.qqfilename[0].split("mmm").length > 1) {
-                            size = "-Medium";
-                            pathis = smallAndMediumPath;
-                        }
-                        else {
-                            size = "";
-                            pathis = originalPath;
-                        }
-                        userSchema.findOneAndUpdate({username:user.username},{
-                            $set:{
-                                uploadingPost:random.generate(32),
-                                uploadingFormat : format
                             }
-                        });
-                        setTimeout(function(){
-                            userSchema.findOneAndUpdate({username:user.username},{
-                                $set:{
-                                    isUploadingAlbum : false,
-                                    isUploadingPost : false,
-                                }
-                            });
-                        },10000);
+                            else if (isPost) {
+                                var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
+                                redisClient.get(user.username + "::uploadingPost", function (err, value) {
+                                    if (err) throw err;
+                                    let uploadingPost;
+                                    if (value) {
+                                        uploadingPost = value;
+                                    }
+                                    else {
+                                        uploadingPost = random(25);
+                                        redisClient.set(user.username + "::uploadingPost",uploadingPost);
+                                        postSchema.create()
+                                    }
 
-                        var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
-                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);
-
-                        posts.create(user,fromat,function(callback){
-                            res.send(callback);
-                        });
-                    }
-                    else {
-                        if (fields.qqfilename[0].split("sss").length > 1) {
-                            size = "--Small";
-                            pathis = smallAndMediumPath;
-                            var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
-                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);
-                        }
-                        else if (fields.qqfilename[0].split("mmm").length > 1) {
-                            size = "--Medium";
-                            pathis = smallAndMediumPath;
-                            var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
-                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);
+                                    if (fields.qqfilename[0].split("sss").length > 1) {
+                                        size = "-Small";
+                                        pathis = smallAndMediumPath;
+                                    }
+                                    else if (fields.qqfilename[0].split("mmm").length > 1) {
+                                        size = "-Medium";
+                                        pathis = smallAndMediumPath;
+                                    }
+                                    else {
+                                        size = "";
+                                        pathis = originalPath;
+                                    }
+                                    uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost + size + "." + format, res);
+                                    setTimeout(function () {
+                                        redisClient.del(user.username + "::uploadingPost");
+                                        redisClient.del(user.username + "::uploadingAlbum");
+                                        redisClient.del(user.username + "::isUploadingPost");
+                                        redisClient.del(user.username + "::isUploadingAlbum");
+                                    }, 600000);
+                                });
+                            }
                         }
                         else {
-                            size = "";
-                            pathis = originalPath;
-                            var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
-                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, user.uploadingPost + size + "." + format, res);
+                            res.send("initial or album first");
                         }
-                    }
-                }
-                else{
-                    res.send("initial posting first");
-                }
-
+                    });
+                });
             }
-            else{
+            else {
                 res.send("403 bad request");
             }
         });
