@@ -31,6 +31,7 @@ var postSchema = new mongoose.Schema({
     },
     buyers:[], // user id
     hashtags:[],
+    generatedHashtags:[],
     categories:[],
     caption:String,
     rate:{
@@ -53,18 +54,17 @@ var postSchema = new mongoose.Schema({
     isCurated : Boolean,
     isPrivate : Boolean,
     activated:Boolean,
-    createdAt:Date,
-    updatedAt:Date
+    createdAt:Number,
+    updatedAt:Number
 });
 
-postSchema.methods.Create = function(postObject,callback){
+postSchema.methods.create = function(postObject,callback){
     var newPost = new Post(postObject);
-    newPost.save(function(err){
-        if(err){
-            return callback(null);
-        }
-        return callback(newPost.postId);
-    });
+    newPost.createdAt = Date.now();
+    newPost.updatedAt = Date.now();
+    newPost.userId = random.generate();
+    newPost.save();
+    return callback(true);
 };
 postSchema.methods.Edit = function(req,res){
 

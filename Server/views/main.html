@@ -495,7 +495,7 @@
 
             }
             case "submitPost":{
-
+                submitPostAction(res);
             }break;
         }
     }
@@ -874,7 +874,9 @@
     function rateResponseHandler(res){
         console.log(res);
     }
-
+    function submitPostAction(res){
+        window.location.pathname="/"+Me.username;
+    }
     function alert(message){
         $("#alertTop h3").html(message);
         $("#alertTop").addClass("show");

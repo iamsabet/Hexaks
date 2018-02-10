@@ -92,28 +92,35 @@ var users = {
                 if(err) throw err;
                 if(postId){
                     res.send(postId);
+                    redisClient.expire(user.username+"::uploadingPost",300000,function(err,result){
+                        console.log(result);
+                    }); // 5 minutes
                 }
                 else {
-                    redisClient.set(user.username+"::isUploadingPost",true,function(callback){
-                        console.log(callback);
+                    redisClient.set(user.username+"::isUploadingPost",true,function(err,callback){
+                        if(err) throw err;
+                        console.log(user.username+"::isUploadingPost");
+                        redisClient.expire(user.username+"::isUploadingPost",60000); // 1 minutes
+                        redisClient.del(user.username+"::isUploadingAlbum");
+                        res.send(true);
                     });
-                    redisClient.del(user.username+"::isUploadingAlbum",false);
-                    res.send(true);
                 }
             });
         }
-        else if(type==="album") {
+        else if(req.body.type==="album") {
             redisClient.get(user.username+"::uploadingAlbum",function(err,albumId){
                 if(err) throw err;
                 if(albumId) {
                     res.send(albumId);
+                    redisClient.expire(user.username+"::uploadingAlbum",300000); // 5 minutes
                 }
                 else{
-                    redisClient.del(user.username+"::isUploadingAlbum",true);
-                    redisClient.set(user.username+"::isUploadingPost",false,function(callback){
-                        console.log(callback);
+                    redisClient.set(user.username+"::isUploadingAlbum",true,function(err,callback){
+                        if(err) throw err;
+                        redisClient.expire(user.username+"::isUploadingAlbum",60000); // 1 minutes
+                        redisClient.del(user.username+"::isUploadingPost");
+                        res.send(true);
                     });
-                    res.send(true);
                 }
             });
         }

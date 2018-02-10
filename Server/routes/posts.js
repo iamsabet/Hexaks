@@ -95,113 +95,120 @@ var posts = {
         }
     },
 
-    create: function(user,format,postId,callback) {
-
-        if(user.isUploadingPost === true){
-            postSchema.findOne({postId:user.uploadingPost,owner:{username:user.username}},function(err,findPost){
-                if(err) throw err;
-                if(!posts){
-                    try {
-                        new ExifImage({ image : '../Pictures/Originals/'+user.uploadingPost+user.uploadingExt }, function (error, exifData) {
-                            if (error)
-                                console.log('Error: '+error.message);
-                            else {
-                                console.log(exifData); // Do something with your data!
-
-                                var postObject = {
-                                    albumId: "", // null if not
-                                    postId: postId,
-                                    owner: {
-                                        username: user.username,
-                                        profilePicUrl: user.profilePictureUrl,
-                                    },
-                                    ext: format,
-                                    exifData:exifData,
-                                    originalImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
-                                        cost: 0, // 0 if free
-                                        resolution: {
-                                            x: x,
-                                            y: y,
-                                        },
-                                    },
-                                    buyers: [], // user id
-                                    hashtags: [],
-                                    category:"",
-                                    caption:"",
-                                    rate: {
-                                        value: 0.0,
-                                        counts: 0,
-                                    },
-                                    views:0,
-                                    viewers: [],// usernames // length
-                                    curator: {
-                                        username: "",
-                                        profilePicUrl: "",
-                                    },
-                                    private: false,
-                                    rejected : {
-                                        value: false,
-                                        reason : "",
-                                    },
-                                    advertise:{},
-                                    activated: false,
-                                };
-                                post.create(postObject,function(result){
-                                    if(result !== null){
-                                        callback(result);
-                                    }
-                                    else {
-                                        return callback(null);
-                                    }
-
-                                });
-                                redisClient.zadd(["viewsZset",0,postObject.postId]);
-                            }
-                        });
-                    } catch (error) {
-                        console.log('Error: ' + error.message);
+    Create: function(user,format,postId,callback) {
+        redisClient.get(user.username+"::uploadingPost",function(err,postId) {
+            if (err) throw err;
+            if (postId) {
+                var postObject = {
+                    postId: postId.split(".")[0],
+                    owner: {
+                        username: user.username,
+                        profilePicUrl: user.profilePictureUrl || "avatar.png",
+                    },
+                    ext: format,
+                    exifData: {},
+                    originalImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
+                        cost: 0, // 0 if free
+                        resolution: {
+                            x: 100,
+                            y: 100,
+                        },
+                    },
+                    buyers: [], // user id
+                    hashtags: [],
+                    generatedHashtags: [],
+                    categories: [],
+                    caption: "",
+                    rate: {
+                        value: 0.0,
+                        counts: 0,
+                    },
+                    views: 0,
+                    // viewers: [],// usernames // length
+                    curator: {
+                        username: "",
+                        profilePicUrl: "",
+                    },
+                    private: false,
+                    rejected: {
+                        value: false,
+                        reason: "",
+                    },
+                    advertise: {},
+                    activated: false,
+                };
+                post.create(postObject, function (result) {
+                    if (result !== null) {
+                        console.log("postId : "+result);
+                        return callback(result);
                     }
-                }
-                else{
-                    callback(findPost.postId);
-                }
-            });
-        }
+                    else {
+                        return callback(null);
+                    }
+                });
+            }
+            else{
+                return callback({result:false,message:"No posts uploaded yet"});
+            }
+        });
     },
 
 
 
     activate:function(req,res,user){
-        postSchema.findOne({postId:user.isUploadingPost},{albumId:0},function(err,resultPost){
-                if(err) throw err;
-                if(resultPost) {
-                    var cost = req.body["cost"] || 0;
-                    if (cost < 1000000 && cost >= 0) {
-                        resultPost.activated = true;
-                        user.isUploadingPost = false;
-                        user.uploadingPost = "";
-                        resultPost.hashtags = req.body["hashtags"];
-                        resultPost.caption = req.body["caption"];
-                        resultPost.hashtags = req.body["hashtags"];
-                        // exif get resoloution //
-                        resultPost.originalImage = {
-                            cost: cost, // 0 if free
-                            resolution: {
-                                x: width,
-                                y: height,
-                            }
-                        };
-                        resultPost.save();
-                        posts.imageProcessing(resultPost.postId+"--Medium."+resultPost.format);
-                        res.send(true);
-                    }
-                    else{
-                        res.send("invalid cost");
-                    }
+        redisClient.get(user.username+"::uploadingPost",function(err,postId){
+            if(err) throw err;
+            if(postId) {
+                try {
+                    new ExifImage({image: 'Server/Pictures/' + postId}, function (error, exifData) {
+                        if (error)
+                            console.log('Error: ' + error.message);
+                        else {
+                            redisClient.del(user.username+"::uploadingPost");
+                            redisClient.del(user.username+"::isUploadingPost");
+                            console.log(exifData);
+                            postSchema.findOneAndUpdate({
+                                owner: {username: user.username},
+                                postId:postId.split(".")[0]
+                            }, {$set: {activated: true},hashtags:req.body["hashtags"] || [],caption:req.body["caption"] || []}, function (err, resultPost) { // destroy redis-chashes
+                                if (err) throw err;
+                                if (resultPost) {
+                                    var cost = req.body["cost"] || 0;
+                                    if (cost < 1000000 && cost >= 0) {
+                                        resultPost.activated = true;
+                                        user.isUploadingPost = false;
+                                        user.uploadingPost = "";
+
+                                        // exif get resoloution //
+                                        resultPost.originalImage = {
+                                            cost: cost, // 0 if free
+                                            resolution: {
+                                                x: width,
+                                                y: height,
+                                            }
+                                        };
+                                        resultPost.save();
+                                        posts.imageProcessing(resultPost.postId + "--Medium." + resultPost.format);
+                                        res.send(true);
+                                    }
+                                    else {
+                                        res.send("invalid cost");
+                                    }
+                                }
+                                else {
+                                    res.send("no post found to add");
+                                }
+                            });
+                        }
+                    });
                 }
-                else{
-                    res.send("no post found to add");
+                catch(err){
+                    res.send({result:false,message:"Image processing failed!" + err});
                 }
+            }
+            else{
+                res.send({result:false,message:"No post found to activate"});
+            }
         });
     },
 
@@ -374,28 +381,7 @@ var posts = {
             });
         }
     },
-    submitPost:function(req,res,user){
-        redisClient.get(user.username + "::uploadingPost", function (err, value) {
-            if(err) throw err;
-            if(value===true) {
-                redisClient.get(user.username + "::uploadingPost", function (err, value) {
-                    if (err) throw err;
-                    if (value) {
 
-                        postSchema.findOneAndUpdate({postId:value},{$set:{deactive:false}})
-
-                        users.removeUploading(user);
-                    }
-                    else {
-                        res.send({result: false, message: "No image uploaded to post"});
-                    }
-                });
-            }
-            else{
-                res.send({result:false,message:"initial uploads first"});
-            }
-        });
-    },
     delete: function(req, res,next,data) {
         var id = req.params.id;
         data.splice(id, 1); // Spoof a DB call

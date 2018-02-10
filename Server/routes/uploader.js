@@ -61,9 +61,9 @@ var uploader = {
                                     else {
                                         uploadingPost = random.generate(25);
                                         redisClient.set(user.username + "::uploadingPost",uploadingPost+"."+format);
-
-                                        postSchema.create(user,format,uploadingPost,function(callback){
-
+                                        posts.Create(user,format,uploadingPost,function(err,callback){
+                                            if(err) console.log(err);
+                                            console.log(callback);
                                         });
                                     }
 
@@ -79,13 +79,12 @@ var uploader = {
                                         size = "";
                                         pathis = originalPath;
                                     }
-                                    uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost + size + "." + format, res);
-                                    setTimeout(function () {
-                                        redisClient.del(user.username + "::uploadingPost");
-                                        redisClient.del(user.username + "::uploadingAlbum");
-                                        redisClient.del(user.username + "::isUploadingPost");
-                                        redisClient.del(user.username + "::isUploadingAlbum");
-                                    }, 600000);
+                                    if(size==="") {
+                                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost, res);
+                                    }
+                                    else{
+                                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost + size + "." + format, res);
+                                    }
                                 });
                             }
                         }

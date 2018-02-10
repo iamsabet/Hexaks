@@ -276,7 +276,7 @@ router.get('/api/v1/posts/subscriptions/',async function(req,res){
 router.post('/api/v1/post/submit/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(callback !==null) {
-            posts.submitPost(req,res,callback);
+            posts.activate(req,res,callback);
         }
         else{
             res.send("404 Not Found");
@@ -286,9 +286,7 @@ router.post('/api/v1/post/submit/', function(req,res){
 router.post('/api/v1/post/initial/', function(req,res){
     validateRequest(req,res,function(user) {
         if(user) {
-            console.log("kir \n");
-            console.log(user);
-            var type = "post";
+            console.log("user"+user);
             users.initialUpload(req,res,user);
         }
         else{
