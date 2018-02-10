@@ -25,7 +25,7 @@ redisClient.select(2,function(){
 
 var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
     originalPath ='/Users/Shared/Hexaks/Server/Pictures/',
-    smallAndMediumPath ='/Users/Shared/Hexaks/Hexaks/Pictures/Statics/',
+    smallAndMediumPath ='/Users/Shared/Hexaks/Web-Client/Statics/Pictures/',
     chunkDirName = "chunks",
     maxFileSize =  40000000, // in bytes, 0 for unlimited 40MB
     minFileSizeToChunk = 1000000; // in bytes 1MB
@@ -59,9 +59,12 @@ var uploader = {
                                         uploadingPost = value;
                                     }
                                     else {
-                                        uploadingPost = random(25);
-                                        redisClient.set(user.username + "::uploadingPost",uploadingPost);
-                                        postSchema.create()
+                                        uploadingPost = random.generate(25);
+                                        redisClient.set(user.username + "::uploadingPost",uploadingPost+"."+format);
+
+                                        postSchema.create(user,format,uploadingPost,function(callback){
+
+                                        });
                                     }
 
                                     if (fields.qqfilename[0].split("sss").length > 1) {

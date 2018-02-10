@@ -284,22 +284,25 @@ router.post('/api/v1/post/submit/', function(req,res){
     });
 });
 router.post('/api/v1/post/initial/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            albums.addNewPost(req,res,callback);
+    validateRequest(req,res,function(user) {
+        if(user) {
+            console.log("kir \n");
+            console.log(user);
+            var type = "post";
+            users.initialUpload(req,res,user);
         }
         else{
-            res.send("404 Not Found");
+            res.send({result:false,message:"404 Not Found"});
         }
     });
 });
 router.post('/api/v1/album/initial/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(callback !==null) {
-            albums.submitAlbum(req,res,callback);
+            users.initialUpload(req,res,callback);
         }
         else{
-            res.send("404 Not Found");
+            res.send({result:false,message:"404 Not Found"});
         }
     });
 });

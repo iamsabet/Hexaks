@@ -95,7 +95,7 @@ var posts = {
         }
     },
 
-    create: function(user,format,callback) {
+    create: function(user,format,postId,callback) {
 
         if(user.isUploadingPost === true){
             postSchema.findOne({postId:user.uploadingPost,owner:{username:user.username}},function(err,findPost){
@@ -110,7 +110,7 @@ var posts = {
 
                                 var postObject = {
                                     albumId: "", // null if not
-                                    postId: user.uploadingPost,
+                                    postId: postId,
                                     owner: {
                                         username: user.username,
                                         profilePicUrl: user.profilePictureUrl,

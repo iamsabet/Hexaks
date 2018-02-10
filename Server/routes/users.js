@@ -86,38 +86,41 @@ var users = {
             }
         });
     },
-
     initialUpload:function(req,res,user){
-
-        if(req.body.type="post") {
+        if(req.body.type==="post") {
             redisClient.get(user.username+"::uploadingPost",function(err,postId){
                 if(err) throw err;
                 if(postId){
                     res.send(postId);
                 }
                 else {
-                    redisClient.set(user.username+"::isUploadingPost",true);
-                    redisClient.set(user.username+"::isUploadingAlbum",false);
+                    redisClient.set(user.username+"::isUploadingPost",true,function(callback){
+                        console.log(callback);
+                    });
+                    redisClient.del(user.username+"::isUploadingAlbum",false);
                     res.send(true);
                 }
             });
         }
-        else if(req.body.type="album") {
+        else if(type==="album") {
             redisClient.get(user.username+"::uploadingAlbum",function(err,albumId){
                 if(err) throw err;
                 if(albumId) {
                     res.send(albumId);
                 }
                 else{
-                    redisClient.set(user.username+"::isUploadingAlbum",true);
-                    redisClient.set(user.username+"::isUploadingPost",false);
+                    redisClient.del(user.username+"::isUploadingAlbum",true);
+                    redisClient.set(user.username+"::isUploadingPost",false,function(callback){
+                        console.log(callback);
+                    });
                     res.send(true);
                 }
             });
         }
+        else{
+            res.send({result:false,message:"Oops"});
+        }
     },
-
-
     removeUploading:function(user){
         redisClient.del(user.username+"::isUploadingAlbum");
         redisClient.del(user.username+"::isUploadingPost");

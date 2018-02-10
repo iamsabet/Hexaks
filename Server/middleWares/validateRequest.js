@@ -32,7 +32,6 @@ module.exports = function(req, res,fn) {
             // The key would be the logged in user's username
                 if (userObject) {
                     var rolesList = userObject.roles;
-                    console.log(req.url);
                     if ((((req.url.indexOf('admin') >= 0) || (req.url.indexOf('curator') >= 0) || (req.url.indexOf('blogger') >= 0) || (req.url.indexOf('premium') >= 0))
                             && (rolesList.indexOf('admin') > -1 || rolesList.indexOf('sabet') > -1 ))|| (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/v1/') >= 0)) {
                         return fn(userObject);

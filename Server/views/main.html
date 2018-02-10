@@ -166,10 +166,10 @@
 <div class="newPostContainer" id="newPost">
     <div class="newPostForm">
         <select name="category" id="category">
-            <!--<option value="Nature">Nature</option>-->
-            <!--<option value="Industrial">Industrial</option>-->
-            <!--<option value="Society">Society</option>-->
-            <!--<option value="Folan">Folan</option>-->
+            <option value="Nature">Nature</option>
+            <option value="Industrial">Industrial</option>
+            <option value="Society">Society</option>
+            <option value="Folan">Folan</option>
         </select>
         <div id="uploadArea" >
             <strong>Drag one or more files to this Drop Zone ...</strong>
@@ -443,10 +443,10 @@
     function sendPagesInitialRequest(pageName,albumOrPost){
         if(pageName === "newPost"){
             if(albumOrPost === "post"){
-                requestHandler("/api/v1/post/initial","POST",{},pageName);
+                requestHandler("/api/v1/post/initial","POST",{type:"post"},pageName);
             }
             else if(albumOrPost === "album"){
-                requestHandler("/api/v1/album/initial","POST",{},pageName);
+                requestHandler("/api/v1/album/initial","POST",{type:"album"},pageName);
             }
             else{
                 alert("invalid post type");
