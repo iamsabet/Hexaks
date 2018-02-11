@@ -668,11 +668,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	float: left;
 	clear: left;
 	display: inline-block;
-	top:50%;
-	left:50%;
-	width:510px;
+	top: 40%;
+	left: 50%;
+	width: auto;
 	height: auto;
-	-webkit-transform: translate(-50%,-50%);
 	-moz-transform: translate(-50%,-50%);
 	-ms-transform: translate(-50%,-50%);
 	-o-transform: translate(-50%,-50%);
@@ -682,38 +681,75 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position: relative;
 	font-size: 20px;
 	width:200px;
-	float: left;
-	clear: left;
+	margin:10px 10px;
 	display: inline-block;
+	float:left;
 }
-
-.newPostContainer .newPostForm textarea{
+.newPostContainer .newPostForm label{
 	position: relative;
-	font-size: 19px;
-	color:black;
+	display: inline-block;
 	float: left;
 	clear: left;
+	margin: 10px;
+	width: 150px;
+	height: auto;
+	line-height: 25px;
+	background-color: transparent;
+	color: black;
+	font-size: 21px;
+}
+.newPostContainer .newPostForm #caption{
+	position: relative;
 	display: inline-block;
+	float: left;
+	clear: left;
+	margin: 10px;
+	width: 270px;
+	height: 80px;
+	background-color: #f6f6f6;
+	color: black;
+	font-size: 20px;
+	resize: none;
+	border-radius: 3px;
+	-moz-appearance: textfield-multiline;
+	-webkit-appearance: textarea;
+	border: 1px solid gray;
+	overflow: auto;
+	padding: 2px;
+	overflow-x:hidden;
+	overflow-y: auto;
 }
 .newPostContainer .newPostForm button{
 	height: 40px;
 	width:200px;
 	position: relative;
-	float: left;
-	clear: both;
 	background-color: #4cae4c;
 	color: black;
 	font-size: 21px;
 	font-weight: bold;
+	float: left;
+	clear: left;
 }
 .newPostContainer #uploadArea{
 	position: relative;
 	display: inline-block;
-	clear: left;
-	float: left;
-	width:500px;
+	min-width: 300px;
+	width: 50%;
+	max-width: 650px;
 	height: 300px;
-	background-color:white;
+	background-color: white;
+	text-align: center;
+	float: right;
+	clear: right;
+	right: 10px;
+}
+@media (max-width:686px) {
+	.newPostContainer #uploadArea {
+		float: left;
+		right: auto;
+		clear:left;
+		left:10px;
+	}
 }
 .uploadItem{
 	display: none;
@@ -1346,7 +1382,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-ms-transform: translate(-50%,-50%) rotate(90deg);
 	-o-transform: translate(-50%,-50%) rotate(90deg);
 	transform: translate(-50%,-50%) rotate(90deg);
-	display: block;
+	display: none;
 
 }
 
@@ -1445,3 +1481,15 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-webkit-transform: rotate(300deg) skewX(30deg);
 	transform: rotate(300deg) skewX(30deg);
 }
+
+
+
+
+
+
+
+
+
+
+
+

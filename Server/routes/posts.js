@@ -158,88 +158,82 @@ var posts = {
     activate:function(req,res,user){
         redisClient.get(user.username+"::uploadingPost",function(err,postId){
             if(err) throw err;
-            if(postId) {
-                try {
-                    new ExifImage({image: 'Server/Pictures/' + postId}, function (error, exifData) {
-                        if (error)
-                            console.log('Error: ' + error.message);
-                        else {
-                            redisClient.del(user.username+"::uploadingPost");
-                            redisClient.del(user.username+"::isUploadingPost");
+            var cost = req.body.cost || 0;
+            if(!isNaN(cost)) {
+                if (postId && req.body.cost <= 1000000 && req.body.cost >= 0) {
+                    try {
+                        console.log(req.body["hashtagsList[]"]);
+                        new ExifImage({image: '/Users/Shared/Hexaks/Server/Pictures/' + postId}, function (error, exifData) {
+                            if (error) throw err;
+                            console.log(cost + " :: "+isNaN(cost));
                             console.log(exifData);
-                            postSchema.findOneAndUpdate({
-                                owner: {username: user.username},
-                                postId:postId.split(".")[0]
-                            }, {$set: {activated: true},hashtags:req.body["hashtags"] || [],caption:req.body["caption"] || []}, function (err, resultPost) { // destroy redis-chashes
-                                if (err) throw err;
-                                if (resultPost) {
-                                    var cost = req.body["cost"] || 0;
-                                    if (cost < 1000000 && cost >= 0) {
-                                        resultPost.activated = true;
-                                        user.isUploadingPost = false;
-                                        user.uploadingPost = "";
-
-                                        // exif get resoloution //
-                                        resultPost.originalImage = {
-                                            cost: cost, // 0 if free
-                                            resolution: {
-                                                x: width,
-                                                y: height,
-                                            }
-                                        };
-                                        resultPost.save();
-                                        posts.imageProcessing(resultPost.postId + "--Medium." + resultPost.format);
-                                        res.send(true);
-                                    }
-                                    else {
-                                        res.send("invalid cost");
+                            postSchema.update({
+                                postId: postId.split(".")[0],
+                                activated: false,
+                            },{
+                                $set: {
+                                    activated: true,
+                                    exifData:exifData.exif,
+                                    hashtags: req.body["hashtagsList[]"] || [],
+                                    caption: req.body.caption || "",
+                                    categories: req.body.categories || ["no cat"],
+                                    originalImage: {
+                                        cost: cost, // 0 if free
+                                        resolution: {
+                                            x: 100,
+                                            y: 100,
+                                        }
                                     }
                                 }
-                                else {
-                                    res.send("no post found to add");
-                                }
+                            },function(err,result){
+                                if(err) throw err;
+                                console.log(result);
+                                res.send(true);
                             });
-                        }
-                    });
-                }
-                catch(err){
-                    res.send({result:false,message:"Image processing failed!" + err});
+                            posts.imageProcessing(postId.split(".")[0] + "--Medium." + postId.split(".")[1]);
+                        });
+                    }
+                    catch (err) {
+                        console.log(err);
+                        res.send({result: false, message: "Image exif extraction failed!" + err});
+                    }
                 }
             }
             else{
-                res.send({result:false,message:"No post found to activate"});
+                res.send({result:false,message:"Oops Bad Request or no post found to activate"});
             }
         });
     },
 
     imageProcessing:function(imageUrl){ // image processing on medium size
+        console.log(imageUrl + " -- > image processing starts");
 
-        Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
-
-                image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
-                    // x, y is the position of this pixel on the image
-                    // idx is the position start position of this rgba tuple in the bitmap Buffer
-                    // this is the image
-                    var red = this.bitmap.data[idx];
-                    var green = this.bitmap.data[idx + 1];
-                    var blue = this.bitmap.data[idx + 2];
-                    var alpha = this.bitmap.data[idx + 3];
-                    gatheredPixels.push({postId: postId, position: idx, value: {r: red, g: green, b: blue, a: alpha}});
-                    // gather list of pixels --> insert many
-                    // rgba values run from 0 - 255
-                    // e.g. this.bitmap.data[idx] = 0; // removes red from this pixel
-                }, function (cb) {
-                    pixels.collection.insertMany(gatheredPixels, [{
-                            ordered: true,
-                            rawResult: false
-                        }],
-                        function () {
-                            console.log(gatheredPixels.length + " inserted pixels");
-                        });
-
-                });
-
-            });
+        // Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
+        //
+        //         image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
+        //             // x, y is the position of this pixel on the image
+        //             // idx is the position start position of this rgba tuple in the bitmap Buffer
+        //             // this is the image
+        //             var red = this.bitmap.data[idx];
+        //             var green = this.bitmap.data[idx + 1];
+        //             var blue = this.bitmap.data[idx + 2];
+        //             var alpha = this.bitmap.data[idx + 3];
+        //             gatheredPixels.push({postId: postId, position: idx, value: {r: red, g: green, b: blue, a: alpha}});
+        //             // gather list of pixels --> insert many
+        //             // rgba values run from 0 - 255
+        //             // e.g. this.bitmap.data[idx] = 0; // removes red from this pixel
+        //         }, function (cb) {
+        //             pixels.collection.insertMany(gatheredPixels, [{
+        //                     ordered: true,
+        //                     rawResult: false
+        //                 }],
+        //                 function () {
+        //                     console.log(gatheredPixels.length + " inserted pixels");
+        //                 });
+        //
+        //         });
+        //
+        //     });
     },
     increaseViews:function(req,res,user){
         if(user) {

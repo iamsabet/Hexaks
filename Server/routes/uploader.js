@@ -40,7 +40,6 @@ var uploader = {
         form.parse(req, function (err, fields, files) {
             if (err) throw err;
             // text/plain is required to ensure support for IE9 and older
-
             if (files) {
                 redisClient.get(user.username + "::isUploadingPost", function (err, isPost) {
                     redisClient.get(user.username + "::isUploadingAlbum", function (err, isAlbum) {
@@ -83,7 +82,7 @@ var uploader = {
                                         uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost, res);
                                     }
                                     else{
-                                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost + size + "." + format, res);
+                                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split(".")[0] + size + "." + format, res);
                                     }
                                 });
                             }

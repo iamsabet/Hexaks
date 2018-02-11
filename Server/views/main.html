@@ -1,11 +1,10 @@
 <html>
 <head>
     <script src="../Statics/javascripts/jquery.min.js"></script>
+    <link rel="stylesheet" href="../Statics/stylesheets/fine-uploader-gallery.css">
     <link rel="stylesheet" href="../Statics/stylesheets/style.css">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="../Statics/stylesheets/fine-uploader-gallery.css">
     <script src="../Statics/javascripts/cookies.js"></script>
-    <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.core.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js"></script>
     <title>Hexaks</title>
 </head>
@@ -169,14 +168,13 @@
             <option value="Nature">Nature</option>
             <option value="Industrial">Industrial</option>
             <option value="Society">Society</option>
-            <option value="Folan">Folan</option>
+            <option value="Color Full">Folan</option>
         </select>
         <div id="uploadArea" >
             <strong>Drag one or more files to this Drop Zone ...</strong>
             <input type="file" accept="image/*" class="browseSingle">
         </div>
-        <textarea name="caption" id="caption"></textarea>
-        <textarea name="hashtags" id="hashtags"></textarea>
+        <div name="caption" id="caption" contenteditable="true"></div>
         <button id="submitPost" > Post </button>
     </div>
 </div>
@@ -207,7 +205,7 @@
                 <div class="qq-thumbnail-wrapper">
                     <img class="qq-thumbnail-selector" qq-max-size="120" qq-server-scale>
                 </div>
-                <button type="button" class="qq-upload-cancel-selector qq-upload-cancel">X</button>
+                <button type="button" class="qq-upload-cancel-selector qq-upload-cancel"></button>
                 <button type="button" class="qq-upload-retry-selector qq-upload-retry">
                     <span class="qq-btn qq-retry-icon" aria-label="Retry"></span>
                     Retry
@@ -358,7 +356,11 @@
     });
     $("body").on("click","#submitPost",function(e){
         e.preventDefault();
-        requestHandler("/api/v1/post/submit","POST",{},"submitPost");
+        var list = $("#caption").html().toString().match(/#\w+/g);
+
+        requestHandler("/api/v1/post/submit","POST",{caption:$("#caption").html(),hashtagsList:list,cost:0,categories:$("#category").val()},"submitPost");
+
+
     });
 
 
@@ -545,9 +547,13 @@
             },
             allowedExtensions: ['gif','jpg','jpeg','png'],
             onSubmit: function(id, fileName){
+
             },
             onComplete: function(id, fileName, responseJSON){ // Customize the output sent to responseJSON in demo.php
                 resetParams();
+                debugger;
+                $(".qq-file-id-"+id).remove();
+
                 switch(responseJSON.ext){
                     case 'gif':
                     case 'jpg':
@@ -559,6 +565,7 @@
                         break;
                 }
                 if(originalUploader._filesInProgress < 1){
+                    $(".qq-file-id-"+parseInt(id+1)).remove();
                     alert("Files Uploaded Successfuly");
                     // var t = setTimeout('location.href = location.href;', 10000)
                 }
@@ -844,7 +851,7 @@
             `);
         }
 
-        setTimeout(function(){$(".ratePad").addClass("show")},200);
+        // setTimeout(function(){$(".ratePad").addClass("show")},200);
 
         $("body").on("mouseenter",".ratePad > div .triangle",function(event){
             var number = parseInt($(this).children("span").html());
@@ -868,14 +875,20 @@
         console.log(res);
     }
     function newPostPageAction(res){
-        console.log(res);
+        if(!res.message) {
+            window.location.pathname= "/"+Me.username;
+        }
+        else{
+            console.log(res.message);
+        }
     }
 
     function rateResponseHandler(res){
         console.log(res);
     }
     function submitPostAction(res){
-        window.location.pathname="/"+Me.username;
+        console.log(res);
+        // window.location.pathname="/"+Me.username;
     }
     function alert(message){
         $("#alertTop h3").html(message);

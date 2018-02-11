@@ -46,11 +46,13 @@
     min-height: 200px;
     max-height: 490px;
     overflow-y: hidden;
-    width: inherit;
+    width: 96%;
+    left: 1%;
     border-radius: 6px;
-    border: 1px dashed #CCCCCC;
+    border: 1px solid #636363;
     background-color: #FAFAFA;
-    padding: 20px;
+    padding: 2px;
+    height: 96%;
 }
 .qq-gallery.qq-uploader:before {
     content: attr(qq-drop-area-text) " ";
@@ -112,8 +114,6 @@
     display: inline-block;
     position: relative;
     max-width: 120px;
-    margin: 0 25px 25px 0;
-    padding: 0;
     line-height: 16px;
     font-size: 13px;
     color: #424242;
@@ -121,9 +121,11 @@
     border-radius: 2px;
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.22);
     vertical-align: top;
-
+    text-align:center;
     /* to ensure consistent size of tiles - may need to change if qq-max-size attr on preview img changes */
-    height: 186px;
+    height: 200px;
+    padding:0 5px;
+    margin:2px auto;
 }
 
 .qq-gallery .qq-upload-spinner,
@@ -281,6 +283,7 @@
     display: inline;
 }
 .qq-gallery .qq-upload-list li.qq-upload-success {
+    text-align:center;
     background-color: #F2F7ED;
 }
 .qq-gallery .qq-upload-list li.qq-upload-fail {
@@ -468,4 +471,15 @@
 
 .qq-gallery .qq-uploader DIALOG::backdrop {
     background-color: rgba(0, 0, 0, 0.7);
+}
+
+
+/* uploader override css */
+
+
+.qq-upload-list > li:nth-child(3n+1),.qq-upload-list > li:nth-child(3n+2){
+    display: none !important;
+}
+.qq-upload-list > li:nth-child(3n){
+    display: block;
 }
