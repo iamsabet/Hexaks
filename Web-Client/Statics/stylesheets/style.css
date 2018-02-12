@@ -465,7 +465,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	line-height: 50px;
 	font-size:20px;
 }
-.eachPost .footer .rate .rateBtn{
+.eachPost .footer .rate .rateIcon{
 	position: relative;
 	float: left;
 	width:40px;
@@ -559,7 +559,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .accountCard a:hover{
 	color: gold;
 }
-
+@media (max-width:1024px){
+	.accountCard {
+		right:0;
+	}
+}
 @media (max-width:686px){
 	.accountCard {
 		max-width: none;

@@ -9,6 +9,7 @@ var uploader = require('./uploader');
 var users = require('./users');
 var validateRequest = require('../middleWares/validateRequest');
 var redis = require('redis');
+var requestIp = require("request-ip");
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -16,6 +17,9 @@ var redisClient = redis.createClient({
 redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
+
+router.post('/login', auth.login);
+router.post('/register', users.register);
 
 
 router.get('/', function(req,res){
@@ -179,9 +183,139 @@ router.post('/api/v1/upload',function(req,res){
 
 
 
+router.post('/api/v1/posts/subscriptions/',async function(req,res){
+
+    validateRequest(req,res,function(user) {
+        if(user !==null) {
+            redisClient.get(user.username+"::requestOrigin", function (err, requestOrigin) {
+                if(err) throw err;
+                let timeOrigin ;
+                let pageNumber = req.body.pageNumber;
+                let counts = req.body.counts;
+                let isCurated = req.body.isCurated;
+                let hashtags = [req.body.hashtag];
+                let orderBy = req.body.orderBy;
+                let category = [req.body.category];
+                if(requestOrigin){
+                    timeOrigin = requestOrigin;
+                    if(pageNumber === 1){
+                        requestOrigin = Date.now();
+                        redisClient.set("requestOrigin:"+user.username,requestOrigin);
+                    }
+                }
+                else{
+                    requestOrigin = Date.now();
+                    redisClient.set("requestOrigin:"+user.username,requestOrigin);
+                }
+                posts.getPostsByFiltersAndOrders(req,res,user,user.followings,orderBy,isCurated,hashtags,category,false,true,false,timeOrigin,counts,pageNumber,function(posts){
+                    if(err) throw err;
+                    console.log(posts);
+                    res.send(posts);
+                });
+            });
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
 
 
 
+router.post('/api/v1/posts/:uuid',async function(req,res){
+    userSchema.findOne({username:req.params.uuid},{isPrivate:1},function(err,hostUser){
+        if(err) throw err;
+        if(hostUser) {
+            validateRequest(req, res, function (user) {
+                if (user) {
+                    let canQuery = true;
+                    let privatePosts = false;
+                    if(hostUser.isPrivate && user.username !== req.params.uuid){
+                        if(user.followings.indexOf(req.param.uuid) > -1){
+                            privatePosts=true;
+                            canQuery = true;
+                        }
+                        else{
+                            canQuery = false;
+                        }
+                    }
+                    if(user.username !== req.params.uuid){
+                        privatePosts = true;
+                    }
+                    redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
+                        if (err) throw err;
+                        let category = undefined;
+                        if(req.body.category && req.body.category !==""){
+                            category = [req.body.category];
+                        }
+                        let timeOrigin;
+                        let pageNumber = req.body.pageNumber || 1;
+                        let counts = req.body.counts || 10;
+                        let isCurated = req.body.isCurated || false;
+                        let hashtags = [req.body.hashtags] || undefined;
+                        let orderBy = req.body.orderBy || "createdAt";
+                        let curator = req.body.curator || undefined;
+                        if (requestOrigin) {
+                            timeOrigin = requestOrigin;
+                            if (pageNumber === 1) {
+                                requestOrigin = Date.now();
+                                redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                            }
+                        }
+                        else {
+                            requestOrigin = Date.now();
+                            timeOrigin = requestOrigin;
+                            redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                        }
+                        if(canQuery) {
+                            posts.getPostsByFiltersAndOrders(req, res, user, [req.params.uuid], orderBy, isCurated, hashtags, category, curator ,false, true, privatePosts, 0,1000000,timeOrigin, 1 ,counts, pageNumber);
+                        }
+                        else{
+                            res.send({result:false,message:"403 - Forbidden Account is Private"});
+                        }
+                    });
+                }
+                else {
+                    if(!hostUser.isPrivate) {
+                        redisClient.get(requestIp.getClientIp(req) + "::requestOrigin", function (err, requestOrigin) {
+
+                            let timeOrigin;
+                            let pageNumber = req.query.pageNumber;
+                            let counts = req.query.counts;
+                            let isCurated = req.query.isCurated;
+                            let hashtags = [];
+                            let orderBy = req.query.orderBy;
+                            let category = [];
+                            if (requestOrigin) {
+                                timeOrigin = requestOrigin;
+                                if (pageNumber === 1) {
+                                    requestOrigin = Date.now();
+                                    redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
+                                    redisClient.expire()
+                                }
+                            }
+                            else {
+                                requestOrigin = Date.now();
+                                redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
+                            }
+                            posts.getPostsByFiltersAndOrders(req, res, user, user, orderBy, isCurated, hashtags, category, false, true, false, timeOrigin, counts, pageNumber, function (posts) {
+                                if (err) throw err;
+                                console.log(posts);
+                                res.send(posts);
+                            });
+                        });
+                    }
+                    else{
+                        res.send({result:false,message:"403 - Forbidden Account is Private"});
+                    }
+                }
+            });
+        }
+        else{
+            res.send("404 Not Found user");
+        }
+    });
+});
 
 
 
@@ -206,72 +340,6 @@ router.post('/api/v1/post/activate/', function(req,res){
         }
     });
 });
-router.post('/api/v1/post/clear/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            users.removeUploading(req,res,callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-
-router.post('/api/v1/post/clear/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            users.removeUploading(req,res,callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-
-
-
-router.get('/api/v1/posts/subscriptions/',async function(req,res){
-
-    validateRequest(req,res,function(user) {
-        if(user !==null) {
-            redis.get("requestOrigin:"+user.username, function (err, requestOrigin) {
-                if(err) throw err;
-                let timeOrigin ;
-                if(requestOrigin){
-                    timeOrigin = requestOrigin;
-                }
-                else{
-                    requestOrigin = Date.now().getTime();
-                    redis.set("requestOrigin:"+user.username,requestOrigin);
-                }
-                let pageNumber = req.query.pageNumber;
-                let counts = req.query.counts;
-                let isCurated = req.query.isCurated;
-                let hashtags = [req.query.hashtag];
-                let orderBy = req.query.orderBy;
-                let category = req.query.category;
-                posts.getPostsByFiltersAndOrders(req,res,user,user.followings,orderBy,isCurated,hashtags,category,false,true,false,timeOrigin,counts,pageNumber,function(posts){
-                    if(err) throw err;
-                    res.send(posts);
-                });
-            });
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-
-
-
-
-
-
-
-
-
-
-
 
 router.post('/api/v1/post/submit/', function(req,res){
     validateRequest(req,res,function(callback) {
@@ -318,8 +386,7 @@ router.post('/api/v1/album/submit/', function(req,res){
 router.delete('/api/v1/admin/user/:id', users.delete);
 
 
-router.post('/login', auth.login);
-router.post('/register', users.register);
+
 /*
  * Routes that can be accessed only by autheticated users
  */

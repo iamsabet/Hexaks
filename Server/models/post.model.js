@@ -52,12 +52,11 @@ var postSchema = new mongoose.Schema({
         link:String,
     },
     isCurated : Boolean,
-    isPrivate : Boolean,
     activated:Boolean,
     createdAt:Number,
     updatedAt:Number
 });
-
+postSchema.plugin(mongoosePaginate);
 postSchema.methods.create = function(postObject,callback){
     var newPost = new Post(postObject);
     newPost.createdAt = Date.now();
@@ -65,6 +64,18 @@ postSchema.methods.create = function(postObject,callback){
     newPost.userId = random.generate();
     newPost.save();
     return callback(true);
+};
+postSchema.methods.Paginate = function(query,options,req,res){
+    post.paginate(query,options,function(err,posts){
+        if(err) {
+            console.log(err);
+            res.send([]);
+        }
+        else {
+            console.log(posts);
+            res.send(posts);
+        }
+    });
 };
 postSchema.methods.Edit = function(req,res){
 
@@ -86,8 +97,7 @@ postSchema.pre('save', function(next){
     }
     next();
 });
-
+postSchema.plugin(mongoosePaginate);
 var Post = mongoose.model('posts', postSchema);
 var post = mongoose.model('posts');
-postSchema.plugin(mongoosePaginate);
 module.exports = post;

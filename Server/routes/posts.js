@@ -28,17 +28,25 @@ redisClient.select(2,function(){
 
 var posts = {
 
-    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,counts,pageNumber,callback) {
+    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdge,counts,pageNumber) {
 
 
         var right = rightCost || 1000000;
-        var left = leftCost || -1;
+        var left = leftCost || 0;
         var orderedBy = orderBy || "createdAt";
-        var privateOrNot = isPrivate || "";
+        var privateOrNot = isPrivate || false;
         var reject = rejected || false;
-        var hashtags = hashtags || [];
-        var category = category || "";
-        var timeEdge = 1;
+        var hashtagQuery = {$exists:true};
+        var categoryQuery = {$exists:true};
+        if(hashtags && hashtags.length > 0){
+            if(hashtags[0]!=="")
+                hashtagQuery = {$in:hashtags};
+        }
+        if(category && category.length > 0){
+            if(category[0]!=="")
+                categoryQuery = {$in:category};
+        }
+        var timeEdge = timeEdge || 1;
 
         if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.value" || orderedBy === "views" || orderedBy === "rate") {
             // timeWindow
@@ -49,29 +57,37 @@ var posts = {
                 else {
                     timeEdge = (timeOrigin - (24 * 3600 * 1000)); // 1day
                 }
+                let costQuery = {cost: {$gte: left, $lte: right}};
+                if(left === 0 && right === 1000000){
+                    costQuery = {$exists:true};
+                }
+                if(privateOrNot === true){
+                    privateOrNot = {$exists:true};
+                }
+                console.log(userNames);
                 var query = {
-                    owner: {username: userNames},
-                    activated: activated,
-                    rejected: reject,
-                    hashtags:{$in:hashtags},
-                    category:category,
-                    originalImage: {cost: {$gt: left, $lt: right}},
-                    isPrivate: privateOrNot,
-                    createdAt: {$lt: timeEdge},
+                    "owner.username" : userNames[0],
+                    activated: activated || true,
+                    "rejected.value":false,
+                    hashtags:hashtagQuery,
+                    categories:categoryQuery,
+                    originalImage: costQuery,
+                    private: privateOrNot,
+                    createdAt: {$gt: timeEdge},
                 };
                 if (isCurated === true) {
                     query.isCurated = true;
-                    query.curator = {
-                        username: curator
-                    };
+                    if(curator) {
+                        query.curator = {
+                            username: curator
+                        };
+                    }
                 }
-                var options = {
-                    select: 'postId owner createdAt updatedAt curator exifData originalImage views isCurated ext advertise rate albumId',
-                    sort: {date: -1},
-                    populate: 'postId',
-                    lean: true, // no fucking idea what this is exactly :/ / - laghar :/ :))
-                    page: pageNumber,
-                    limit: counts
+                let options = {
+                    select: 'postId owner createdAt updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
+                    sort: {createdAt: -1},
+                    page: 1,
+                    limit: 10
                 };
 
                 if (orderBy === "originalImage.cost") {
@@ -86,11 +102,8 @@ var posts = {
                 else { // "views"
                     options.sort = {views: -1};
                 }
-
-                postSchema.paginate(query, options, function (err, posts) {
-                    if (err) throw err;
-                    return callback(posts);
-                });
+                console.log(query);
+                post.Paginate(query, options,req,res);
             }
         }
     },
@@ -99,7 +112,7 @@ var posts = {
         redisClient.get(user.username+"::uploadingPost",function(err,postId) {
             if (err) throw err;
             if (postId) {
-                var postObject = {
+                let postObject = {
                     postId: postId.split(".")[0],
                     owner: {
                         username: user.username,
@@ -134,6 +147,7 @@ var posts = {
                         value: false,
                         reason: "",
                     },
+                    isCurated : false,
                     advertise: {},
                     activated: false,
                 };
@@ -162,9 +176,8 @@ var posts = {
             if(!isNaN(cost)) {
                 if (postId && req.body.cost <= 1000000 && req.body.cost >= 0) {
                     try {
-                        console.log(req.body["hashtagsList[]"]);
                         new ExifImage({image: '/Users/Shared/Hexaks/Server/Pictures/' + postId}, function (error, exifData) {
-                            if (error) throw err;
+                            if (error) console.log("exif extraction failed  -- > file.format");
                             console.log(cost + " :: "+isNaN(cost));
                             console.log(exifData);
                             postSchema.update({
@@ -188,6 +201,8 @@ var posts = {
                             },function(err,result){
                                 if(err) throw err;
                                 console.log(result);
+                                redisClient.del(user.username+"::uploadingPost");
+                                redisClient.del(user.username+"::isUploadingPost");
                                 res.send(true);
                             });
                             posts.imageProcessing(postId.split(".")[0] + "--Medium." + postId.split(".")[1]);

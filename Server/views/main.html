@@ -274,7 +274,17 @@
     };
     var currentPostItterator = 1;
     var postsList = [ /* current post schema */ ];
-
+    var Filters = {
+        username:pageType,
+        pageNumber : 1,
+        counts: 10,
+        isCurated : null,
+        curator : null ,
+        hashtags : [],
+        orderBy : null,
+        category : null,
+    };
+    var pageType="";
     var pageNames = ["feed","profile","settings","home","slideView","newPost","policy"];
 
     var originalUploader = {};
@@ -358,7 +368,15 @@
         e.preventDefault();
         var list = $("#caption").html().toString().match(/#\w+/g);
 
-        requestHandler("/api/v1/post/submit","POST",{caption:$("#caption").html(),hashtagsList:list,cost:0,categories:$("#category").val()},"submitPost");
+        requestHandler("/api/v1/post/submit","POST",
+                {
+                caption:$("#caption").html(),
+                hashtagsList:list,
+                cost:0,
+                isPrivate: $("#isPrivate").val() || false,
+                categories:$("#category").val()
+                }
+                ,"submitPost");
 
 
     });
@@ -428,8 +446,22 @@
 
     // Post(Picture) Handlers
     function getPostsByFilter(input){
-        if(input.isPrivate && input.following)
-        requestHandler("/api/v1/posts/getPostsByFilter","POST",{/* ? */},"getPostsByFilter");
+
+
+        if(pageType === "followings"){
+            requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
+        }
+        else{
+            console.log(pageType);
+            if (input.isPrivate) {
+                if(input.following) {
+                    requestHandler("/api/v1/posts/" + input.username, "POST", Filters, "getPostsByFilter");
+                }
+            }
+            else{
+                requestHandler("/api/v1/posts/"+input.username, "POST", Filters, "getPostsByFilter");
+            }
+        }
     }
 
     function getPostInfos(){
@@ -494,15 +526,16 @@
 
             }break;
             case "getPostsByFilter":{
-
-            }
+                console.log("total :" + res.total + " - "+ res.page + " / " + res.pages);
+                parsePosts(res.docs);
+            }break;
             case "submitPost":{
                 submitPostAction(res);
             }break;
         }
     }
     function urlParser(writeState){ // --> Page Name --> Username / post Orders / category / #hashtags
-        var pageType ="";
+
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
         }
@@ -633,7 +666,6 @@
                         }
                     }
                     loadProfileInfo(hostUserName);
-                    getPostsByFilter(hostUserName);
                     if(newHistory || false) {
                         pushHistory(pageName,window.location.pathname,pageType);
                     }
@@ -742,12 +774,12 @@
                 if ($(".rightSide")[0]) {
                     $(element).addClass("halfRight");
                     $(".rightSide").addClass("hide");
-                    $(".accountCard").css("right","5px");
+                    $(".accountCard").css("right","0");
                 }
                 else if ($(".leftSide")[0]) {
                     $(element).addClass("halfLeft");
                     $(".leftSide").addClass("hide");
-                    $(".accountCard").css("right","5px");
+                    $(".accountCard").css("right","0");
                 }
             }
             else if (element.className === "halfLeft") {
@@ -795,7 +827,7 @@
                     $("#follow").addClass("show");
                     $("#follow").html("Follow Back");
                     if(res.user.isPrivate===false){
-                        getPostsByFilter({username:res.user.username});
+
                     }
                 }
                 else if (res.followed === false && res.following === true) { // followed but not following
@@ -809,10 +841,12 @@
                 }
             }
             else {
-                $("#unfollow").remove();
-                $("#follow").remove();
+                if(res.user.isPrivate)
+                    $("#unfollow").remove();
+                    $("#follow").remove();
             }
-
+            Filters.hashtags = ""; // to lowwer case
+            Filters.category = "";
             getPostsByFilter({username:res.user.username,followed:res.followed , following:res.following,isPrivate:res.isPrivate});
         }
         else {
@@ -870,25 +904,61 @@
             rate(rateNumber,postId);
         });
     }
+    function parsePosts(posts){
+        postsList = posts;
+        console.log(postsList);
+        if(Filters.pageNumber===1){
+            $(".postsContainer").html();
+        }
+        $.each(postsList,function(index,data){
+            var curator = ``;
+            if(postsList[index].isCurated){
+                curator = `
 
+                `;
+            }
+
+            $(".postsContainer").append(`
+                <li class="eachPost" id="post-${postsList[index].postId}">
+                    <div class="header">
+                        <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[index].owner.username}-prof.jpg" />
+                        <span class="username left">${postsList[index].owner.username}</span>
+                        <div class="curatorDiv right">
+                            <img src="../Statics/images/images/curateSmallBtn.png"/>
+                        </div>
+                    </div>
+                    <div class="imgContainer">
+                        <img src="../Statics/Pictures/${postsList[index].postId}-Small.${postsList[index].ext}" />
+                    </div>
+                    <div class="footer">
+                        <div class="rate">
+                            <img class="rateIcon" src="../Statics/images/images/b_like_p.png" />
+                            <span>${postsList[index].rate.value}/6</span>
+                        </div>
+                        <span class="time right">${postsList[index].createdAt}</span>
+                    </div>
+                </li>
+            `);
+        });
+    }
     function slideViewPageAction(res){
         console.log(res);
     }
     function newPostPageAction(res){
-        if(!res.message) {
-            window.location.pathname= "/"+Me.username;
-        }
-        else{
-            console.log(res.message);
-        }
+        console.log(res);
+
     }
 
     function rateResponseHandler(res){
         console.log(res);
     }
     function submitPostAction(res){
-        console.log(res);
-        // window.location.pathname="/"+Me.username;
+        if(!res.message) {
+            window.location.pathname= "/"+Me.username;
+        }
+        else{
+            console.log(res.message);
+        }
     }
     function alert(message){
         $("#alertTop h3").html(message);

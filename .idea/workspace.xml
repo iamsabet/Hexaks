@@ -3,202 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Hexaks/Pictures/Statics/UTNH7S5aVXWDwZfb6jC8VV3pF-Medium.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Hexaks/Pictures/Statics/UTNH7S5aVXWDwZfb6jC8VV3pF-Small.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/jLy0x0IHwERyG9jsmmKGgoUVT.jpg" afterPath="" />
       <change beforePath="$PROJECT_DIR$/Server/app.js" afterPath="$PROJECT_DIR$/Server/app.js" />
+      <change beforePath="$PROJECT_DIR$/Server/models/post.model.js" afterPath="$PROJECT_DIR$/Server/models/post.model.js" />
+      <change beforePath="$PROJECT_DIR$/Server/routes/index.js" afterPath="$PROJECT_DIR$/Server/routes/index.js" />
       <change beforePath="$PROJECT_DIR$/Server/routes/posts.js" afterPath="$PROJECT_DIR$/Server/routes/posts.js" />
-      <change beforePath="$PROJECT_DIR$/Server/routes/uploader.js" afterPath="$PROJECT_DIR$/Server/routes/uploader.js" />
       <change beforePath="$PROJECT_DIR$/Server/views/main.html" afterPath="$PROJECT_DIR$/Server/views/main.html" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/LICENSE" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/README.md" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/azure.fine-uploader.core.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/azure.fine-uploader.core.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/azure.fine-uploader.core.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/azure.fine-uploader.core.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/azure.fine-uploader.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/azure.fine-uploader.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/azure.fine-uploader.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/azure.fine-uploader.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/continue.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/edit.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader-gallery.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader-gallery.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader-gallery.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader-new.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader-new.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader-new.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/fine-uploader.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/loading.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/pause.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/placeholders/not_available-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/placeholders/waiting-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/processing.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/retry.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/templates/default.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/templates/gallery.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/templates/simple-thumbnails.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.fine-uploader/trash.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/azure.jquery.fine-uploader.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/azure.jquery.fine-uploader.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/azure.jquery.fine-uploader.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/azure.jquery.fine-uploader.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/continue.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/edit.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader-gallery.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader-gallery.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader-gallery.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader-new.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader-new.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader-new.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/fine-uploader.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/loading.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/pause.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/placeholders/not_available-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/placeholders/waiting-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/processing.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/retry.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/templates/default.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/templates/gallery.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/templates/simple-thumbnails.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/azure.jquery.fine-uploader/trash.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/dnd/dnd.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/dnd/dnd.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/dnd/dnd.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/dnd/dnd.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/continue.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/edit.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader-gallery.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader-gallery.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader-gallery.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader-new.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader-new.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader-new.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.core.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.core.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.core.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.core.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/iframe.xss.response.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/loading.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/pause.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/placeholders/not_available-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/placeholders/waiting-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/processing.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/retry.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/templates/default.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/templates/gallery.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/templates/simple-thumbnails.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/trash.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/continue.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/edit.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader-gallery.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader-gallery.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader-gallery.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader-new.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader-new.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader-new.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/fine-uploader.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/iframe.xss.response.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/loading.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/pause.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/placeholders/not_available-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/placeholders/waiting-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/processing.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/retry.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/templates/default.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/templates/gallery.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/templates/simple-thumbnails.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/trash.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/all.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/azure.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/core/all.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/core/azure.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/core/index.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/core/s3.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/core/traditional.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/dnd.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/jquery/azure.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/jquery/s3.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/jquery/traditional.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/s3.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/lib/traditional.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/npm-debug.log" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/package.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/continue.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/edit.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader-gallery.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader-gallery.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader-gallery.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader-new.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader-new.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader-new.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/fine-uploader.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/loading.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/pause.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/placeholders/not_available-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/placeholders/waiting-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/processing.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/retry.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/s3.fine-uploader.core.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/s3.fine-uploader.core.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/s3.fine-uploader.core.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/s3.fine-uploader.core.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/s3.fine-uploader.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/s3.fine-uploader.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/s3.fine-uploader.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/s3.fine-uploader.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/templates/default.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/templates/gallery.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/templates/simple-thumbnails.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.fine-uploader/trash.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/continue.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/edit.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader-gallery.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader-gallery.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader-gallery.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader-new.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader-new.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader-new.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader.min.css" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/fine-uploader.min.css.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/loading.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/pause.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/placeholders/not_available-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/placeholders/waiting-generic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/processing.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/retry.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/s3.jquery.fine-uploader.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/s3.jquery.fine-uploader.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/s3.jquery.fine-uploader.min.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/s3.jquery.fine-uploader.min.js.map" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/templates/default.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/templates/gallery.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/templates/simple-thumbnails.html" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/s3.jquery.fine-uploader/trash.gif" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/typescript/fine-uploader.d.ts" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/typescript/fine-uploader.test.ts" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-gallery.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-gallery.css" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-new.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-new.css" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader.css" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/jLy0x0IHwERyG9jsmmKGgoUVT-Medium.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/jLy0x0IHwERyG9jsmmKGgoUVT-Small.jpg" afterPath="" />
       <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -214,12 +26,20 @@
       <file leaf-file-name="main.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/views/main.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="120" column="0" lean-forward="false" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+            <state relative-caret-position="350">
+              <caret line="847" column="12" lean-forward="false" selection-start-line="847" selection-start-column="12" selection-end-line="848" selection-end-column="34" />
               <folding>
-                <marker date="1518382031184" expanded="true" signature="30428:30579" ph="..." />
-                <marker date="1518382031184" expanded="true" signature="30466:30573" ph="..." />
-                <marker date="1518382031184" expanded="true" signature="30493:30550" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="31374:31525" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="31412:31519" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="31439:31496" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="32760:33256" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="32760:33843" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="32801:33233" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="33090:33206" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="33280:33422" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="33463:33821" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="33506:33639" ph="..." />
+                <marker date="1518461139637" expanded="true" signature="33506:33708" ph="..." />
               </folding>
             </state>
           </provider>
@@ -228,8 +48,18 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/routes/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="421">
-              <caret line="278" column="22" lean-forward="false" selection-start-line="278" selection-start-column="22" selection-end-line="278" selection-end-column="22" />
+            <state relative-caret-position="217">
+              <caret line="300" column="47" lean-forward="false" selection-start-line="300" selection-start-column="34" selection-end-line="300" selection-end-column="47" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/app.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" column="24" lean-forward="false" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -245,11 +75,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="posts.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="posts.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Server/routes/posts.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="164" column="62" lean-forward="false" selection-start-line="164" selection-start-column="62" selection-end-line="164" selection-end-column="62" />
+            <state relative-caret-position="402">
+              <caret line="45" column="23" lean-forward="false" selection-start-line="45" selection-start-column="23" selection-end-line="45" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -258,18 +88,28 @@
       <file leaf-file-name="users.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/routes/users.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="532">
+            <state relative-caret-position="230">
               <caret line="114" column="78" lean-forward="false" selection-start-line="114" selection-start-column="72" selection-end-line="114" selection-end-column="78" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
+      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
-              <caret line="348" column="25" lean-forward="false" selection-start-line="348" selection-start-column="17" selection-end-line="348" selection-end-column="25" />
+            <state relative-caret-position="326">
+              <caret line="390" column="33" lean-forward="false" selection-start-line="390" selection-start-column="19" selection-end-line="390" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/models/user.model.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="685">
+              <caret line="53" column="26" lean-forward="false" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -278,8 +118,8 @@
       <file leaf-file-name="post.model.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/models/post.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="688">
-              <caret line="58" column="3" lean-forward="false" selection-start-line="58" selection-start-column="3" selection-end-line="58" selection-end-column="3" />
+            <state relative-caret-position="527">
+              <caret line="72" column="9" lean-forward="false" selection-start-line="72" selection-start-column="9" selection-end-line="72" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -288,7 +128,7 @@
       <file leaf-file-name="uploader.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/routes/uploader.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="689">
+            <state relative-caret-position="1260">
               <caret line="84" column="132" lean-forward="false" selection-start-line="84" selection-start-column="132" selection-end-line="84" selection-end-column="132" />
               <folding />
             </state>
@@ -307,22 +147,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.account</find>
-      <find>redisclien</find>
-      <find>redis</find>
-      <find>urlParser</find>
-      <find>&quot;newPost&quot;</find>
-      <find>currentPostId</find>
-      <find>postId</find>
-      <find>Info</find>
-      <find>currentPostID</find>
-      <find>getMeResponse</find>
-      <find>getPostsByFilter</find>
-      <find>if(</find>
-      <find>sendPage</find>
-      <find>submitUpload</find>
-      <find>responseAC</find>
-      <find>newPostContaiNER</find>
       <find>post/initia</find>
       <find>initial</find>
       <find>.newPostContainer</find>
@@ -337,6 +161,22 @@
       <find>debugger</find>
       <find>submitPost</find>
       <find>ratePad</find>
+      <find>window.locat</find>
+      <find>.accountCard</find>
+      <find>getPostsByF</find>
+      <find>getPosts</find>
+      <find>pageType</find>
+      <find>getPostsBy</find>
+      <find>getPostsB</find>
+      <find>private</find>
+      <find>getPostsByFilter</find>
+      <find>Filters</find>
+      <find>Filters.ca</find>
+      <find>indust</find>
+      <find>parse</find>
+      <find>#kir&quot;</find>
+      <find>.postsCo</find>
+      <find>getPostsByFil</find>
     </findStrings>
     <replaceStrings>
       <replace>postSchema</replace>
@@ -403,16 +243,16 @@
         <option value="$PROJECT_DIR$/Server/models/user.model.js" />
         <option value="$PROJECT_DIR$/Server/middleWares/validateRequest.js" />
         <option value="$PROJECT_DIR$/Server/routes/users.js" />
-        <option value="$PROJECT_DIR$/Server/models/post.model.js" />
-        <option value="$PROJECT_DIR$/Server/routes/index.js" />
-        <option value="$PROJECT_DIR$/Server/app.js" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader.css" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-new.css" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-gallery.css" />
         <option value="$PROJECT_DIR$/Server/routes/uploader.js" />
-        <option value="$PROJECT_DIR$/Server/routes/posts.js" />
+        <option value="$PROJECT_DIR$/Server/app.js" />
+        <option value="$PROJECT_DIR$/Server/models/post.model.js" />
+        <option value="$PROJECT_DIR$/Server/routes/index.js" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
         <option value="$PROJECT_DIR$/Server/views/main.html" />
+        <option value="$PROJECT_DIR$/Server/routes/posts.js" />
       </list>
     </option>
   </component>
@@ -470,7 +310,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -529,15 +371,35 @@
               <item name="Hexaks" type="462c0819:PsiDirectoryNode" />
               <item name="Web-Client" type="462c0819:PsiDirectoryNode" />
               <item name="Statics" type="462c0819:PsiDirectoryNode" />
+              <item name="images" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Hexaks" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Hexaks" type="462c0819:PsiDirectoryNode" />
+              <item name="Web-Client" type="462c0819:PsiDirectoryNode" />
+              <item name="Statics" type="462c0819:PsiDirectoryNode" />
+              <item name="images" type="462c0819:PsiDirectoryNode" />
+              <item name="images" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Hexaks" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Hexaks" type="462c0819:PsiDirectoryNode" />
+              <item name="Web-Client" type="462c0819:PsiDirectoryNode" />
+              <item name="Statics" type="462c0819:PsiDirectoryNode" />
+              <item name="Pictures" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Hexaks" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Hexaks" type="462c0819:PsiDirectoryNode" />
+              <item name="Web-Client" type="462c0819:PsiDirectoryNode" />
+              <item name="Statics" type="462c0819:PsiDirectoryNode" />
               <item name="stylesheets" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
-      <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -621,6 +483,7 @@
       <patterns />
     </configuration>
     <configuration name="gallery.html" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/Hexaks/Web-Client/Statics/javascripts/fine-uploader/all.fine-uploader/templates/gallery.html" />
+    <configuration name="main.html (1)" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/Hexaks/Server/views/main.html" />
     <configuration name="main.html" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/Hexaks/client/views/main.html" />
     <configuration name="posts.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-js-file="posts.js" working-dir="$PROJECT_DIR$/Server/routes" />
     <configuration default="true" type="Remote" factoryName="Remote">
@@ -663,17 +526,19 @@
       <option name="PROGRAM_PARAMETERS" />
       <predefined_log_file id="idea.log" enabled="true" />
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Node.js.bin/www" />
       <item index="1" class="java.lang.String" itemvalue="JavaScript Debug.main.html" />
       <item index="2" class="java.lang.String" itemvalue="Node.js.posts.js" />
       <item index="3" class="java.lang.String" itemvalue="JavaScript Debug.gallery.html" />
+      <item index="4" class="java.lang.String" itemvalue="JavaScript Debug.main.html (1)" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.gallery.html" />
-        <item index="1" class="java.lang.String" itemvalue="Node.js.posts.js" />
-        <item index="2" class="java.lang.String" itemvalue="JavaScript Debug.main.html" />
+      <list size="4">
+        <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.main.html (1)" />
+        <item index="1" class="java.lang.String" itemvalue="JavaScript Debug.gallery.html" />
+        <item index="2" class="java.lang.String" itemvalue="Node.js.posts.js" />
+        <item index="3" class="java.lang.String" itemvalue="JavaScript Debug.main.html" />
       </list>
     </recent_temporary>
   </component>
@@ -716,11 +581,12 @@
       <workItem from="1518183532383" duration="17607000" />
       <workItem from="1518290501145" duration="9277000" />
       <workItem from="1518348502493" duration="15906000" />
+      <workItem from="1518428242292" duration="19086000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="187376000" />
+    <option name="totallyTimeSpent" value="206462000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -728,30 +594,30 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24257933" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.243" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18392856" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18620269" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39962476" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Learn" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -824,38 +690,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/models/user.model.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
-          <caret line="53" column="26" lean-forward="false" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-19998">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/iframe.xss.response.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.core.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.js" />
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/iframe.xss.response.js" />
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.core.js" />
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -876,7 +713,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="13" column="14" lean-forward="false" selection-start-line="13" selection-start-column="14" selection-end-line="13" selection-end-column="14" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -919,7 +755,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -931,16 +766,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/Pictures/txCAjy4tBjBxBqLw60lSRWfcv.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/Pictures/txCAjy4tBjBxBqLw60lSRWfcv.jpg" />
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-new.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-703">
           <caret line="233" column="37" lean-forward="false" selection-start-line="233" selection-start-column="37" selection-end-line="233" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -948,7 +778,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="628">
           <caret line="227" column="0" lean-forward="false" selection-start-line="227" selection-start-column="0" selection-end-line="227" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -964,15 +793,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="65" lean-forward="false" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="65" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -980,6 +800,42 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="14" column="66" lean-forward="false" selection-start-line="14" selection-start-column="66" selection-end-line="14" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/Pictures/7TpY0QubewpgLmUrAVgYVFjVS.jpg" />
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/Pictures/wI1ki7lTWUX1KP8Z9gqQXeoNg.jpg-Medium.jpg" />
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/Pictures/6gG5bjWU20ICRKEb0RoLw5b7P-Medium.jpg" />
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/Pictures/6gG5bjWU20ICRKEb0RoLw5b7P-Small.jpg" />
+    <entry file="file://$PROJECT_DIR$/Server/routes/uploader.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1260">
+          <caret line="84" column="132" lean-forward="false" selection-start-line="84" selection-start-column="132" selection-end-line="84" selection-end-column="132" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/user.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="685">
+          <caret line="53" column="26" lean-forward="false" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/routes/users.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="114" column="78" lean-forward="false" selection-start-line="114" selection-start-column="72" selection-end-line="114" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/post.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="72" column="9" lean-forward="false" selection-start-line="72" selection-start-column="9" selection-end-line="72" selection-end-column="9" />
           <folding />
         </state>
       </provider>
@@ -992,82 +848,54 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/Pictures/7TpY0QubewpgLmUrAVgYVFjVS.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/Pictures/wI1ki7lTWUX1KP8Z9gqQXeoNg.jpg-Medium.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/routes/users.js">
+    <entry file="file://$PROJECT_DIR$/Server/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="114" column="78" lean-forward="false" selection-start-line="114" selection-start-column="72" selection-end-line="114" selection-end-column="78" />
+        <state relative-caret-position="30">
+          <caret line="2" column="24" lean-forward="false" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/routes/uploader.js">
+    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="689">
-          <caret line="84" column="132" lean-forward="false" selection-start-line="84" selection-start-column="132" selection-end-line="84" selection-end-column="132" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/models/post.model.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="688">
-          <caret line="58" column="3" lean-forward="false" selection-start-line="58" selection-start-column="3" selection-end-line="58" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/Pictures/6gG5bjWU20ICRKEb0RoLw5b7P-Medium.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/Pictures/6gG5bjWU20ICRKEb0RoLw5b7P-Small.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/routes/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="421">
-          <caret line="278" column="22" lean-forward="false" selection-start-line="278" selection-start-column="22" selection-end-line="278" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/routes/posts.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="164" column="62" lean-forward="false" selection-start-line="164" selection-start-column="62" selection-end-line="164" selection-end-column="62" />
+        <state relative-caret-position="326">
+          <caret line="390" column="33" lean-forward="false" selection-start-line="390" selection-start-column="19" selection-end-line="390" selection-end-column="33" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/views/main.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="120" column="0" lean-forward="false" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+        <state relative-caret-position="350">
+          <caret line="847" column="12" lean-forward="false" selection-start-line="847" selection-start-column="12" selection-end-line="848" selection-end-column="34" />
           <folding>
-            <marker date="1518382031184" expanded="true" signature="30428:30579" ph="..." />
-            <marker date="1518382031184" expanded="true" signature="30466:30573" ph="..." />
-            <marker date="1518382031184" expanded="true" signature="30493:30550" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="31374:31525" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="31412:31519" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="31439:31496" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="32760:33256" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="32760:33843" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="32801:33233" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="33090:33206" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="33280:33422" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="33463:33821" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="33506:33639" ph="..." />
+            <marker date="1518461139637" expanded="true" signature="33506:33708" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
+    <entry file="file://$PROJECT_DIR$/Server/routes/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="348" column="25" lean-forward="false" selection-start-line="348" selection-start-column="17" selection-end-line="348" selection-end-column="25" />
+        <state relative-caret-position="217">
+          <caret line="300" column="47" lean-forward="false" selection-start-line="300" selection-start-column="34" selection-end-line="300" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/routes/posts.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="402">
+          <caret line="45" column="23" lean-forward="false" selection-start-line="45" selection-start-column="23" selection-end-line="45" selection-end-column="23" />
           <folding />
         </state>
       </provider>
