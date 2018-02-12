@@ -73,7 +73,7 @@ var posts = {
                     categories:categoryQuery,
                     originalImage: costQuery,
                     private: privateOrNot,
-                    createdAt: {$gt: timeEdge},
+                    createdAt: {$gte: timeEdge,$lt:timeOrigin},
                 };
                 if (isCurated === true) {
                     query.isCurated = true;

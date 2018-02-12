@@ -212,6 +212,7 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
                 }
                 else{
                     requestOrigin = Date.now();
+                    timeOrigin = requestOrigin;
                     redisClient.set("requestOrigin:"+user.username,requestOrigin);
                 }
                 posts.getPostsByFiltersAndOrders(req, res, user, user.followings, orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, 1 ,counts, pageNumber);
