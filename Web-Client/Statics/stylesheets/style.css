@@ -341,9 +341,8 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position: relative;
 	display: inline-block;
 	margin: 20px 1%;
-	width: auto;
-	min-width: 330px;
 	max-width: 400px;
+	width: 330px;
 	height: auto;
 }
 .postsContainer .eachPost .imgContainer img{

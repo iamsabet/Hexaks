@@ -274,6 +274,7 @@
     };
     var currentPostItterator = 1;
     var postsList = [ /* current post schema */ ];
+    var pageType="";
     var Filters = {
         username:pageType,
         pageNumber : 1,
@@ -284,7 +285,6 @@
         orderBy : null,
         category : null,
     };
-    var pageType="";
     var pageNames = ["feed","profile","settings","home","slideView","newPost","policy"];
 
     var originalUploader = {};
@@ -445,23 +445,22 @@
 
 
     // Post(Picture) Handlers
-    function getPostsByFilter(input){
-
-
-        if(pageType === "followings"){
-            requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
-        }
-        else{
-            console.log(pageType);
-            if (input.isPrivate) {
-                if(input.following) {
-                    requestHandler("/api/v1/posts/" + input.username, "POST", Filters, "getPostsByFilter");
-                }
-            }
-            else{
-                requestHandler("/api/v1/posts/"+input.username, "POST", Filters, "getPostsByFilter");
-            }
-        }
+    async function getPostsByFilter(input,pageType){
+        requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
+        // if(pageType === "followings"){
+        //
+        // }
+        // else{
+        //     console.log(pageType);
+        //     if (input.isPrivate) {
+        //         if(input.following) {
+        //             requestHandler("/api/v1/posts/" + input.username, "POST", Filters, "getPostsByFilter");
+        //         }
+        //     }
+        //     else{
+        //         requestHandler("/api/v1/posts/"+input.username, "POST", Filters, "getPostsByFilter");
+        //     }
+        // }
     }
 
     function getPostInfos(){
@@ -618,7 +617,7 @@
 
         setTimeout(function(){
 
-            console.log(pageName);
+            console.log(pageName+" --- "+pageType);
 
                 if(pageName=== "feed" || pageName=== "home" || pageName=== ""){
                     // show feed items --> hide Others
@@ -627,7 +626,6 @@
                         if (pageName === "home" || pageName === "") {
                             $("#homeSliders").addClass("show");
                             $("#postsContainer").addClass("show");
-
 
                         }
                         // hide elements
@@ -644,6 +642,7 @@
                         }
                     }
                     // --> Function Calls
+                    getPostsByFilter({},pageType);
                     if(newHistory || false) {
                         pushHistory(pageName,window.location.pathname,pageType);
                     }
@@ -923,7 +922,7 @@
                     <div class="header">
                         <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[index].owner.username}-prof.jpg" />
                         <span class="username left">${postsList[index].owner.username}</span>
-                        <div class="curatorDiv right">
+                        <div class="curatorContainer right">
                             <img src="../Statics/images/images/curateSmallBtn.png"/>
                         </div>
                     </div>

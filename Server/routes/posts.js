@@ -66,9 +66,9 @@ var posts = {
                 }
                 console.log(userNames);
                 var query = {
-                    "owner.username" : userNames[0],
+                    "owner.username" : {$in:userNames},
                     activated: activated || true,
-                    "rejected.value":false,
+                    "rejected.value":reject,
                     hashtags:hashtagQuery,
                     categories:categoryQuery,
                     originalImage: costQuery,
@@ -77,7 +77,7 @@ var posts = {
                 };
                 if (isCurated === true) {
                     query.isCurated = true;
-                    if(curator) {
+                    if(curator !== "") {
                         query.curator = {
                             username: curator
                         };

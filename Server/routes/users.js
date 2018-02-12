@@ -150,7 +150,6 @@ var users = {
             if (err) throw err;
             console.log(rest);
         });
-        redis.HGetAll("user::"+followObject.following,);
         Follow.Create(req, res, followObject);
 
     },

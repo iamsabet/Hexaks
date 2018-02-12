@@ -183,19 +183,26 @@ router.post('/api/v1/upload',function(req,res){
 
 
 
-router.post('/api/v1/posts/subscriptions/',async function(req,res){
+router.post('/api/v1/posts/subscriptions/',function(req,res){
 
     validateRequest(req,res,function(user) {
         if(user !==null) {
             redisClient.get(user.username+"::requestOrigin", function (err, requestOrigin) {
                 if(err) throw err;
-                let timeOrigin ;
-                let pageNumber = req.body.pageNumber;
-                let counts = req.body.counts;
-                let isCurated = req.body.isCurated;
-                let hashtags = [req.body.hashtag];
-                let orderBy = req.body.orderBy;
-                let category = [req.body.category];
+                let category = undefined;
+                if(req.body.category && req.body.category !==""){
+                    category = [req.body.category];
+                }
+                let hashtags = undefined;
+                if(req.body.hashtag && req.body.hashtag !==""){
+                    hashtags = [req.body.hashtag];
+                }
+                let timeOrigin;
+                let pageNumber = req.body.pageNumber || 1;
+                let counts = req.body.counts || 10;
+                let isCurated = req.body.isCurated || false;
+                let orderBy = req.body.orderBy || "createdAt";
+                let curator = req.body.curator || undefined;
                 if(requestOrigin){
                     timeOrigin = requestOrigin;
                     if(pageNumber === 1){
@@ -207,22 +214,19 @@ router.post('/api/v1/posts/subscriptions/',async function(req,res){
                     requestOrigin = Date.now();
                     redisClient.set("requestOrigin:"+user.username,requestOrigin);
                 }
-                posts.getPostsByFiltersAndOrders(req,res,user,user.followings,orderBy,isCurated,hashtags,category,false,true,false,timeOrigin,counts,pageNumber,function(posts){
-                    if(err) throw err;
-                    console.log(posts);
-                    res.send(posts);
-                });
+                posts.getPostsByFiltersAndOrders(req, res, user, user.followings, orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, 1 ,counts, pageNumber);
+
             });
         }
         else{
-            res.send("404 Not Found");
+            res.send({result:false,message:"404 Not Found"});
         }
     });
 });
 
 
 
-router.post('/api/v1/posts/:uuid',async function(req,res){
+router.post('/api/v1/posts/:uuid',function(req,res){
     userSchema.findOne({username:req.params.uuid},{isPrivate:1},function(err,hostUser){
         if(err) throw err;
         if(hostUser) {
