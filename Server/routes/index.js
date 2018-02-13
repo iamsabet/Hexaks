@@ -83,6 +83,13 @@ router.get('/api/v1/admin/', function(req,res){
 });
 
 
+router.get('/posts/:uuid', function(req,res){
+    var hostPostId = req.params.uuid;
+    res.render("slideView.html");
+
+});
+
+
 
 router.get('/:uuid', function(req,res){
     var hostUserName = req.params.uuid;
@@ -91,13 +98,12 @@ router.get('/:uuid', function(req,res){
 });
 
 
-
-router.get('/posts/:uuid', function(req,res){
-    var hostPostId = req.params.uuid;
-    res.render("slideView.html");
+router.get('/:uuid/:uuid2', function(req,res){
+    var uuid = req.params.uuid2;
+    console.log(uuid);
+    res.render("main.html");
 
 });
-
 
 router.get('/api/v1/users/getMe',function(req,res){
     validateRequest(req,res,function(callback){
@@ -182,6 +188,62 @@ router.post('/api/v1/upload',function(req,res){
 
 
 
+router.post('/api/v1/posts/explore/',function(req,res){
+
+    validateRequest(req,res,function(user) {
+        if(user !==null) {
+            redisClient.get(user.username+"::requestOrigin", function (err, requestOrigin) {
+                if(err) throw err;
+                let category = undefined;
+                if(req.body.category && req.body.category !==""){
+                    category = [req.body.category];
+                }
+                let hashtags = undefined;
+                if(req.body.hashtag && req.body.hashtag !==""){
+                    hashtags = [req.body.hashtag];
+                }
+                let timeOrigin;
+                let pageNumber = req.body.pageNumber || 1;
+                let counts = req.body.counts || 10;
+                let isCurated = req.body.isCurated || false;
+                let timeEdge = req.body.timeEdge || 1;
+                let orderBy = undefined;
+                if(req.body.order==="latest")
+                    orderBy = "createdAt";
+                else if(req.body.order==="top") {
+                    orderBy = req.body.orderBy || "rate.value";
+                    isCurated = true;
+                }
+
+                let curator = req.body.curator || undefined;
+                if(requestOrigin){
+                    if(pageNumber === 1){
+                        requestOrigin = Date.now();
+                        redisClient.del(user.username+"::requestOrigin",function(index){
+                            console.log(index);
+                        });
+                        redisClient.set(user.username+"::requestOrigin",requestOrigin);
+                        redisClient.expire(user.username+"::requestOrigin",30000);
+                    }
+                    timeOrigin = requestOrigin;
+                }
+                else{
+                    requestOrigin = Date.now();
+                    timeOrigin = requestOrigin;
+                    redisClient.set(user.username+"::requestOrigin",requestOrigin);
+                    redisClient.expire(user.username+"::requestOrigin",30000);
+                }
+                posts.getPostsByFiltersAndOrders(req, res, user, "all", orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
+
+            });
+        }
+        else{
+            res.send({result:false,message:"404 Not Found"});
+        }
+    });
+});
+
+
 
 router.post('/api/v1/posts/subscriptions/',function(req,res){
 
@@ -212,16 +274,21 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
 
                 let curator = req.body.curator || undefined;
                 if(requestOrigin){
-                    timeOrigin = requestOrigin;
                     if(pageNumber === 1){
                         requestOrigin = Date.now();
-                        redisClient.set("requestOrigin:"+user.username,requestOrigin);
+                        redisClient.del(user.username+"::requestOrigin",function(index){
+                            console.log(index);
+                        });
+                        redisClient.set(user.username+"::requestOrigin",requestOrigin);
+                        redisClient.expire(user.username+"::requestOrigin",30000);
                     }
+                    timeOrigin = requestOrigin;
                 }
                 else{
                     requestOrigin = Date.now();
                     timeOrigin = requestOrigin;
-                    redisClient.set("requestOrigin:"+user.username,requestOrigin);
+                    redisClient.set(user.username+"::requestOrigin",requestOrigin);
+                    redisClient.expire(user.username+"::requestOrigin",30000);
                 }
                 posts.getPostsByFiltersAndOrders(req, res, user, user.followings, orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
 
@@ -269,16 +336,22 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         let orderBy = req.body.orderBy || "createdAt";
                         let curator = req.body.curator || undefined;
                         if (requestOrigin) {
-                            timeOrigin = requestOrigin;
                             if (pageNumber === 1) {
                                 requestOrigin = Date.now();
-                                redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                                redisClient.del(user.username+"::requestOrigin",function(index){
+                                    console.log(index);
+                                });
+                                redisClient.set(user.username+"::requestOrigin", requestOrigin);
+                                redisClient.expire(user.username+"::requestOrigin",30000);
                             }
+                            timeOrigin = requestOrigin;
+
                         }
                         else {
                             requestOrigin = Date.now();
                             timeOrigin = requestOrigin;
-                            redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                            redisClient.set(user.username+"::requestOrigin", requestOrigin);
+                            redisClient.expire(user.username+"::requestOrigin",30000);
                         }
                         if(canQuery) {
                             posts.getPostsByFiltersAndOrders(req, res, user, [req.params.uuid], orderBy, isCurated, hashtags, category, curator ,false, true, privatePosts, 0,1000000,timeOrigin, 1 ,counts, pageNumber);
@@ -303,13 +376,17 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                                 timeOrigin = requestOrigin;
                                 if (pageNumber === 1) {
                                     requestOrigin = Date.now();
+                                    redisClient.del(requestIp.getClientIp(req) + "::requestOrigin",function(index){
+                                        console.log(index);
+                                    });
                                     redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
-                                    redisClient.expire()
+                                    redisClient.expire(requestIp.getClientIp(req) + "::requestOrigin",30000);
                                 }
                             }
                             else {
                                 requestOrigin = Date.now();
                                 redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
+                                redisClient.expire(requestIp.getClientIp(req) + "::requestOrigin",30000);
                             }
                             posts.getPostsByFiltersAndOrders(req, res, user, user, orderBy, isCurated, hashtags, category, false, true, false, timeOrigin, counts, pageNumber, function (posts) {
                                 if (err) throw err;

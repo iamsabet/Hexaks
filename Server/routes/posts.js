@@ -85,19 +85,21 @@ var posts = {
                 }
                 let options = {
                     select: 'postId owner createdAt updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
-                    sort: {createdAt: -1},
+                    sort: {createdAt: +1},
                     page: 1,
                     limit: 10
                 };
-
+                if(userNames === "all"){
+                    query["owner.username"]= {$exists:true};
+                }
                 if (orderBy === "originalImage.cost") {
-                    options.sort = {"originalImage.cost": -1};
+                    options.sort = {"originalImage.cost": +1};
                 }
                 else if (orderBy === "rate.value") {
-                    options.sort = {"rate.value" : -1};
+                    options.sort = {"rate.value" : +1};
                 }
                 else if (orderBy === "rate") {
-                    options.sort = {rate: -1};
+                    options.sort = {rate: +1};
                 }
                 else { // "views"
                     options.sort = {views: -1};
@@ -180,13 +182,17 @@ var posts = {
                             if (error) console.log("exif extraction failed  -- > file.format");
                             console.log(cost + " :: "+isNaN(cost));
                             console.log(exifData);
+                            var exif = {};
+                            if(exifData && postId.split(".")[1].toLowerCase()=== "jpeg" || postId.split(".")[1].toLowerCase() === "jpg"){
+                                exif = exifData.exif;
+                            }
                             postSchema.update({
                                 postId: postId.split(".")[0],
                                 activated: false,
                             },{
                                 $set: {
                                     activated: true,
-                                    exifData:exifData.exif,
+                                    exifData:exif,
                                     hashtags: req.body["hashtagsList[]"] || [],
                                     caption: req.body.caption || "",
                                     categories: req.body.categories || ["no cat"],

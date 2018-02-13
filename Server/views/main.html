@@ -282,7 +282,7 @@
         isCurated : null,
         curator : null ,
         hashtag : [],
-        order : "latest",
+        order : "top",
         orderBy : "rate.value",
         timeEdge: 2, // hours
         leftCost:0,
@@ -319,9 +319,9 @@
     // TOP NAV
     $("body").on("click",".topNav ul li",function(){
         $(this).parents("ul").children(".selected").removeClass("selected");
-        Filters.orderBy = $(this).html();
-        debugger;
         $(this).addClass("selected");
+        Filters.orderBy = $(this).html();
+        
         orderName = $(this).html().toLowerCase();
 
         if(orderName === "curated"|| orderName === "top") {
@@ -396,7 +396,7 @@
             url: url || "/",
             method: method || "GET",
             data: input || {},
-            before: function () {
+            beforeSend: function () {
             },
             success: function (res) {
                 if(res.message && res.result===false){
@@ -460,8 +460,12 @@
             case "followings":{
                     requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
             }break;
+
             case "":{
                     requestHandler("/api/v1/posts/explore", "POST", Filters, "getPostsByFilter");
+            }break;
+            case "top" || "latest":{
+                requestHandler("/api/v1/posts/explore", "POST", Filters, "getPostsByFilter");
             }break;
             case "home":{
                     requestHandler("/api/v1/posts/home", "POST", Filters, "getPostsByFilter");
@@ -570,16 +574,17 @@
                 Filters.orderBy = pageType;
                 Filters.category = window.location.pathname.split("/")[2] || null;
                 if(pageType==="curated"){
-                    pageType = top;
+                    pageType = "top";
                 }
-                changePage(pageType,pageType, writeState);// Other Pages
+                changePage("feed",pageType, writeState);// Other Pages
             }
-                if(pageType ==="settings" || pageType==="slideview" || pageType ==="contact" || pageType==="newpost" || pageType==="policy")
-                    changePage(pageType,pageType, writeState);// Other Pages
+            else {
+                if (pageType === "settings" || pageType === "slideview" || pageType === "contact" || pageType === "newpost" || pageType === "policy")
+                    changePage(pageType, pageType, writeState);// Other Pages
                 else
-                    changePage("feed",pageType,writeState);// Feed
+                    changePage("feed", pageType, writeState);// Feed
 
-
+            }
         }
         else{
             changePage("profile",pageType,writeState);// Profile -->
@@ -943,32 +948,33 @@
         if(Filters.pageNumber===1){
             $(".postsContainer").html();
         }
+        var length = postsList.length -1;
         $.each(postsList,function(index,data){
             var curator = ``;
-            if(postsList[index].isCurated){
+            if(postsList[length - index].isCurated){
                 curator = `
 
                 `;
             }
 
             $(".postsContainer").append(`
-                <li class="eachPost" id="post-${postsList[index].postId}">
+                <li class="eachPost" id="post-${postsList[length - index].postId}">
                     <div class="header">
-                        <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[index].owner.username}-prof.jpg" />
-                        <span class="username left">${postsList[index].owner.username}</span>
+                        <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[length - index].owner.username}-prof.jpg" />
+                        <span class="username left">${postsList[length - index].owner.username}</span>
                         <div class="curatorContainer right">
                             <img src="../Statics/images/images/curateSmallBtn.png"/>
                         </div>
                     </div>
                     <div class="imgContainer">
-                        <img src="../Statics/Pictures/${postsList[index].postId}-Small.${postsList[index].ext}" />
+                        <img src="../Statics/Pictures/${postsList[length - index].postId}-Small.${postsList[length - index].ext}" />
                     </div>
                     <div class="footer">
                         <div class="rate">
                             <img class="rateIcon" src="../Statics/images/images/b_like_p.png" />
-                            <span>${postsList[index].rate.value}/6</span>
+                            <span>${postsList[length - index].rate.value}/6</span>
                         </div>
-                        <span class="time right">${postsList[index].createdAt}</span>
+                        <span class="time right">${postsList[length - index].createdAt}</span>
                     </div>
                 </li>
             `);
