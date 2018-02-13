@@ -281,11 +281,14 @@
         counts: 10,
         isCurated : null,
         curator : null ,
-        hashtags : [],
-        orderBy : null,
+        hashtag : [],
+        order : "latest",
+        orderBy : "rate.value",
+        timeEdge: 2, // hours
+        leftCost:0,
+        rightCost:1000000,
         category : null,
     };
-    var pageNames = ["feed","profile","settings","home","slideView","newPost","policy"];
 
     var originalUploader = {};
     // initial by url parsing
@@ -306,12 +309,18 @@
 
         }
     });
+    $("body").on("click","#newPostBtn",function(event){
+       event.preventDefault();
+       changePage("newpost","newPost",true);
+    });
     $("body").on("submit",".loginSmall form",function(event){
         event.preventDefault();
     });
     // TOP NAV
     $("body").on("click",".topNav ul li",function(){
         $(this).parents("ul").children(".selected").removeClass("selected");
+        Filters.orderBy = $(this).html();
+        debugger;
         $(this).addClass("selected");
         orderName = $(this).html().toLowerCase();
 
@@ -445,22 +454,30 @@
 
 
     // Post(Picture) Handlers
-    async function getPostsByFilter(input,pageType){
-        requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
-        // if(pageType === "followings"){
-        //
-        // }
-        // else{
-        //     console.log(pageType);
-        //     if (input.isPrivate) {
-        //         if(input.following) {
-        //             requestHandler("/api/v1/posts/" + input.username, "POST", Filters, "getPostsByFilter");
-        //         }
-        //     }
-        //     else{
-        //         requestHandler("/api/v1/posts/"+input.username, "POST", Filters, "getPostsByFilter");
-        //     }
-        // }
+    function getPostsByFilter(input,pageType){
+
+        switch (pageType) {
+            case "followings":{
+                    requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
+            }break;
+            case "":{
+                    requestHandler("/api/v1/posts/explore", "POST", Filters, "getPostsByFilter");
+            }break;
+            case "home":{
+                    requestHandler("/api/v1/posts/home", "POST", Filters, "getPostsByFilter");
+            }break;
+            default : {
+                console.log(pageType);
+                if (input.isPrivate) {
+                    if (input.following) {
+                        requestHandler("/api/v1/posts/" + input.username, "POST", Filters, "getPostsByFilter");
+                    }
+                }
+                else {
+                    requestHandler("/api/v1/posts/" + input.username, "POST", Filters, "getPostsByFilter");
+                }
+            }
+        }
     }
 
     function getPostInfos(){
@@ -534,18 +551,34 @@
         }
     }
     function urlParser(writeState){ // --> Page Name --> Username / post Orders / category / #hashtags
-
+        Filters.hashtag = window.location.hash;
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
+        }
+        if(window.location.pathname.split("/")[2]){
+            var orderBy = window.location.pathname.split("/")[2];
+            if( orderBy === "curated" || orderBy === "latest" || orderBy === "top" ) {
+                Filters.orderBy = orderBy;
+                Filters.category = window.location.pathname.split("/")[3] || null;
+            }
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "followings" || pageType === "followers" ||
             pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" ||
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
 
+            if( pageType === "curated" || pageType === "latest" || pageType === "top" ) {
+                Filters.orderBy = pageType;
+                Filters.category = window.location.pathname.split("/")[2] || null;
+                if(pageType==="curated"){
+                    pageType = top;
+                }
+                changePage(pageType,pageType, writeState);// Other Pages
+            }
                 if(pageType ==="settings" || pageType==="slideview" || pageType ==="contact" || pageType==="newpost" || pageType==="policy")
                     changePage(pageType,pageType, writeState);// Other Pages
                 else
                     changePage("feed",pageType,writeState);// Feed
+
 
         }
         else{
@@ -626,7 +659,6 @@
                         if (pageName === "home" || pageName === "") {
                             $("#homeSliders").addClass("show");
                             $("#postsContainer").addClass("show");
-
                         }
                         // hide elements
                         pageNames = ["settings", "newPost", "slideView", "profileTop", "profileTopSmall", "contact", "policy"];
@@ -644,7 +676,7 @@
                     // --> Function Calls
                     getPostsByFilter({},pageType);
                     if(newHistory || false) {
-                        pushHistory(pageName,window.location.pathname,pageType);
+                        pushHistory(pageName,pageType ,pageType);
                     }
                 }
                 else if(pageName === "profile"){
@@ -666,7 +698,7 @@
                     }
                     loadProfileInfo(hostUserName);
                     if(newHistory || false) {
-                        pushHistory(pageName,window.location.pathname,pageType);
+                        pushHistory(pageName,hostUserName,pageType);
                     }
                 }
                 else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="postscontainer" || pageName==="contact"){
@@ -687,23 +719,25 @@
                         }
                     }
                     if(newHistory || false) {
-                        pushHistory(pageName,window.location.pathname,pageType);
+                        pushHistory(pageName,pageName,pageType);
                     }
                 }
                 else {
                     alert("Oops , Page Name Not Defined !");
                 }
-
-
+                currentPage = pageName ;
         },50);
 
     }
 
     function pushHistory(newPageName,url,data){
-        if (historyPointer === historyList.length) {
+        window.history.replaceState("","","/");
+        window.history.replaceState("/","",url);
+        if (historyPointer === historyList.length-1 ) {
             historyList.push({pageName: newPageName, urlData: url ,data:data, hashtag : window.location.hash});
             currentPage = newPageName;
             historyPointer++;
+
         }
         else if (historyPointer < historyList.length -1 ){
             for(var x  = historyList.length -1 ; x > historyPointer ; x--){
@@ -727,7 +761,7 @@
     function backward(){
         if(historyPointer > 0){
             historyPointer--;
-            changePage(historyList[historyPointer].pageName,false);
+            changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
             window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
         }
         else{
@@ -737,7 +771,7 @@
     function forward(){
         if(historyPointer < historyList.length -1 ){
             historyPointer++;
-            changePage(historyList[historyPointer].pageName,false);
+            changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
             window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
         }
         else{

@@ -201,7 +201,15 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
                 let pageNumber = req.body.pageNumber || 1;
                 let counts = req.body.counts || 10;
                 let isCurated = req.body.isCurated || false;
-                let orderBy = req.body.orderBy || "createdAt";
+                let timeEdge = req.body.timeEdge || 1;
+                let orderBy = undefined;
+                if(req.body.order==="latest")
+                    orderBy = "createdAt";
+                else if(req.body.order==="top") {
+                    orderBy = req.body.orderBy || "rate.value";
+                    isCurated = true;
+                }
+
                 let curator = req.body.curator || undefined;
                 if(requestOrigin){
                     timeOrigin = requestOrigin;
@@ -215,7 +223,7 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
                     timeOrigin = requestOrigin;
                     redisClient.set("requestOrigin:"+user.username,requestOrigin);
                 }
-                posts.getPostsByFiltersAndOrders(req, res, user, user.followings, orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, 1 ,counts, pageNumber);
+                posts.getPostsByFiltersAndOrders(req, res, user, user.followings, orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
 
             });
         }

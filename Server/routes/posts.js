@@ -52,10 +52,10 @@ var posts = {
             // timeWindow
             if ((typeof isCurated) === "boolean") {
                 if (timeEdge < 31 && timeEdge > 1) {
-                    timeEdge = (timeOrigin - (timeEdge * 24 * 3600 * 1000)); // time edge up to 31 days
+                    timeEdge = (timeOrigin - (timeEdge * 3600 * 1000)); // time edge up to 31 days
                 }
                 else {
-                    timeEdge = (timeOrigin - (24 * 3600 * 1000)); // 1day
+                    timeEdge = (timeOrigin - ( 3600 * 1000)); // 1day
                 }
                 let costQuery = {cost: {$gte: left, $lte: right}};
                 if(left === 0 && right === 1000000){
@@ -91,10 +91,10 @@ var posts = {
                 };
 
                 if (orderBy === "originalImage.cost") {
-                    options.sort = {originalImage: {cost: -1}};
+                    options.sort = {"originalImage.cost": -1};
                 }
                 else if (orderBy === "rate.value") {
-                    options.sort = {rate: {value: -1}};
+                    options.sort = {"rate.value" : -1};
                 }
                 else if (orderBy === "rate") {
                     options.sort = {rate: -1};
