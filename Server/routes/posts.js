@@ -43,7 +43,7 @@ var posts = {
                 hashtagQuery = {$in:hashtags};
         }
         if(category && category.length > 0){
-            if(category[0]!=="")
+            if(category[0] !== "" && category[0] !== "All")
                 categoryQuery = {$in:category};
         }
         console.log(timeEdgeIn);

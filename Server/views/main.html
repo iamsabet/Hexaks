@@ -72,7 +72,7 @@
     </div>
     <div class="topNav">
         <ul>
-            <li class="selected">Latest</li>
+            <li>Latest</li>
             <li>Top</li>
             <li>Curated</li>
         </ul>
@@ -104,13 +104,14 @@
         <img id="logo" src="../Statics/images/images/LOGO.png">
         // parse dynamicly for clients - authenticated - and role based
         <ul>
-            <li class="navRightButtons selected">Home</li>
+            <li class="navRightButtons">Home</li>
             <li class="navRightButtons">Explore</li>
             <li class="navRightButtons">Subscriptions</li>
             <li class="navRightButtons">People</li>
+            <li class="navRightButtons">Settings</li>
+            <li class="navRightButtons" id="about">About</li>
         </ul>
-        <a href="/settings">Settings</a>
-        <a href="/about" id="about">About</a>
+
     </div>
     <!--<div class="footer">-->
     <!--<a href="/terms">Terms Of Service</a>-->
@@ -281,13 +282,13 @@
         counts: 10,
         isCurated : "",
         curator : "" ,
-        hashtag : [],
+        hashtag : "",
         order : "latest",
         orderBy : "rate.value",
         timeEdge: 1000, // hours
         leftCost:0,
         rightCost:1000000,
-        category : null,
+        category : "",
     };
 
     var originalUploader = {};
@@ -311,39 +312,8 @@
     });
     $("body").on("click",".navRightButtons",function(event){
         event.preventDefault();
-        $(".navRightButtons").removeClass("selected");
-        $(this).addClass("selected");
-        var pageType = $(this).html().toLowerCase();
-        var tempNewUrl = "";
-        var additional = "";
-        var y = 0;
-        var currentUrlArray = window.location.pathname.split("/");
-
-        if(currentUrlArray[1] === "latest" || currentUrlArray[1] === "top" || currentUrlArray[1] === "curated"){
-            additional = pageType;
-        }
-        else{
-            currentUrlArray[1] = pageType;
-        }
-        for(var x = 0 ; x < currentUrlArray.length+1; x++) {
-
-            if(x===1) {
-                if (additional !== "") {
-                    tempNewUrl += additional + "/";
-                     y = 1;
-                }
-                else{
-                    tempNewUrl += currentUrlArray[x-y]+"/";
-                }
-            }
-            else{
-                tempNewUrl += currentUrlArray[x-y] +"/";
-            }
-            if(x === currentUrlArray.length){
-                window.history.replaceState("/","/",tempNewUrl);
-                urlParser(true);
-            }
-        }
+        var pageName = $(this).html().toLowerCase();
+        makeUrl(pageName);
     });
     $("body").on("click","#newPostBtn",function(event){
        event.preventDefault();
@@ -366,54 +336,17 @@
             else {
                 Filters.isCurated = false;
             }
+            Filters.order = "top";
+            Filters.orderBy = "rate.value";
         }
         else if (order === "latest") {
             Filters.isCurated = false;
+            Filters.order = "latest";
             if ($(".timeNav.show")) {
                 $(".timeNav.show").removeClass("show");
             }
         }
-
-
-        var tempNewUrl = "";
-        var additional = "";
-        var y = 0;
-        var currentUrlArray = window.location.pathname.toLowerCase().split("/");
-        if (currentUrlArray[1] === "latest" || currentUrlArray[1] === "top" || currentUrlArray[1] === "curated") {
-            currentUrlArray[1] = order;
-        }
-        else {
-            additional = order;
-        }
-        for (var x = 0; x < currentUrlArray.length; x++) {
-
-            if (x === 2) {
-                if (additional !== "") {
-                    tempNewUrl += additional + "/";
-                    y = 1 ;
-                }
-                else {
-                    tempNewUrl += currentUrlArray[x-y] + "/";
-                }
-            }
-            else {
-                tempNewUrl += currentUrlArray[x-y] + "/";
-            }
-            if(currentUrlArray.length === 2){
-                currentUrlArray[1] = order;
-            }
-            if ( x === currentUrlArray.length -1 ) {
-                if(order === "latest" || order==="top" || order==="curated") {
-                    // window.history.replaceState("", "", "/");
-                    console.log(tempNewUrl);
-                    window.history.replaceState("", "", tempNewUrl);
-                    urlParser(true);
-                }
-                else{
-                    alert("invalid order inout" + order);
-                }
-            }
-        }
+        makeUrl();
     });
     $("body").on("click",".closeTimeNav",function(){
         if($(".timeNav.show")) {
@@ -485,7 +418,6 @@
                 categories:$("#category").val()
                 }
                 ,"submitPost");
-
 
     });
 
@@ -649,34 +581,131 @@
             }break;
         }
     }
-    function urlParser(writeState){ // --> Page Name --> Username / post Orders / category / #hashtags
-        Filters.hashtag = window.location.hash;
+
+
+    function makeUrl(pageName) {
+
+        var urlArray = window.location.pathname.split("/");
+        var newUrl = "";
+        var hashtag = "";
+        var category = "";
+        var order = "";
+
+
+        if (pageName) {
+
+            window.history.replaceState("", "","/"+pageName);
+            if (pageName !== "subscriptions" && pageName !== "explore") {
+                Filters.order = "latest";
+                Filters.orderBy = "createdAt";
+
+            }
+            else {
+                Filters.order = "top";
+                Filters.orderBy = "rate.value";
+            }
+            Filters.category = "";
+            Filters.hashtag = "";
+        }
+        else{
+
+            hashtag = Filters.hashtag || "";
+            category = Filters.category || "";
+            order = Filters.order || "";
+            if (Filters.isCurated === true) {
+                order = "curated";
+            }
+            if(urlArray[1]!=="" && urlArray[1] !== "latest" & urlArray[1] !== "top" && urlArray[1] !== "curated"){
+                newUrl += "/" + urlArray[1];
+            }
+            if(order !== "" && (order === "latest" || order === "top" || order === "curated")){
+                newUrl += "/" + order;
+            }
+            if(hashtag !== "" && category === ""){
+                category = "All";
+                newUrl += "/" + category + "/" + hashtag;
+            }
+            if(category !== ""){
+                newUrl += "/" + category + "/" + hashtag;
+            }
+            window.history.replaceState("", "", "/");
+            window.history.replaceState("", "", newUrl);
+        }
+        urlParser(true);
+    }
+
+
+    function urlParser(writeState){
+        var order = "latest";
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
         }
         if(window.location.pathname.split("/")[2]){
-            var orderBy = window.location.pathname.split("/")[2];
-            if( orderBy === "curated" || orderBy === "latest" || orderBy === "top" ) {
-                Filters.order = orderBy;
-                Filters.category = window.location.pathname.split("/")[3] || null;
-                Filters.hashtag = window.location.hash || null;
+            order = window.location.pathname.split("/")[2];
+            if( order === "curated" || order === "latest" || order === "top" ) {
+                Filters.order = order;
+                Filters.category = window.location.pathname.split("/")[3] || "";
+                Filters.hashtag = window.location.hash || "";
+                if(order === "curated"){
+                    Filters.order = "top";
+                    Filters.isCurated = true;
+                }
+                else{
+                    Filters.isCurated = "";
+                }
             }
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "subscriptions" || pageType === "followings" || pageType === "followers" ||
-            pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" ||
+            pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
 
-            if( pageType === "curated" || pageType === "latest" || pageType === "top" ) {
-                Filters.order = pageType;
-                Filters.category = window.location.pathname.split("/")[2] || null;
-                Filters.hashtag = window.location.hash || null;
+            if( pageType === "curated" || pageType === "latest" || pageType === "top") {
+
+                var rightNavBtns = $(".navRightButtons");
+                rightNavBtns.removeClass("selected");
+                for(var x = 0 ; x < rightNavBtns.length ; x++){
+                    if(rightNavBtns[x].innerHTML.toLowerCase() === pageType){ // select rightNavBtns
+                        rightNavBtns[x].className += " selected";
+                    }
+                    else{
+                        rightNavBtns[x].className = "navRightButtons";
+                    }
+                }
                 if(pageType==="curated"){
-                    pageType = "top";
+                    Filters.order = "top";
+                    Filters.isCurated = true;
+                }
+                else{
+                    Filters.isCurated = "";
                 }
                 changePage("feed",pageType, writeState);// Other Pages
             }
             else {
-                if (pageType === "settings" || pageType === "slideview" || pageType === "contact" || pageType === "newpost" || pageType === "policy")
+
+                if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "subscriptions" || pageType==="people" || pageType === "settings" || pageType === "about"){
+                    if( pageType === "" ) {
+                        pageType = "explore";
+                    }
+                    var rightNavBtns = $(".navRightButtons");
+                    rightNavBtns.removeClass("selected");
+                    for(var y = 0 ; y < rightNavBtns.length ; y++){
+                        if(rightNavBtns[y].innerHTML.toLowerCase() === pageType){ // select rightNavBtns
+                            rightNavBtns[y].className += " selected";
+                        }
+                        else{
+                            rightNavBtns[y].className = "navRightButtons";
+                        }
+                    }
+
+                    var orderElements = $(".topNav ul li");
+                    orderElements.removeClass("selected");
+                    for(var x = 0 ; x < orderElements.length ; x++){
+                        if(orderElements[x].innerHTML.toLowerCase()===order){
+                            orderElements[x].className = "selected";
+                        }
+                    }
+                }
+                if (pageType === "settings" || pageType === "slideview" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy")
                     changePage(pageType, pageType, writeState);// Other Pages
                 else
                     changePage("feed", pageType, writeState);// Feed
@@ -762,6 +791,9 @@
                             $("#homeSliders").addClass("show");
                             $("#postsContainer").addClass("show");
                         }
+                        if(pageName === "") {
+                            $(".topNav ul li")[0].addClass("selected");
+                        }
                         // hide elements
                         pageNames = ["settings", "newPost", "slideView", "profileTop", "people","profileTopSmall", "contact", "policy"];
                         for (var x = 0; x < pageNames.length; x++) {
@@ -803,9 +835,9 @@
                         pushHistory(pageName,hostUserName,pageType,true);
                     }
                 }
-                else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="people" || pageName==="postscontainer" || pageName==="contact"){
+                else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="people" || pageName==="contact"){
                     if( pageName !== currentPage ) {
-                        var pageNames = ["settings", "newPost", "slideView", "postsContainer", "contact", "policy","people"];
+                        var pageNames = ["settings", "newPost", "slideView", "contact", "people","policy"];
 
                         for (var x = 0; x < pageNames.length; x++) {
 
