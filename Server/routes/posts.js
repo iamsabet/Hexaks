@@ -28,7 +28,7 @@ redisClient.select(2,function(){
 
 var posts = {
 
-    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdge,counts,pageNumber) {
+    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber) {
 
 
         var right = rightCost || 1000000;
@@ -46,67 +46,74 @@ var posts = {
             if(category[0]!=="")
                 categoryQuery = {$in:category};
         }
-        var timeEdge = timeEdge || 1;
-
+        console.log(timeEdgeIn);
+        var timeEdge = timeEdgeIn;
         if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.value" || orderedBy === "views" || orderedBy === "rate") {
             // timeWindow
-            if ((typeof isCurated) === "boolean") {
-                if (timeEdge < 31 && timeEdge > 1) {
-                    timeEdge = (timeOrigin - (timeEdge * 3600 * 1000)); // time edge up to 31 days
-                }
-                else {
-                    timeEdge = (timeOrigin - ( 3600 * 1000)); // 1day
-                }
-                let costQuery = {cost: {$gte: left, $lte: right}};
-                if(left === 0 && right === 1000000){
-                    costQuery = {$exists:true};
-                }
-                if(privateOrNot === true){
-                    privateOrNot = {$exists:true};
-                }
-                console.log(userNames);
-                var query = {
-                    "owner.username" : {$in:userNames},
-                    activated: activated || true,
-                    "rejected.value":reject,
-                    hashtags:hashtagQuery,
-                    categories:categoryQuery,
-                    originalImage: costQuery,
-                    private: privateOrNot,
-                    createdAt: {$gte: timeEdge,$lt:timeOrigin},
-                };
-                if (isCurated === true) {
-                    query.isCurated = true;
-                    if(curator !== "") {
-                        query.curator = {
-                            username: curator
-                        };
-                    }
-                }
-                let options = {
-                    select: 'postId owner createdAt updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
-                    sort: {createdAt: +1},
-                    page: 1,
-                    limit: 10
-                };
-                if(userNames === "all"){
-                    query["owner.username"]= {$exists:true};
-                }
-                if (orderBy === "originalImage.cost") {
-                    options.sort = {"originalImage.cost": +1};
-                }
-                else if (orderBy === "rate.value") {
-                    options.sort = {"rate.value" : +1};
-                }
-                else if (orderBy === "rate") {
-                    options.sort = {rate: +1};
-                }
-                else { // "views"
-                    options.sort = {views: -1};
-                }
-                console.log(query);
-                post.Paginate(query, options,req,res);
+
+            let costQuery = {cost: {$gte: left, $lte: right}};
+            if(left === 0 && right === 1000000){
+                costQuery = {$exists:true};
             }
+            if(privateOrNot === true){
+                privateOrNot = {$exists:true};
+            }
+            var usernames = {$in:userNames};
+            if(userNames==="All"){
+                usernames = {$exists:true}
+            }
+            console.log(userNames);
+            var query = {
+                "owner.username" : usernames,
+                activated: activated || true,
+                "rejected.value":reject,
+                hashtags:hashtagQuery,
+                categories:categoryQuery,
+                originalImage: costQuery,
+                private: privateOrNot,
+            };
+            if (timeEdge <= (31*24) && timeEdge > -1) {
+                if(timeEdge !== 0) {
+                    timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
+                    query.createdAt = {$gte:timeEdge,$lt:timeOrigin} // time edge up to 31 days
+                }
+            }
+            else{
+                timeEdge = (timeOrigin - (3600 * 1000)); // 1day
+                query.createdAt = {$gte: timeEdge,$lt:timeOrigin} // time edge up to 31 days
+            }
+            if (isCurated !== "" && isCurated !== undefined) {
+                query.isCurated = isCurated;
+                if(curator !== "" && curator !== undefined) {
+                    query.curator = {
+                        username: curator
+                    };
+                }
+            }
+            let options = {
+                select: 'postId owner createdAt updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
+                sort: {createdAt: -1},
+                page: pageNumber,
+                limit: parseInt(counts)
+            };
+            if(userNames === "all"){
+                query["owner.username"]= {$exists:true};
+            }
+            if (orderBy === "originalImage.cost") {
+                options.sort = {"originalImage.cost": -1};
+            }
+            else if (orderBy === "rate.value") {
+                options.sort = {"rate.value" : -1};
+            }
+            else if (orderBy === "rate") {
+                options.sort = {rate: -1};
+            }
+            else if(orderBy === "views"){ // "views"
+                options.sort = {views: -1};
+            }
+            console.log(query);
+            console.log(options);
+            post.Paginate(query, options,req,res);
         }
     },
 

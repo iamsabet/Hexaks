@@ -104,10 +104,10 @@
         <img id="logo" src="../Statics/images/images/LOGO.png">
         // parse dynamicly for clients - authenticated - and role based
         <ul>
-            <li class="selected">Home</li>
-            <li>Explore</li>
-            <li>Subscriptions</li>
-            <li>People</li>
+            <li class="navRightButtons selected">Home</li>
+            <li class="navRightButtons">Explore</li>
+            <li class="navRightButtons">Subscriptions</li>
+            <li class="navRightButtons">People</li>
         </ul>
         <a href="/settings">Settings</a>
         <a href="/about" id="about">About</a>
@@ -279,12 +279,12 @@
         username:pageType,
         pageNumber : 1,
         counts: 10,
-        isCurated : null,
-        curator : null ,
+        isCurated : "",
+        curator : "" ,
         hashtag : [],
-        order : "top",
+        order : "latest",
         orderBy : "rate.value",
-        timeEdge: 2, // hours
+        timeEdge: 1000, // hours
         leftCost:0,
         rightCost:1000000,
         category : null,
@@ -295,7 +295,6 @@
     var currentPage = "";
     var historyPointer = -1;
     var historyList = [];
-    var orderName = "";
     // Events.Js
 
     $(document).ready(function(){
@@ -306,40 +305,140 @@
             urlParser(true);
         }
         else {
+            getMe();
+            urlParser(true);
+        }
+    });
+    $("body").on("click",".navRightButtons",function(event){
+        event.preventDefault();
+        $(".navRightButtons").removeClass("selected");
+        $(this).addClass("selected");
+        var pageType = $(this).html().toLowerCase();
+        var tempNewUrl = "";
+        var additional = "";
+        var y = 0;
+        var currentUrlArray = window.location.pathname.split("/");
 
+        if(currentUrlArray[1] === "latest" || currentUrlArray[1] === "top" || currentUrlArray[1] === "curated"){
+            additional = pageType;
+        }
+        else{
+            currentUrlArray[1] = pageType;
+        }
+        for(var x = 0 ; x < currentUrlArray.length+1; x++) {
+
+            if(x===1) {
+                if (additional !== "") {
+                    tempNewUrl += additional + "/";
+                     y = 1;
+                }
+                else{
+                    tempNewUrl += currentUrlArray[x-y]+"/";
+                }
+            }
+            else{
+                tempNewUrl += currentUrlArray[x-y] +"/";
+            }
+            if(x === currentUrlArray.length){
+                window.history.replaceState("/","/",tempNewUrl);
+                urlParser(true);
+            }
         }
     });
     $("body").on("click","#newPostBtn",function(event){
        event.preventDefault();
-       changePage("newpost","newPost",true);
+       changePage("newpost","/newpost","/newPost",true);
     });
     $("body").on("submit",".loginSmall form",function(event){
         event.preventDefault();
     });
     // TOP NAV
-    $("body").on("click",".topNav ul li",function(){
+    $("body").on("click",".topNav ul li",function() {
         $(this).parents("ul").children(".selected").removeClass("selected");
         $(this).addClass("selected");
-        Filters.orderBy = $(this).html();
 
-        orderName = $(this).html().toLowerCase();
-
-        if(orderName === "curated"|| orderName === "top") {
+        var order = $(this).html().toLowerCase();
+        if (order === "curated" || order === "top") {
             $(".timeNav").addClass("show");
+            if (order === "curated") {
+                Filters.isCurated = true;
+            }
+            else {
+                Filters.isCurated = false;
+            }
         }
-        else if(orderName === "latest" ){
-            if($(".timeNav.show")) {
+        else if (order === "latest") {
+            Filters.isCurated = false;
+            if ($(".timeNav.show")) {
                 $(".timeNav.show").removeClass("show");
             }
         }
-        else{
-            window.alert("wrong input for order");
+
+
+        var tempNewUrl = "";
+        var additional = "";
+        var y = 0;
+        var currentUrlArray = window.location.pathname.toLowerCase().split("/");
+        if (currentUrlArray[1] === "latest" || currentUrlArray[1] === "top" || currentUrlArray[1] === "curated") {
+            currentUrlArray[1] = order;
+        }
+        else {
+            additional = order;
+        }
+        for (var x = 0; x < currentUrlArray.length; x++) {
+
+            if (x === 2) {
+                if (additional !== "") {
+                    tempNewUrl += additional + "/";
+                    y = 1 ;
+                }
+                else {
+                    tempNewUrl += currentUrlArray[x-y] + "/";
+                }
+            }
+            else {
+                tempNewUrl += currentUrlArray[x-y] + "/";
+            }
+            if(currentUrlArray.length === 2){
+                currentUrlArray[1] = order;
+            }
+            if ( x === currentUrlArray.length -1 ) {
+                if(order === "latest" || order==="top" || order==="curated") {
+                    // window.history.replaceState("", "", "/");
+                    console.log(tempNewUrl);
+                    window.history.replaceState("", "", tempNewUrl);
+                    urlParser(true);
+                }
+                else{
+                    alert("invalid order inout" + order);
+                }
+            }
         }
     });
     $("body").on("click",".closeTimeNav",function(){
         if($(".timeNav.show")) {
             $(".timeNav.show").removeClass("show");
         }
+    });
+    $("body").on("change",".timeNav.show select",function(){
+        switch($(this).val().toString().toLowerCase()){
+            case "hour":{
+                Filters.timeEdge = 1;
+            }break;
+            case "day":{
+                Filters.timeEdge = 24;
+            }break;
+            case "3 days":{
+                Filters.timeEdge = (3*24);
+            }break;
+            case "week":{
+                Filters.timeEdge = (7*24);
+            }break;
+            case "month":{
+                Filters.timeEdge = (31*24);
+            }break;
+        }
+        urlParser(true);
     });
     $('body').on("click","#loginSubmit",function(){
         var input = {
@@ -457,17 +556,13 @@
     function getPostsByFilter(input,pageType){
 
         switch (pageType) {
-            case "followings":{
+            case "subscriptions":{
                     requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
             }break;
-
-            case "":{
+            case "explore" || "top" || "latest":{
                     requestHandler("/api/v1/posts/explore", "POST", Filters, "getPostsByFilter");
             }break;
-            case "top" || "latest":{
-                requestHandler("/api/v1/posts/explore", "POST", Filters, "getPostsByFilter");
-            }break;
-            case "home":{
+            case "home" || "":{
                     requestHandler("/api/v1/posts/home", "POST", Filters, "getPostsByFilter");
             }break;
             default : {
@@ -562,17 +657,19 @@
         if(window.location.pathname.split("/")[2]){
             var orderBy = window.location.pathname.split("/")[2];
             if( orderBy === "curated" || orderBy === "latest" || orderBy === "top" ) {
-                Filters.orderBy = orderBy;
+                Filters.order = orderBy;
                 Filters.category = window.location.pathname.split("/")[3] || null;
+                Filters.hashtag = window.location.hash || null;
             }
         }
-        if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "followings" || pageType === "followers" ||
+        if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "subscriptions" || pageType === "followings" || pageType === "followers" ||
             pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" ||
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
 
             if( pageType === "curated" || pageType === "latest" || pageType === "top" ) {
-                Filters.orderBy = pageType;
+                Filters.order = pageType;
                 Filters.category = window.location.pathname.split("/")[2] || null;
+                Filters.hashtag = window.location.hash || null;
                 if(pageType==="curated"){
                     pageType = "top";
                 }
@@ -666,7 +763,7 @@
                             $("#postsContainer").addClass("show");
                         }
                         // hide elements
-                        pageNames = ["settings", "newPost", "slideView", "profileTop", "profileTopSmall", "contact", "policy"];
+                        pageNames = ["settings", "newPost", "slideView", "profileTop", "people","profileTopSmall", "contact", "policy"];
                         for (var x = 0; x < pageNames.length; x++) {
                             if (pageName === pageNames[x].toLowerCase()) {
                                 $(`#${pageNames[x]}`).addClass("show");
@@ -681,7 +778,7 @@
                     // --> Function Calls
                     getPostsByFilter({},pageType);
                     if(newHistory || false) {
-                        pushHistory(pageName,pageType ,pageType);
+                        pushHistory(pageName,pageType ,pageType,false);
                     }
                 }
                 else if(pageName === "profile"){
@@ -689,7 +786,7 @@
                     if( pageName !== currentPage ) {
                         $("#postsContainer").addClass("show");
                         $("#profileTop").addClass("show");
-                        pageNames = ["settings", "newPost", "slideView", "homeSliders", "contact", "policy"];
+                        pageNames = ["settings", "newPost", "slideView", "homeSliders", "people","contact", "policy"];
                         for (var x = 0; x < pageNames.length; x++) {
                             if (pageName === pageNames[x]) {
                                 $(`#${pageNames[x]}`).addClass("show");
@@ -703,12 +800,12 @@
                     }
                     loadProfileInfo(hostUserName);
                     if(newHistory || false) {
-                        pushHistory(pageName,hostUserName,pageType);
+                        pushHistory(pageName,hostUserName,pageType,true);
                     }
                 }
-                else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="postscontainer" || pageName==="contact"){
+                else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="people" || pageName==="postscontainer" || pageName==="contact"){
                     if( pageName !== currentPage ) {
-                        var pageNames = ["settings", "newPost", "slideView", "postsContainer", "contact", "policy"];
+                        var pageNames = ["settings", "newPost", "slideView", "postsContainer", "contact", "policy","people"];
 
                         for (var x = 0; x < pageNames.length; x++) {
 
@@ -723,8 +820,10 @@
                             }
                         }
                     }
+                    // => function calls :
+
                     if(newHistory || false) {
-                        pushHistory(pageName,pageName,pageType);
+                        pushHistory(pageName,pageName,pageType,true);
                     }
                 }
                 else {
@@ -735,9 +834,11 @@
 
     }
 
-    function pushHistory(newPageName,url,data){
-        window.history.replaceState("","","/");
-        window.history.replaceState("/","",url);
+    function pushHistory(newPageName,url,data,changeUrl){
+        if(changeUrl || false){
+            window.history.replaceState("", "", "");
+            window.history.replaceState("/", "", url);
+        }
         if (historyPointer === historyList.length-1 ) {
             historyList.push({pageName: newPageName, urlData: url ,data:data, hashtag : window.location.hash});
             currentPage = newPageName;
@@ -946,7 +1047,7 @@
         postsList = posts;
         console.log(postsList);
         if(Filters.pageNumber===1){
-            $(".postsContainer").html();
+            $(".postsContainer").html("");
         }
         var length = postsList.length -1;
         $.each(postsList,function(index,data){
