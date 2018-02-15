@@ -118,8 +118,13 @@
     <!--<a href="/faq">FAQ</a>-->
     <!--<a href="/contact">Contact</a>-->
     <!--</div>-->
-    <div class="postsContainer" id="postsContainer">
+    <div class="postsContainer">
+        <div id="postsHeader">
+            <h3> 156 posts found</h3>
+        </div>
+        <ul class="postsContainer" id="postsContainer">
 
+        </ul>
     </div>
     <div class="settingsContainer" id="settings">
         <div class="menu">
@@ -151,6 +156,12 @@
 
 <div class="slideView" id="slideView">
 
+    <div>
+
+    </div>
+    <div class="pictureBox">
+        <!--<img src=""/>-->
+    </div>
 
 </div>
 
@@ -274,6 +285,8 @@
 
         }
     };
+    var left = {};
+    var right = {};
     var currentPostItterator = 1;
     var postsList = [];
     var pageType="";
@@ -428,7 +441,11 @@
                 ,"submitPost");
 
     });
+    $("body").on("click",".eachPost",function(){
 
+        var postId = this.classList[1];
+        makeUrl(postId);
+    });
 
     function requestHandler(url, method, input, caller) {
         $.ajax({
@@ -529,7 +546,7 @@
         requestHandler("/api/v1/posts/rate","POST",{postId:postId,rateNumber:rateNumber},"rate");
     }
 
-    function sendPagesInitialRequest(pageName,albumOrPost){
+    function sendPagesInitialRequest(pageName,albumOrPost,postid){
         if(pageName === "newPost"){
             if(albumOrPost === "post"){
                 requestHandler("/api/v1/post/initial","POST",{type:"post"},pageName);
@@ -540,6 +557,13 @@
             else{
                 alert("invalid post type");
             }
+        }
+        else if("slideview"){
+
+            var postId = postid;
+            currentPostItterator = parseInt($(`.post-${postId} p`)[0].innerHTML);
+            slideAction(currentPostItterator,"initial");
+
         }
     }
     // Actions.js
@@ -601,18 +625,26 @@
 
 
         if (pageName) {
-            window.history.replaceState("", "","/"+pageName);
-            if (pageName === "subscriptions" || pageName === "explore") {
-                Filters.order = "top";
-                Filters.orderBy = "rate.value";
+
+            if(pageName.startsWith("post")){
+                var postId = pageName.split("-")[1];
+                window.history.replaceState("", "", "/slideView/" + postId);
             }
             else {
-                Filters.order = "latest";
-                Filters.orderBy = "createdAt";
 
+                window.history.replaceState("", "", "/" + pageName);
+                if (pageName === "subscriptions" || pageName === "explore") {
+                    Filters.order = "top";
+                    Filters.orderBy = "rate.value";
+                }
+                else {
+                    Filters.order = "latest";
+                    Filters.orderBy = "createdAt";
+
+                }
+                Filters.category = "";
+                Filters.hashtag = "";
             }
-            Filters.category = "";
-            Filters.hashtag = "";
         }
         else{
 
@@ -663,7 +695,7 @@
             }
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "subscriptions" || pageType === "followings" || pageType === "followers" ||
-            pageType === "slideView"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
+            pageType === "slideview"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
 
             if( pageType === "curated" || pageType === "latest" || pageType === "top") {
@@ -799,7 +831,7 @@
                     }
                 }
                 else if(pageName === "profile"){
-                    hostUserName = pageType.split("/")[0];
+                    host.username = pageType.split("/")[0];
                     Filters.order = pageType.split("/")[1];
                     selectTopNav(Filters.order);
                     if( pageName !== currentPage ) {
@@ -817,7 +849,7 @@
                             }
                         }
                     }
-                    loadProfileInfo(hostUserName);
+                    loadProfileInfo(host.username);
                     if(newHistory || false) {
                         pushHistory(pageName,pageType,pageType,true);
                     }
@@ -825,12 +857,14 @@
                 else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="people" || pageName==="contact"){
                     if( pageName !== currentPage ) {
                         var pageNames = ["settings", "newPost", "slideView", "contact", "people","policy"];
-
                         for (var x = 0; x < pageNames.length; x++) {
 
                             if (pageName === pageNames[x].toLowerCase()) {
                                 $(`#${pageNames[x]}`).addClass("show");
-                                sendPagesInitialRequest(pageNames[x],"post");
+                                if(window.location.pathname.split("/")[2]) {
+                                    var postId = window.location.pathname.split("/")[2];
+                                    sendPagesInitialRequest(pageNames[x], "post",postId);
+                                }
                             }
                             else {
                                 if ($(`#${pageNames[x]}.show`)) {
@@ -881,6 +915,14 @@
         }
         else{
             $("#forwardBtn").hide(100);
+        }
+    }
+    function checkBackward(){
+        if(historyPointer > 0){
+            $("#backwardBtn").show(100);
+        }
+        else{
+            $("#backwardBtn").hide(100);
         }
     }
     function backward(){
@@ -1091,53 +1133,89 @@
             rate(rateNumber,postId);
         });
     }
-    function parsePosts(posts){
-        postsList = posts;
-        console.log(postsList);
-        if(Filters.pageNumber===1){
-            $(".postsContainer").html("");
+    function slideAction(postNumber,situation) {
+
+        if (situation === "left") {
+            currentPostItterator--;
         }
-        var length = postsList.length -1;
-        $.each(postsList,function(index,data){
-            var curator = ``;
-            if(postsList[length - index].isCurated){
-                curator = ``;
-            }
-            var timeAgo = ((Date.now() - postsList[length - index].createdAt)/ (60000));
-            var vahed = "minute";
-            if( parseInt(timeAgo) > 59){
-                timeAgo = (timeAgo / 60);
-                vahed = "hour";
-                if(timeAgo > 23){
-                    timeAgo = (timeAgo / 24);
-                    vahed = "day";
-                    if(timeAgo > 30){
-                         timeAgo = timeAgo / 30 ;
-                        vahed = "month";
-                         if(timeAgo > 12){
-                             vahed = "year";
-                             timeAgo = timeAgo / 12 ;
-                         }
-                    }
+        else if (situation === "right") {
+            currentPostItterator++;
+        }
+        else if (situation === "initial") {
+            currentPostItterator = postNumber;
+            if (currentPostItterator > -1 && currentPostItterator <= postsList.length - 1) {
+                if (postsList[currentPostItterator - 1]) {
+                    if (postsList[currentPostItterator - 1] !== {})
+                        left = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
+                }
+
+                if (postsList[currentPostItterator + 1]) {
+                    right = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
+
+
+                    currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
+
+                    $(".pictureBox").html(`
+                        <img src="../Statics/Pictures/${left}" class="leftPic"/>
+                        <img src="../Statics/pictures/${currentPost}" class="middlePic"/>
+                        <img src="../Statics/pictures/${right}" class="rightPic"/>
+                `);
                 }
             }
-            else if(parseInt(timeAgo) < 1){
-                timeAgo = "in a minute";
+
+            // postsList[currentPostItterator].postId;
+        }
+    }
+
+        function parsePosts(posts) {
+            postsList = posts;
+            console.log(postsList);
+            if (Filters.pageNumber === 1) {
+                $("#postsContainer").html("");
             }
-            if(parseInt(timeAgo) === 1 && (vahed==="minute" || vahed==="day" || vahed==="month" || vahed==="year")){
-                timeAgo = "a";
-            }
-            else if(parseInt(timeAgo) === 1 && vahed==="hour"){
-                timeAgo = "an";
-            }
-            else if(parseInt(timeAgo) !== 1){
-                vahed +="s";
-                if(typeof timeAgo !== "string")
-                timeAgo = parseInt(timeAgo);
-            }
-            let date = timeAgo + " " + vahed;
-            $(".postsContainer").append(`
-                <li class="eachPost" id="post-${postsList[length - index].postId}">
+            var length = postsList.length - 1;
+            $.each(postsList, function (index, data) {
+                var curator = ``;
+                if (postsList[length - index].isCurated) {
+                    curator = ``;
+                }
+                var timeAgo = ((Date.now() - postsList[length - index].createdAt) / (60000));
+                var vahed = "minute";
+                if (parseInt(timeAgo) > 59) {
+                    timeAgo = (timeAgo / 60);
+                    vahed = "hour";
+                    if (timeAgo > 23) {
+                        timeAgo = (timeAgo / 24);
+                        vahed = "day";
+                        if (timeAgo > 30) {
+                            timeAgo = timeAgo / 30;
+                            vahed = "month";
+                            if (timeAgo > 12) {
+                                vahed = "year";
+                                timeAgo = timeAgo / 12;
+                            }
+                        }
+                    }
+                }
+                else if (parseInt(timeAgo) < 1) {
+                    timeAgo = "in a minute";
+                }
+                if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
+                    timeAgo = "a";
+                }
+                else if (parseInt(timeAgo) === 1 && vahed === "hour") {
+                    timeAgo = "an";
+                }
+                else if (parseInt(timeAgo) !== 1) {
+                    vahed += "s";
+                    if (typeof timeAgo !== "string")
+                        timeAgo = parseInt(timeAgo);
+                }
+                let date = timeAgo + " " + vahed;
+                $("#postsContainer").append(`
+                <li class="eachPost post-${postsList[length - index].postId}" >
+                <p hidden>${index}</p>
+                <p hidden>${postsList[length - index].ext}</p>
                     <div class="header">
                         <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[length - index].owner.username}-prof.jpg" />
                         <span class="username left">${postsList[length - index].owner.username}</span>
@@ -1157,36 +1235,39 @@
                     </div>
                 </li>
             `);
-        });
-    }
-    function slideViewPageAction(res){
-        console.log(res);
-    }
-    function newPostPageAction(res){
-        console.log(res);
-
-    }
-
-    function rateResponseHandler(res){
-        console.log(res);
-    }
-    function submitPostAction(res){
-        if(!res.message) {
-            window.location.pathname= "/"+Me.username;
+            });
         }
-        else{
-            console.log(res.message);
-        }
-    }
-    function alert(message){
-        $("#alertTop h3").html(message);
-        $("#alertTop").addClass("show");
-        setTimeout(function (){
-            $("#alertTop").removeClass("show");
-            // Something you want delayed.
-        }, 3000); // 5seconds show
-    }
 
+        function slideViewPageAction(res) {
+            console.log(res);
+        }
+
+        function newPostPageAction(res) {
+            console.log(res);
+
+        }
+
+        function rateResponseHandler(res) {
+            console.log(res);
+        }
+
+        function submitPostAction(res) {
+            if (!res.message) {
+                window.location.pathname = "/" + Me.username;
+            }
+            else {
+                console.log(res.message);
+            }
+        }
+
+        function alert(message) {
+            $("#alertTop h3").html(message);
+            $("#alertTop").addClass("show");
+            setTimeout(function () {
+                $("#alertTop").removeClass("show");
+                // Something you want delayed.
+            }, 3000); // 5seconds show
+        }
 
 
 
