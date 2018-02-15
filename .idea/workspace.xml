@@ -2,8 +2,45 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Server/views/main.html" afterPath="$PROJECT_DIR$/Server/views/main.html" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/A4jv0vSMiAzAL0dzKf8PBSf4n.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/C3Ls6I7BPweMvo2F3N6mXBuwY.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/EIExufANWiiapy1RQLhjikMGh.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/GPM0b5UEM20mbQs94svV5l9IP.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/IEee1ueIdtBLDGUiGE63rkEXf.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/OXR1FQZlCaOliS6yEpvlbhRMT.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/USMisRYAxOXNcZXGjI0ZbaZOp.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/ViouXyptWj1ARz2bF8k4jqPBs.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/bMFxF8ZSunCmfVefUZt2f9SRW.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/ggIdbLyg6IGWPm7igsoSfE2GP.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/jIMV8GUlJ1mEvuCJHP4aQE4R4.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/ksrzpU8foGARZdSCD2wrfj5Ff.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Server/Pictures/x4FnM7L75LB3bzfknqeyI8Bm5.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/A4jv0vSMiAzAL0dzKf8PBSf4n-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/A4jv0vSMiAzAL0dzKf8PBSf4n-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/C3Ls6I7BPweMvo2F3N6mXBuwY-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/C3Ls6I7BPweMvo2F3N6mXBuwY-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/EIExufANWiiapy1RQLhjikMGh-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/EIExufANWiiapy1RQLhjikMGh-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/GPM0b5UEM20mbQs94svV5l9IP-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/GPM0b5UEM20mbQs94svV5l9IP-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/IEee1ueIdtBLDGUiGE63rkEXf-Medium.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/IEee1ueIdtBLDGUiGE63rkEXf-Small.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/OXR1FQZlCaOliS6yEpvlbhRMT-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/OXR1FQZlCaOliS6yEpvlbhRMT-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/USMisRYAxOXNcZXGjI0ZbaZOp-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/USMisRYAxOXNcZXGjI0ZbaZOp-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ViouXyptWj1ARz2bF8k4jqPBs-Medium.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ViouXyptWj1ARz2bF8k4jqPBs-Small.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/bMFxF8ZSunCmfVefUZt2f9SRW-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/bMFxF8ZSunCmfVefUZt2f9SRW-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ggIdbLyg6IGWPm7igsoSfE2GP-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ggIdbLyg6IGWPm7igsoSfE2GP-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/jIMV8GUlJ1mEvuCJHP4aQE4R4-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/jIMV8GUlJ1mEvuCJHP4aQE4R4-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ksrzpU8foGARZdSCD2wrfj5Ff-Medium.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ksrzpU8foGARZdSCD2wrfj5Ff-Small.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/x4FnM7L75LB3bzfknqeyI8Bm5-Medium.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/x4FnM7L75LB3bzfknqeyI8Bm5-Small.jpg" afterPath="" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -517,16 +554,15 @@
       <workItem from="1518554599263" duration="29615000" />
       <workItem from="1518700980402" duration="6000" />
       <workItem from="1518701033341" duration="6135000" />
-      <workItem from="1518714655200" duration="12531000" />
+      <workItem from="1518714655200" duration="12704000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="268347000" />
+    <option name="totallyTimeSpent" value="268520000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -540,7 +576,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1941392" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1941392" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3285568" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
