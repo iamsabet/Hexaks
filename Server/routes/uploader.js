@@ -6,11 +6,8 @@ var postSchema = require('../models/post.model');
 var post = new postSchema();
 var userSchema = require('../models/user.model');
 var user = new userSchema();
-var albumSchema = require('../models/album.model');
-var album = new albumSchema();
 var posts = require('../routes/posts.js');
 var users = require('../routes/users.js');
-var albums = require('../routes/albums.js');
 var multiparty = require('multiparty');
 var random = require("randomstring");
 var redis = require('redis');
@@ -24,8 +21,8 @@ redisClient.select(2,function(){
 
 
 var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
-    originalPath ='/Users/Shared/Hexaks/Server/Pictures/',
-    smallAndMediumPath ='/Users/Shared/Hexaks/Web-Client/Statics/Pictures/',
+    originalPath ='/Users/sabet/Projects/Hexaks/Server/Pictures/',
+    smallAndMediumPath ='/Users/sabet/Projects/Hexaks/Web-Client/Statics/Pictures/',
     chunkDirName = "chunks",
     maxFileSize =  40000000, // in bytes, 0 for unlimited 40MB
     minFileSizeToChunk = 1000000; // in bytes 1MB
@@ -196,7 +193,6 @@ var uploader = {
     moveFile:function(destinationDir, sourceFile, destinationFile, success, failure) {
         mkdirp(destinationDir, sourceFile.fullName, function (error) {
             var sourceStream, destStream;
-
             if (error) {
                 console.error("Problem creating directory " + destinationDir + ": " + error);
                 failure();
@@ -227,7 +223,7 @@ var uploader = {
         uploader.moveFile(destinationDir, file.path, fileDestination, success, failure);
     },
     storeChunk:function (file, path,uuid,index, numChunks, success, failure) {
-        var destinationDir = path+"/",
+        var destinationDir = path,
             chunkFilename = uploader.getChunkFilename(index, numChunks),
             fileDestination = destinationDir + chunkFilename;
             console.log(destinationDir + chunkFilename);

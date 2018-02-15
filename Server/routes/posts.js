@@ -30,7 +30,7 @@ var posts = {
 
     getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber) {
 
-
+        console.log("KIRRRR" + isCurated);
         var right = rightCost || 1000000;
         var left = leftCost || 0;
         var orderedBy = orderBy || "createdAt";
@@ -63,7 +63,7 @@ var posts = {
                 usernames = {$exists:true}
             }
             console.log(userNames);
-            var query = {
+            let query = {
                 "owner.username" : usernames,
                 activated: activated || true,
                 "rejected.value":reject,
@@ -82,7 +82,7 @@ var posts = {
                 timeEdge = (timeOrigin - (3600 * 1000)); // 1day
                 query.createdAt = {$gte: timeEdge,$lt:timeOrigin} // time edge up to 31 days
             }
-            if (isCurated !== "" && isCurated !== undefined) {
+            if (isCurated===true) {
                 query.isCurated = isCurated;
                 if(curator !== "" && curator !== undefined) {
                     query.curator = {
@@ -185,7 +185,7 @@ var posts = {
             if(!isNaN(cost)) {
                 if (postId && req.body.cost <= 1000000 && req.body.cost >= 0) {
                     try {
-                        new ExifImage({image: '/Users/Shared/Hexaks/Server/Pictures/' + postId}, function (error, exifData) {
+                        new ExifImage({image: '/Users/sabet/Projects/Hexaks/Server/Pictures/' + postId}, function (error, exifData) {
                             if (error) console.log("exif extraction failed  -- > file.format");
                             console.log(cost + " :: "+isNaN(cost));
                             console.log(exifData);

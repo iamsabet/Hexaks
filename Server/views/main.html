@@ -267,6 +267,7 @@
     // Global Variables.JS
     // import * as Jimp from "jimp";
     var Me = {};
+    var host = {};
     var currentPost = {
         postId:"",
         info:{
@@ -280,7 +281,7 @@
         username:pageType,
         pageNumber : 1,
         counts: 10,
-        isCurated : "",
+        isCurated : false,
         curator : "" ,
         hashtag : "",
         order : "latest",
@@ -326,10 +327,14 @@
     $("body").on("click",".topNav ul li",function() {
         $(this).parents("ul").children(".selected").removeClass("selected");
         $(this).addClass("selected");
-
         var order = $(this).html().toLowerCase();
         if (order === "curated" || order === "top") {
-            $(".timeNav").addClass("show");
+            if(host.username !== window.location.pathname.split("/")[1]) {
+                $(".timeNav").addClass("show");
+                setTimeout(function(){
+                    $(".timeNav").removeClass("show");
+                },3600000);
+            }
             if (order === "curated") {
                 Filters.isCurated = true;
             }
@@ -340,8 +345,10 @@
             Filters.orderBy = "rate.value";
         }
         else if (order === "latest") {
+            Filters.timeEdge = 31*24; //744h  1month
             Filters.isCurated = false;
             Filters.order = "latest";
+            Filters.orderBy = "createdAt";
             if ($(".timeNav.show")) {
                 $(".timeNav.show").removeClass("show");
             }
@@ -354,6 +361,7 @@
         }
     });
     $("body").on("change",".timeNav.show select",function(){
+        debugger;
         switch($(this).val().toString().toLowerCase()){
             case "hour":{
                 Filters.timeEdge = 1;
@@ -491,7 +499,7 @@
             case "subscriptions":{
                     requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
             }break;
-            case "explore" || "top" || "latest":{
+            case "explore":{
                     requestHandler("/api/v1/posts/explore", "POST", Filters, "getPostsByFilter");
             }break;
             case "home" || "":{
@@ -593,16 +601,15 @@
 
 
         if (pageName) {
-
             window.history.replaceState("", "","/"+pageName);
-            if (pageName !== "subscriptions" && pageName !== "explore") {
+            if (pageName === "subscriptions" || pageName === "explore") {
+                Filters.order = "top";
+                Filters.orderBy = "rate.value";
+            }
+            else {
                 Filters.order = "latest";
                 Filters.orderBy = "createdAt";
 
-            }
-            else {
-                Filters.order = "top";
-                Filters.orderBy = "rate.value";
             }
             Filters.category = "";
             Filters.hashtag = "";
@@ -651,7 +658,7 @@
                     Filters.isCurated = true;
                 }
                 else{
-                    Filters.isCurated = "";
+                    Filters.isCurated = false;
                 }
             }
         }
@@ -660,25 +667,19 @@
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
 
             if( pageType === "curated" || pageType === "latest" || pageType === "top") {
-
-                var rightNavBtns = $(".navRightButtons");
-                rightNavBtns.removeClass("selected");
-                for(var x = 0 ; x < rightNavBtns.length ; x++){
-                    if(rightNavBtns[x].innerHTML.toLowerCase() === pageType){ // select rightNavBtns
-                        rightNavBtns[x].className += " selected";
-                    }
-                    else{
-                        rightNavBtns[x].className = "navRightButtons";
-                    }
-                }
-                if(pageType==="curated"){
+                Filters.order = pageType;
+                Filters.category = window.location.pathname.split("/")[2] || "";
+                Filters.hashtag = window.location.hash || "";
+                if(pageType === "curated"){
                     Filters.order = "top";
                     Filters.isCurated = true;
                 }
                 else{
-                    Filters.isCurated = "";
+                    Filters.isCurated = false;
                 }
-                changePage("feed",pageType, writeState);// Other Pages
+                selectRightNav(pageType);
+                selectTopNav(pageType);
+                changePage("feed","explore", writeState);// Other Pages
             }
             else {
 
@@ -686,24 +687,8 @@
                     if( pageType === "" ) {
                         pageType = "explore";
                     }
-                    var rightNavBtns = $(".navRightButtons");
-                    rightNavBtns.removeClass("selected");
-                    for(var y = 0 ; y < rightNavBtns.length ; y++){
-                        if(rightNavBtns[y].innerHTML.toLowerCase() === pageType){ // select rightNavBtns
-                            rightNavBtns[y].className += " selected";
-                        }
-                        else{
-                            rightNavBtns[y].className = "navRightButtons";
-                        }
-                    }
-
-                    var orderElements = $(".topNav ul li");
-                    orderElements.removeClass("selected");
-                    for(var x = 0 ; x < orderElements.length ; x++){
-                        if(orderElements[x].innerHTML.toLowerCase()===order){
-                            orderElements[x].className = "selected";
-                        }
-                    }
+                   selectRightNav(pageType);
+                   selectTopNav(order);
                 }
                 if (pageType === "settings" || pageType === "slideview" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy")
                     changePage(pageType, pageType, writeState);// Other Pages
@@ -713,7 +698,8 @@
             }
         }
         else{
-            changePage("profile",pageType,writeState);// Profile -->
+
+            changePage("profile",pageType+"/"+order,writeState);// Profile -->
         }
     }
     // action functions
@@ -814,7 +800,9 @@
                     }
                 }
                 else if(pageName === "profile"){
-                    var hostUserName = pageType;
+                    hostUserName = pageType.split("/")[0];
+                    Filters.order = pageType.split("/")[1];
+                    selectTopNav(Filters.order);
                     if( pageName !== currentPage ) {
                         $("#postsContainer").addClass("show");
                         $("#profileTop").addClass("show");
@@ -832,7 +820,7 @@
                     }
                     loadProfileInfo(hostUserName);
                     if(newHistory || false) {
-                        pushHistory(pageName,hostUserName,pageType,true);
+                        pushHistory(pageName,pageType,pageType,true);
                     }
                 }
                 else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="people" || pageName==="contact"){
@@ -868,7 +856,7 @@
 
     function pushHistory(newPageName,url,data,changeUrl){
         if(changeUrl || false){
-            window.history.replaceState("", "", "");
+            window.history.replaceState("", "", "/");
             window.history.replaceState("/", "", url);
         }
         if (historyPointer === historyList.length-1 ) {
@@ -939,6 +927,27 @@
         }
     }
 
+    function selectTopNav(order){
+        var orderElements = $(".topNav ul li");
+        orderElements.removeClass("selected");
+        for(var x = 0 ; x < orderElements.length ; x++){
+            if(orderElements[x].innerHTML.toLowerCase()===order){
+                orderElements[x].className = "selected";
+            }
+        }
+    }
+    function selectRightNav(pageType){
+        var rightNavBtns = $(".navRightButtons");
+        rightNavBtns.removeClass("selected");
+        for(var y = 0 ; y < rightNavBtns.length ; y++){
+            if(rightNavBtns[y].innerHTML.toLowerCase() === pageType){ // select rightNavBtns
+                rightNavBtns[y].className += " selected";
+            }
+            else{
+                rightNavBtns[y].className = "navRightButtons";
+            }
+        }
+    }
     function slideNav(element){
         if (window.innerWidth < 1025) {
             if (element.className === "") {
@@ -990,6 +999,14 @@
             list[4].innerHTML = (res.user.roles.toString()) || "";
             list[5].innerHTML = (res.user.username);
             list[6].innerHTML = (res.user.isPrivate);
+
+            host.fullName = (res.user.fullName);
+            host.followingsCount = (res.user.followingsCount);
+            host.followersCount = (res.user.followersCount);
+            host.city = (res.user.city) || "";
+            host.roles = (res.user.roles.toString()) || [];
+            host.username = (res.user.username);
+            host.isPrivate = (res.user.isPrivate);
 
             $(".profileTop .loader").addClass("hide");
 

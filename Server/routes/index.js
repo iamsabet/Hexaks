@@ -215,7 +215,6 @@ router.post('/api/v1/posts/explore/',function(req,res){
                     orderBy = "createdAt";
                 else if(req.body.order==="top") { // curated only
                     orderBy = req.body.orderBy || "rate.value";
-                    isCurated = true;
                 }
 
                 let curator = req.body.curator || undefined;
@@ -266,14 +265,13 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
                 let timeOrigin;
                 let pageNumber = req.body.pageNumber || 1;
                 let counts = req.body.counts || 10;
-                let isCurated = req.body.isCurated || undefined;
+                let isCurated = req.body.isCurated || false;
                 let timeEdge = req.body.timeEdge || 1;
                 let orderBy = undefined;
                 if(req.body.order==="latest")
                     orderBy = "createdAt";
                 else if(req.body.order==="top") {
                     orderBy = req.body.orderBy || "rate.value";
-                    isCurated = true;
                 }
 
                 let curator = req.body.curator || undefined;
