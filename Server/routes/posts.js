@@ -92,7 +92,7 @@ var posts = {
             }
             let options = {
                 select: 'postId owner createdAt updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
-                sort: {createdAt: -1},
+                sort: {createdAt: +1},
                 page: pageNumber,
                 limit: parseInt(counts)
             };
@@ -103,7 +103,7 @@ var posts = {
                 options.sort = {"originalImage.cost": -1};
             }
             else if (orderBy === "rate.value") {
-                options.sort = {"rate.value" : -1};
+                options.sort = {"rate.value" : +1};
             }
             else if (orderBy === "rate") {
                 options.sort = {rate: -1};

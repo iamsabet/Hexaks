@@ -275,7 +275,7 @@
         }
     };
     var currentPostItterator = 1;
-    var postsList = [ /* current post schema */ ];
+    var postsList = [];
     var pageType="";
     var Filters = {
         username:pageType,
@@ -285,8 +285,8 @@
         curator : "" ,
         hashtag : "",
         order : "latest",
-        orderBy : "rate.value",
-        timeEdge: 1000, // hours
+        orderBy : "createdAt",
+        timeEdge: 31*24, // hours
         leftCost:0,
         rightCost:1000000,
         category : "",
@@ -733,7 +733,6 @@
             },
             onComplete: function(id, fileName, responseJSON){ // Customize the output sent to responseJSON in demo.php
                 resetParams();
-                debugger;
                 $(".qq-file-id-"+id).remove();
 
                 switch(responseJSON.ext){
@@ -1102,11 +1101,40 @@
         $.each(postsList,function(index,data){
             var curator = ``;
             if(postsList[length - index].isCurated){
-                curator = `
-
-                `;
+                curator = ``;
             }
-
+            var timeAgo = ((Date.now() - postsList[length - index].createdAt)/ (60000));
+            var vahed = "minute";
+            if( parseInt(timeAgo) > 59){
+                timeAgo = (timeAgo / 60);
+                vahed = "hour";
+                if(timeAgo > 23){
+                    timeAgo = (timeAgo / 24);
+                    vahed = "day";
+                    if(timeAgo > 30){
+                         timeAgo = timeAgo / 30 ;
+                        vahed = "month";
+                         if(timeAgo > 12){
+                             vahed = "year";
+                             timeAgo = timeAgo / 12 ;
+                         }
+                    }
+                }
+            }
+            else if(parseInt(timeAgo) < 1){
+                timeAgo = "in a minute";
+            }
+            if(parseInt(timeAgo) === 1 && (vahed==="minute" || vahed==="day" || vahed==="month" || vahed==="year")){
+                timeAgo = "a";
+            }
+            else if(parseInt(timeAgo) === 1 && vahed==="hour"){
+                timeAgo = "an";
+            }
+            else if(parseInt(timeAgo) !== 1){
+                vahed +="s";
+                timeAgo = parseInt(timeAgo);
+            }
+            let date = timeAgo + " " + vahed;
             $(".postsContainer").append(`
                 <li class="eachPost" id="post-${postsList[length - index].postId}">
                     <div class="header">
@@ -1124,7 +1152,7 @@
                             <img class="rateIcon" src="../Statics/images/images/b_like_p.png" />
                             <span>${postsList[length - index].rate.value}/6</span>
                         </div>
-                        <span class="time right">${postsList[length - index].createdAt}</span>
+                        <span class="time right">${date}</span>
                     </div>
                 </li>
             `);
