@@ -1132,6 +1132,7 @@
             }
             else if(parseInt(timeAgo) !== 1){
                 vahed +="s";
+                if(typeof timeAgo !== "string")
                 timeAgo = parseInt(timeAgo);
             }
             let date = timeAgo + " " + vahed;

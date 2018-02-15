@@ -111,8 +111,8 @@ var posts = {
             else if(orderBy === "views"){ // "views"
                 options.sort = {views: -1};
             }
-            console.log(query);
-            console.log(options);
+            // console.log(query);
+            // console.log(options);
             post.Paginate(query, options,req,res);
         }
     },

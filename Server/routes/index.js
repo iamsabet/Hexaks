@@ -195,6 +195,7 @@ router.post('/api/v1/posts/explore/',function(req,res){
 
     validateRequest(req,res,function(user) {
         if(user !==null) {
+            var now = Date.now();
             redisClient.get(user.username+"::requestOrigin", function (err, requestOrigin) {
                 if(err) throw err;
                 let category = undefined;
@@ -218,19 +219,17 @@ router.post('/api/v1/posts/explore/',function(req,res){
                 }
 
                 let curator = req.body.curator || undefined;
-                if(requestOrigin){
-                    if(pageNumber === 1){
-                        requestOrigin = Date.now();
-                        redisClient.del(user.username+"::requestOrigin",function(index){
-                            console.log(index);
-                        });
+                if(pageNumber === 1){
+                    if(requestOrigin){
+
+                        requestOrigin = now;
                         redisClient.set(user.username+"::requestOrigin",requestOrigin);
                         redisClient.expire(user.username+"::requestOrigin",30000);
                     }
                     timeOrigin = requestOrigin;
                 }
                 else{
-                    requestOrigin = Date.now();
+                    requestOrigin = now;
                     timeOrigin = requestOrigin;
                     redisClient.set(user.username+"::requestOrigin",requestOrigin);
                     redisClient.expire(user.username+"::requestOrigin",30000);
