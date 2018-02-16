@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Server/views/main.html" afterPath="$PROJECT_DIR$/Server/views/main.html" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -41,8 +41,8 @@
       <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
-              <caret line="1319" column="25" lean-forward="false" selection-start-line="1319" selection-start-column="25" selection-end-line="1319" selection-end-column="25" />
+            <state relative-caret-position="393">
+              <caret line="1314" column="22" lean-forward="false" selection-start-line="1314" selection-start-column="22" selection-end-line="1314" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -524,12 +524,12 @@
       <workItem from="1518700980402" duration="6000" />
       <workItem from="1518701033341" duration="6135000" />
       <workItem from="1518714655200" duration="12859000" />
-      <workItem from="1518776619825" duration="7539000" />
+      <workItem from="1518776619825" duration="8130000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="276214000" />
+    <option name="totallyTimeSpent" value="276805000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -840,8 +840,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="1319" column="25" lean-forward="false" selection-start-line="1319" selection-start-column="25" selection-end-line="1319" selection-end-column="25" />
+        <state relative-caret-position="393">
+          <caret line="1314" column="22" lean-forward="false" selection-start-line="1314" selection-start-column="22" selection-end-line="1314" selection-end-column="22" />
           <folding />
         </state>
       </provider>

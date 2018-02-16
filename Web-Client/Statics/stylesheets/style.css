@@ -1301,18 +1301,18 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .slideView .pictureBox{
 	position: relative;
-	width:100%;
+	width:95%;
+	left:2.5%;
 	height: 100%;
 }
 
 .slideView .pictureBox img{
 	position: absolute;
 	left: 50%;
-	height: auto;
 	top: 50%;
-	max-width: 1200px;
-	width: 90%;
-	padding-right: 20px;
+	width:auto;
+	max-width: 1000px;
+	max-height: 900px;
 	-webkit-transition: all 0.3s;
 	-moz-transition: all 0.3s;
 	-ms-transition: all 0.3s;
@@ -1326,7 +1326,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 
 .slideView .pictureBox .middlePic{
-
+	height: auto;
 	-webkit-transform: translate(-50%,-50%);
 	-moz-transform: translate(-50%,-50%);
 	-ms-transform: translate(-50%,-50%);
