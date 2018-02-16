@@ -1318,19 +1318,33 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 .slideView .pictureBox .leftPic{
 	left:-5000px;
-
+	-webkit-transform: translate(-50%,-50%);
+	-moz-transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	-o-transform: translate(-50%,-50%);
+	transform: translate(-50%,-50%);
 }
 
 .slideView .pictureBox .middlePic{
- 	left:50%;
-	-webkit-transform: translate(-50%,0);
-	-moz-transform: translate(-50%,0);
-	-ms-transform: translate(-50%,0);
-	-o-transform: translate(-50%,0);
-	transform: translate(-50%,0);
+	left: 50%;
+	height: auto;
+	top: 50%;
+	max-width: 1200px;
+	width: 90%;
+	padding-right: 20px;
+	-webkit-transform: translate(-50%,-50%);
+	-moz-transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	-o-transform: translate(-50%,-50%);
+	transform: translate(-50%,-50%);
 }
 .slideView .pictureBox .rightPic{
-	left: 100vw;
+	left: 5000px;
+	-webkit-transform: translate(-50%,-50%);
+	-moz-transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	-o-transform: translate(-50%,-50%);
+	transform: translate(-50%,-50%);
 }
 
 

@@ -2,45 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/A4jv0vSMiAzAL0dzKf8PBSf4n.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/C3Ls6I7BPweMvo2F3N6mXBuwY.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/EIExufANWiiapy1RQLhjikMGh.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/GPM0b5UEM20mbQs94svV5l9IP.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/IEee1ueIdtBLDGUiGE63rkEXf.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/OXR1FQZlCaOliS6yEpvlbhRMT.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/USMisRYAxOXNcZXGjI0ZbaZOp.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/ViouXyptWj1ARz2bF8k4jqPBs.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/bMFxF8ZSunCmfVefUZt2f9SRW.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/ggIdbLyg6IGWPm7igsoSfE2GP.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/jIMV8GUlJ1mEvuCJHP4aQE4R4.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/ksrzpU8foGARZdSCD2wrfj5Ff.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Server/Pictures/x4FnM7L75LB3bzfknqeyI8Bm5.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/A4jv0vSMiAzAL0dzKf8PBSf4n-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/A4jv0vSMiAzAL0dzKf8PBSf4n-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/C3Ls6I7BPweMvo2F3N6mXBuwY-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/C3Ls6I7BPweMvo2F3N6mXBuwY-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/EIExufANWiiapy1RQLhjikMGh-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/EIExufANWiiapy1RQLhjikMGh-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/GPM0b5UEM20mbQs94svV5l9IP-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/GPM0b5UEM20mbQs94svV5l9IP-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/IEee1ueIdtBLDGUiGE63rkEXf-Medium.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/IEee1ueIdtBLDGUiGE63rkEXf-Small.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/OXR1FQZlCaOliS6yEpvlbhRMT-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/OXR1FQZlCaOliS6yEpvlbhRMT-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/USMisRYAxOXNcZXGjI0ZbaZOp-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/USMisRYAxOXNcZXGjI0ZbaZOp-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ViouXyptWj1ARz2bF8k4jqPBs-Medium.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ViouXyptWj1ARz2bF8k4jqPBs-Small.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/bMFxF8ZSunCmfVefUZt2f9SRW-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/bMFxF8ZSunCmfVefUZt2f9SRW-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ggIdbLyg6IGWPm7igsoSfE2GP-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ggIdbLyg6IGWPm7igsoSfE2GP-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/jIMV8GUlJ1mEvuCJHP4aQE4R4-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/jIMV8GUlJ1mEvuCJHP4aQE4R4-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ksrzpU8foGARZdSCD2wrfj5Ff-Medium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/ksrzpU8foGARZdSCD2wrfj5Ff-Small.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/x4FnM7L75LB3bzfknqeyI8Bm5-Medium.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/Pictures/x4FnM7L75LB3bzfknqeyI8Bm5-Small.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Server/views/main.html" afterPath="$PROJECT_DIR$/Server/views/main.html" />
+      <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -55,21 +19,21 @@
       <file leaf-file-name="main.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Server/views/main.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="1135" column="35" lean-forward="false" selection-start-line="1135" selection-start-column="35" selection-end-line="1135" selection-end-column="35" />
+            <state relative-caret-position="481">
+              <caret line="1163" column="55" lean-forward="false" selection-start-line="1163" selection-start-column="55" selection-end-line="1163" selection-end-column="55" />
               <folding>
-                <marker date="1518737087263" expanded="true" signature="39957:40108" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="39995:40102" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="40022:40079" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="44323:45538" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="44324:44946" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="44324:45538" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="44467:44923" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="44780:44896" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="44970:45130" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="45171:45516" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="45214:45347" ph="..." />
-                <marker date="1518737087263" expanded="true" signature="45214:45425" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="39973:40124" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="40011:40118" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="40038:40095" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="46522:47666" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="46523:47114" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="46523:47666" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="46663:47095" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="46964:47072" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="47138:47290" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="47327:47648" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="47366:47491" ph="..." />
+                <marker date="1518787073237" expanded="true" signature="47366:47565" ph="..." />
               </folding>
             </state>
           </provider>
@@ -78,8 +42,8 @@
       <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="1311" column="33" lean-forward="false" selection-start-line="1311" selection-start-column="33" selection-end-line="1311" selection-end-column="33" />
+            <state relative-caret-position="586">
+              <caret line="1341" column="17" lean-forward="false" selection-start-line="1341" selection-start-column="17" selection-end-line="1341" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -98,7 +62,7 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/routes/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1405">
+            <state relative-caret-position="3495">
               <caret line="233" column="74" lean-forward="false" selection-start-line="233" selection-start-column="74" selection-end-line="233" selection-end-column="74" />
               <folding />
             </state>
@@ -118,7 +82,7 @@
       <file leaf-file-name="posts.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/routes/posts.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
+            <state relative-caret-position="1530">
               <caret line="102" column="58" lean-forward="false" selection-start-line="102" selection-start-column="58" selection-end-line="102" selection-end-column="58" />
               <folding />
             </state>
@@ -137,12 +101,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>people</find>
-      <find>latest</find>
-      <find>navRightButtons</find>
-      <find>&quot;people&quot;</find>
-      <find>profile</find>
-      <find>.topNav ul li&quot;)</find>
       <find>hostUserName</find>
       <find>host</find>
       <find>makeUrl</find>
@@ -167,6 +125,12 @@
       <find>left</find>
       <find>sendPage</find>
       <find>.slidevie</find>
+      <find>postId</find>
+      <find>total</find>
+      <find>p</find>
+      <find>parseposts</find>
+      <find>left =</find>
+      <find>slideAc</find>
     </findStrings>
     <replaceStrings>
       <replace>postSchema</replace>
@@ -242,8 +206,8 @@
         <option value="$PROJECT_DIR$/Server/routes/uploader.js" />
         <option value="$PROJECT_DIR$/Server/routes/posts.js" />
         <option value="$PROJECT_DIR$/Server/routes/index.js" />
-        <option value="$PROJECT_DIR$/Server/views/main.html" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
+        <option value="$PROJECT_DIR$/Server/views/main.html" />
       </list>
     </option>
   </component>
@@ -301,10 +265,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -334,6 +297,12 @@
               <item name="Hexaks" type="462c0819:PsiDirectoryNode" />
               <item name="Server" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Hexaks" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Hexaks" type="462c0819:PsiDirectoryNode" />
+              <item name="Server" type="462c0819:PsiDirectoryNode" />
+              <item name="Pictures" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Hexaks" type="b2602c69:ProjectViewProjectNode" />
@@ -369,6 +338,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -554,15 +524,17 @@
       <workItem from="1518554599263" duration="29615000" />
       <workItem from="1518700980402" duration="6000" />
       <workItem from="1518701033341" duration="6135000" />
-      <workItem from="1518714655200" duration="12704000" />
+      <workItem from="1518714655200" duration="12859000" />
+      <workItem from="1518776619825" duration="7052000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="268520000" />
+    <option name="totallyTimeSpent" value="275727000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -576,7 +548,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1941392" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1965812" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3285568" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -584,7 +556,7 @@
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39962476" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39918116" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -791,7 +763,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="795">
           <caret line="53" column="26" lean-forward="false" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -799,7 +770,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="908">
           <caret line="72" column="9" lean-forward="false" selection-start-line="72" selection-start-column="9" selection-end-line="72" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -826,7 +796,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/routes/posts.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
+        <state relative-caret-position="1530">
           <caret line="102" column="58" lean-forward="false" selection-start-line="102" selection-start-column="58" selection-end-line="102" selection-end-column="58" />
           <folding />
         </state>
@@ -834,7 +804,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/routes/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1405">
+        <state relative-caret-position="3495">
           <caret line="233" column="74" lean-forward="false" selection-start-line="233" selection-start-column="74" selection-end-line="233" selection-end-column="74" />
           <folding />
         </state>
@@ -850,29 +820,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="1311" column="33" lean-forward="false" selection-start-line="1311" selection-start-column="33" selection-end-line="1311" selection-end-column="33" />
+        <state relative-caret-position="586">
+          <caret line="1341" column="17" lean-forward="false" selection-start-line="1341" selection-start-column="17" selection-end-line="1341" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/views/main.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="1135" column="35" lean-forward="false" selection-start-line="1135" selection-start-column="35" selection-end-line="1135" selection-end-column="35" />
+        <state relative-caret-position="481">
+          <caret line="1163" column="55" lean-forward="false" selection-start-line="1163" selection-start-column="55" selection-end-line="1163" selection-end-column="55" />
           <folding>
-            <marker date="1518737087263" expanded="true" signature="39957:40108" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="39995:40102" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="40022:40079" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="44323:45538" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="44324:44946" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="44324:45538" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="44467:44923" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="44780:44896" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="44970:45130" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="45171:45516" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="45214:45347" ph="..." />
-            <marker date="1518737087263" expanded="true" signature="45214:45425" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="39973:40124" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="40011:40118" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="40038:40095" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="46522:47666" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="46523:47114" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="46523:47666" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="46663:47095" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="46964:47072" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="47138:47290" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="47327:47648" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="47366:47491" ph="..." />
+            <marker date="1518787073237" expanded="true" signature="47366:47565" ph="..." />
           </folding>
         </state>
       </provider>

@@ -279,17 +279,14 @@
     // import * as Jimp from "jimp";
     var Me = {};
     var host = {};
-    var currentPost = {
-        postId:"",
-        info:{
-
-        }
-    };
+    var currentPostObject = {};
+    var currentPost = {};
     var left = {};
     var right = {};
     var currentPostItterator = 1;
     var postsList = [];
     var pageType="";
+    var total=0;
     var Filters = {
         username:pageType,
         pageNumber : 1,
@@ -562,6 +559,7 @@
 
             var postId = postid;
             currentPostItterator = parseInt($(`.post-${postId} p`)[0].innerHTML);
+            debugger;
             slideAction(currentPostItterator,"initial");
 
         }
@@ -606,7 +604,7 @@
             }break;
             case "getPostsByFilter":{
                 console.log("total :" + res.total + " - "+ res.page + " / " + res.pages);
-                parsePosts(res.docs);
+                parsePosts(res);
             }break;
             case "submitPost":{
                 submitPostAction(res);
@@ -1134,27 +1132,65 @@
         });
     }
     function slideAction(postNumber,situation) {
-
         if (situation === "left") {
-            currentPostItterator--;
+            currentPostItterator+=1;
+
+            $(".pictureBox img:nth-child(1)").addClass("middlePic").removeClass("leftPic");
+            $(".pictureBox img:nth-child(2)").addClass("rightPic").removeClass("middlePic");
+            $(".pictureBox img:nth-child(3)").remove();
+            debugger;
+            if (postsList[currentPostItterator + 1]) {
+                if (postsList[currentPostItterator + 1] !== {}) {
+                    left = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
+                        $(".pictureBox").prepend(`
+                            <img src="../Statics/Pictures/${left}" class="leftPic"/>
+                        `);
+
+
+                }
+            }
+            if(postsList[currentPostItterator]) {
+                currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
+                currentPostObject = postsList[currentPostItterator];
+            }
+                // load data
+
         }
         else if (situation === "right") {
-            currentPostItterator++;
+            currentPostItterator-=1;
+
+            $(".pictureBox img:nth-child(2)").addClass("leftPic").removeClass("middlePic");
+            $(".pictureBox img:nth-child(3)").addClass("middlePic").removeClass("rightPic");
+            $(".pictureBox img:nth-child(1)").remove();
+            if (postsList[currentPostItterator - 1]) {
+                if (postsList[currentPostItterator - 1] !== {}) {
+                    right = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
+                    $(".pictureBox").append(`
+                        <img src="../Statics/Pictures/${right}" class="rightPic"/>
+                    `);
+                }
+            }
+            if(postsList[currentPostItterator]) {
+                currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
+                currentPostObject = postsList[currentPostItterator];
+            }
+
         }
         else if (situation === "initial") {
             currentPostItterator = postNumber;
             if (currentPostItterator > -1 && currentPostItterator <= postsList.length - 1) {
-                if (postsList[currentPostItterator - 1]) {
-                    if (postsList[currentPostItterator - 1] !== {})
-                        left = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
+                if (postsList[currentPostItterator + 1]) {
+                    if (postsList[currentPostItterator + 1] !== {})
+                        left = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
                 }
 
-                if (postsList[currentPostItterator + 1]) {
-                    right = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
+                if (postsList[currentPostItterator - 1]) {
+                    if (postsList[currentPostItterator -1] !== {})
+                        right = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
 
 
                     currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
-
+                    currentPostObject = postsList[currentPostItterator];
                     $(".pictureBox").html(`
                         <img src="../Statics/Pictures/${left}" class="leftPic"/>
                         <img src="../Statics/pictures/${currentPost}" class="middlePic"/>
@@ -1165,109 +1201,123 @@
 
             // postsList[currentPostItterator].postId;
         }
+        else{
+
+        }
+
+        loadPostDatas(currentPostObject,currentPostItterator);
     }
 
-        function parsePosts(posts) {
-            postsList = posts;
-            console.log(postsList);
-            if (Filters.pageNumber === 1) {
-                $("#postsContainer").html("");
+
+    function loadPostDatas(postObject,postNumber){
+        console.log(postObject);
+        console.log(postNumber);
+
+    }
+
+    function parsePosts(res) {
+        postsList = res.docs;
+        total = res.total;
+        console.log(postsList);
+        if (Filters.pageNumber === 1) {
+            $("#postsHeader h3").html(total+" posts found");
+            $("#postsContainer").html("");
+        }
+        var length = postsList.length - 1;
+        $.each(postsList, function (index, data) {
+            var curator = ``;
+            if (postsList[length - index].isCurated) {
+                curator = ``;
             }
-            var length = postsList.length - 1;
-            $.each(postsList, function (index, data) {
-                var curator = ``;
-                if (postsList[length - index].isCurated) {
-                    curator = ``;
-                }
-                var timeAgo = ((Date.now() - postsList[length - index].createdAt) / (60000));
-                var vahed = "minute";
-                if (parseInt(timeAgo) > 59) {
-                    timeAgo = (timeAgo / 60);
-                    vahed = "hour";
-                    if (timeAgo > 23) {
-                        timeAgo = (timeAgo / 24);
-                        vahed = "day";
-                        if (timeAgo > 30) {
-                            timeAgo = timeAgo / 30;
-                            vahed = "month";
-                            if (timeAgo > 12) {
-                                vahed = "year";
-                                timeAgo = timeAgo / 12;
-                            }
+            var timeAgo = ((Date.now() - postsList[length - index].createdAt) / (60000));
+            var vahed = "minute";
+            if (parseInt(timeAgo) > 59) {
+                timeAgo = (timeAgo / 60);
+                vahed = "hour";
+                if (timeAgo > 23) {
+                    timeAgo = (timeAgo / 24);
+                    vahed = "day";
+                    if (timeAgo > 30) {
+                        timeAgo = timeAgo / 30;
+                        vahed = "month";
+                        if (timeAgo > 12) {
+                            vahed = "year";
+                            timeAgo = timeAgo / 12;
                         }
                     }
                 }
-                else if (parseInt(timeAgo) < 1) {
-                    timeAgo = "in a minute";
-                }
-                if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
-                    timeAgo = "a";
-                }
-                else if (parseInt(timeAgo) === 1 && vahed === "hour") {
-                    timeAgo = "an";
-                }
-                else if (parseInt(timeAgo) !== 1) {
-                    vahed += "s";
-                    if (typeof timeAgo !== "string")
-                        timeAgo = parseInt(timeAgo);
-                }
-                let date = timeAgo + " " + vahed;
-                $("#postsContainer").append(`
-                <li class="eachPost post-${postsList[length - index].postId}" >
-                <p hidden>${index}</p>
-                <p hidden>${postsList[length - index].ext}</p>
-                    <div class="header">
-                        <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[length - index].owner.username}-prof.jpg" />
-                        <span class="username left">${postsList[length - index].owner.username}</span>
-                        <div class="curatorContainer right">
-                            <img src="../Statics/images/images/curateSmallBtn.png"/>
-                        </div>
-                    </div>
-                    <div class="imgContainer">
-                        <img src="../Statics/Pictures/${postsList[length - index].postId}-Small.${postsList[length - index].ext}" />
-                    </div>
-                    <div class="footer">
-                        <div class="rate">
-                            <img class="rateIcon" src="../Statics/images/images/b_like_p.png" />
-                            <span>${postsList[length - index].rate.value}/6</span>
-                        </div>
-                        <span class="time right">${date}</span>
-                    </div>
-                </li>
-            `);
-            });
-        }
-
-        function slideViewPageAction(res) {
-            console.log(res);
-        }
-
-        function newPostPageAction(res) {
-            console.log(res);
-
-        }
-
-        function rateResponseHandler(res) {
-            console.log(res);
-        }
-
-        function submitPostAction(res) {
-            if (!res.message) {
-                window.location.pathname = "/" + Me.username;
             }
-            else {
-                console.log(res.message);
+            else if (parseInt(timeAgo) < 1) {
+                timeAgo = "in a minute";
             }
-        }
+            if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
+                timeAgo = "a";
+            }
+            else if (parseInt(timeAgo) === 1 && vahed === "hour") {
+                timeAgo = "an";
+            }
+            else if (parseInt(timeAgo) !== 1) {
+                vahed += "s";
+                if (typeof timeAgo !== "string")
+                    timeAgo = parseInt(timeAgo);
+            }
+            let date = timeAgo + " " + vahed;
+            $("#postsContainer").append(`
+            <li class="eachPost post-${postsList[length - index].postId}" >
+            <p hidden>${length - index}</p>
+            <p hidden>${postsList[length - index].ext}</p>
+                <div class="header">
+                    <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[length - index].owner.username}-prof.jpg" />
+                    <span class="username left">${postsList[length - index].owner.username}</span>
+                    <div class="curatorContainer right">
+                        <img src="../Statics/images/images/curateSmallBtn.png"/>
+                    </div>
+                </div>
+                <div class="imgContainer">
+                    <img src="../Statics/Pictures/${postsList[length - index].postId}-Small.${postsList[length - index].ext}" />
+                </div>
+                <div class="footer">
+                    <div class="rate">
+                        <img class="rateIcon" src="../Statics/images/images/b_like_p.png" />
+                        <span>${postsList[length - index].rate.value}/6</span>
+                    </div>
+                    <span class="time right">${date}</span>
+                </div>
+            </li>
+        `);
+        });
+    }
 
-        function alert(message) {
-            $("#alertTop h3").html(message);
-            $("#alertTop").addClass("show");
-            setTimeout(function () {
-                $("#alertTop").removeClass("show");
-                // Something you want delayed.
-            }, 3000); // 5seconds show
+    function slideViewPageAction(res) {
+        console.log(res);
+    }
+
+    function newPostPageAction(res) {
+        console.log(res);
+
+    }
+
+    function rateResponseHandler(res) {
+        console.log(res);
+    }
+
+    function submitPostAction(res) {
+        if (!res.message) {
+            window.location.pathname = "/" + Me.username;
         }
+        else {
+            console.log(res.message);
+        }
+    }
+
+    function alert(message) {
+        $("#alertTop h3").html(message);
+        $("#alertTop").addClass("show");
+        setTimeout(function () {
+            $("#alertTop").removeClass("show");
+            // Something you want delayed.
+        }, 3000); // 5seconds show
+    }
 
 
 
