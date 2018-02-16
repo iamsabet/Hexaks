@@ -559,7 +559,6 @@
 
             var postId = postid;
             currentPostItterator = parseInt($(`.post-${postId} p`)[0].innerHTML);
-            debugger;
             slideAction(currentPostItterator,"initial");
 
         }
@@ -1138,7 +1137,6 @@
             $(".pictureBox img:nth-child(1)").addClass("middlePic").removeClass("leftPic");
             $(".pictureBox img:nth-child(2)").addClass("rightPic").removeClass("middlePic");
             $(".pictureBox img:nth-child(3)").remove();
-            debugger;
             if (postsList[currentPostItterator + 1]) {
                 if (postsList[currentPostItterator + 1] !== {}) {
                     left = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
@@ -1152,6 +1150,9 @@
             if(postsList[currentPostItterator]) {
                 currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
                 currentPostObject = postsList[currentPostItterator];
+            }
+            else{
+                alert("post not found");
             }
                 // load data
 
@@ -1174,6 +1175,9 @@
                 currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
                 currentPostObject = postsList[currentPostItterator];
             }
+            else{
+                alert("post not found");
+            }
 
         }
         else if (situation === "initial") {
@@ -1185,10 +1189,11 @@
                 }
 
                 if (postsList[currentPostItterator - 1]) {
-                    if (postsList[currentPostItterator -1] !== {})
+                    if (postsList[currentPostItterator - 1] !== {})
                         right = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
 
-
+                }
+                if(postsList[currentPostItterator]){
                     currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
                     $(".pictureBox").html(`
@@ -1196,6 +1201,9 @@
                         <img src="../Statics/pictures/${currentPost}" class="middlePic"/>
                         <img src="../Statics/pictures/${right}" class="rightPic"/>
                 `);
+                }
+                else{
+                    alert("post not found");
                 }
             }
 
