@@ -1290,7 +1290,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 }
 
-.slideView{
+.post{
 	position:fixed;
 	left:+100vw;
 	width:100vw;
@@ -1299,42 +1299,61 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	display: inline-block;
 	z-index: 200;
 }
-.slideView .pictureBox{
+.post .pictureBox{
 	position: relative;
 	width:95%;
 	left:2.5%;
 	height: 100%;
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	backface-visibility: hidden;
 }
 
-.slideView .pictureBox img{
+.post .pictureBox img {
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	width:auto;
+	width: auto;
 	max-width: 1000px;
 	max-height: 900px;
-	-webkit-transition: all 0.3s;
-	-moz-transition: all 0.3s;
-	-ms-transition: all 0.3s;
-	-o-transition: all 0.3s;
-	transition: all 0.3s;
-}
-
-.slideView .pictureBox .leftPic{
-	left:-200vw;
-
-}
-
-.slideView .pictureBox .middlePic{
-	height: auto;
+	-webkit-transition: all 0.4s;
+	-moz-transition: all 0.4s;
+	-ms-transition: all 0.4;
+	-o-transition: all 0.4s;
+	transition: all 0.4s;
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	backface-visibility: hidden;
 	-webkit-transform: translate(-50%,-50%);
 	-moz-transform: translate(-50%,-50%);
 	-ms-transform: translate(-50%,-50%);
 	-o-transform: translate(-50%,-50%);
 	transform: translate(-50%,-50%);
 }
-.slideView .pictureBox .rightPic{
-	left: +200vw;
+
+.post .pictureBox .leftPic{
+	left:-100vw;
+	-webkit-transform: translate(0,-50%);
+	-moz-transform: translate(0,-50%);
+	-ms-transform: translate(0,-50%);
+	-o-transform: translate(0,-50%);
+	transform: translate(0,-50%);
+}
+
+.post .pictureBox .middlePic{
+	height: auto;
+
+}
+
+.post .pictureBox .rightPic{
+	left: 100vw;
+	-webkit-transform: translate(0,-50%);
+	-moz-transform: translate(0,-50%);
+	-ms-transform: translate(0,-50%);
+	-o-transform: translate(0,-50%);
+	transform: translate(0,-50%);
 
 }
 
@@ -1448,7 +1467,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 #profileTopSmall.show {
 }
 
-#slideView{
+#post{
 	-webkit-transition: all 0.5s ease-out;
 	-moz-transition: all 0.5s ease-out;
 	-ms-transition: all 0.5s ease-out;
@@ -1456,7 +1475,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	transition: all 0.5s ease-out;
 	left:100vw;
 }
-#slideView.show{
+#post.show{
 	left:0;
 }
 

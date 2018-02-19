@@ -83,10 +83,19 @@ router.get('/api/v1/admin/', function(req,res){
 });
 
 
-router.get('/posts/:uuid', function(req,res){
-    var hostPostId = req.params.uuid;
-    res.render("slideView.html");
+router.get('/post/:uuid', function(req,res){
+    validateRequest(req,res,function(callback){
+        var hostPostId = req.params.uuid;
 
+        if(callback) {
+            res.render("post.html");                 // html only static file preload some datas for authenticated
+        }
+        else{
+            var hostPostId = req.params.uuid;
+            posts.isPrivate();
+                // html only static file preload some datas for authenticated
+        }
+    });
 });
 
 

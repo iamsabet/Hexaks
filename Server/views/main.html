@@ -11,9 +11,7 @@
 
 <body>
 
-<div class="ratePad">
 
-</div>
 
 
 <div id="homeContainer" class="containerDiv">
@@ -154,16 +152,54 @@
     </div>
 </div>
 
-<div class="slideView" id="slideView">
+<div class="post" id="post">
 
-    <div>
+    <button class="closePost">
 
-    </div>
+    </button>
     <div class="pictureBox">
         <!--<img src=""/>-->
     </div>
+    <div class="footer">
+        <button class="leftButton"></button>
+        <div class="ownerProfile">
+            <img class="ownerProfilePicture" src="../Statics/images/images/avatar.png"/>
+            <a href="/" class="ownerUsername usernameLink">username</a>
+        </div>
+        <div class="caption">
+            <textarea contenteditable="false">lknadlsknd;laksnd as.kjdn;lkasnda.ksnd 'aoskd</textarea>
+            <textarea contenteditable="true" class="editable"></textarea>
+        </div>
+        <div class="buttonGroup">
+            <button class="info"></button>
+            <button class="comments"></button>
+            <button class="download"></button>
+        </div>
+        <div class="rateButton">
+            <button class="openRateBtn"></button>
+            <span class="rateValue"></span>
+            <span class="rateCounts"></span>
+        </div>
+        <button class="rightButton"></button>
+    </div>
 
+    <div class="commentsContainer">
+
+
+    </div>
+    <div class="infoContainer">
+
+    </div>
+    <div class="downloadContainer">
+
+    </div>
+    <div class="ratePad">
+
+    </div>
 </div>
+
+
+
 
 
 <div class="contactContainer" id="contact">
@@ -554,7 +590,7 @@
                 alert("invalid post type");
             }
         }
-        else if("slideview"){
+        else if("post"){
 
             var postId = postid || window.location.pathname.split("/")[2];
             currentPostItterator = parseInt($(`.post-${postId} p`).html());
@@ -592,7 +628,7 @@
             case "newPost":{
                 newPostPageAction(res);
             }break;
-            case "slideView":{
+            case "post":{
                 slideViewPageAction(res);
 
             }break;
@@ -623,7 +659,7 @@
 
             if(pageName.startsWith("post")){
                 var postId = pageName.split("-")[1];
-                window.history.replaceState("", "", "/slideview/" + postId);
+                window.history.replaceState("", "", "/post/" + postId);
             }
             else {
 
@@ -696,7 +732,7 @@
             }
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "subscriptions" || pageType === "followings" || pageType === "followers" ||
-            pageType=== "slideview"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
+            pageType=== "post"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
 
             if( pageType === "curated" || pageType === "latest" || pageType === "top") {
@@ -723,7 +759,7 @@
                    selectRightNav(pageType);
                    selectTopNav(order);
                 }
-                if (pageType === "settings" || pageType === "slideview" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy") {
+                if (pageType === "settings" || pageType === "post" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy") {
                     if(postId) {
 
                         changePage(pageType + "/" + postId, pageType+"/"+postId, writeState,true);
@@ -822,7 +858,7 @@
                             $(".topNav ul li")[0].addClass("selected");
                         }
                         // hide elements
-                        pageNames = ["settings", "newPost", "slideView", "profileTop", "people","profileTopSmall", "contact", "policy"];
+                        pageNames = ["settings", "newPost", "post", "profileTop", "people","profileTopSmall", "contact", "policy"];
                         for (var x = 0; x < pageNames.length; x++) {
                             if (pageName === pageNames[x].toLowerCase()) {
                                 $(`#${pageNames[x]}`).addClass("show");
@@ -864,9 +900,9 @@
                         pushHistory(pageName,pageType,pageType,true);
                     }
                 }
-                else if(pageName=== "settings" || pageName==="newpost" || pageName==="slideview" || pageName==="people" || pageName==="contact"){
+                else if(pageName=== "settings" || pageName==="newpost" || pageName==="post" || pageName==="people" || pageName==="contact"){
                     if( pageName !== currentPage ) {
-                        var pageNames = ["settings", "newPost", "slideView", "contact", "people","policy"];
+                        var pageNames = ["settings", "newPost", "post", "contact", "people","policy"];
                         for (var x = 0; x < pageNames.length; x++) {
 
                             if (pageName === pageNames[x].toLowerCase()) {
@@ -1261,7 +1297,7 @@
     function loadPostDatas(postObject,postNumber){
         console.log(postObject);
         console.log(postNumber);
-        pushHistory("/slideview/"+postObject.postId,"/slideview/"+postObject.postId,"/slideview/"+postObject.postId,true);
+        pushHistory("/post/"+postObject.postId,"/post/"+postObject.postId,"/post/"+postObject.postId,true);
     }
 
     function parsePosts(res) {
