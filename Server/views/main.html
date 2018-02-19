@@ -623,7 +623,7 @@
 
             if(pageName.startsWith("post")){
                 var postId = pageName.split("-")[1];
-                window.history.replaceState("", "", "/slideView/" + postId);
+                window.history.replaceState("", "", "/slideview/" + postId);
             }
             else {
 
@@ -1173,7 +1173,9 @@
                 }
             }
             else{
-                // load more
+                if(currentPostItterator === total - 1 && postsList.length === total){
+                    alert("No More Posts");
+                }
             }
                 // load data
 
@@ -1209,7 +1211,9 @@
                 }
             }
             else{
-                // load more
+                if(currentPostItterator === total - 1 && postsList.length === total){
+                    alert("No More Posts");
+                }
             }
         }
         else if (situation === "initial") {
@@ -1257,7 +1261,7 @@
     function loadPostDatas(postObject,postNumber){
         console.log(postObject);
         console.log(postNumber);
-
+        pushHistory("/slideview/"+postObject.postId,"/slideview/"+postObject.postId,"/slideview/"+postObject.postId,true);
     }
 
     function parsePosts(res) {
