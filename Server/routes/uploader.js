@@ -24,7 +24,7 @@ var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
     originalPath ='/Users/sabet/Projects/Hexaks/Server/Pictures/',
     smallAndMediumPath ='/Users/sabet/Projects/Hexaks/Web-Client/Statics/Pictures/',
     chunkDirName = "chunks",
-    maxFileSize =  40000000, // in bytes, 0 for unlimited 40MB
+    maxFileSize =  100000000, // in bytes, 0 for unlimited 100MB
     minFileSizeToChunk = 1000000; // in bytes 1MB
 // routes
 /* GET home page. */
@@ -33,11 +33,11 @@ var uploader = {
     onUpload: function (req, res,user) {
 
         var form = new multiparty.Form();
-        console.log();
         form.parse(req, function (err, fields, files) {
             if (err) throw err;
             // text/plain is required to ensure support for IE9 and older
             if (files) {
+                console.log(user);
                 redisClient.get(user.username + "::isUploadingPost", function (err, isPost) {
                     redisClient.get(user.username + "::isUploadingAlbum", function (err, isAlbum) {
                         if (isPost || isAlbum) {

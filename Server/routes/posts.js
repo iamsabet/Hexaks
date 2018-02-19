@@ -190,8 +190,10 @@ var posts = {
                             console.log(cost + " :: "+isNaN(cost));
                             console.log(exifData);
                             var exif = {};
-                            if(exifData && postId.split(".")[1].toLowerCase()=== "jpeg" || postId.split(".")[1].toLowerCase() === "jpg"){
-                                exif = exifData.exif;
+                            if(exifData &&( postId.split(".")[1].toLowerCase()=== "jpeg" || postId.split(".")[1].toLowerCase() === "jpg")){
+                                if(exifData) {
+                                    exif = exifData.exif || {};
+                                }
                             }
                             postSchema.update({
                                 postId: postId.split(".")[0],

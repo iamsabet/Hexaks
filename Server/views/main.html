@@ -283,7 +283,7 @@
     var currentPost = {};
     var left = {};
     var right = {};
-    var currentPostItterator = 1;
+    var currentPostItterator = 0;
     var postsList = [];
     var pageType="";
     var total=0;
@@ -371,7 +371,6 @@
         }
     });
     $("body").on("change",".timeNav.show select",function(){
-        debugger;
         switch($(this).val().toString().toLowerCase()){
             case "hour":{
                 Filters.timeEdge = 1;
@@ -557,8 +556,8 @@
         }
         else if("slideview"){
 
-            var postId = postid;
-            currentPostItterator = parseInt($(`.post-${postId} p`)[0].innerHTML);
+            var postId = postid || window.location.pathname.split("/")[2];
+            currentPostItterator = parseInt($(`.post-${postId} p`).html());
             slideAction(currentPostItterator,"initial");
 
         }
@@ -612,15 +611,14 @@
     }
 
 
-    function makeUrl(pageName) {
+    function makeUrl(pageName,postId) {
 
-        var urlArray = window.location.pathname.split("/");
+        var urlArray = window.location.pathname.toLowerCase().split("/");
         var newUrl = "";
         var hashtag = "";
         var category = "";
         var order = "";
-
-
+        console.log(urlArray.join("/"));
         if (pageName) {
 
             if(pageName.startsWith("post")){
@@ -667,11 +665,17 @@
             window.history.replaceState("", "", "/");
             window.history.replaceState("", "", newUrl);
         }
-        urlParser(true);
+        if(postId) {
+            urlParser(true,postId);
+        }
+        else{
+            urlParser(true);
+        }
     }
 
 
-    function urlParser(writeState){
+    function urlParser(writeState,postId){
+
         var order = "latest";
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
@@ -692,7 +696,7 @@
             }
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "subscriptions" || pageType === "followings" || pageType === "followers" ||
-            pageType === "slideview"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
+            pageType=== "slideview"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
 
             if( pageType === "curated" || pageType === "latest" || pageType === "top") {
@@ -719,8 +723,16 @@
                    selectRightNav(pageType);
                    selectTopNav(order);
                 }
-                if (pageType === "settings" || pageType === "slideview" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy")
-                    changePage(pageType, pageType, writeState);// Other Pages
+                if (pageType === "settings" || pageType === "slideview" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy") {
+                    if(postId) {
+
+                        changePage(pageType + "/" + postId, pageType+"/"+postId, writeState,true);
+                    }
+                    else{
+                        changePage(pageType, pageType, writeState);
+                    }
+
+                }
                 else
                     changePage("feed", pageType, writeState);// Feed
 
@@ -791,12 +803,13 @@
 
     }
 
-    function changePage(pageName,pageType,newHistory){
+    function changePage(pageName,pageType,newHistory,postid){
 
         setTimeout(function(){
-
-            console.log(pageName+" --- "+pageType);
-
+            if(postid || false) {
+                pageName = pageName.split("/")[0];
+                pageType =  pageName.split("/")[1];
+            }
                 if(pageName=== "feed" || pageName=== "home" || pageName=== ""){
                     // show feed items --> hide Others
                     if( pageName !== currentPage ) {
@@ -824,7 +837,7 @@
                     // --> Function Calls
                     getPostsByFilter({},pageType);
                     if(newHistory || false) {
-                        pushHistory(pageName,pageType ,pageType,false);
+                        pushHistory(pageName,pageType ,pageType,true);
                     }
                 }
                 else if(pageName === "profile"){
@@ -834,7 +847,7 @@
                     if( pageName !== currentPage ) {
                         $("#postsContainer").addClass("show");
                         $("#profileTop").addClass("show");
-                        pageNames = ["settings", "newPost", "slideView", "homeSliders", "people","contact", "policy"];
+                        pageNames = ["settings", "newPost", "slideVvew", "homeSliders", "people","contact", "policy"];
                         for (var x = 0; x < pageNames.length; x++) {
                             if (pageName === pageNames[x]) {
                                 $(`#${pageNames[x]}`).addClass("show");
@@ -858,10 +871,8 @@
 
                             if (pageName === pageNames[x].toLowerCase()) {
                                 $(`#${pageNames[x]}`).addClass("show");
-                                if(window.location.pathname.split("/")[2]) {
-                                    var postId = window.location.pathname.split("/")[2];
-                                    sendPagesInitialRequest(pageNames[x], "post",postId);
-                                }
+
+                                    sendPagesInitialRequest(pageNames[x].toLowerCase(), "post",pageName.split("-")[1]);
                             }
                             else {
                                 if ($(`#${pageNames[x]}.show`)) {
@@ -873,7 +884,7 @@
                     // => function calls :
 
                     if(newHistory || false) {
-                        pushHistory(pageName,pageName,pageType,true);
+                        pushHistory(pageName+"/"+postid,pageType,pageType,false);
                     }
                 }
                 else {
@@ -887,7 +898,7 @@
     function pushHistory(newPageName,url,data,changeUrl){
         if(changeUrl || false){
             window.history.replaceState("", "", "/");
-            window.history.replaceState("/", "", url);
+            window.history.replaceState("", "", url);
         }
         if (historyPointer === historyList.length-1 ) {
             historyList.push({pageName: newPageName, urlData: url ,data:data, hashtag : window.location.hash});
@@ -923,20 +934,20 @@
         }
     }
     function backward(){
-        if(historyPointer > 0){
+        if(historyPointer >= 0){
             historyPointer--;
             changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
-            window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
+            // window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
         }
         else{
             window.history.back();
         }
     }
     function forward(){
-        if(historyPointer < historyList.length -1 ){
+        if(historyPointer < historyList.length ){
             historyPointer++;
             changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
-            window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
+            // window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
         }
         else{
             //
@@ -1132,85 +1143,111 @@
     }
     function slideAction(postNumber,situation) {
         if (situation === "left") {
-            currentPostItterator+=1;
+            if(currentPostItterator > 0) {
+                currentPostItterator -= 1;
 
-            $(".pictureBox img:nth-child(1)").addClass("middlePic").removeClass("leftPic");
-            $(".pictureBox img:nth-child(2)").addClass("rightPic").removeClass("middlePic");
-            $(".pictureBox img:nth-child(3)").remove();
-            if (postsList[currentPostItterator + 1]) {
-                if (postsList[currentPostItterator + 1] !== {}) {
-                    left = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
+                $(".pictureBox img:nth-child(1)").addClass("middlePic");
+                $(".pictureBox img:nth-child(1)").removeClass("leftPic");
+                $(".pictureBox img:nth-child(2)").addClass("rightPic");
+                $(".pictureBox img:nth-child(2)").removeClass("middlePic")
+                $(".pictureBox img:nth-child(3)").remove();
+                if (postsList[currentPostItterator - 1]) {
+                    if (postsList[currentPostItterator - 1]) {
+                        left = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
                         $(".pictureBox").prepend(`
                             <img src="../Statics/Pictures/${left}" class="leftPic"/>
                         `);
-
-
+                    }
+                }
+                else{
+                    $(".pictureBox").prepend(`
+                        <img src="../Statics/Pictures/empty.jpg" class="leftPic"/>
+                    `);
+                }
+                if (postsList[currentPostItterator]) {
+                    currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
+                    currentPostObject = postsList[currentPostItterator];
+                }
+                else {
+                    alert("post not found");
                 }
             }
-            if(postsList[currentPostItterator]) {
-                currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
-                currentPostObject = postsList[currentPostItterator];
-            }
             else{
-                alert("post not found");
+                // load more
             }
                 // load data
 
         }
         else if (situation === "right") {
-            currentPostItterator-=1;
+            if(currentPostItterator < postsList.length -1) {
+                currentPostItterator += 1;
 
-            $(".pictureBox img:nth-child(2)").addClass("leftPic").removeClass("middlePic");
-            $(".pictureBox img:nth-child(3)").addClass("middlePic").removeClass("rightPic");
-            $(".pictureBox img:nth-child(1)").remove();
-            if (postsList[currentPostItterator - 1]) {
-                if (postsList[currentPostItterator - 1] !== {}) {
-                    right = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
-                    $(".pictureBox").append(`
+                $(".pictureBox img:nth-child(2)").addClass("leftPic");
+                $(".pictureBox img:nth-child(2)").removeClass("middlePic");
+                $(".pictureBox img:nth-child(3)").addClass("middlePic");
+                $(".pictureBox img:nth-child(3)").removeClass("rightPic");
+                $(".pictureBox img:nth-child(1)").remove();
+                if (postsList[currentPostItterator + 1]) {
+                    if (postsList[currentPostItterator + 1]) {
+                        right = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
+                        $(".pictureBox").append(`
                         <img src="../Statics/Pictures/${right}" class="rightPic"/>
                     `);
+                    }
+                }
+                else{
+                    $(".pictureBox").append(`
+                        <img src="../Statics/Pictures/empty.jpg" class="rightPic"/>
+                    `);
+                }
+                if (postsList[currentPostItterator]) {
+                    currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
+                    currentPostObject = postsList[currentPostItterator];
+                }
+                else {
+                    alert("post not found");
                 }
             }
-            if(postsList[currentPostItterator]) {
-                currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
-                currentPostObject = postsList[currentPostItterator];
-            }
             else{
-                alert("post not found");
+                // load more
             }
-
         }
         else if (situation === "initial") {
             currentPostItterator = postNumber;
             if (currentPostItterator > -1 && currentPostItterator <= postsList.length - 1) {
                 if (postsList[currentPostItterator + 1]) {
-                    if (postsList[currentPostItterator + 1] !== {})
-                        left = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
+                    var right = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
                 }
 
                 if (postsList[currentPostItterator - 1]) {
-                    if (postsList[currentPostItterator - 1] !== {})
-                        right = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
+                    var left = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
 
                 }
                 if(postsList[currentPostItterator]){
                     currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
-                    $(".pictureBox").html(`
-                        <img src="../Statics/Pictures/${left}" class="leftPic"/>
-                        <img src="../Statics/pictures/${currentPost}" class="middlePic"/>
-                        <img src="../Statics/pictures/${right}" class="rightPic"/>
-                `);
+                    if(left) {
+                        $(".pictureBox").html(`<img src="../Statics/Pictures/${left}" class="leftPic"/>`);
+                    }
+                    else{
+                        $(".pictureBox").html(`<img src="../Statics/Pictures/empty.jpg" class="leftPic"/>`);
+                    }
+                    $(".pictureBox").append(`<img src="../Statics/pictures/${currentPost}" class="middlePic"/>`);
+                    if(right) {
+                        $(".pictureBox").append(`<img src="../Statics/pictures/${right}" class="rightPic"/>`);
+                    }
+                    else{
+                        $(".pictureBox").append(`<img src="../Statics/pictures/loadmore.jpg" class="rightPic"/>`);
+                    }
+
                 }
                 else{
                     alert("post not found");
                 }
             }
-
-            // postsList[currentPostItterator].postId;
         }
         else{
-
+            console.log("Invalid Command");
         }
 
         loadPostDatas(currentPostObject,currentPostItterator);
@@ -1224,76 +1261,81 @@
     }
 
     function parsePosts(res) {
-        postsList = res.docs;
-        total = res.total;
-        console.log(postsList);
-        if (Filters.pageNumber === 1) {
-            $("#postsHeader h3").html(total+" posts found");
-            $("#postsContainer").html("");
+        if(res.docs.length === 0){
+            $("#postsHeader h3").html(" No posts found");
         }
-        var length = postsList.length - 1;
-        $.each(postsList, function (index, data) {
-            var curator = ``;
-            if (postsList[length - index].isCurated) {
-                curator = ``;
+        else {
+            postsList = res.docs;
+            total = res.total;
+            console.log(postsList);
+            if (Filters.pageNumber === 1) {
+                $("#postsHeader h3").html(total + " posts found");
+                $("#postsContainer").html("");
             }
-            var timeAgo = ((Date.now() - postsList[length - index].createdAt) / (60000));
-            var vahed = "minute";
-            if (parseInt(timeAgo) > 59) {
-                timeAgo = (timeAgo / 60);
-                vahed = "hour";
-                if (timeAgo > 23) {
-                    timeAgo = (timeAgo / 24);
-                    vahed = "day";
-                    if (timeAgo > 30) {
-                        timeAgo = timeAgo / 30;
-                        vahed = "month";
-                        if (timeAgo > 12) {
-                            vahed = "year";
-                            timeAgo = timeAgo / 12;
+            var length = postsList.length - 1;
+            $.each(postsList, function (index, data) {
+                var curator = ``;
+                if (postsList[index].isCurated) {
+                    curator = ``;
+                }
+                var timeAgo = ((Date.now() - postsList[index].createdAt) / (60000));
+                var vahed = "minute";
+                if (parseInt(timeAgo) > 59) {
+                    timeAgo = (timeAgo / 60);
+                    vahed = "hour";
+                    if (timeAgo > 23) {
+                        timeAgo = (timeAgo / 24);
+                        vahed = "day";
+                        if (timeAgo > 30) {
+                            timeAgo = timeAgo / 30;
+                            vahed = "month";
+                            if (timeAgo > 12) {
+                                vahed = "year";
+                                timeAgo = timeAgo / 12;
+                            }
                         }
                     }
                 }
-            }
-            else if (parseInt(timeAgo) < 1) {
-                timeAgo = "in a minute";
-            }
-            if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
-                timeAgo = "a";
-            }
-            else if (parseInt(timeAgo) === 1 && vahed === "hour") {
-                timeAgo = "an";
-            }
-            else if (parseInt(timeAgo) !== 1) {
-                vahed += "s";
-                if (typeof timeAgo !== "string")
-                    timeAgo = parseInt(timeAgo);
-            }
-            let date = timeAgo + " " + vahed;
-            $("#postsContainer").append(`
-            <li class="eachPost post-${postsList[length - index].postId}" >
-            <p hidden>${length - index}</p>
-            <p hidden>${postsList[length - index].ext}</p>
+                else if (parseInt(timeAgo) < 1) {
+                    timeAgo = "in a minute";
+                }
+                if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
+                    timeAgo = "a";
+                }
+                else if (parseInt(timeAgo) === 1 && vahed === "hour") {
+                    timeAgo = "an";
+                }
+                else if (parseInt(timeAgo) !== 1) {
+                    vahed += "s";
+                    if (typeof timeAgo !== "string")
+                        timeAgo = parseInt(timeAgo);
+                }
+                let date = timeAgo + " " + vahed;
+                $("#postsContainer").append(`
+            <li class="eachPost post-${postsList[index].postId}" >
+            <p hidden>${index}</p>
+            <p hidden>${postsList[index].ext}</p>
                 <div class="header">
-                    <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[length - index].owner.username}-prof.jpg" />
-                    <span class="username left">${postsList[length - index].owner.username}</span>
+                    <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[index].owner.username}-prof.jpg" />
+                    <span class="username left">${postsList[index].owner.username}</span>
                     <div class="curatorContainer right">
                         <img src="../Statics/images/images/curateSmallBtn.png"/>
                     </div>
                 </div>
                 <div class="imgContainer">
-                    <img src="../Statics/Pictures/${postsList[length - index].postId}-Small.${postsList[length - index].ext}" />
+                    <img src="../Statics/Pictures/${postsList[index].postId}-Small.${postsList[index].ext}" />
                 </div>
                 <div class="footer">
                     <div class="rate">
                         <img class="rateIcon" src="../Statics/images/images/b_like_p.png" />
-                        <span>${postsList[length - index].rate.value}/6</span>
+                        <span>${postsList[index].rate.value}/6</span>
                     </div>
                     <span class="time right">${date}</span>
                 </div>
             </li>
         `);
-        });
+            });
+        }
     }
 
     function slideViewPageAction(res) {
