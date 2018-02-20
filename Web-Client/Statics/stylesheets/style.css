@@ -203,7 +203,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position: fixed;
 	width: 140px;
 	top:0;
-	z-index: 999999;
+	z-index: 1000002;
 	display: block;
 	height: 100vh;
 	background-color: black;
@@ -1297,7 +1297,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	background-color:rgba(30,30,30,0.7);
 	height: 100vh;
 	display: inline-block;
-	z-index: 200;
+	z-index: 999999;
 }
 .post .pictureBox{
 	position: relative;
@@ -1316,7 +1316,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	top: 50%;
 	width: auto;
 	max-width: 1000px;
-	max-height: 900px;
+	max-height: 90%;
 	-webkit-transition: all 0.4s;
 	-moz-transition: all 0.4s;
 	-ms-transition: all 0.4;
@@ -1334,31 +1334,164 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 
 .post .pictureBox .leftPic{
-	left:-100vw;
+	left:-120vw;
 	-webkit-transform: translate(0,-50%);
 	-moz-transform: translate(0,-50%);
 	-ms-transform: translate(0,-50%);
 	-o-transform: translate(0,-50%);
 	transform: translate(0,-50%);
+	max-width: 120%;
+	max-height: 95%;
 }
 
 .post .pictureBox .middlePic{
-	height: auto;
-
+	max-width: 105%;
+	max-height: 90%;
 }
 
 .post .pictureBox .rightPic{
-	left: 100vw;
+	left: 120vw;
 	-webkit-transform: translate(0,-50%);
 	-moz-transform: translate(0,-50%);
 	-ms-transform: translate(0,-50%);
 	-o-transform: translate(0,-50%);
 	transform: translate(0,-50%);
+	max-width: 120%;
+	max-height: 95%;
 
 }
 
+.postFooter{
+	width: 100%;
+	position: fixed;
+	left: 0;
+	padding: 2px;
+	background-color: #151515;
+	display: inline-block;
+	text-align: center;
+	height: 85px;
+	top: 100vh;
+	z-index: 1000016;
+	margin-top:0;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-ms-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+}
+.postFooter.show{
+	margin-top: -90px !important;
+}
+
+.postFooter button{
+	display: inline-block;
+	position: absolute;
+	width:50px;
+	height: 60px;
+	top:10px;
+	background-size: 100%;
+	background: transparent no-repeat center;
+	border-radius: 5px;
+	-webkit-transition: all 0.7s;
+	-moz-transition: all 0.7s;
+	-ms-transition: all 0.4s;
+	-o-transition: all 0.7s;
+	transition: all 0.7s;
+	outline: none;
+	border:1px solid #151515;
+	box-shadow: 7px 2px 15px 3px #151515;
+}
+.postFooter button:hover{
+	cursor: pointer;
+	background-color: black;
+	border:1px solid #ff0055;
+	box-shadow: 7px 2px 15px 3px #151515;
+
+}
+.postFooter button.clicked{
+	background-color: #ff0055;
+	border:2px solid black;
+}
+.postFooter button.leftButton{
+	left:0;
+	background-image: url("../images/icons/left.png");
+}
+.postFooter button.rightButton{
+	right: 150px;
+	background-image: url("../images/icons/right.png");
+	z-index: 10000;
+}
+@media (max-width:768px){
+	.postFooter button.rightButton{
+		right: 10px;
+		bottom:10px;
+	}
+}
+.postFooter div{
+	position: relative;
+	display: inline-block;
+	float: left;
+	width: auto;
+}
+.postFooter .ownerProfile{
+	display: inline-block;
+	height: 100%;
+	width: auto;
+	max-width: 400px;
+	min-width: 250px;
+	vertical-align: top;
+	margin-left: 60px;
+	padding:5px;
+}
+.postFooter .ownerProfile:hover{
+	color:#ff0055;
+	cursor: pointer;
+	background-color: #333333;
+}
+.postFooter .ownerProfile .ownerProfilePicture{
+	height: 100%;
+}
 
 
+.postFooter .ownerProfile .clip-svg {
+	width: 0;
+	height: 0;
+}
+
+.postFooter .ownerProfile img {
+	max-width: 100%;
+	height: auto;
+}
+
+.postFooter .ownerProfile .polygon-clip-hexagon {
+	-webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+	clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+	-webkit-clip-path: url("#polygon-clip-hexagon");
+	clip-path: url("#polygon-clip-hexagon");
+}
+
+.postFooter .ownerProfile .polygon-each-img-wrap{
+	width: 58px;
+	height: 70px;
+	margin: 0;
+	float: left;
+}
+.postFooter .ownerProfile .ownerUsername{
+	position: absolute;
+	margin: 5px 5px;
+	top: 18px;
+	left: 65px;
+	font-size: 20px;
+	line-height: 22px;
+	color: white;
+	text-align: left;
+	word-break: break-all;
+	word-wrap: break-word;
+	width: auto;
+	max-width: 250px;
+	height: 100%;
+
+}
 
 /* -->  Main Pages Positions Override to handle Page Changes */
 

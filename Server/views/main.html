@@ -160,28 +160,6 @@
     <div class="pictureBox">
         <!--<img src=""/>-->
     </div>
-    <div class="footer">
-        <button class="leftButton"></button>
-        <div class="ownerProfile">
-            <img class="ownerProfilePicture" src="../Statics/images/images/avatar.png"/>
-            <a href="/" class="ownerUsername usernameLink">username</a>
-        </div>
-        <div class="caption">
-            <textarea contenteditable="false">lknadlsknd;laksnd as.kjdn;lkasnda.ksnd 'aoskd</textarea>
-            <textarea contenteditable="true" class="editable"></textarea>
-        </div>
-        <div class="buttonGroup">
-            <button class="info"></button>
-            <button class="comments"></button>
-            <button class="download"></button>
-        </div>
-        <div class="rateButton">
-            <button class="openRateBtn"></button>
-            <span class="rateValue"></span>
-            <span class="rateCounts"></span>
-        </div>
-        <button class="rightButton"></button>
-    </div>
 
     <div class="commentsContainer">
 
@@ -196,6 +174,38 @@
     <div class="ratePad">
 
     </div>
+</div>
+<div class="postFooter">
+    <button class="leftButton"></button>
+    <div class="ownerProfile">
+        <svg class="clip-svg">
+            <defs>
+                <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                    <polygon points="0.5 0, 1 0.25, 1 0.75, 0.5 1, 0 0.75, 0 0.25" />
+                </clipPath>
+            </defs>
+        </svg>
+        <div class="polygon-each-img-wrap">
+            <img class="ownerProfilePicture polygon-clip-hexagon" src="../Statics/images/images/avatar.png"/>
+        </div>
+
+        <a href="/" class="ownerUsername usernameLink">username</a>
+    </div>
+    <div class="caption">
+        <textarea contenteditable="false"></textarea>
+        <textarea contenteditable="true" class="editable"></textarea>
+    </div>
+    <div class="buttonGroup">
+        <button class="info"></button>
+        <button class="comments"></button>
+        <button class="download"></button>
+    </div>
+    <div class="rateButton">
+        <button class="openRateBtn"></button>
+        <span class="rateValue"></span>
+        <span class="rateCounts"></span>
+    </div>
+    <button class="rightButton"></button>
 </div>
 
 
@@ -847,6 +857,7 @@
                 pageType =  pageName.split("/")[1];
             }
                 if(pageName=== "feed" || pageName=== "home" || pageName=== ""){
+                    $(".postFooter").removeClass("show");
                     // show feed items --> hide Others
                     if( pageName !== currentPage ) {
                         $("#postsContainer").addClass("show");
@@ -877,6 +888,7 @@
                     }
                 }
                 else if(pageName === "profile"){
+                    $(".postFooter").removeClass("show");
                     host.username = pageType.split("/")[0];
                     Filters.order = pageType.split("/")[1];
                     selectTopNav(Filters.order);
@@ -902,6 +914,12 @@
                 }
                 else if(pageName=== "settings" || pageName==="newpost" || pageName==="post" || pageName==="people" || pageName==="contact"){
                     if( pageName !== currentPage ) {
+                        if(pageName ==="post"){
+                            $(".postFooter").addClass("show");
+                        }
+                        else{
+                            $(".postFooter").removeClass("show");
+                        }
                         var pageNames = ["settings", "newPost", "post", "contact", "people","policy"];
                         for (var x = 0; x < pageNames.length; x++) {
 
