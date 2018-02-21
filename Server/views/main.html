@@ -12,8 +12,6 @@
 <body>
 
 
-
-
 <div id="homeContainer" class="containerDiv">
     <div id="alertTop">
         <h3></h3>
@@ -192,8 +190,11 @@
         <a href="/" class="ownerUsername usernameLink">username</a>
     </div>
     <div class="caption">
-        <textarea contenteditable="false"></textarea>
-        <textarea contenteditable="true" class="editable"></textarea>
+        <button class="editSurface"></button>
+        <textarea readonly class="notEditable show">This Is Caption</textarea>
+        <textarea class="editable" maxlength="250">This Is Caption</textarea>
+        <button class="cancelCaption"></button>
+        <button class="saveCaption"></button>
     </div>
     <div class="buttonGroup">
         <button class="info"></button>
@@ -374,7 +375,10 @@
     });
     $("body").on("click","#newPostBtn",function(event){
        event.preventDefault();
-       changePage("newpost","/newpost","/newPost",true);
+       debugger;
+        window.history.replaceState("","","/");
+        window.history.replaceState("","","/newpost");
+        urlParser(true);
     });
     $("body").on("submit",".loginSmall form",function(event){
         event.preventDefault();
@@ -465,6 +469,36 @@
             $(".loginSmall").slideDown(300);
         }
     });
+
+    $("body").on("click",".caption .notEditable",function(e){
+        if(Me.username === postsList[currentPostItterator].owner.username){
+            $(".caption .editSurface").addClass("show");
+        }
+        var date = Date.now();
+        $("body").on("mouseleave", ".caption .notEditable", function (e) {
+            if (Me.username === postsList[currentPostItterator].owner.username) {
+                if( date + 500 < Date.now()) {
+                    $(".caption .editSurface").removeClass("show");
+                }
+            }
+        });
+    });
+
+
+    $("body").on("click",".caption .editSurface",function(e){
+        if(Me.username === postsList[currentPostItterator].owner.username){
+            $(".caption .notEditable").removeClass("show");
+            $(".caption .editSurface").removeClass("show");
+            $(".caption .editable").addClass("show");
+            $(".caption .cancelCaption").addClass("show");
+        }
+    });
+    $("body").on("change",".caption .editable",function(e){
+        if(Me.username === postsList[currentPostItterator].owner.username){
+            $(".caption .saveCaption").addClass("show");
+        }
+    });
+
     $("body").on("click","#logoutBtn",function(){
         logout();
     });
@@ -589,7 +623,7 @@
     }
 
     function sendPagesInitialRequest(pageName,albumOrPost,postid){
-        if(pageName === "newPost"){
+        if(pageName.toLowerCase() === "newpost"){
             if(albumOrPost === "post"){
                 requestHandler("/api/v1/post/initial","POST",{type:"post"},pageName);
             }
@@ -721,7 +755,7 @@
 
 
     function urlParser(writeState,postId){
-
+        debugger;
         var order = "latest";
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
