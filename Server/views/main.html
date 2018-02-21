@@ -1292,10 +1292,8 @@
     }
     function slideAction(postNumber,situation) {
         if (situation === "left") {
-
             if(currentPostItterator > 0) {
                 currentPostItterator -= 1;
-
                 $(".pictureBox img:nth-child(1)").addClass("middlePic");
                 $(".pictureBox img:nth-child(1)").removeClass("leftPic");
                 $(".pictureBox img:nth-child(2)").addClass("rightPic");
@@ -1303,7 +1301,7 @@
                 $(".pictureBox img:nth-child(3)").remove();
                 if (postsList[currentPostItterator - 1]) {
                     if (postsList[currentPostItterator - 1]) {
-                        left = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
+                        left = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
                         $(".pictureBox").prepend(`
                             <img src="../Statics/Pictures/${left}" class="leftPic"/>
                         `);
@@ -1427,7 +1425,7 @@
         $(".postFooter .caption.notEditable").val(postObject.caption);
         $(".postFooter .ownerUsername").html(postObject.owner.username);
         $(".postFooter .ownerProfilePicture").attr("src","../Statics/ProfilePics/"+postObject.owner.profilePicUrl);
-        $(".postFooter .ownerUsername").html(postObject.originalImage); // complete page loads
+        $(".post .infoContainer").html(postObject.originalImage); // complete page loads
 
     }
 
