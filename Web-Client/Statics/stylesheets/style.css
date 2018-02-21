@@ -213,6 +213,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-ms-transition: background-color,left,right 500ms;
 	-o-transition: background-color,left,right 500ms;
 	transition: background-color,left,right 500ms;
+	box-shadow: 1px 1px 1px 2px #151515;
+}
+.nav:hover{
+	box-shadow: 5px 1px 10px 5px #777777;
 }
 .nav.leftSide{
 	left:0;
@@ -1414,12 +1418,33 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .postFooter button.leftButton{
 	left:0;
+	opacity:0;
+	-webkit-transition: all 0.2s;
+	-moz-transition: all 0.2s;
+	-ms-transition: all 0.2s;
+	-o-transition: all 0.2s;
+	transition: all 0.2s;
 	background-image: url("../images/icons/left.png");
 }
 .postFooter button.rightButton{
 	right: 150px;
+	opacity:0;
+	-webkit-transition: all 0.2s;
+	-moz-transition: all 0.2s;
+	-ms-transition: all 0.2s;
+	-o-transition: all 0.2s;
+	transition: all 0.2s;
 	background-image: url("../images/icons/right.png");
 	z-index: 10000;
+}
+.postFooter button.rightButton,.postFooter button.leftButton{
+	opacity: 1;
+}
+.postFooter button.rightButton.show.loadMore{
+	background-image: url("../images/icons/loadmore.png");
+}
+.postFooter button.rightButton.show.repeat{
+	background-image: url("../images/icons/repeate.png");
 }
 @media (max-width:768px){
 	.postFooter button.rightButton{
@@ -1493,7 +1518,9 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 }
 .postFooter .caption{
-	width: 450px;
+	max-width: 350px;
+	min-width: 280px;
+	width: auto;
 	display: inline-block;
 	font-size:19px;
 	height: 100%;
@@ -1554,12 +1581,12 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	opacity: 0.5;
 	color:white;
 	background-size: auto auto;
-	background: rgba(255, 0, 85, 0.5) url("../images/images/icons/edit-64.png") no-repeat center center;
-	-webkit-transition: all 0.3s;
-	-moz-transition: all 0.3s;
-	-ms-transition: all 0.3s;
-	-o-transition: all 0.3s;
-	transition: all 0.3s;
+	background: rgba(255, 0, 85, 0.5) url("../images/icons/edit-64.png") no-repeat center center;
+	-webkit-transition: all 0.2s;
+	-moz-transition: all 0.2s;
+	-ms-transition: all 0.2s;
+	-o-transition: all 0.2s;
+	transition: all 0.2s;
 }
 .postFooter .caption .editSurface.show{
 	opacity: 0.5;
@@ -1568,6 +1595,45 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .postFooter .caption .editSurface.show:hover{
 	opacity: 1;
 }
+
+.postFooter .caption .cancelCaption,.postFooter .caption .saveCaption{
+	position: absolute;
+	right: -100px;
+	top:40px;
+	margin:5px;
+	height: 40px;
+	width: 42px;
+	padding:0;
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	-ms-transition: all 0.3s;
+	-o-transition: all 0.3s;
+	transition: all 0.3s;
+	z-index: 0;
+}
+.postFooter .caption .cancelCaption:hover,.postFooter .caption .saveCaption:hover{
+	background-color: transparent;
+	border:0;
+}
+
+.postFooter .caption .cancelCaption.show{
+	right: -50px;
+	background-image: url("../images/icons/b-cross.png");
+	z-index: 10000000000;
+}
+.postFooter .caption .saveCaption.show{
+	background: transparent url("../images/icons/b_cm_42.png") no-repeat center;
+	z-index: 10000000000;
+
+}
+
+.postFooter .caption .cancelCaption.show:hover,.postFooter .caption .saveCaption.show:hover{
+	background-color:#d9edf7;
+	width:43px;
+	height: 41px;
+}
+
+
 
 /* -->  Main Pages Positions Override to handle Page Changes */
 

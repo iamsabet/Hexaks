@@ -375,7 +375,6 @@
     });
     $("body").on("click","#newPostBtn",function(event){
        event.preventDefault();
-       debugger;
         window.history.replaceState("","","/");
         window.history.replaceState("","","/newpost");
         urlParser(true);
@@ -474,14 +473,9 @@
         if(Me.username === postsList[currentPostItterator].owner.username){
             $(".caption .editSurface").addClass("show");
         }
-        var date = Date.now();
-        $("body").on("mouseleave", ".caption .notEditable", function (e) {
-            if (Me.username === postsList[currentPostItterator].owner.username) {
-                if( date + 500 < Date.now()) {
-                    $(".caption .editSurface").removeClass("show");
-                }
-            }
-        });
+        setTimeout(function(){
+            $(".caption .editSurface").removeClass("show");
+        },5000);
     });
 
 
@@ -489,13 +483,51 @@
         if(Me.username === postsList[currentPostItterator].owner.username){
             $(".caption .notEditable").removeClass("show");
             $(".caption .editSurface").removeClass("show");
-            $(".caption .editable").addClass("show");
+            $(".caption .editable").addClass("show").focus();
+            $(".caption .editable").val($(".caption .editable").val());
+            setTimeout(function(){
+                // cursor set at end
+            },50);
             $(".caption .cancelCaption").addClass("show");
         }
     });
-    $("body").on("change",".caption .editable",function(e){
-        if(Me.username === postsList[currentPostItterator].owner.username){
-            $(".caption .saveCaption").addClass("show");
+
+    $("body").on("keydown",".caption .editable",function(e){
+        if (Me.username === postsList[currentPostItterator].owner.username) {
+            if ($(".caption .saveCaption")[0].className.split("show")[1]) {
+                $(".caption .saveCaption").removeClass("show");
+            }
+            else {
+                if ($(".caption .saveCaption")[0].className.split("show")[1] === undefined) {
+                    $(".caption .saveCaption").addClass("show");
+                }
+            }
+        }
+    });
+
+
+    $("body").on("click",".caption .cancelCaption.show",function(e){
+        $(".caption .notEditable").addClass("show");
+        $(".caption .editable").removeClass("show");
+        $(".caption .cancelCaption").removeClass("show");
+        $(".caption .saveCaption").removeClass("show");
+        $(".caption .notEditable").val(postsList[currentPostItterator].caption);
+        $(".caption .editable").val(postsList[currentPostItterator].caption);
+    });
+    $("body").on("click",".caption .saveCaption.show",function(e){
+        if(Me.username === postsList[currentPostItterator].owner.username) {
+            if(postsList[currentPostItterator].caption !== $(".editable").val()) {
+                if ($(".caption .spinner")) {
+                    $(".caption .spinner").addClass("show");
+                }
+
+                var newCaptionText = $(".editable").val().toString();
+                var postId = window.location.pathname.split("/")[2].toString();
+                editCaption(newCaptionText, postId);
+            }
+            else {
+                $(".caption .cancelCaption").click();
+            }
         }
     });
 
@@ -522,7 +554,12 @@
         var postId = this.classList[1];
         makeUrl(postId);
     });
-
+    $("body").on("click",".postFooter .leftButton",function(){
+        slideAction(0,"left");
+    });
+    $("body").on("click",".postFooter .rightButton",function(){
+        slideAction(0,"right");
+    });
     function requestHandler(url, method, input, caller) {
         $.ajax({
             url: url || "/",
@@ -585,6 +622,29 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function editCaption(newCaptionText, postId){
+        requestHandler("/api/v1/post/editPost","POST",{newCaption:newCaptionText , postId:postId},"editCaption");
+    }
+
+    function editCategory(newCategory, postId){
+        requestHandler("/api/v1/post/editPost","POST",{newCategory:newCategory , postId:postId},"editCategory");
+    }
+
     // Post(Picture) Handlers
     function getPostsByFilter(input,pageType){
 
@@ -612,9 +672,7 @@
         }
     }
 
-    function getPostInfos(){
-        requestHandler("/api/v1/posts/getPostInfos/"+currentPost.postId,"GET",{},"getPostInfos");
-    }
+
 
 
 
@@ -677,9 +735,13 @@
 
             }break;
 
-            case  "getPostInfos":{
+            case  "loadPostInfos":{
 
             }break;
+            case  "editCaption":{
+                editCaptionResponseAction(res);
+            }break;
+
             case "getPostsByFilter":{
                 console.log("total :" + res.total + " - "+ res.page + " / " + res.pages);
                 parsePosts(res);
@@ -755,7 +817,6 @@
 
 
     function urlParser(writeState,postId){
-        debugger;
         var order = "latest";
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
@@ -1231,13 +1292,14 @@
     }
     function slideAction(postNumber,situation) {
         if (situation === "left") {
+
             if(currentPostItterator > 0) {
                 currentPostItterator -= 1;
 
                 $(".pictureBox img:nth-child(1)").addClass("middlePic");
                 $(".pictureBox img:nth-child(1)").removeClass("leftPic");
                 $(".pictureBox img:nth-child(2)").addClass("rightPic");
-                $(".pictureBox img:nth-child(2)").removeClass("middlePic")
+                $(".pictureBox img:nth-child(2)").removeClass("middlePic");
                 $(".pictureBox img:nth-child(3)").remove();
                 if (postsList[currentPostItterator - 1]) {
                     if (postsList[currentPostItterator - 1]) {
@@ -1251,6 +1313,7 @@
                     $(".pictureBox").prepend(`
                         <img src="../Statics/Pictures/empty.jpg" class="leftPic"/>
                     `);
+                    $(".postFooter .leftButton").removeClass("show");
                 }
                 if (postsList[currentPostItterator]) {
                     currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
@@ -1289,6 +1352,13 @@
                     $(".pictureBox").append(`
                         <img src="../Statics/Pictures/empty.jpg" class="rightPic"/>
                     `);
+                    if(total=== currentPostItterator) {
+                        $(".postFooter .rightButton").removeClass("loadMore");
+                        $(".postFooter .rightButton").addClass("repeat");
+                    }
+                    else {
+                        $(".postFooter .rightButton").addClass("loadMore");
+                    }
                 }
                 if (postsList[currentPostItterator]) {
                     currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
@@ -1349,7 +1419,16 @@
     function loadPostDatas(postObject,postNumber){
         console.log(postObject);
         console.log(postNumber);
+        // change url
         pushHistory("/post/"+postObject.postId,"/post/"+postObject.postId,"/post/"+postObject.postId,true);
+
+        // change datas
+        $(".postFooter .caption.editable").val(postObject.caption);
+        $(".postFooter .caption.notEditable").val(postObject.caption);
+        $(".postFooter .ownerUsername").html(postObject.owner.username);
+        $(".postFooter .ownerProfilePicture").attr("src","../Statics/ProfilePics/"+postObject.owner.profilePicUrl);
+        $(".postFooter .ownerUsername").html(postObject.originalImage); // complete page loads
+
     }
 
     function parsePosts(res) {
@@ -1438,7 +1517,23 @@
         console.log(res);
 
     }
-
+    function editCaptionResponseAction(res){
+        if($(".caption .spinner")) {
+            $(".caption .spinner").removeClass("show");
+        }
+        if(!res.message && res.result){
+            $(".editable").val(res.newCaption);
+            $(".notEditable").val(res.newCaption);
+            postsList[currentPostItterator].caption = res.newCaption;
+            $(".caption .notEditable").addClass("show");
+            $(".caption .editable").removeClass("show");
+            $(".caption .cancelCaption").removeClass("show");
+            $(".caption .saveCaption").removeClass("show");
+        }
+        else{
+            alert(res.message);
+        }
+    }
     function rateResponseHandler(res) {
         console.log(res);
     }

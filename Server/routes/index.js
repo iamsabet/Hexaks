@@ -460,6 +460,17 @@ router.post('/api/v1/post/submit/', function(req,res){
         }
     });
 });
+router.post('/api/v1/post/editPost/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback !==null) {
+            posts.editPost(req,res,callback);
+        }
+        else{
+            res.send("404 Not Found");
+        }
+    });
+});
+
 router.post('/api/v1/post/initial/', function(req,res){
     validateRequest(req,res,function(user) {
         if(user) {

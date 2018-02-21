@@ -91,7 +91,7 @@ var posts = {
                 }
             }
             let options = {
-                select: 'postId owner createdAt updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
+                select: 'postId owner createdAt caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
                 sort: {createdAt: +1},
                 page: pageNumber,
                 limit: parseInt(counts)
@@ -234,7 +234,9 @@ var posts = {
             }
         });
     },
-
+    editPost : function(req,res,user){
+        var post
+    },
     imageProcessing:function(imageUrl){ // image processing on medium size
         console.log(imageUrl + " -- > image processing starts");
 
