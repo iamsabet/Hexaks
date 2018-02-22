@@ -156,12 +156,25 @@
 
     </button>
     <div class="pictureBox">
-        <!--<img src=""/>-->
+
     </div>
 
     <div class="commentsContainer">
-
-
+        <ul class="commentsList">
+            <li class="eachComment" id="cm-${comments[index].commentId}">
+                <svg class="clip-svg">
+                    <defs>
+                        <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                            <polygon points="0.5 0, 1 0.25, 1 0.75, 0.5 1, 0 0.75, 0 0.25" />
+                        </clipPath>
+                    </defs>
+                </svg>
+                <div class="polygon-each-img-wrap">
+                    <img class="ownerProfilePicture polygon-clip-hexagon" src="../Statics/images/images/avatar.png"/>
+                </div>
+                
+            </li>
+        </ul>
     </div>
     <div class="infoContainer">
 
@@ -1418,7 +1431,7 @@
         console.log(postObject);
         console.log(postNumber);
         // change url
-        pushHistory("/post/"+postObject.postId,"/post/"+postObject.postId,"/post/"+postObject.postId,true);
+        pushHistory("post","/post/"+postObject.postId,"/post/"+postObject.postId,true);
 
         // change datas
         $(".postFooter .caption.editable").val(postObject.caption);

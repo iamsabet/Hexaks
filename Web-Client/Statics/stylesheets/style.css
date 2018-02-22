@@ -1425,6 +1425,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-o-transition: all 0.2s;
 	transition: all 0.2s;
 	background-image: url("../images/icons/left.png");
+
 }
 .postFooter button.rightButton{
 	right: 150px;
@@ -1438,7 +1439,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	z-index: 10000;
 }
 .postFooter button.rightButton,.postFooter button.leftButton{
-	opacity: 1;
+    opacity: 1;
+    width: 60px;
+    top: 0;
+    height: 100%;
+
 }
 .postFooter button.rightButton.show.loadMore{
 	background-image: url("../images/icons/loadmore.png");
@@ -1459,14 +1464,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width: auto;
 }
 .postFooter .ownerProfile{
-	display: inline-block;
-	height: 100%;
-	width: auto;
-	max-width: 400px;
-	min-width: 250px;
-	vertical-align: top;
-	margin-left: 60px;
-	padding:5px;
+    display: inline-block;
+    height: 100%;
+    width: auto;
+    max-width: 400px;
+    min-width: 250px;
+    vertical-align: top;
+    margin-left: 60px;
+    padding: 8px 5px 5px;
 }
 .postFooter .ownerProfile:hover{
 	color:#ff0055;
@@ -1478,24 +1483,24 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 
 
-.postFooter .ownerProfile .clip-svg {
+.clip-svg {
 	width: 0;
 	height: 0;
 }
 
-.postFooter .ownerProfile img {
+.postFooter .ownerProfile img,.commentsContainer .commentsList .eachComment img{
 	max-width: 100%;
 	height: auto;
 }
 
-.postFooter .ownerProfile .polygon-clip-hexagon {
+.polygon-clip-hexagon {
 	-webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 	clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 	-webkit-clip-path: url("#polygon-clip-hexagon");
 	clip-path: url("#polygon-clip-hexagon");
 }
 
-.postFooter .ownerProfile .polygon-each-img-wrap{
+.polygon-each-img-wrap{
 	width: 58px;
 	height: 70px;
 	margin: 0;
@@ -1634,6 +1639,30 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.commentsContainer{
+
+}
+.commentsContainer .commentsList{
+
+}
 
 /* -->  Main Pages Positions Override to handle Page Changes */
 
