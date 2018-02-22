@@ -172,7 +172,7 @@
                 <div class="polygon-each-img-wrap">
                     <img class="ownerProfilePicture polygon-clip-hexagon" src="../Statics/images/images/avatar.png"/>
                 </div>
-                
+
             </li>
         </ul>
     </div>
@@ -199,7 +199,6 @@
         <div class="polygon-each-img-wrap">
             <img class="ownerProfilePicture polygon-clip-hexagon" src="../Statics/images/images/avatar.png"/>
         </div>
-
         <a href="/" class="ownerUsername usernameLink">username</a>
     </div>
     <div class="caption">
@@ -1426,7 +1425,7 @@
         loadPostDatas(currentPostObject,currentPostItterator);
     }
 
-
+    
     function loadPostDatas(postObject,postNumber){
         console.log(postObject);
         console.log(postNumber);
@@ -1434,8 +1433,8 @@
         pushHistory("post","/post/"+postObject.postId,"/post/"+postObject.postId,true);
 
         // change datas
-        $(".postFooter .caption.editable").val(postObject.caption);
-        $(".postFooter .caption.notEditable").val(postObject.caption);
+        $(".postFooter .caption .editable").val(postObject.caption);
+        $(".postFooter .caption .notEditable").val(postObject.caption);
         $(".postFooter .ownerUsername").html(postObject.owner.username);
         $(".postFooter .ownerProfilePicture").attr("src","../Statics/ProfilePics/"+postObject.owner.profilePicUrl);
         $(".post .infoContainer").html(postObject.originalImage); // complete page loads

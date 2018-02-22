@@ -6,8 +6,8 @@ var rateSchema = new Schema({ // 9 Pixels
     members : [], // userNames
     value:Number, // 1 --> 6
     postId:String,
-    createdAt:Date,
-    updatedAt:Date
+    createdAt:Number,
+    updatedAt:Number
 });
 
 rateSchema.methods.Create = function(req,res,rateObject){
@@ -16,8 +16,8 @@ rateSchema.methods.Create = function(req,res,rateObject){
     newRate.rateId = random.generate();
     newRate.save(function(err){
         if(err) throw err;
-        console.log(newUser.username);
-        res.send({result:true,value:newUser.userId});
+        console.log(newRate.username);
+        res.send({result:true,value:newRate.rateId});
     });
 };
 rateSchema.methods.Edit = function(req,res){

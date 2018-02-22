@@ -56,12 +56,11 @@ var postSchema = new mongoose.Schema({
     createdAt:Number,
     updatedAt:Number
 });
-postSchema.plugin(mongoosePaginate);
 postSchema.methods.create = function(postObject,callback){
     var newPost = new Post(postObject);
     newPost.createdAt = Date.now();
     newPost.updatedAt = Date.now();
-    newPost.userId = random.generate();
+    newPost.userId = random.generate(12);
     newPost.save();
     return callback(true);
 };

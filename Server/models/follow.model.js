@@ -10,7 +10,7 @@ var followSchema = new Schema({ // 9 Pixels
     following : String , // username
     deactive : Boolean,
     accepted : Boolean,
-    createdAt:Date
+    createdAt:Number
 });
 
 followSchema.methods.Create = function(req,res,followObject){

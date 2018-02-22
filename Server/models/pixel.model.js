@@ -11,7 +11,7 @@ var pixelSchema = new Schema({ // 9 Pixels
         b : Number ,
         a : Number
     },
-    createdAt:Date
+    createdAt:Number
 });
 
 pixelSchema.methods.Create = function(req,res){

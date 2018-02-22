@@ -2,7 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa110e29-26ac-41ff-9154-4b4271e25e69" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/Server/models/view.model.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Server/routes/comments.js" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Server/models/comment.model.js" afterPath="$PROJECT_DIR$/Server/models/comment.model.js" />
+      <change beforePath="$PROJECT_DIR$/Server/models/follow.model.js" afterPath="$PROJECT_DIR$/Server/models/follow.model.js" />
+      <change beforePath="$PROJECT_DIR$/Server/models/pixel.model.js" afterPath="$PROJECT_DIR$/Server/models/pixel.model.js" />
+      <change beforePath="$PROJECT_DIR$/Server/models/post.model.js" afterPath="$PROJECT_DIR$/Server/models/post.model.js" />
+      <change beforePath="$PROJECT_DIR$/Server/models/rate.model.js" afterPath="$PROJECT_DIR$/Server/models/rate.model.js" />
+      <change beforePath="$PROJECT_DIR$/Server/models/user.model.js" afterPath="$PROJECT_DIR$/Server/models/user.model.js" />
       <change beforePath="$PROJECT_DIR$/Server/views/main.html" afterPath="$PROJECT_DIR$/Server/views/main.html" />
       <change beforePath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" afterPath="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
     </list>
@@ -19,74 +27,41 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Server/views/main.html">
+      <file leaf-file-name="comment.model.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Server/models/comment.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="174" column="16" lean-forward="false" selection-start-line="174" selection-start-column="16" selection-end-line="174" selection-end-column="16" />
-              <folding>
-                <marker date="1519299438102" expanded="true" signature="45959:46110" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="45997:46104" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="46024:46081" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="55546:56627" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="55547:56102" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="55547:56627" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="55669:56083" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="55952:56060" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="56126:56260" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="56297:56609" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="56336:56461" ph="..." />
-                <marker date="1519299438102" expanded="true" signature="56336:56526" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-614">
-              <caret line="1490" column="62" lean-forward="false" selection-start-line="1490" selection-start-column="62" selection-end-line="1490" selection-end-column="62" />
+            <state relative-caret-position="300">
+              <caret line="20" column="44" lean-forward="true" selection-start-line="20" selection-start-column="44" selection-end-line="20" selection-end-column="44" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="uploader.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Server/routes/uploader.js">
+      <file leaf-file-name="notification.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/models/notification.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="705">
-              <caret line="47" column="29" lean-forward="false" selection-start-line="47" selection-start-column="29" selection-end-line="47" selection-end-column="29" />
+            <state relative-caret-position="225">
+              <caret line="15" column="20" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="20" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Server/routes/index.js">
+      <file leaf-file-name="pixel.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/models/pixel.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="465" column="44" lean-forward="false" selection-start-line="465" selection-start-column="18" selection-end-line="465" selection-end-column="44" />
+            <state relative-caret-position="195">
+              <caret line="13" column="20" lean-forward="false" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="auth.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Server/routes/auth.js">
+      <file leaf-file-name="rate.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/models/rate.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="users.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Server/routes/users.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="389">
-              <caret line="121" column="39" lean-forward="false" selection-start-line="121" selection-start-column="39" selection-end-line="121" selection-end-column="39" />
+            <state relative-caret-position="75">
+              <caret line="5" column="11" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="11" />
               <folding />
             </state>
           </provider>
@@ -95,8 +70,8 @@
       <file leaf-file-name="posts.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/routes/posts.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-20">
-              <caret line="237" column="16" lean-forward="false" selection-start-line="237" selection-start-column="16" selection-end-line="237" selection-end-column="16" />
+            <state relative-caret-position="424">
+              <caret line="32" column="8" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="37" selection-end-column="39" />
               <folding>
                 <element signature="e#2422#2480#0" expanded="false" />
               </folding>
@@ -104,11 +79,51 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="comments.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/routes/comments.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="405">
+              <caret line="69" column="31" lean-forward="false" selection-start-line="69" selection-start-column="31" selection-end-line="69" selection-end-column="31" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="receipt.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/models/receipt.model.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/models/user.model.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="299">
+              <caret line="51" column="41" lean-forward="false" selection-start-line="51" selection-start-column="41" selection-end-line="51" selection-end-column="41" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="view.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/models/view.model.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="120">
+              <caret line="8" column="20" lean-forward="false" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="post.model.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/models/post.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="439">
-              <caret line="40" column="9" lean-forward="false" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="9" />
+            <state relative-caret-position="213">
+              <caret line="62" column="39" lean-forward="false" selection-start-line="62" selection-start-column="39" selection-end-line="62" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -126,7 +141,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.pictureBox</find>
       <find>textArea</find>
       <find>.footer</find>
       <find>.post</find>
@@ -137,7 +151,6 @@
       <find>SendPage</find>
       <find>mouseen</find>
       <find>explore</find>
-      <find>debugger</find>
       <find>.caption</find>
       <find>sendPages</find>
       <find>Date.now</find>
@@ -150,12 +163,14 @@
       <find>posts</find>
       <find>posts/editCa</find>
       <find>.nav</find>
-      <find>loadPost</find>
       <find>.owner.username</find>
       <find>&quot;left&quot;</find>
       <find>left =</find>
       <find>.leftBu</find>
       <find>.clip-svg</find>
+      <find>debugger</find>
+      <find>loadPost</find>
+      <find>de</find>
     </findStrings>
     <replaceStrings>
       <replace>postSchema</replace>
@@ -183,11 +198,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/routers/user.routes.js" />
-        <option value="$PROJECT_DIR$/config/mongodb.js" />
-        <option value="$PROJECT_DIR$/client/views/home.html" />
-        <option value="$PROJECT_DIR$/routers/index.routes.js" />
-        <option value="$PROJECT_DIR$/client/views/users.ejs" />
         <option value="$PROJECT_DIR$/client/views/users.html" />
         <option value="$PROJECT_DIR$/models/badge.model.js" />
         <option value="$PROJECT_DIR$/models/article.model.js" />
@@ -214,26 +224,31 @@
         <option value="$PROJECT_DIR$/Server/models/album.model.js" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/register-login.css" />
         <option value="$PROJECT_DIR$/Server/routes/auth.js" />
-        <option value="$PROJECT_DIR$/Server/models/follow.model.js" />
         <option value="$PROJECT_DIR$/Server/package.json" />
         <option value="$PROJECT_DIR$/Server/models/receipt.model.js" />
         <option value="$PROJECT_DIR$/Server/views/login.html" />
         <option value="$PROJECT_DIR$/Server/views/register.html" />
         <option value="$PROJECT_DIR$/Server/routes/albums.js" />
-        <option value="$PROJECT_DIR$/Server/models/user.model.js" />
         <option value="$PROJECT_DIR$/Server/middleWares/validateRequest.js" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader.css" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-new.css" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/fine-uploader-gallery.css" />
         <option value="$PROJECT_DIR$/Server/app.js" />
-        <option value="$PROJECT_DIR$/Server/models/post.model.js" />
         <option value="$PROJECT_DIR$/Server/node_modules/jquery/dist/jquery.js" />
         <option value="$PROJECT_DIR$/Server/routes/uploader.js" />
         <option value="$PROJECT_DIR$/Server/routes/users.js" />
         <option value="$PROJECT_DIR$/Server/routes/index.js" />
-        <option value="$PROJECT_DIR$/Server/routes/posts.js" />
         <option value="$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css" />
         <option value="$PROJECT_DIR$/Server/views/main.html" />
+        <option value="$PROJECT_DIR$/Server/models/follow.model.js" />
+        <option value="$PROJECT_DIR$/Server/models/pixel.model.js" />
+        <option value="$PROJECT_DIR$/Server/models/view.model.js" />
+        <option value="$PROJECT_DIR$/Server/routes/posts.js" />
+        <option value="$PROJECT_DIR$/Server/routes/comments.js" />
+        <option value="$PROJECT_DIR$/Server/models/comment.model.js" />
+        <option value="$PROJECT_DIR$/Server/models/post.model.js" />
+        <option value="$PROJECT_DIR$/Server/models/user.model.js" />
+        <option value="$PROJECT_DIR$/Server/models/rate.model.js" />
       </list>
     </option>
   </component>
@@ -559,12 +574,12 @@
       <workItem from="1518935055846" duration="24000" />
       <workItem from="1518935106793" duration="1232000" />
       <workItem from="1518972012175" duration="17925000" />
-      <workItem from="1519153170063" duration="20054000" />
+      <workItem from="1519153170063" duration="25171000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="318051000" />
+    <option name="totallyTimeSpent" value="323168000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -584,6 +599,7 @@
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18559219" sideWeight="0.49542484" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3285568" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -597,7 +613,6 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3285568" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Learn" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -612,42 +627,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Server/node_modules/mongoose/lib/model.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="4057" column="12" lean-forward="false" selection-start-line="4057" selection-start-column="12" selection-end-line="4057" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.js" />
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/jquery.fine-uploader/iframe.xss.response.js" />
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/fine-uploader/fine-uploader.core.js" />
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.core.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/all.fine-uploader/templates/gallery.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="14" lean-forward="false" selection-start-line="13" selection-start-column="14" selection-end-line="13" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/all.fine-uploader/trash.gif">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/javascripts/fine-uploader/all.fine-uploader/retry.gif">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -784,13 +763,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/models/user.model.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
-          <caret line="53" column="26" lean-forward="false" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="498">
@@ -830,32 +802,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/routes/users.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="121" column="39" lean-forward="false" selection-start-line="121" selection-start-column="39" selection-end-line="121" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/models/post.model.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="439">
-          <caret line="40" column="9" lean-forward="false" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/routes/posts.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-20">
-          <caret line="237" column="16" lean-forward="false" selection-start-line="237" selection-start-column="16" selection-end-line="237" selection-end-column="16" />
-          <folding>
-            <element signature="e#2422#2480#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/routes/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
@@ -866,30 +812,128 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Web-Client/Statics/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-614">
-          <caret line="1490" column="62" lean-forward="false" selection-start-line="1490" selection-start-column="62" selection-end-line="1490" selection-end-column="62" />
+        <state relative-caret-position="297">
+          <caret line="1494" column="1" lean-forward="true" selection-start-line="1494" selection-start-column="1" selection-end-line="1494" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/views/main.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="174" column="16" lean-forward="false" selection-start-line="174" selection-start-column="16" selection-end-line="174" selection-end-column="16" />
+        <state relative-caret-position="208">
+          <caret line="1427" column="4" lean-forward="false" selection-start-line="1427" selection-start-column="4" selection-end-line="1427" selection-end-column="4" />
           <folding>
-            <marker date="1519299438102" expanded="true" signature="45959:46110" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="45997:46104" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="46024:46081" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="55546:56627" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="55547:56102" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="55547:56627" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="55669:56083" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="55952:56060" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="56126:56260" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="56297:56609" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="56336:56461" ph="..." />
-            <marker date="1519299438102" expanded="true" signature="56336:56526" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="45942:46093" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="45980:46087" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="46007:46064" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="55535:56616" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="55536:56091" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="55536:56616" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="55658:56072" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="55941:56049" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="56115:56249" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="56286:56598" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="56325:56450" ph="..." />
+            <marker date="1519330004223" expanded="true" signature="56325:56515" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/routes/users.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="389">
+          <caret line="121" column="13" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="269" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/follow.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="20" lean-forward="false" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/notification.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="20" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/pixel.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="20" lean-forward="false" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/view.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="20" lean-forward="false" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/routes/posts.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="424">
+          <caret line="32" column="8" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="37" selection-end-column="39" />
+          <folding>
+            <element signature="e#2422#2480#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/routes/comments.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="69" column="31" lean-forward="false" selection-start-line="69" selection-start-column="31" selection-end-line="69" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/post.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="62" column="39" lean-forward="false" selection-start-line="62" selection-start-column="39" selection-end-line="62" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/user.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="51" column="41" lean-forward="false" selection-start-line="51" selection-start-column="41" selection-end-line="51" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/receipt.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/rate.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="11" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/models/comment.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="44" lean-forward="true" selection-start-line="20" selection-start-column="44" selection-end-line="20" selection-end-column="44" />
+          <folding />
         </state>
       </provider>
     </entry>
