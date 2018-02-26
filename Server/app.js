@@ -8,7 +8,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var io = require("socket.io");
 var requestIp = require("request-ip");
 var routes = require('./routes/index');
 var db = mongoose.connection;

@@ -16,7 +16,7 @@ viewSchema.methods.Create = function(req,res,rateObject){
     newView.rateId = random.generate();
     newView.save(function(err){
         if(err) throw err;
-        console.log(newUser.username);
+        console.log(newView.username);
         res.send({result:true,value:newView.userId});
     });
 };

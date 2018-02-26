@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
-var bcrypt   = require('bcrypt-nodejs');
-var Float = require('mongoose-float').loadType(mongoose);
 var notifSchema = new Schema({
     name : String,
     username : String,
@@ -13,7 +11,7 @@ var notifSchema = new Schema({
     read:Boolean,
     icon:String,
     type:String,
-    deactive:Boolean
+    deactive:Boolean,
 
 });
 

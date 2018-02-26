@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
-var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
 require('mongoose-long')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
@@ -38,7 +37,7 @@ var postSchema = new mongoose.Schema({
         value:Float,
         counts: Number
     },
-    views : Schema.Types.Long ,// viewers.length length
+    views : Schema.Types.Long ,     // viewers.length length
     curator : {
         username:String,
         profilePicUrl:String,

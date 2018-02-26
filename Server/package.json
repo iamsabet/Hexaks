@@ -33,6 +33,7 @@
     "routes": "latest",
     "serve-favicon": "^2.4.5",
     "redis": "latest",
-    "socket.io": "latest"
+    "socket.io": "latest",
+    "find-hashtags": "latest"
   }
 }

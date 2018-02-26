@@ -30,7 +30,6 @@ var posts = {
 
     getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber) {
 
-        console.log("KIRRRR" + isCurated);
         var right = rightCost || 1000000;
         var left = leftCost || 0;
         var orderedBy = orderBy || "createdAt";
