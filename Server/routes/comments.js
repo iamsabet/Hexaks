@@ -69,10 +69,37 @@ var comments = {
     },
 
     Create: function(req,res,user) {
+        // not blocked - check can see post
         var postId = req.body.postId;
         var ownerId = req.body.ownerId;
         var postOwnerId = req.body.postOwnerId;
         var text = req.body.text;
+
+        var reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
+        var reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
+        var str = text;
+        var m;
+        var hashtags = [];
+        var mentions = [] ;
+
+        while ((m = reHashtag.exec(str)) != null) {
+            if (m.index === reHashtag.lastIndex) {
+                reHashtag.lastIndex++;
+            }
+            if(hashtags.indexOf(m[0]) === -1){
+                hashtags.push(m[0]);
+            }
+        }
+        var n;
+        while ((n = reMention.exec(str)) != null) {
+            if (m.index === reMention.lastIndex) {
+                reMention.lastIndex++;
+            }
+            if(hashtags.indexOf(n[0]) === -1){
+                mentions.push(n[0]);
+            }
+        }
+
         if (postId) {
             let commentObject = {
                 postId : postId,

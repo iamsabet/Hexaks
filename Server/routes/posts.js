@@ -124,6 +124,7 @@ var posts = {
                     postId: postId.split(".")[0],
                     owner: {
                         username: user.username,
+                        userId: user.userId,
                         profilePicUrl: user.profilePictureUrl || "avatar.png",
                     },
                     ext: format,
@@ -194,14 +195,39 @@ var posts = {
                                     exif = exifData.exif || {};
                                 }
                             }
-                            postSchema.update({
+                            var reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
+                            var reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
+                            var str = 'Hey I love #apple and #orange and #apple!@ also #banana';
+                            var m;
+                            var hashtags = [];
+                            var mentions = [] ;
+                            while ((m = reHashtag.exec(str)) != null) {
+                                if (m.index === reHashtag.lastIndex) {
+                                    reHashtag.lastIndex++;
+                                }
+                                if(hashtags.indexOf(m[0]) === -1){
+                                    hashtags.push(m[0]);
+                                }
+                            }
+                            var n;
+                            while ((n = reMention.exec(str)) != null) {
+                                if (m.index === reMention.lastIndex) {
+                                    reMention.lastIndex++;
+                                }
+                                if(hashtags.indexOf(n[0]) === -1){
+                                    mentions.push(n[0]);
+                                }
+                            }
+
+                                postSchema.update({
                                 postId: postId.split(".")[0],
                                 activated: false,
                             },{
                                 $set: {
                                     activated: true,
                                     exifData:exif,
-                                    hashtags: req.body["hashtagsList[]"] || [],
+                                    hashtags: hashtags,
+                                    mentions : mentions,
                                     caption: req.body.caption || "",
                                     categories: req.body.categories || ["no cat"],
                                     originalImage: {

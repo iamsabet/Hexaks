@@ -86,7 +86,6 @@ router.get('/api/v1/admin/', function(req,res){
 router.get('/post/:uuid', function(req,res){
     validateRequest(req,res,function(callback){
         var hostPostId = req.params.uuid;
-
         if(callback) {
             res.render("post.html");                 // html only static file preload some datas for authenticated
         }
@@ -195,6 +194,24 @@ router.post('/api/v1/upload',function(req,res){
     });
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// POST Routes
 router.post('/api/v1/posts/home/',function(req,res){
     //
     res.send(true);
@@ -505,11 +522,6 @@ router.post('/api/v1/album/submit/', function(req,res){
 });
 router.delete('/api/v1/admin/user/:id', users.delete);
 
-
-
-/*
- * Routes that can be accessed only by autheticated users
- */
 
 
 module.exports = router;

@@ -10,6 +10,7 @@ var postSchema = new mongoose.Schema({
     postId : String,
     owner : {
         username: String,
+        userId:String,
         profilePicUrl:String,
     },
     originalImage:{ // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
