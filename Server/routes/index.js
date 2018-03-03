@@ -91,8 +91,14 @@ router.get('/post/:uuid', function(req,res){
         }
         else{
             var hostPostId = req.params.uuid;
-            posts.isPrivate();
-                // html only static file preload some datas for authenticated
+            posts.isPrivate(hostPostId,function(callback){// html only static file preload some datas for not authenticated
+                if(callback === true){
+
+                }
+                else{
+
+                }
+            });
         }
     });
 });

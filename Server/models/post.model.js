@@ -82,7 +82,6 @@ postSchema.methods.Edit = function(req,res){
 
 postSchema.methods.Remove = function(req,res){
 
-
 };
 
 postSchema.pre('save', function(next){
