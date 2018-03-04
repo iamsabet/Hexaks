@@ -8,11 +8,7 @@ var mongoosePaginate = require('mongoose-paginate');
 var postSchema = new mongoose.Schema({
     albumId:String, // null if not
     postId : String,
-    owner : {
-        username: String,
-        userId:String,
-        profilePicUrl:String,
-    },
+    ownerId:String,
     originalImage:{ // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
         cost:Number, // 0 if free
         resolution:{
@@ -54,15 +50,27 @@ var postSchema = new mongoose.Schema({
     isCurated : Boolean,
     activated:Boolean,
     createdAt:Number,
+    deleted:Boolean,
     updatedAt:Number
 });
-postSchema.methods.create = function(postObject,callback){
-    var newPost = new Post(postObject);
-    newPost.createdAt = Date.now();
-    newPost.updatedAt = Date.now();
-    newPost.userId = random.generate(12);
-    newPost.save();
-    return callback(true);
+postSchema.methods.create = function(postObject,username,callback){
+    let newPost = new Post(postObject);
+    let now = Date.now();
+    newPost.createdAt = now;
+    newPost.updatedAt = now;
+    newPost.deleted = false;
+    postSchema.count({ownerId:postObject.ownerId},function(err,count){
+        if(err) {
+            console.log(err);
+            return callback(null);
+        }
+        else {
+            count++;
+            newPost.postId = CryptoJS.AES.encrypt(postObject.ownerId + "/" + count, 'postSecretKey 6985');
+            newPost.save();
+            return callback(true);
+        }
+    });
 };
 postSchema.methods.Paginate = function(query,options,req,res){
     post.paginate(query,options,function(err,posts){
@@ -96,6 +104,6 @@ postSchema.pre('save', function(next){
     next();
 });
 postSchema.plugin(mongoosePaginate);
-var Post = mongoose.model('posts', postSchema);
-var post = mongoose.model('posts');
+let Post = mongoose.model('posts', postSchema);
+let post = mongoose.model('posts');
 module.exports = post;

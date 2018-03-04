@@ -4,6 +4,9 @@ var postSchema = require('../models/post.model');
 var post = new postSchema();
 var userSchema = require('../models/user.model');
 var User = new userSchema();
+var albumSchema = require('../models/album.model');
+var album = new albumSchema();
+var Jimp = require("jimp");
 var pixelSchema = require('../models/pixel.model');
 var pixel = new pixelSchema();
 var rateSchema = require('../models/rate.model');
@@ -15,7 +18,6 @@ var users = require('./users');
 var redis = require("redis");
 var requestIp = require("request-ip");
 var findHashtags = require('find-hashtags');
-var CryptoJS = require("crypto-js");
 
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -25,22 +27,17 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
-var comments = {
+var views = {
 
     getPostComments: function(req, res,user,postId,timeOrigin,timeEdgeIn,counts,pageNumber) {
-
-        // Decrypt
-        var bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-        var plaintext = bytes.toString();
-
-
 
         console.log(timeEdgeIn);
         var timeEdge = timeEdgeIn;
         let query = {
-            "ownerId" : ownerId,
-            "postId" : postId,
+            ownerId : ownerId,
+            postId : postId,
             diactive: false,
+            delete:false,
 
         };
         if (timeEdge <= (31*24) && timeEdge > -1) {
@@ -78,8 +75,6 @@ var comments = {
         var ownerId = req.body.ownerId;
         var postOwnerId = req.body.postOwnerId;
         var text = req.body.text;
-
-
 
         var reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
         var reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
@@ -136,9 +131,9 @@ var comments = {
     delete: function(req, res,next,data) {
         var id = req.params.id;
         data.splice(id, 1); // Spoof a DB call
-        res.send(true);
+        res.json(true);
     }
 };
 
 
-module.exports = comments;
+module.exports = views;

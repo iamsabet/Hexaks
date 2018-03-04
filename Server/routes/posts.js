@@ -70,6 +70,7 @@ var posts = {
                 categories:categoryQuery,
                 originalImage: costQuery,
                 private: privateOrNot,
+                deleted:false,
             };
             if (timeEdge <= (31*24) && timeEdge > -1) {
                 if(timeEdge !== 0) {
@@ -122,11 +123,7 @@ var posts = {
             if (postId) {
                 let postObject = {
                     postId: postId.split(".")[0],
-                    owner: {
-                        username: user.username,
-                        userId: user.userId,
-                        profilePicUrl: user.profilePictureUrl || "avatar.png",
-                    },
+                    ownerId:user.userId,
                     ext: format,
                     exifData: {},
                     originalImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
@@ -160,7 +157,7 @@ var posts = {
                     advertise: {},
                     activated: false,
                 };
-                post.create(postObject, function (result) {
+                post.create(postObject,user.username, function (result) {
                     if (result !== null) {
                         console.log("postId : "+result);
                         return callback(result);

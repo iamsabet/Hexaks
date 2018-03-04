@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const random = require('randomstring');
 var mongoosePaginate = require('mongoose-paginate');
 var commentSchema = new Schema({
     commentId : String,
@@ -11,14 +10,17 @@ var commentSchema = new Schema({
     hashtags : [], // #
     fullText:String,
     diactive:Boolean,
+    deleted:Boolean,
     createdAt:Number,
+    edited:Boolean,
     updatedAt:Number
 });
 commentSchema.methods.create = function(commentObject,callback){
-    var newComment = new Comment(commentObject);
+    let newComment = new Comment(commentObject);
     newComment.createdAt = Date.now();
     newComment.updatedAt = Date.now();
-    newComment.userId = random.generate(12);
+    newComment.edited = false;
+    newComment.deleted = false;
     newComment.save();
     return callback(true);
 };
@@ -28,7 +30,7 @@ commentSchema.pre('save', function(next){
         this.updatedAt = Date.now();
     }
     else{
-        var now = Date.now();
+        let now = Date.now();
         this.createdAt = now;
         this.updatedAt = now;
     }

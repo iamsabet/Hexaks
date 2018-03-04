@@ -25,9 +25,49 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
-var comments = {
+var follows = {
 
-    getPostComments: function(req, res,user,postId,timeOrigin,timeEdgeIn,counts,pageNumber) {
+    getFollowersPaginated: function(req, res,user,timeOrigin,counts,pageNumber) {
+
+        // Decrypt
+        var bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
+        var plaintext = bytes.toString();
+
+        let query = {
+            "ownerId" : ownerId,
+            "postId" : postId,
+            diactive: false,
+
+        };
+        if (timeEdge <= (31*24) && timeEdge > -1) {
+            if(timeEdge !== 0) {
+                timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
+                query.createdAt = {$gte:timeEdge,$lt:timeOrigin} // time edge up to 31 days
+            }
+        }
+        else{
+            timeEdge = (timeOrigin - (3600 * 1000)); // 1day
+            query.createdAt = {$gte: timeEdge,$lt:timeOrigin} // time edge up to 31 days
+        }
+        if (isCurated===true) {
+            query.isCurated = isCurated;
+            if(curator !== "" && curator !== undefined) {
+                query.curator = {
+                    username: curator
+                };
+            }
+        }
+        let options = {
+            select: 'postId owner createdAt caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
+            sort: {createdAt: +1},
+            page: pageNumber,
+            limit:counts
+        };
+        // console.log(query);
+        // console.log(options);
+        post.Paginate(query, options,req,res);
+    },
+    getFollowingsPaginated: function(req, res,user,postId,timeOrigin,timeEdgeIn,counts,pageNumber) {
 
         // Decrypt
         var bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
@@ -71,7 +111,6 @@ var comments = {
         // console.log(options);
         post.Paginate(query, options,req,res);
     },
-
     Create: function(req,res,user) {
         // not blocked - check can see post
         var postId = req.body.postId;
@@ -141,4 +180,4 @@ var comments = {
 };
 
 
-module.exports = comments;
+module.exports = follows;

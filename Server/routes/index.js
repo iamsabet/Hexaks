@@ -4,6 +4,9 @@ var userSchema = require('../models/user.model');
 var Users = new userSchema();
 var auth = require('./auth');
 var posts = require('./posts');
+var comments = require('./comments');
+var rates = require('./rates');
+var views = require('./views');
 var albums = require('./albums');
 var uploader = require('./uploader');
 var users = require('./users');
@@ -226,54 +229,57 @@ router.post('/api/v1/posts/home/',function(req,res){
 router.post('/api/v1/posts/explore/',function(req,res){
 
     validateRequest(req,res,function(user) {
+        let username;
         if(user !==null) {
-            var now = Date.now();
-            redisClient.get(user.username+"::requestOrigin", function (err, requestOrigin) {
-                if(err) throw err;
-                let category = undefined;
-                if(req.body.category && req.body.category !==""){
-                    category = [req.body.category];
-                }
-                let hashtags = undefined;
-                if(req.body.hashtag && req.body.hashtag !==""){
-                    hashtags = [req.body.hashtag];
-                }
-                let timeOrigin;
-                let pageNumber = req.body.pageNumber || 1;
-                let counts = req.body.counts || 10;
-                let isCurated = req.body.isCurated || undefined;
-                let timeEdge = req.body.timeEdge || 1;
-                let orderBy = undefined;
-                if(req.body.order==="latest")
-                    orderBy = "createdAt";
-                else if(req.body.order==="top") { // curated only
-                    orderBy = req.body.orderBy || "rate.value";
-                }
-
-                let curator = req.body.curator || undefined;
-                if(pageNumber === 1){
-                    if(requestOrigin){
-
-                        requestOrigin = now;
-                        redisClient.set(user.username+"::requestOrigin",requestOrigin);
-                        redisClient.expire(user.username+"::requestOrigin",30000);
-                    }
-                    timeOrigin = requestOrigin;
-                }
-                else{
-                    requestOrigin = now;
-                    timeOrigin = requestOrigin;
-                    redisClient.set(user.username+"::requestOrigin",requestOrigin);
-                    redisClient.expire(user.username+"::requestOrigin",30000);
-                }
-                                                // req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber
-                posts.getPostsByFiltersAndOrders(req, res, user, "all", orderBy, isCurated, hashtags, category, curator ,false, true, false, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
-
-            });
+            username = user.username;
         }
         else{
-            res.send({result:false,message:"404 Not Found"});
+            username = requestIp.getClientIp(req).toString();
         }
+
+        let now = Date.now();
+        redisClient.get(username+"::postRequestOrigin", function (err, requestOrigin) {
+            if(err) throw err;
+            let category = undefined;
+            if(req.body.category && req.body.category !==""){
+                category = [req.body.category];
+            }
+            let hashtags = undefined;
+            if(req.body.hashtag && req.body.hashtag !==""){
+                hashtags = [req.body.hashtag];
+            }
+            let timeOrigin;
+            let pageNumber = req.body.pageNumber || 1;
+            let counts = req.body.counts || 10;
+            let isCurated = req.body.isCurated || undefined;
+            let timeEdge = req.body.timeEdge || 1;
+            let orderBy = undefined;
+            if(req.body.order==="latest")
+                orderBy = "createdAt";
+            else if(req.body.order==="top") { // curated only
+                orderBy = req.body.orderBy || "rate.value";
+            }
+
+            let curator = req.body.curator || undefined;
+            if(pageNumber === 1){
+                if(requestOrigin){
+
+                    requestOrigin = now;
+                    redisClient.set(username+"::postRequestOrigin",requestOrigin);
+                    redisClient.expire(username+"::postRequestOrigin",30000);
+                }
+                timeOrigin = requestOrigin;
+            }
+            else{
+                requestOrigin = now;
+                timeOrigin = requestOrigin;
+                redisClient.set(username+"::postRequestOrigin",requestOrigin);
+                redisClient.expire(username+"::postRequestOrigin",30000);
+            }
+            // req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber
+            posts.getPostsByFiltersAndOrders(req, res, user, "all", orderBy, isCurated, hashtags, category, curator ,false, true, false, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
+
+        });
     });
 });
 
@@ -282,7 +288,7 @@ router.post('/api/v1/posts/explore/',function(req,res){
 router.post('/api/v1/posts/subscriptions/',function(req,res){
 
     validateRequest(req,res,function(user) {
-        if(user !==null) {
+        if(user) {
             redisClient.get(user.username+"::requestOrigin", function (err, requestOrigin) {
                 if(err) throw err;
                 let category = undefined;
@@ -328,7 +334,7 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
             });
         }
         else{
-            res.send({result:false,message:"404 Not Found"});
+            res.send({result:false,message:"Login Or Register to Continue"});
         }
     });
 });
@@ -526,6 +532,63 @@ router.post('/api/v1/album/submit/', function(req,res){
         }
     });
 });
+
+
+
+
+
+
+
+// comment controllers
+
+router.post('/api/v1/getComments/',function(req,res){
+
+    if( req.body &&  typeof req.body.postId === "string") {
+        validateRequest(req, res, function (user) {
+            var username;
+            if (user) {
+                username = user.username
+            }
+            else {
+                username = requestIp.getClientIp(req).toString();
+            }
+
+            var now = Date.now();
+            redisClient.get(username + "::cmRequestOrigin", function (err, requestOrigin) {
+                if (err) throw err;
+                let timeOrigin;
+                let pageNumber = req.body.pageNumber || 1;
+                let counts = req.body.counts || 10;
+                let postId = req.body.postId;
+                if (pageNumber === 1) {
+                    if (requestOrigin) {
+
+                        requestOrigin = now;
+                        redisClient.set(username + "::cmRequestOrigin", requestOrigin);
+                        redisClient.expire(username + "::cmRequestOrigin", 30000);
+                    }
+                    timeOrigin = requestOrigin;
+                }
+                else {
+                    requestOrigin = now;
+                    timeOrigin = requestOrigin;
+                    redisClient.set(username + "::cmRequestOrigin", requestOrigin);
+                    redisClient.expire(username + "::cmRequestOrigin", 30000);
+                }
+                comments.getPostComments(req, res, user, timeOrigin, postId, counts, pageNumber);
+            });
+
+        });
+    }
+    else{
+        res.send({result:false,message:"Bad Input"});
+    }
+});
+
+
+
+
+
 router.delete('/api/v1/admin/user/:id', users.delete);
 
 
