@@ -26,6 +26,7 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
+
 var posts = {
 
     getPostsByFiltersAndOrders: function(req, res,user,userIds,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber) {
