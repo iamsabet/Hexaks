@@ -50,7 +50,12 @@ var users = {
                             fullName : req.body["fullName"],
                             roles : roles,
                             city:"",
-                            profilePictureSet:"avatar.png",
+                            gender : req.body.gender || "male",
+                            birthDay : {
+                                value:Number,
+                                date : Date,
+                            },
+                            profilePictureSet:(req.body.gender || "male") + ".png",
                             profilePictureUrls:[],
                             favouriteProfiles : [], // user ids  //  up to 6   // -->   get most popular profile
                             intrestCategories:[], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise

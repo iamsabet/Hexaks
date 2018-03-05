@@ -11,6 +11,11 @@ var userSchema = new Schema({
     favouriteProfiles : [], // user ids  //  up to 6   // -->   get most popular profile
     intrestCategories:[], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
     password : String,
+    gender:String,
+    birthDay : {
+        value:Number,
+        date : Date,
+    },
     followingsCount:Number,
     followers: [], // userIds
     followersCount:Number,
