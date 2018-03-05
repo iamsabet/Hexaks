@@ -52,8 +52,8 @@ var users = {
                             city:"",
                             gender : req.body.gender || "male",
                             birthDay : {
-                                value:Number,
-                                date : Date,
+                                value: 0,
+                                date : new Date(),
                             },
                             profilePictureSet:(req.body.gender || "male") + ".png",
                             profilePictureUrls:[],
@@ -89,7 +89,12 @@ var users = {
 
                         };
                         User.create(req,res,userObject);
-                        redisClient.hmset([userObject.userId.toString()+":info","username" , userObject.username.toString(),"privacy" , userObject.isPrivate.toString(),"emailVerified"  ,"false", "phoneVerified"  , "false"]);
+                        console.log([userObject.userId+":info","username" , userObject.username.toString(),"privacy" , userObject.privacy,
+                            "profilePictureSet",userObject.profilePictureSet,"profilePictureUrls",userObject.profilePictureUrls,
+                            "emailVerified"  ,false, "phoneVerified" , false]);
+                        redisClient.hmset([userObject.userId+":info","username" , userObject.username.toString(),"privacy" , userObject.privacy,
+                                    "profilePictureSet",userObject.profilePictureSet,"profilePictureUrls",userObject.profilePictureUrls,
+                                        "emailVerified"  ,false, "phoneVerified" , false]);
                         redisClient.set(userObject.username + ":userId",userObject.userId);
 
                         // sendVerificationEmail();

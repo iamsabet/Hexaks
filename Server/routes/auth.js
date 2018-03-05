@@ -30,7 +30,12 @@ var auth = {
         // Fire a query to your DB and check if the credentials are valid
         auth.validate(username, password,function(callback){
             var userDbObject = callback;
-            redisClient.hmset(userDbObject.userId+":info","username",userDbObject.username, "privacy", userDbObject.privacy,"emailVerified",userDbObject.emailVerified,"phoneVerified",userDbObject.phoneVerified);
+            redisClient.hgetall(userDbObject.userId+":info",function(err,info) {
+                if (!err && !info) {
+                    redisClient.hmset([userDbObject.userId+":info","username",userDbObject.username, "privacy", userDbObject.privacy,"emailVerified",userDbObject.emailVerified,
+                            "profilePictureSet",userDbObject.profilePictureSet,"profilePictureUrls",userDbObject.profilePictureUrls,"phoneVerified",userDbObject.phoneVerified]);
+                }
+            });
             redisClient.set(userDbObject.username + ":userId",userDbObject.userId);
             usrs.extendExpiration(userDbObject);
             if (!userDbObject) { // If authentication fails, we send a 401 back
