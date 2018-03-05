@@ -9,6 +9,7 @@ var rates = require('./rates');
 var views = require('./views');
 var albums = require('./albums');
 var uploader = require('./uploader');
+var follows = require('./follow');
 var users = require('./users');
 var validateRequest = require('../middleWares/validateRequest');
 var redis = require('redis');
@@ -21,7 +22,7 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
-router.post('/login', auth.login);
+router.post('/login',auth.login);
 router.post('/register', users.register);
 
 
@@ -170,7 +171,7 @@ router.post('/api/v1/users/follow',function(req,res){
 
     validateRequest(req,res,function(callback){
         if(callback) {
-            users.follow(req, res, callback)
+            follows.follow(req, res, callback)
         }
         else{
             res.send(null);
@@ -181,7 +182,7 @@ router.post('/api/v1/users/unfollow',function(req,res){
 
     validateRequest(req,res,function(callback){
         if(callback) {
-            users.unfollow(req, res, callback)
+            follows.unfollow(req, res, callback)
         }
         else{
             res.send(null);

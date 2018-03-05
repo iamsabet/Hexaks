@@ -3,6 +3,7 @@ var User = new userSchema();
 var followSchema = require('../models/follow.model');
 var Follow = new followSchema();
 var redis = require('redis');
+var random = require('randomstring');
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -44,18 +45,23 @@ var users = {
                         var userObject = {
                             username:req.body["username"].toLowerCase(),
                             password: req.body["password"],
+                            userId : random.generate(12),
                             email:req.body["email"].toLowerCase(),
                             fullName : req.body["fullName"],
                             roles : roles,
                             city:"",
-                            profilePictureUrl:"",
+                            profilePictureSet:"avatar.png",
+                            profilePictureUrls:[],
+                            favouriteProfiles : [], // user ids  //  up to 6   // -->   get most popular profile
+                            intrestCategories:[], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
                             followings: [], // userIds
-                            posts:[], // {postId : , smallImageUrl : , ownerUserName : }
                             rate:{
                                 number:0.0,
                                 counts:0,
                             },
                             verified:{
+                                emailVerified : false,
+                                phoneVerified : false,
                                 email:"",
                                 sms:""
                             },
@@ -69,7 +75,7 @@ var users = {
                                 bio: ""
                             },
                             badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
-                            isPrivate:false,
+                            privacy:false,
                             inactivate:false,
                             ban:{
                                 is:false,
@@ -78,9 +84,11 @@ var users = {
 
                         };
                         User.create(req,res,userObject);
-                        if(userObject.isPrivate) {
-                            redisClient.hmset("user::" + userObject.username, "privacy", userObject.isPrivate);
-                        }
+                        redisClient.hmset([userObject.userId.toString()+":info","username" , userObject.username.toString(),"privacy" , userObject.isPrivate.toString(),"emailVerified"  ,"false", "phoneVerified"  , "false"]);
+                        redisClient.set(userObject.username + ":userId",userObject.userId);
+
+                        // sendVerificationEmail();
+                        // push wellcome logins notifs and messages and shit
                     }
                 });
             }
@@ -134,54 +142,21 @@ var users = {
         redisClient.del(user.username+"::uploadingAlbum");
         redisClient.del(user.username+"::uploadingPost");
     },
-
-    follow:function(req,res,user){
-
-        var followObject = {
-            follower: user.username,
-            following: req.body.following,
-        };
-
-        userSchema.update({username:followObject.follower},{$inc: { followingsCount: 1 },$addToSet:{followings:followObject.following}},function(err,rest){
-            if(err) throw err;
-            console.log(rest);
+    extendExpiration:function(user){
+        redisClient.get(user.userId + ":online",function(err,value){
+           if(!value){
+               redisClient.set(user.userId + ":online",true);
+           }
+           redisClient.expire(user.userId + ":online",15000);
         });
-        userSchema.update({username:followObject.following},{$inc: { followersCount: 1 } , $addToSet:{followers:followObject.follower}},function(err,rest){
-            if (err) throw err;
-            console.log(rest);
-        });
-        Follow.Create(req, res, followObject);
+        
+    },
 
-    },
-    unfollow:function(req,res,user){
-        var index = user.followings.indexOf(req.body.following);
-        if(index > -1) {
-            var unfollowObject = {
-                follower: user.username,
-                following: req.body.following,
-            };
-            userSchema.update({username:unfollowObject.follower},{$inc: { followingsCount: -1},$pull:{followings:unfollowObject.following}},function(err,rest){
-                if(err) throw err;
-                console.log(rest);
-            });
-            userSchema.update({username:unfollowObject.following},{$inc: { followersCount: -1 },$pull:{followers:unfollowObject.follower}},function(err,rest){
-                if (err) throw err;
-                console.log(rest);
-            });
-            Follow.Remove(req, res, unfollowObject);
-        }
-        else{
-            res.send(false);
-        }
-    },
-    getFollowers:function(req,res,user){
-
-    },
-    getFollowings:function(req,res,user){
-
-    },
     block:function(req,res,user){
 
+    },
+    disconnect:function(req,res,user){
+        // remove both follows
     },
     unblock:function(req,res,user){
 

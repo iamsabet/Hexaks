@@ -16,6 +16,8 @@ var redis = require("redis");
 var requestIp = require("request-ip");
 var findHashtags = require('find-hashtags');
 var CryptoJS = require("crypto-js");
+var followSchema = require('../models/follow.model');
+var Follow = new followSchema();
 
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -111,72 +113,46 @@ var follows = {
         // console.log(options);
         post.Paginate(query, options,req,res);
     },
-    Create: function(req,res,user) {
-        // not blocked - check can see post
-        var postId = req.body.postId;
-        var ownerId = req.body.ownerId;
-        var postOwnerId = req.body.postOwnerId;
-        var text = req.body.text;
-
-
-
-        var reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
-        var reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
-        var str = text;
-        var m;
-        var hashtags = [];
-        var mentions = [] ;
-
-        while ((m = reHashtag.exec(str)) != null) {
-            if (m.index === reHashtag.lastIndex) {
-                reHashtag.lastIndex++;
-            }
-            if(hashtags.indexOf(m[0]) === -1){
-                hashtags.push(m[0]);
-            }
-        }
-        var n;
-        while ((n = reMention.exec(str)) != null) {
-            if (m.index === reMention.lastIndex) {
-                reMention.lastIndex++;
-            }
-            if(hashtags.indexOf(n[0]) === -1){
-                mentions.push(n[0]);
-            }
-        }
-
-        if (postId) {
-            let commentObject = {
-                postId : postId,
-                postOwnerId : postOwnerId,
-                ownerId : ownerId,
-                mentions:[], // usernames @
-                hashtags : [], // #
-                fullText:text,
-                diactive:false,
+    follow:function(req,res,user){
+        if(req.body && req.body.followingId) {
+            var followObject = {
+                follower: user.userId,
+                following: req.body.followingId,
             };
-            post.create(commentObject, function (result) {
-                if (result !== null) {
-                    console.log("commentId : "+result);
-                    return callback(result);
-                }
-                else {
-                    return callback(null);
-                }
+
+            userSchema.update({username: followObject.follower}, {
+                $inc: {followingsCount: 1},
+                $addToSet: {followings: followObject.following}
+            }, function (err, rest) {
+                if (err) throw err;
+                console.log(rest);
             });
+            Follow.Create(req, res, followObject);
         }
         else{
-            return callback({result:false,message:"No posts uploaded yet"});
+            res.send({result:false,message:"Bad input"});
         }
     },
-    edit:function(req,res,user){
-
+    unfollow:function(req,res,user){
+        if(req.body && req.body.followingId) {
+            var unfollowObject = {
+                follower: user.username,
+                following: req.body.followingId,
+            };
+            userSchema.update({username: unfollowObject.follower}, {
+                $inc: {followingsCount: -1},
+                $pull: {followings: unfollowObject.following}
+            }, function (err, rest) {
+                if (err) throw err;
+                console.log(rest);
+            });
+            Follow.Remove(req, res, unfollowObject);
+        }
+        else{
+            res.send({result:false,message:"Bad input"});
+        }
     },
-    delete: function(req, res,next,data) {
-        var id = req.params.id;
-        data.splice(id, 1); // Spoof a DB call
-        res.send(true);
-    }
+
 };
 
 

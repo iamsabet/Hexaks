@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const random = require('randomstring');
+var redis = require('redis');
+var random = require('randomstring');
+var redisClient = redis.createClient({
+    password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
+
+});    // Create the client
+redisClient.select(2,function(){
+    console.log("Connected to redis Database");
+});
 var Float = require('mongoose-float').loadType(mongoose);
 require('mongoose-long')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
@@ -70,8 +78,25 @@ postSchema.methods.Paginate = function(query,options,req,res){
             res.send([]);
         }
         else {
-            console.log(posts);
-            res.send(posts);
+            if(posts.length > 0){
+                for(let x = 0 ; x < posts.length ; x++){
+                    redisClient.hgetall(posts.ownerId+":info",function(err,values){
+                        if( !err && values) {
+                            console.log(values);
+                        }
+                        else{
+                            console.log("err :"+ err +" / values : "+values);
+                        }
+                        if(x === posts.length-1){
+                            res.send(posts);
+                        }
+
+                    });
+                }
+            }
+            else{
+                res.send(posts);
+            }
         }
     });
 };

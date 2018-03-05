@@ -1,6 +1,6 @@
 var jwt = require('jwt-simple');
 var validateUser = require('../routes/auth').validateUser;
-
+var usr = require('../routes/users');
 
 module.exports = function(req, res,fn) {
 
@@ -31,6 +31,7 @@ module.exports = function(req, res,fn) {
                 var userObject = callback;
             // The key would be the logged in user's username
                 if (userObject) {
+                    usr.extendExpiration(userObject);
                     var rolesList = userObject.roles;
                     if ((((req.url.indexOf('admin') >= 0) || (req.url.indexOf('curator') >= 0) || (req.url.indexOf('blogger') >= 0) || (req.url.indexOf('premium') >= 0))
                             && (rolesList.indexOf('admin') > -1 || rolesList.indexOf('sabet') > -1 ))|| (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/v1/') >= 0)) {

@@ -625,10 +625,10 @@
         requestHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
     }
     function follow(hostUsername){
-        requestHandler("/api/v1/users/follow","POST",{following:hostUsername},"follow");
+        requestHandler("/api/v1/users/follow","POST",{followingId:host.userId},"follow");
     }
     function unfollow(hostUsername){
-        requestHandler("/api/v1/users/unfollow","POST",{following:hostUsername},"unfollow");
+        requestHandler("/api/v1/users/unfollow","POST",{following:host.userId},"unfollow");
     }
 
 
@@ -1128,7 +1128,7 @@
     }
     function getMeResponseAction(res){
         Me = res;
-        if(res !== null) {
+        if(res !== null && res !== false && res !== "") {
             $(".accountCard").html(`
     	<a href="" id="profileBtn">${res.username}</a>
     	<a href="/getNotifs" id="newPostBtn"></a>
@@ -1216,7 +1216,7 @@
             host.city = (res.user.city) || "";
             host.roles = (res.user.roles.toString()) || [];
             host.username = (res.user.username);
-            host.isPrivate = (res.user.isPrivate);
+            host.privacy = (res.user.isPrivate);
 
             $(".profileTop .loader").addClass("hide");
 
@@ -1442,8 +1442,15 @@
     }
 
     function parsePosts(res) {
+
         if(res.docs.length === 0){
-            $("#postsHeader h3").html(" No posts found");
+            $("#postsHeader h3").html(" No posts found ");
+        }
+        else if(res.docs === []){
+            $("#postsHeader h3").html(" No posts found ");
+        }
+        else if(res === []){
+            $("#postsHeader h3").html(" Oops Something Went Wrong ");
         }
         else {
             postsList = res.docs;

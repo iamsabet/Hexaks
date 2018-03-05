@@ -1,6 +1,16 @@
 var jwt = require('jwt-simple');
 var userSchema = require('../models/user.model');
 var bcrypt = require("bcrypt-nodejs");
+var redis = require('redis');
+var random = require('randomstring');
+var usrs = require("./users");
+var redisClient = redis.createClient({
+    password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
+
+});    // Create the client
+redisClient.select(2,function(){
+    console.log("Connected to redis Database");
+});
 var auth = {
 
     login: function(req, res) {
@@ -20,7 +30,9 @@ var auth = {
         // Fire a query to your DB and check if the credentials are valid
         auth.validate(username, password,function(callback){
             var userDbObject = callback;
-
+            redisClient.hmset(userDbObject.userId+":info","username",userDbObject.username, "privacy", userDbObject.privacy,"emailVerified",userDbObject.emailVerified,"phoneVerified",userDbObject.phoneVerified);
+            redisClient.set(userDbObject.username + ":userId",userDbObject.userId);
+            usrs.extendExpiration(userDbObject);
             if (!userDbObject) { // If authentication fails, we send a 401 back
                 res.status(401);
                 res.json({
@@ -42,7 +54,7 @@ var auth = {
     validate: function(username, password,callback) {
         // spoofing the DB response for simplicity
 
-        userSchema.findOne({username:username,password:password},{_id:0,userId:1,username:1,profilePictureUrl:1},function(err,user) {
+        userSchema.findOne({username:username,password:password},{_id:0,userId:1,username:1,profilePictureSet:1,profilePictureUrls:1,privacy:1,emailVerified:1,phoneVerified:1},function(err,user) {
             if (err) throw err;
             if (user) {
                 return callback(user);

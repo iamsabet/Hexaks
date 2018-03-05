@@ -1,20 +1,19 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const random = require('randomstring');
-var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
 var userSchema = new Schema({
     userId:String,
     username : String,
     email:String,
     fullName:String,
-    profilePictureUrl:String,
+    profilePictureSet:String,
+    profilePictureUrls:[],
+    favouriteProfiles : [], // user ids  //  up to 6   // -->   get most popular profile
+    intrestCategories:[], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
     password : String,
-    followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
     followingsCount:Number,
-    followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
+    followers: [], // userIds
     followersCount:Number,
-    posts:[], // {postId : , smallImageUrl : , ownerUserName : }
     location:String,
     phoneNumber:String,
     city:String,
@@ -24,6 +23,8 @@ var userSchema = new Schema({
         counts:Number,
     },
     verified:{
+        emailVerified : Boolean,
+        phoneVerified : Boolean,
         email:String,
         sms:String
     },
@@ -33,9 +34,9 @@ var userSchema = new Schema({
         bio: String
     },
     badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
-    roles : [], // String - Sabet / Admin / Curator / Blogger / Premium
+    roles : [], // String - Sabet / Admin / Curator / Blogger / Premium / --> founder <-- under 1000 --> future advantages --> + premium ...
     inactivate:Boolean,
-    isPrivate:Boolean,
+    privacy:Boolean,
     viewedPosts:[], // last 100s
     ban:{
         is:Boolean,
@@ -48,9 +49,8 @@ var userSchema = new Schema({
 
 userSchema.methods.create = function (req,res,userObject) {
 
-    var newUser = new User(userObject);
+    let newUser = new User(userObject);
     newUser.createdAt = Date.now();
-    newUser.userId = random.generate(12);
     newUser.save(function(err){
         if(err) throw err;
         console.log(newUser.username);
@@ -63,13 +63,13 @@ userSchema.pre('save', function(next){
         this.updatedAt = Date.now();
     }
     else{
-        var now = Date.now();
+        let now = Date.now();
         this.createdAt = now;
         this.updatedAt = now;
     }
     next();
 });
 
-var User = mongoose.model('users', userSchema);
-var user = mongoose.model('users');
+let User = mongoose.model('users', userSchema);
+let user = mongoose.model('users');
 module.exports = user;
