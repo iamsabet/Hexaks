@@ -49,8 +49,7 @@ var users = {
                             roles : roles,
                             city:"",
                             profilePictureUrl:"",
-                            followings: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
-                            followers: [], // object --> {id:"aslkljd","username","akjsd","profPicUrl" : "jasdsnljadsn"}
+                            followings: [], // userIds
                             posts:[], // {postId : , smallImageUrl : , ownerUserName : }
                             rate:{
                                 number:0.0,
@@ -63,6 +62,7 @@ var users = {
                             boughtImages:[],// {post Id,receipt Id}
                             followersCount:0,
                             followingsCount:0,
+                            phoneNumber:"",
                             viedPosts:[],
                             details:{
                                 phoneNumber : "",
@@ -88,20 +88,20 @@ var users = {
     },
     initialUpload:function(req,res,user){
         if(req.body.type==="post") {
-            redisClient.get(user.username+"::uploadingPost",function(err,postId){
+            redisClient.get(user.userId+"::uploadingPost",function(err,postId){
                 if(err) throw err;
                 if(postId){
                     res.send(postId);
-                    redisClient.expire(user.username+"::uploadingPost",300000,function(err,result){
+                    redisClient.expire(user.userId+"::uploadingPost",300000,function(err,result){
                         console.log(result);
                     }); // 5 minutes
                 }
                 else {
-                    redisClient.set(user.username+"::isUploadingPost",true,function(err,callback){
+                    redisClient.set(user.userId+"::isUploadingPost",true,function(err,callback){
                         if(err) throw err;
-                        console.log(user.username+"::isUploadingPost");
-                        redisClient.expire(user.username+"::isUploadingPost",60000); // 1 minutes
-                        redisClient.del(user.username+"::isUploadingAlbum");
+                        console.log(user.userId+"::isUploadingPost");
+                        redisClient.expire(user.userId+"::isUploadingPost",60000); // 1 minutes
+                        redisClient.del(user.userId+"::isUploadingAlbum");
                         res.send(true);
                     });
                 }

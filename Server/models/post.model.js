@@ -59,18 +59,9 @@ postSchema.methods.create = function(postObject,username,callback){
     newPost.createdAt = now;
     newPost.updatedAt = now;
     newPost.deleted = false;
-    postSchema.count({ownerId:postObject.ownerId},function(err,count){
-        if(err) {
-            console.log(err);
-            return callback(null);
-        }
-        else {
-            count++;
-            newPost.postId = CryptoJS.AES.encrypt(postObject.ownerId + "/" + count, 'postSecretKey 6985');
-            newPost.save();
-            return callback(true);
-        }
-    });
+    newPost.save();
+    return callback(true);
+
 };
 postSchema.methods.Paginate = function(query,options,req,res){
     post.paginate(query,options,function(err,posts){

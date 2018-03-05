@@ -276,7 +276,6 @@ router.post('/api/v1/posts/explore/',function(req,res){
                 redisClient.set(username+"::postRequestOrigin",requestOrigin);
                 redisClient.expire(username+"::postRequestOrigin",30000);
             }
-            // req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber
             posts.getPostsByFiltersAndOrders(req, res, user, "all", orderBy, isCurated, hashtags, category, curator ,false, true, false, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
 
         });

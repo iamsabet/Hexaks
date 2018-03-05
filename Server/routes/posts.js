@@ -28,7 +28,7 @@ redisClient.select(2,function(){
 
 var posts = {
 
-    getPostsByFiltersAndOrders: function(req, res,user,userNames,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber) {
+    getPostsByFiltersAndOrders: function(req, res,user,userIds,orderBy,isCurated,hashtags,category,curator,rejected,activated,isPrivate,leftCost,rightCost,timeOrigin,timeEdgeIn,counts,pageNumber) {
 
         var right = rightCost || 1000000;
         var left = leftCost || 0;
@@ -57,13 +57,13 @@ var posts = {
             if(privateOrNot === true){
                 privateOrNot = {$exists:true};
             }
-            var usernames = {$in:userNames};
-            if(userNames==="All"){
-                usernames = {$exists:true}
+            var userId = {$in:userIds};
+            if(userIds ==="all"){
+                userId = {$exists:true}
             }
-            console.log(userNames);
+            console.log(userId);
             let query = {
-                "owner.username" : usernames,
+                ownerId : userId,
                 activated: activated || true,
                 "rejected.value":reject,
                 hashtags:hashtagQuery,
@@ -96,8 +96,8 @@ var posts = {
                 page: pageNumber,
                 limit: parseInt(counts)
             };
-            if(userNames === "all"){
-                query["owner.username"]= {$exists:true};
+            if(userIds === "all"){
+                query["ownerId"]= {$exists:true};
             }
             if (orderBy === "originalImage.cost") {
                 options.sort = {"originalImage.cost": -1};
@@ -118,65 +118,63 @@ var posts = {
     },
 
     Create: function(user,format,postId,callback) {
-        redisClient.get(user.username+"::uploadingPost",function(err,postId) {
-            if (err) throw err;
-            if (postId) {
-                let postObject = {
-                    postId: postId.split(".")[0],
-                    ownerId:user.userId,
-                    ext: format,
-                    exifData: {},
-                    originalImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
-                        cost: 0, // 0 if free
-                        resolution: {
-                            x: 100,
-                            y: 100,
-                        },
+        if (postId) {
+            let postObject = {
+                postId: postId,
+                ownerId:user.userId,
+                ext: format,
+                exifData: {},
+                originalImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
+                    cost: 0, // 0 if free
+                    resolution: {
+                        x: 100,
+                        y: 100,
                     },
-                    buyers: [], // user id
-                    hashtags: [],
-                    generatedHashtags: [],
-                    categories: [],
-                    caption: "",
-                    rate: {
-                        value: 0.0,
-                        counts: 0,
-                    },
-                    views: 0,
-                    // viewers: [],// usernames // length
-                    curator: {
-                        username: "",
-                        profilePicUrl: "",
-                    },
-                    private: false,
-                    rejected: {
-                        value: false,
-                        reason: "",
-                    },
-                    isCurated : false,
-                    advertise: {},
-                    activated: false,
-                };
-                post.create(postObject,user.username, function (result) {
-                    if (result !== null) {
-                        console.log("postId : "+result);
-                        return callback(result);
-                    }
-                    else {
-                        return callback(null);
-                    }
-                });
-            }
-            else{
-                return callback({result:false,message:"No posts uploaded yet"});
-            }
-        });
+                },
+                buyers: [], // user id
+                hashtags: [],
+                generatedHashtags: [],
+                categories: [],
+                caption: "",
+                rate: {
+                    value: 0.0,
+                    counts: 0,
+                },
+                views: 0,
+                // viewers: [],// usernames // length
+                curator: {
+                    username: "",
+                    profilePicUrl: "",
+                },
+                private: false,
+                rejected: {
+                    value: false,
+                    reason: "",
+                },
+                isCurated : false,
+                advertise: {},
+                activated: false,
+                deleted:false,
+            };
+            post.create(postObject,user.username, function (result) {
+                if (result !== null) {
+                    console.log("postId : "+result);
+                    return callback(result);
+                }
+                else {
+                    return callback(null);
+                }
+            });
+        }
+        else{
+            return callback({result:false,message:"No posts uploaded yet"});
+        }
     },
 
 
 
     activate:function(req,res,user){
-        redisClient.get(user.username+"::uploadingPost",function(err,postId){
+        redisClient.get(user.userId+"::uploadingPost",function(err,postId){
             if(err) throw err;
             var cost = req.body.cost || 0;
             if(!isNaN(cost)) {
@@ -238,8 +236,8 @@ var posts = {
                             },function(err,result){
                                 if(err) throw err;
                                 console.log(result);
-                                redisClient.del(user.username+"::uploadingPost");
-                                redisClient.del(user.username+"::isUploadingPost");
+                                redisClient.del(user.userId+"::uploadingPost");
+                                redisClient.del(user.userId+"::isUploadingPost");
                                 res.send(true);
                             });
                             posts.imageProcessing(postId.split(".")[0] + "--Medium." + postId.split(".")[1]);

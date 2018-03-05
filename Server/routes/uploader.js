@@ -11,6 +11,7 @@ var users = require('../routes/users.js');
 var multiparty = require('multiparty');
 var random = require("randomstring");
 var redis = require('redis');
+var CryptoJS = require("crypto-js");
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -38,8 +39,8 @@ var uploader = {
             // text/plain is required to ensure support for IE9 and older
             if (files) {
                 console.log(user);
-                redisClient.get(user.username + "::isUploadingPost", function (err, isPost) {
-                    redisClient.get(user.username + "::isUploadingAlbum", function (err, isAlbum) {
+                redisClient.get(user.userId + "::isUploadingPost", function (err, isPost) {
+                    redisClient.get(user.userId + "::isUploadingAlbum", function (err, isAlbum) {
                         if (isPost || isAlbum) {
                             var pathis = "";
                             var size = "";
@@ -48,44 +49,58 @@ var uploader = {
                             }
                             else if (isPost) {
                                 var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
-                                redisClient.get(user.username + "::uploadingPost", function (err, value) {
+                                redisClient.get(user.userId + "::uploadingPost", function (err, value) {
                                     if (err) throw err;
-                                    let uploadingPost;
-                                    if (value) {
-                                        uploadingPost = value;
-                                    }
-                                    else {
-                                        uploadingPost = random.generate(25);
-                                        redisClient.set(user.username + "::uploadingPost",uploadingPost+"."+format);
-                                        posts.Create(user,format,uploadingPost,function(err,callback){
-                                            if(err) console.log(err);
-                                            console.log(callback);
-                                        });
-                                    }
+                                    var uploadingPost;
+                                    console.log(value);
+                                    postSchema.count({ownerId: user.userId}, function (err, count) {
+                                        if (err) {
+                                            // console.log(err);
+                                            return callback(null);
+                                        }
+                                        if (value) {
+                                            uploadingPost = value;
 
-                                    if (fields.qqfilename[0].split("sss").length > 1) {
-                                        size = "-Small";
-                                        pathis = smallAndMediumPath;
-                                    }
-                                    else if (fields.qqfilename[0].split("mmm").length > 1) {
-                                        size = "-Medium";
-                                        pathis = smallAndMediumPath;
-                                    }
-                                    else {
-                                        size = "";
-                                        pathis = originalPath;
-                                    }
-                                    if(size==="") {
-                                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost, res);
-                                    }
-                                    else{
-                                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split(".")[0] + size + "." + format, res);
-                                    }
+                                        }
+                                        else {
+
+                                            console.log(count);
+                                            count++;
+                                            uploadingPost = CryptoJS.AES.encrypt(user.userId + ":--:" + count, 'postSecretKey 6985').toString().split("/").join("");
+                                            redisClient.set(user.userId + "::uploadingPost", uploadingPost + "===." + format);
+                                            posts.Create(user, format, uploadingPost, function (err, callback) {
+                                                if (err) console.log(err);
+                                                console.log(callback);
+                                            });
+                                        }
+                                        if (fields.qqfilename[0].split("sss").length > 1) {
+
+                                            size = "-Small";
+                                            pathis = smallAndMediumPath;
+                                        }
+                                        else if (fields.qqfilename[0].split("mmm").length > 1) {
+                                            size = "-Medium";
+                                            pathis = smallAndMediumPath;
+                                        }
+                                        else {
+                                            size = "";
+                                            pathis = originalPath;
+                                        }
+                                        if (size === "") {
+                                            pathis = originalPath;
+                                            console.log(pathis);
+                                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost + "." + format, res);
+                                        }
+                                        else {
+                                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split(".")[0] + size + "." + format, res);
+
+                                        }
+                                    });
                                 });
                             }
                         }
-                        else {
-                            res.send("initial or album first");
+                        else{
+                            res.send({result:false,message:"Initial Upload post or album State First"});
                         }
                     });
                 });

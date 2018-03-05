@@ -16,6 +16,7 @@ var userSchema = new Schema({
     followersCount:Number,
     posts:[], // {postId : , smallImageUrl : , ownerUserName : }
     location:String,
+    phoneNumber:String,
     city:String,
     country:String,
     rate:{

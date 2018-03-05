@@ -31,7 +31,7 @@ var comments = {
 
         // Decrypt
         var bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-        var plaintext = bytes.toString();
+        let postOwnerId = bytes.toString().split(":--:")[0];
 
 
 
