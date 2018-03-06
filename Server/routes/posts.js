@@ -229,8 +229,8 @@ var posts = {
                                     originalImage: {
                                         cost: cost, // 0 if free
                                         resolution: {
-                                            x: 100,
-                                            y: 100,
+                                            x: 200,
+                                            y: 200,
                                         }
                                     }
                                 }

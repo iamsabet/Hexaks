@@ -174,11 +174,13 @@ var users = {
 
     getHostProfile:function(req,res,user){ // no privacy considered !.
         var hostUsername = req.body.host;
-        userSchema.findOne({username:hostUsername},{username:1,fullName:1,privacy:1,userId:1,followersCount:1,followingsCount:1,city:1,roles:1},function(err,userx){
+        userSchema.findOne({username:hostUsername},{username:1,fullName:1,privacy:1,userId:1,profilePictureSet:1,profilePictureUrls:1,followersCount:1,followingsCount:1,city:1,location:1,birthDay:1,age:1,roles:1,badges:1},function(err,userx){
             if(err) res.send(err);
             if(userx) {
                 var response = {user:userx , following:false,followed:false};
                 if(user===null){
+                    if(userx.privacy)
+                        delete userx.profilePictureUrls; // blind private info
                     res.send({user:userx,following:null,followed:null});
                 }
                 else {
@@ -186,6 +188,11 @@ var users = {
                         res.send({user: userx, following: null, followed: null});
                     }
                     else {
+                        if(userx.privacy){
+                            if (user.followings.indexOf(hostUsername) === -1) {
+                                delete response.user.profilePictureUrls;
+                            }
+                        }
                         if (userx.followings.indexOf(user.username) > -1) {
                             response.followed = true;
                         }
