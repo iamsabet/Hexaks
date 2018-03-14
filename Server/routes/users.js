@@ -113,37 +113,37 @@ var users = {
     },
     initialUpload: function (req, res, user) {
         if (req.body.type === "post") {
-            redisClient.get(user.userId + "::uploadingPost", function (err, postId) {
+            redisClient.get(user.userId + ":uploadingPost", function (err, postId) {
                 if (err) throw err;
                 if (postId) {
                     res.send(postId);
-                    redisClient.expire(user.userId + "::uploadingPost", 300000, function (err, result) {
+                    redisClient.expire(user.userId + ":uploadingPost", 300000, function (err, result) {
                         console.log(result);
                     }); // 5 minutes
                 }
                 else {
-                    redisClient.set(user.userId + "::isUploadingPost", true, function (err, callback) {
+                    redisClient.set(user.userId + ":isUploadingPost", true, function (err, callback) {
                         if (err) throw err;
-                        console.log(user.userId + "::isUploadingPost");
-                        redisClient.expire(user.userId + "::isUploadingPost", 60000); // 1 minutes
-                        redisClient.del(user.userId + "::isUploadingAlbum");
+                        console.log(user.userId + ":isUploadingPost");
+                        redisClient.expire(user.userId + ":isUploadingPost", 60000); // 1 minutes
+                        redisClient.del(user.userId + ":isUploadingAlbum");
                         res.send(true);
                     });
                 }
             });
         }
         else if (req.body.type === "album") {
-            redisClient.get(user.username + "::uploadingAlbum", function (err, albumId) {
+            redisClient.get(user.username + ":uploadingAlbum", function (err, albumId) {
                 if (err) throw err;
                 if (albumId) {
                     res.send(albumId);
-                    redisClient.expire(user.username + "::uploadingAlbum", 300000); // 5 minutes
+                    redisClient.expire(user.username + ":uploadingAlbum", 300000); // 5 minutes
                 }
                 else {
-                    redisClient.set(user.username + "::isUploadingAlbum", true, function (err, callback) {
+                    redisClient.set(user.username + ":isUploadingAlbum", true, function (err, callback) {
                         if (err) throw err;
-                        redisClient.expire(user.username + "::isUploadingAlbum", 60000); // 1 minutes
-                        redisClient.del(user.username + "::isUploadingPost");
+                        redisClient.expire(user.username + ":isUploadingAlbum", 60000); // 1 minutes
+                        redisClient.del(user.username + ":isUploadingPost");
                         res.send(true);
                     });
                 }
@@ -154,10 +154,10 @@ var users = {
         }
     },
     removeUploading: function (user) {
-        redisClient.del(user.username + "::isUploadingAlbum");
-        redisClient.del(user.username + "::isUploadingPost");
-        redisClient.del(user.username + "::uploadingAlbum");
-        redisClient.del(user.username + "::uploadingPost");
+        redisClient.del(user.username + ":isUploadingAlbum");
+        redisClient.del(user.username + ":isUploadingPost");
+        redisClient.del(user.username + ":uploadingAlbum");
+        redisClient.del(user.username + ":uploadingPost");
     },
 
     extendExpiration: function (user) {
@@ -183,59 +183,67 @@ var users = {
     getHostProfile: function (req, res, user) { // no privacy considered !.
         let hostUsername = req.body.host;
         if(typeof hostUsername === "string"){
-            userSchema.findOne({username: username},{
-                username: 1,
-                fullName: 1,
-                privacy: 1,
-                userId: 1,
-                profilePictureSet: 1,
-                profilePictureUrls: 1,
-                followings:1,
-                favouriteProfiles :1, // user ids  //  up to 6   // -->   get most popular profile
-                interestCategories:1, // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
-                gender:1,
-                followingsCount:1,
-                followersCount:1,
-                phoneNumber:1,
-                country:1,
-                rate:1,
-                verified:1,
-                city: 1,
-                location: 1,
-                birthDay: 1,
-                age: 1,
-                roles: 1,
-                badges: 1
-            }, function (err, userx) {
-                if (err) res.send(err);
-                if (userx) {
-                    let response = {user: userx, following: false, followed: false};
-                    if (user === null) {
-                        if (userx.privacy)
-                            delete userx.profilePictureUrls; // blind private info
-                        res.send({user: userx, following: null, followed: null});
-                    }
-                    else {
-                        if (user.username === hostUsername) {
-                            res.send({user: userx, following: null, followed: null});
-                        }
-                        else {
-                            if (userx.privacy) {
-                                if (user.followings.indexOf(userId) === -1) {
-                                    delete response.user.profilePictureUrls;
+            redisClient.get(hostUsername+":userId",function(err,userId) {
+                if(err) res.send({result:false,message:" user name not found"});
+                if(userId) {
+                    userSchema.findOne({userId: userId}, {
+                        username: 1,
+                        fullName: 1,
+                        privacy: 1,
+                        userId: 1,
+                        profilePictureSet: 1,
+                        profilePictureUrls: 1,
+                        followings: 1,
+                        favouriteProfiles: 1, // user ids  //  up to 6   // -->   get most popular profile
+                        interestCategories: 1, // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
+                        gender: 1,
+                        followingsCount: 1,
+                        followersCount: 1,
+                        phoneNumber: 1,
+                        country: 1,
+                        rate: 1,
+                        verified: 1,
+                        city: 1,
+                        location: 1,
+                        birthDay: 1,
+                        age: 1,
+                        roles: 1,
+                        badges: 1
+                    }, function (err, userx) {
+                        if (err) res.send(err);
+                        if (userx) {
+                            let response = {user: userx, following: false, followed: false};
+                            if (user === null) {
+                                if (userx.privacy)
+                                    delete userx.profilePictureUrls; // blind private info
+                                res.send({user: userx, following: null, followed: null});
+                            }
+                            else {
+                                if (user.username === hostUsername) {
+                                    res.send({user: userx, following: null, followed: null});
+                                }
+                                else {
+                                    if (userx.privacy) {
+                                        if (user.followings.indexOf(userId) === -1) {
+                                            delete response.user.profilePictureUrls;
+                                        }
+                                    }
+                                    if (userx.followings.indexOf(user.userId) > -1) {
+                                        response.followed = true;
+                                    }
+                                    if (user.followings.indexOf(hostUsername) > -1) {
+                                        response.following = true;
+                                    }
+                                    res.send(response);
                                 }
                             }
-                            if (userx.followings.indexOf(user.userId) > -1) {
-                                response.followed = true;
-                            }
-                            if (user.followings.indexOf(hostUsername) > -1) {
-                                response.following = true;
-                            }
-                            res.send(response);
                         }
-                    }
+                        else {
+                            res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
+                        }
+                    });
                 }
-                else {
+                else{
                     res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
                 }
             });

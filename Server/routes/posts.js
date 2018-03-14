@@ -92,13 +92,13 @@ var posts = {
                 }
             }
             let options = {
-                select: 'postId owner createdAt caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
+                select: 'postId owner createdAt ownerId mentions caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
                 sort: {createdAt: +1},
                 page: pageNumber,
                 limit: parseInt(counts)
             };
             if(userIds === "all"){
-                query["ownerId"]= {$exists:true};
+                query.ownerId= {$exists:true};
             }
             if (orderBy === "originalImage.cost") {
                 options.sort = {"originalImage.cost": -1};
@@ -171,33 +171,33 @@ var posts = {
             return callback({result:false,message:"No posts uploaded yet"});
         }
     },
-
     getPostInfo: function(req,res,user){
 
     },
     activate:function(req,res,user){
-        redisClient.get(user.userId+"::uploadingPost",function(err,postId){
+        redisClient.get(user.userId+":uploadingPost",function(err,postId){
             if(err) throw err;
-            var cost = req.body.cost || 0;
+            let cost = req.body.cost || 0;
             if(!isNaN(cost)) {
                 if (postId && req.body.cost <= 1000000 && req.body.cost >= 0) {
                     try {
-                        new ExifImage({image: '/Users/sabet/Projects/Hexaks/Server/Pictures/' + postId}, function (error, exifData) {
+                        console.log(postId);
+                        new ExifImage({image: '/Users/sabet/Projects/Hexaks/Server/Pictures/' + postId.split("===.")[0]+"."+postId.split("===.")[1]}, function (error, exifData) {
                             if (error) console.log("exif extraction failed  -- > file.format");
                             console.log(cost + " :: "+isNaN(cost));
                             console.log(exifData);
-                            var exif = {};
+                            let exif = {};
                             if(exifData &&( postId.split(".")[1].toLowerCase()=== "jpeg" || postId.split(".")[1].toLowerCase() === "jpg")){
                                 if(exifData) {
                                     exif = exifData.exif || {};
                                 }
                             }
-                            var reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
-                            var reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
-                            var str = 'Hey I love #apple and #orange and #apple!@ also #banana';
-                            var m;
-                            var hashtags = [];
-                            var mentions = [] ;
+                            let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
+                            let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
+                            let str = 'Hey I love #apple and #orange and #apple!@ also #banana';
+                            let m;
+                            let hashtags = [];
+                            let mentions = [] ;
                             while ((m = reHashtag.exec(str)) != null) {
                                 if (m.index === reHashtag.lastIndex) {
                                     reHashtag.lastIndex++;
@@ -206,7 +206,7 @@ var posts = {
                                     hashtags.push(m[0]);
                                 }
                             }
-                            var n;
+                            let n;
                             while ((n = reMention.exec(str)) != null) {
                                 if (m.index === reMention.lastIndex) {
                                     reMention.lastIndex++;
@@ -217,7 +217,7 @@ var posts = {
                             }
 
                                 postSchema.update({
-                                postId: postId.split(".")[0],
+                                postId: postId.split("===.")[0],
                                 activated: false,
                             },{
                                 $set: {
@@ -238,11 +238,11 @@ var posts = {
                             },function(err,result){
                                 if(err) throw err;
                                 console.log(result);
-                                redisClient.del(user.userId+"::uploadingPost");
-                                redisClient.del(user.userId+"::isUploadingPost");
+                                redisClient.del(user.userId+":uploadingPost");
+                                redisClient.del(user.userId+":isUploadingPost");
                                 res.send(true);
                             });
-                            posts.imageProcessing(postId.split(".")[0] + "--Medium." + postId.split(".")[1]);
+                            posts.imageProcessing(postId.split("===.")[0] + "--Medium." + postId.split(".")[1]);
                         });
                     }
                     catch (err) {
@@ -257,7 +257,7 @@ var posts = {
         });
     },
     editPost : function(req,res,user){
-        var post
+
     },
     imageProcessing:function(imageUrl){ // image processing on medium size
         console.log(imageUrl + " -- > image processing starts");
@@ -290,144 +290,13 @@ var posts = {
         //     });
     },
     increaseViews:function(req,res,user){
-        if(user) {
-            if (!user.viewedPosts.includes(req.body.postId)) {
-                if(user.viewedPosts.length === 1000)
-                    user.viewedPosts
 
-                res.send(true);
-            }
-            else {
-                console.log("Already Viewed");
-                res.send(false);
-
-            }
-        }
-        else {
-            postSchema.findOne({postId: req.body["postId"]}, {albumId: 0}, function (err, resultPost) {
-                if (err) throw err;
-                // if(){ // redis query check in 24hs list; if not -->
-                resultPost.views += 1;
-                resultPost.save();
-                res.send(true);
-                // }
-                // else {
-                //     res.send(false);
-                // }
-            });
-        }
     },
     rate:function(req,res,user){
-        if(req.body["rate"] && req.body["postId"]) {
-            var rate = req.body["rate"];
-            var postId = req.body["postId"];
-            if (user) {
-                if (err) throw err;
-                if (rate <= 6 && rate >= 1 && postId) {
-                    rateSchema.findOne({
-                        postId: postId,
-                        value: rate,
-                    }, function (err, resultRate) {
-                        if (err) throw err;
-                        console.log(resultRate);
-                        if(resultRate) {
-                            if(resultRate.members.indexOf(user.username) > -1) {
-                                resultRate.members.push(user.username);
-                                resultRate.save();
-                                users.createSuggestion(user.username,rate,postId,function(callback){
-                                    if(callback)
-                                        console.log("Suggested List Updated for user "+ user.username);
-                                });
-                                postSchema.findOne({postId: postId}, {albumId: 0}, function (err, resultPost) {
-                                    if (err) throw err;
-                                    if (resultPost) {
-                                        if (resultPost.rate.value >= rate) {
-                                            if (resultPost.rate.value !== rate) {
-                                                resultPost.rate.value += Float((resultPost.rate.value - rate) / (resultPost.rate.counts + 1));
-                                                console.log(resultPost.rate.value);
-                                            }
-                                            resultPost.rate.counts += 1;
-                                            resultPost.save();
 
-                                        }
-                                        else {
-                                            resultPost.rate.value -= Float((rate - resusltPost.rate.value) / (resultPost.rate.counts + 1));
-                                            console.log(resultPost.rate.value);
-                                            resultPost.rate.counts += 1;
-                                            resultPost.save();
-                                        }
-                                    }
-                                    else {
-                                        res.send("no post found");
-                                    }
-                                });
-                                res.send(true);
-                            }
-                            else{
-                                res.send("Already Rated !");
-                            }
-                        }
-                        else{
-                            res.send("no rate found");
-                        }
-                    });
-                }
-                else {
-                    res.send("504 - bad request");
-                }
-            }
-            else {
-                res.send("401 - not authenticated"); //
-            }
-        }
-        else {
-            res.send("invalid input");
-        }
     },
     view:function(req,res,user,postId,redisClient) {
-        if(user) {
-            if (req.body.postId) {
-                if (!user.viewedPosts.includes(req.body.postId)) {
-                    if (user.viewedPosts.length === 200) {
-                        userSchema.findOneAndUpdate({username:user.username},{$pop:{viewedPosts:-1}});
-                    }
-                    userSchema.findOneAndUpdate({username:user.username},{$push:{viewedPosts:req.body.postId}});
-                    postSchema.findOneAndUpdate({postId:req.body.postId},{$inc:{views:1}});
-                    res.send(true);
-                }
-                else {
-                    res.send(false);
-                }
 
-            }
-            else {
-                res.send(false);
-            }
-        }
-        else {
-            var anonymosIp = requestIp.getClientIp(req);
-            redisClient.lrange("anonymosViews::" + anonymosIp, 0, -1, function (err, result) { // 24 hour delete
-                if(err) throw err;
-                if(result.length > 0){
-                    if(result.indexOf(req.body.postId) > -1){
-                        res.send(false);
-                    }
-                    else{
-                        if(result.length === 100){
-                            redisClient.rpop("anonymosViews::" + anonymosIp);
-                        }
-                        redisClient.lpush("anonymosViews::" + anonymosIp , req.body.postId); // 24 hour delete
-                        redisClient.hincrby("post::"+req.body.postId,"views" , +1,function(err,number){ // cach view numbers
-                            if(number === 10){
-                                redisClient.hincrby("post::"+req.body.postId,"views",-10);
-                                postSchema.update({postId:req.body.postId},{$inc:{views:10}});
-                            }
-                        });
-
-                    }
-                }
-            });
-        }
     },
 
     delete: function(req, res,next,data) {

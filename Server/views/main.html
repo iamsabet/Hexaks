@@ -346,6 +346,7 @@
     var postsList = [];
     var pageType="";
     var total=0;
+    var usersInfo = {};
     var Filters = {
         username:pageType,
         pageNumber : 1,
@@ -1205,7 +1206,7 @@
             alert(res.message);
         }
         else if (res.user) {
-            debugger;
+
             var list = $(".profileTop .userInfo").children();
             list[0].innerHTML = (res.user.fullName);
             list[1].innerHTML = (res.user.followingsCount) + " Followings";
@@ -1461,6 +1462,7 @@
         }
         else {
             postsList = res.docs;
+            usersInfo = res.owners;
             total = res.total;
             console.log(postsList);
             if (Filters.pageNumber === 1) {
@@ -1511,8 +1513,8 @@
             <p hidden>${index}</p>
             <p hidden>${postsList[index].ext}</p>
                 <div class="header">
-                    <img class="profilePicture left" src="../Statics/images/profilePics/${postsList[index].owner.username}-prof.jpg" />
-                    <span class="username left">${postsList[index].owner.username}</span>
+                    <img class="profilePicture left" src="../Statics/images/profilePics/${usersInfo[postsList[index].ownerId].split("/")[1]}" /> <!-- profilePicture -->
+                    <span class="username left">${usersInfo[postsList[index].ownerId].split("/")[0]}</span> <!-- username  -->
                     <div class="curatorContainer right">
                         <img src="../Statics/images/images/curateSmallBtn.png"/>
                     </div>

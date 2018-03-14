@@ -39,8 +39,8 @@ var uploader = {
             // text/plain is required to ensure support for IE9 and older
             if (files) {
                 console.log(user);
-                redisClient.get(user.userId + "::isUploadingPost", function (err, isPost) {
-                    redisClient.get(user.userId + "::isUploadingAlbum", function (err, isAlbum) {
+                redisClient.get(user.userId + ":isUploadingPost", function (err, isPost) {
+                    redisClient.get(user.userId + ":isUploadingAlbum", function (err, isAlbum) {
                         if (isPost || isAlbum) {
                             var pathis = "";
                             var size = "";
@@ -49,7 +49,7 @@ var uploader = {
                             }
                             else if (isPost) {
                                 var format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
-                                redisClient.get(user.userId + "::uploadingPost", function (err, value) {
+                                redisClient.get(user.userId + ":uploadingPost", function (err, value) {
                                     if (err) throw err;
                                     var uploadingPost;
                                     console.log(value);
@@ -67,7 +67,7 @@ var uploader = {
                                             console.log(count);
                                             count++;
                                             uploadingPost = CryptoJS.AES.encrypt(user.userId + ":--:" + count, 'postSecretKey 6985').toString().split("/").join("");
-                                            redisClient.set(user.userId + "::uploadingPost", uploadingPost + "===." + format);
+                                            redisClient.set(user.userId + ":uploadingPost", uploadingPost + "===." + format);
                                             posts.Create(user, format, uploadingPost, function (err, callback) {
                                                 if (err) console.log(err);
                                                 console.log(callback);
@@ -89,10 +89,10 @@ var uploader = {
                                         if (size === "") {
                                             pathis = originalPath;
                                             console.log(pathis);
-                                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost + "." + format, res);
+                                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split("===.")[0]+ "."+format, res);
                                         }
                                         else {
-                                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split(".")[0] + size + "." + format, res);
+                                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split("===.")[0] + size + "." + format, res);
 
                                         }
                                     });

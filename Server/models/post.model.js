@@ -78,20 +78,31 @@ postSchema.methods.Paginate = function(query,options,req,res){
             res.send([]);
         }
         else {
-            if(posts.length > 0){
-                for(let x = 0 ; x < posts.length ; x++){
-                    redisClient.hgetall(posts.ownerId+":info",function(err,values){
-                        if( !err && values) {
-                            console.log(values);
-                        }
-                        else{
-                            console.log("err :"+ err +" / values : "+values);
-                        }
-                        if(x === posts.length-1){
+            if(posts){
+                posts.owners = {};
+                for(let x = 0 ; x < posts.docs.length ; x++){
+                    if(!posts.owners[posts.docs[x].ownerId]) {
+                        redisClient.hgetall(posts.docs[x].ownerId + ":info", function (err, info) {
+                            if (!err && info) {
+                                console.log(info);
+                                posts.owners[posts.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
+                            }
+                            else {
+                                console.log("err :" + err + " / values : " + info);
+                                posts.owners[posts.docs[x].ownerId] = "notfound" + "/" + "male.png";
+                            }
+
+                            if (x === posts.docs.length - 1) {
+                                res.send(posts);
+                            }
+                        });
+                    }
+                    else{
+                        if (x === posts.docs.length - 1) {
+                            console.log(posts);
                             res.send(posts);
                         }
-
-                    });
+                    }
                 }
             }
             else{
