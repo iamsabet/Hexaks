@@ -15,6 +15,7 @@ var validateRequest = require('../middleWares/validateRequest');
 var redis = require('redis');
 var requestIp = require("request-ip");
 var redisClient = redis.createClient({
+
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
 });    // Create the client
@@ -41,6 +42,7 @@ router.get('/login', function(req,res){
         res.render("login.html");
         }
     });
+
 });
 
 router.get('/register', function(req,res){
@@ -88,39 +90,27 @@ router.get('/api/v1/admin/', function(req,res){
 
 
 router.get('/post/:uuid', function(req,res){
+
     validateRequest(req,res,function(callback){
-        var hostPostId = req.params.uuid;
         if(callback) {
-            res.render("post.html");                 // html only static file preload some datas for authenticated
+            res.render("post.html");    // html only static file preload some datas for authenticated
         }
         else{
-            var hostPostId = req.params.uuid;
-            posts.isPrivate(hostPostId,function(callback){// html only static file preload some datas for not authenticated
-                if(callback === true){
-
-                }
-                else{
-
-                }
-            });
+            res.render("post.html");    // not authenticated
         }
     });
 });
-
-
-
 router.get('/:uuid', function(req,res){
-    var hostUserName = req.params.uuid;
     res.render("main.html");
-
 });
-
-
-router.get('/:uuid/:uuid2', function(req,res){
-    var uuid = req.params.uuid2;
-    console.log(uuid);
+router.get('/:uuid/latest', function(req,res){
     res.render("main.html");
-
+});
+router.get('/:uuid/curated', function(req,res){
+    res.render("main.html");
+});
+router.get('/:uuid/top', function(req,res){
+    res.render("main.html");
 });
 
 router.get('/api/v1/users/getMe',function(req,res){
@@ -342,31 +332,32 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
 
 
 router.post('/api/v1/posts/:uuid',function(req,res){
-    userSchema.findOne({username:req.params.uuid},{isPrivate:1},function(err,hostUser){
-        if(err) throw err;
-        if(hostUser) {
+    let userId = req.params.uuid;
+    redisClient.hgetall(userId+":info",function(err,hostUser) {
+        if (err) res.send({result:false,message:"404 - User not found "});
+        if (hostUser) {
             validateRequest(req, res, function (user) {
                 if (user) {
-                    var self = false;
+                    let self = false;
                     let canQuery = true;
                     let privatePosts = false;
-                    if(hostUser.isPrivate && user.username !== req.params.uuid){
-                        if(user.followings.indexOf(req.param.uuid) > -1){
-                            privatePosts=true;
+                    if (hostUser.privacy && user.userId !== userId) {
+                        if (user.followings.indexOf(userId) > -1) {
+                            privatePosts = true;
                             canQuery = true;
                         }
-                        else{
+                        else {
                             canQuery = false;
                         }
                     }
-                    if(user.username === req.params.uuid){
+                    else if (user.userId === userId) {
                         privatePosts = true;
                         self = true;
                     }
                     redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
                         if (err) throw err;
                         let category = undefined;
-                        if(req.body.category && req.body.category !==""){
+                        if (req.body.category && req.body.category !== "") {
                             category = [req.body.category];
                         }
                         let timeOrigin;
@@ -380,10 +371,10 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         let now = Date.now();
                         if (requestOrigin) {
                             if (pageNumber === 1) {
-                                redisClient.del(user.username+"::requestOrigin");
+                                redisClient.del(user.username + "::requestOrigin");
                                 requestOrigin = now;
-                                redisClient.set(user.username+"::requestOrigin", requestOrigin);
-                                redisClient.expire(user.username+"::requestOrigin",30000);
+                                redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                                redisClient.expire(user.username + "::requestOrigin", 30000);
                             }
                             timeOrigin = requestOrigin;
 
@@ -391,22 +382,22 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         else {
                             requestOrigin = now;
                             timeOrigin = requestOrigin;
-                            redisClient.set(user.username+"::requestOrigin", requestOrigin);
-                            redisClient.expire(user.username+"::requestOrigin",30000);
+                            redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                            redisClient.expire(user.username + "::requestOrigin", 30000);
                         }
-                        if(canQuery) {
-                            if(self){
+                        if (canQuery) {
+                            if (self) {
                                 timeEdge = 0;
                             }
-                            posts.getPostsByFiltersAndOrders(req, res, user, [req.params.uuid], orderBy, isCurated, hashtags, category, curator ,false, true, privatePosts, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
+                            posts.getPostsByFiltersAndOrders(req, res, user, [req.params.uuid], orderBy, isCurated, hashtags, category, curator, false, true, privatePosts, 0, 1000000, timeOrigin, timeEdge, counts, pageNumber);
                         }
-                        else{
-                            res.send({result:false,message:"403 - Forbidden Account is Private"});
+                        else {
+                            res.send({result: false, message: "403 - Forbidden Account is Private"});
                         }
                     });
                 }
                 else {
-                    if(!hostUser.isPrivate) {
+                    if (!hostUser.isPrivate) {
                         redisClient.get(requestIp.getClientIp(req), function (err, requestOrigin) {
                             if (err) throw err;
                             let category = undefined;
@@ -424,10 +415,10 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                             let now = Date.now();
                             if (requestOrigin) {
                                 if (pageNumber === 1) {
-                                    redisClient.del(requestIp.getClientIp(req)+ "::requestOrigin");
+                                    redisClient.del(requestIp.getClientIp(req) + "::requestOrigin");
                                     requestOrigin = now;
                                     redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
-                                    redisClient.expire(requestIp.getClientIp(req)+ "::requestOrigin", 30000);
+                                    redisClient.expire(requestIp.getClientIp(req) + "::requestOrigin", 30000);
                                 }
                                 timeOrigin = requestOrigin;
 
@@ -435,7 +426,7 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                             else {
                                 requestOrigin = now;
                                 timeOrigin = requestOrigin;
-                                redisClient.set(requestIp.getClientIp(req)+ "::requestOrigin", requestOrigin);
+                                redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
                                 redisClient.expire(requestIp.getClientIp(req) + "::requestOrigin", 30000);
                             }
 
@@ -443,13 +434,13 @@ router.post('/api/v1/posts/:uuid',function(req,res){
 
                         });
                     }
-                    else{
-                        res.send({result:false,message:"Account is Private - login and follow "});
+                    else {
+                        res.send({result: false, message: "Account is Private - login and follow "});
                     }
                 }
             });
         }
-        else{
+        else {
             res.send("404 Not Found user");
         }
     });
@@ -547,10 +538,15 @@ router.post('/api/v1/getComments/',function(req,res){
         validateRequest(req, res, function (user) {
             var username;
             if (user) {
-                username = user.username
+                username = user.username;
+
             }
             else {
-                username = requestIp.getClientIp(req).toString();
+                username = user.username;
+                user = {
+                    notAuth : true,
+                    userIp : requestIp.getClientIp(req).toString()
+                };
             }
 
             var now = Date.now();
@@ -568,13 +564,17 @@ router.post('/api/v1/getComments/',function(req,res){
                         redisClient.expire(username + "::cmRequestOrigin", 30000);
                     }
                     timeOrigin = requestOrigin;
+
                 }
                 else {
+
                     requestOrigin = now;
                     timeOrigin = requestOrigin;
                     redisClient.set(username + "::cmRequestOrigin", requestOrigin);
                     redisClient.expire(username + "::cmRequestOrigin", 30000);
+
                 }
+
                 comments.getPostComments(req, res, user, timeOrigin, postId, counts, pageNumber);
             });
 

@@ -9,7 +9,7 @@ var commentSchema = new Schema({
     mentions:[], // usernames @
     hashtags : [], // #
     fullText:String,
-    diactive:Boolean,
+    deactive:Boolean,
     deleted:Boolean,
     createdAt:Number,
     edited:Boolean,

@@ -9,7 +9,7 @@ var userSchema = new Schema({
     profilePictureSet:String,
     profilePictureUrls:[],
     favouriteProfiles : [], // user ids  //  up to 6   // -->   get most popular profile
-    intrestCategories:[], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
+    interestCategories:[], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
     password : String,
     gender:String,
     birthDay : {
@@ -17,7 +17,6 @@ var userSchema = new Schema({
         date : Date,
     },
     followingsCount:Number,
-    followers: [], // userIds
     followersCount:Number,
     location:String,
     phoneNumber:String,
@@ -38,9 +37,10 @@ var userSchema = new Schema({
         phoneNumber : String,
         bio: String
     },
-    badges:[], // [{"badgid":"kajshdkdass","badsgName":"Feloaskd","badgePictureUrl":"akjsdhkulkj.png"}]
+    badges:[], // badgeIds --> up to 3 badges
     roles : [], // String - Sabet / Admin / Curator / Blogger / Premium / --> founder <-- under 1000 --> future advantages --> + premium ...
     inactivate:Boolean,
+    deactive:Boolean,
     privacy:Boolean,
     viewedPosts:[], // last 100s
     ban:{

@@ -172,8 +172,9 @@ var posts = {
         }
     },
 
+    getPostInfo: function(req,res,user){
 
-
+    },
     activate:function(req,res,user){
         redisClient.get(user.userId+"::uploadingPost",function(err,postId){
             if(err) throw err;
