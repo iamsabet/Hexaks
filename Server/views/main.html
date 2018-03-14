@@ -343,6 +343,7 @@
     var left = {};
     var right = {};
     var currentPostItterator = 0;
+    var currentPostId = "";
     var postsList = [];
     var pageType="";
     var total=0;
@@ -564,8 +565,9 @@
     });
     $("body").on("click",".eachPost",function(){
 
-        var postId = this.classList[1];
-        makeUrl(postId);
+        currentPostId = this.classList[1];
+        currentPostItterator = parseInt($(this).children("p")[0].innerHTML);
+        makeUrl(currentPostId);
     });
     $("body").on("click",".postFooter .leftButton",function(){
         slideAction(0,"left");
@@ -711,8 +713,6 @@
         }
         else if("post"){
 
-            var postId = postid || window.location.pathname.split("/")[2];
-            currentPostItterator = parseInt($(`.post-${postId} p`).html());
             slideAction(currentPostItterator,"initial");
 
         }
@@ -883,7 +883,6 @@
                 }
                 if (pageType === "settings" || pageType === "post" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy") {
                     if(postId) {
-
                         changePage(pageType + "/" + postId, pageType+"/"+postId, writeState,true);
                     }
                     else{
@@ -1048,10 +1047,6 @@
                         }
                     }
                     // => function calls :
-
-                    if(newHistory || false) {
-                        pushHistory(pageName+"/"+postid,pageType,pageType,false);
-                    }
                 }
                 else {
                     alert("Oops , Page Name Not Defined !");
@@ -1336,18 +1331,19 @@
                 if (postsList[currentPostItterator]) {
                     currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
+                    loadPostDatas(currentPostObject,currentPostItterator);
                 }
                 else {
                     alert("post not found");
+                    loadPostDatas("post not found",-1);
                 }
             }
             else{
                 if(currentPostItterator === total - 1 && postsList.length === total){
                     alert("No More Posts");
+                    loadPostDatas("no more posts left",-1);
                 }
             }
-                // load data
-
         }
         else if (situation === "right") {
             if(currentPostItterator < postsList.length -1) {
@@ -1381,18 +1377,24 @@
                 if (postsList[currentPostItterator]) {
                     currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
+                    loadPostDatas(currentPostObject,currentPostItterator);
                 }
                 else {
                     alert("post not found");
+                    loadPostDatas("post not found",-1);
                 }
             }
             else{
                 if(currentPostItterator === total - 1 && postsList.length === total){
                     alert("No More Posts");
+                    loadPostDatas("post not found",-1);
+
                 }
             }
+            loadPostDatas(currentPostObject,currentPostItterator);
         }
         else if (situation === "initial") {
+
             currentPostItterator = postNumber;
             if (currentPostItterator > -1 && currentPostItterator <= postsList.length - 1) {
                 if (postsList[currentPostItterator + 1]) {
@@ -1406,6 +1408,8 @@
                 if(postsList[currentPostItterator]){
                     currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
+
+                    loadPostDatas(currentPostObject,currentPostItterator);
                     if(left) {
                         $(".pictureBox").html(`<img src="../Statics/Pictures/${left}" class="leftPic"/>`);
                     }
@@ -1422,6 +1426,7 @@
 
                 }
                 else{
+                    loadPostDatas("post not found",-1);
                     alert("post not found");
                 }
             }
@@ -1429,8 +1434,6 @@
         else{
             console.log("Invalid Command");
         }
-
-        loadPostDatas(currentPostObject,currentPostItterator);
     }
 
     
@@ -1443,8 +1446,8 @@
         // change datas
         $(".postFooter .caption .editable").val(postObject.caption);
         $(".postFooter .caption .notEditable").val(postObject.caption);
-        $(".postFooter .ownerUsername").html(postObject.owner.username);
-        $(".postFooter .ownerProfilePicture").attr("src","../Statics/ProfilePics/"+postObject.owner.profilePicUrl);
+        $(".postFooter .ownerUsername").html(usersInfo[postObject.ownerId].split("/")[0]);
+        $(".postFooter .ownerProfilePicture").attr("src","../Statics/ProfilePics/"+ usersInfo[postObject.ownerId].split("/")[1]);
         $(".post .infoContainer").html(postObject.originalImage); // complete page loads
 
     }
@@ -1513,8 +1516,8 @@
             <p hidden>${index}</p>
             <p hidden>${postsList[index].ext}</p>
                 <div class="header">
-                    <img class="profilePicture left" src="../Statics/images/profilePics/${usersInfo[postsList[index].ownerId].split("/")[1]}" /> <!-- profilePicture -->
-                    <span class="username left">${usersInfo[postsList[index].ownerId].split("/")[0]}</span> <!-- username  -->
+                    <img class="profilePicture left" src="../Statics/ProfilePics/${usersInfo[postsList[index].ownerId].split("/")[1]}" />
+                    <span class="username left">${usersInfo[postsList[index].ownerId].split("/")[0]}</span>
                     <div class="curatorContainer right">
                         <img src="../Statics/images/images/curateSmallBtn.png"/>
                     </div>
