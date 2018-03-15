@@ -38,7 +38,7 @@ var follows = {
 
         };
         let options = {
-            select: 'follower followId',
+            select: 'follower followId following',
             sort: {updatedAt: +1},
             page: pageNumber,
             limit: parseInt(counts)

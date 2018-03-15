@@ -27,36 +27,25 @@ redisClient.select(2,function(){
 
 var comments = {
 
-    getPostComments: function(req, res,user,timeOrigin,timeEdgeIn,postId,counts,pageNumber) {
+    getPostComments: function(req, res,user,timeOrigin,postId,counts,pageNumber) {
         postSchema.findOne({postId:postId},{privacy:1, postId:1},function(err,post){
             if(err) res.send({result:false,message:"500 post found for comments"});
             if(post){
                 // Decrypt post id to get owner id from it
                 let bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
                 let postOwnerId = bytes.toString().split(":--:")[0];
-                let timeEdge = timeEdgeIn;
                 let query = {
                     "ownerId": postOwnerId,
                     "postId": postId,
                     deactive: false,
 
                 };
-                if (timeEdge <= (31 * 24) && timeEdge > -1) {
-                    if (timeEdge !== 0) {
-                        timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
-                        query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
-                    }
-                }
-                else {
-                    timeEdge = (timeOrigin - (24 * 31 * 3600 * 1000)); // 2 years
-                    query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
-                }
 
                 let options = {
-                    select: 'postId owner createdAt caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
+                    select: 'commentId postId postOwnerId ownerId mentions hashtags fullText deactive deleted createdAt edited updatedAt',
                     sort: {createdAt: +1},
                     page: pageNumber,
-                    limit: counts
+                    limit: parseInt(counts)
                 };
 
 

@@ -33,17 +33,22 @@ followSchema.methods.Paginate = function(query,options,req,res){
         else {
             if(follows){
                 follows.owners = {};
+                let selector = "follower";
+                if(query.following === {$exists: true}){
+                    selector = "following";
+                }
+
                 if(follows.docs.length > 0) {
                     for (let x = 0; x < follows.docs.length; x++) {
-                        if (!follows.owners[follows.docs[x].ownerId]) {
-                            redisClient.hgetall(follows.docs[x].ownerId + ":info", function (err, info) {
+                        if (!follows.owners[follows.docs[x][selector]]) {
+                            redisClient.hgetall(follows.docs[x][selector] + ":info", function (err, info) {
                                 if (!err && info) {
                                     console.log(info);
-                                    follows.owners[follows.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
+                                    follows.owners[follows.docs[x][selector]] = info.username + "/" + info.profilePictureSet;
                                 }
                                 else {
                                     console.log("err :" + err + " / values : " + info);
-                                    follows.owners[follows.docs[x].ownerId] = "notfound" + "/" + "male.png";
+                                    follows.owners[follows.docs[x][selector]] = "notfound" + "/" + "male.png";
                                 }
 
                                 if (x === follows.docs.length - 1) {
