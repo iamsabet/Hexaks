@@ -113,6 +113,78 @@ router.get('/:uuid/top', function(req,res){
     res.render("main.html");
 });
 
+
+
+router.post('/api/v1/:uuid/followings',function(req,res) {
+    let hostId = req.params.uuid.toString();
+    validateRequest(req, res, function (user) {
+        if (user) {
+            redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
+                if (err) throw err;
+
+                let timeOrigin;
+                let pageNumber = req.body.pageNumber || 1;
+                let counts = req.body.counts || 10;
+                let timeEdge = 0;
+                let now = Date.now();
+                if (requestOrigin) {
+                    if (pageNumber === 1) {
+                        redisClient.del(user.username + "::requestOrigin");
+                        requestOrigin = now;
+                        redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                        redisClient.expire(user.username + "::requestOrigin", 30000);
+                    }
+                    timeOrigin = requestOrigin;
+
+                }
+                else {
+                    requestOrigin = now;
+                    timeOrigin = requestOrigin;
+                    redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                    redisClient.expire(user.username + "::requestOrigin", 30000);
+                }
+                follows.getFollowingsPaginated(req, res, user, hostId,timeOrigin, counts, pageNumber);
+            });
+        }
+    });
+});
+
+
+router.post('/api/v1/:uuid/followers',function(req,res) {
+    let hostId = req.params.uuid.toString();
+    validateRequest(req, res, function (user) {
+        if (user) {
+            redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
+                if (err) throw err;
+
+                let timeOrigin;
+                let pageNumber = req.body.pageNumber || 1;
+                let counts = req.body.counts || 10;
+                let timeEdge = 0;
+                let now = Date.now();
+                if (requestOrigin) {
+                    if (pageNumber === 1) {
+                        redisClient.del(user.username + "::requestOrigin");
+                        requestOrigin = now;
+                        redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                        redisClient.expire(user.username + "::requestOrigin", 30000);
+                    }
+                    timeOrigin = requestOrigin;
+
+                }
+                else {
+                    requestOrigin = now;
+                    timeOrigin = requestOrigin;
+                    redisClient.set(user.username + "::requestOrigin", requestOrigin);
+                    redisClient.expire(user.username + "::requestOrigin", 30000);
+                }
+                follows.getFollowingsPaginated(req, res, user, hostId,timeOrigin, counts, pageNumber);
+            });
+        }
+    });
+});
+
+
 router.get('/api/v1/users/getMe',function(req,res){
     validateRequest(req,res,function(callback){
        if(callback){
@@ -156,6 +228,7 @@ router.post('/api/v1/users/updateProfileInfo',function(req,res){
         }
     });
 });
+
 
 router.post('/api/v1/users/follow',function(req,res){
 
@@ -349,18 +422,15 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         else {
                             canQuery = false;
                         }
-                        console.log("1");
                     }
                     else if (user.userId === userId) {
                         privatePosts = true;
                         self = true;
-                        console.log("2");
                     }
                     else if(!JSON.parse(hostUser.privacy)){
                         privatePosts = true;
                         canQuery = true;
                         self = false;
-                        console.log("3");
                     }
                     redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
                         if (err) throw err;

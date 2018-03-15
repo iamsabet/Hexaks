@@ -37,7 +37,6 @@ var follows = {
             deactive: false,
 
         };
-
         let options = {
             select: 'follower followId',
             sort: {updatedAt: +1},
@@ -45,111 +44,70 @@ var follows = {
             limit: parseInt(counts)
         };
         redisClient.hgetall(hostId + ":info", function (err, info) {
-            if(err) throw err;
-            if(info){
-        var host = {};
-        var canQuery = false;
-        if (hostId === user.userId) {
-            host = user; // self
-            canQuery = true;
-        }
-        else {
-            if (!JSON.parse(info.privacy)){
+            if (err) throw err;
+            if (info) {
+                if (hostId === user.userId) {
 
-                follows.Paginate(query, options, req, res);
-
-
-                res.send({
-                    result: false,
-                    message: "Content is private only available for private user followers"
-                });
-            }
-        }
-        else if (post.privacy && !user.notAuth) {
-            if (postOwnerId === user.userId) {
-
-                comments.Paginate(query, options, req, res);
-
-            }
-            else {
-                redisClient.hgetall(postOwnerId + ":info", function (err, info) {
-                    if (!err && info) {
-                        if (!info.privacy) {
-                            post.Paginate(query, options, req, res);
+                    follows.Paginate(query, options, req, res); // Authorized
+                }
+                else {
+                    if (JSON.parse(info.privacy)) {
+                        if(user.followings.indexOf(hostId)) {
+                            follows.Paginate(query, options, req, res); // Authorized
                         }
-                        else {
-                            followSchema.findOne({
-                                follower: user.userId,
-                                following: postOwnerId,
-                                accepted: true,
-                                deactive: false
-                            }, function (err, flw) {
-                                if (err) res.send({
-                                    result: false,
-                                    message: "500 follow not found error for comments"
-                                });
-                                if (flw) { // access authorized user to private data
-
-                                    comments.Paginate(query, options, req, res);
-
-                                }
-                                else {
-
-                                    res.send({result: false, message: "401 Unauthorized"});
-                                }
-                            });
+                        else{
+                            res.send({result:false,message:"Content is priovate"});
                         }
                     }
-                    else {
-                        res.send({result: false, message: "user info not found in cache"}); // redis
+                    else{ // not private
+                        follows.Paginate(query, options, req, res); // Authorized
                     }
-                });
+                }
             }
-        }
+            else{
+                res.send({result:false,message:"user info not found in cache"});
+            }
+        });
     },
-    getFollowingsPaginated: function(req, res,user,postId,timeOrigin,timeEdgeIn,counts,pageNumber) {
+    getFollowingsPaginated: function(req, res,user,hostId,timeOrigin,counts,pageNumber) {
 
-        // Decrypt
-        var bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-        var plaintext = bytes.toString();
-
-
-
-        console.log(timeEdgeIn);
-        var timeEdge = timeEdgeIn;
         let query = {
-            "ownerId" : ownerId,
-            "postId" : postId,
-            diactive: false,
+            "following": {$exists: true},
+            "follower": hostId,
+            deactive: false,
 
         };
-        if (timeEdge <= (31*24) && timeEdge > -1) {
-            if(timeEdge !== 0) {
-                timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
-                query.createdAt = {$gte:timeEdge,$lt:timeOrigin} // time edge up to 31 days
-            }
-        }
-        else{
-            timeEdge = (timeOrigin - (3600 * 1000)); // 1day
-            query.createdAt = {$gte: timeEdge,$lt:timeOrigin} // time edge up to 31 days
-        }
-        if (isCurated===true) {
-            query.isCurated = isCurated;
-            if(curator !== "" && curator !== undefined) {
-                query.curator = {
-                    username: curator
-                };
-            }
-        }
         let options = {
-            select: 'postId owner createdAt caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
-            sort: {createdAt: +1},
+            select: 'following followId',
+            sort: {updatedAt: +1},
             page: pageNumber,
-            limit:counts
+            limit: parseInt(counts)
         };
-        // console.log(query);
-        // console.log(options);
-        post.Paginate(query, options,req,res);
+        redisClient.hgetall(hostId + ":info", function (err, info) {
+            if (err) throw err;
+            if (info) {
+                if (hostId === user.userId) {
+
+                    follows.Paginate(query, options, req, res); // Authorized
+                }
+                else {
+                    if (JSON.parse(info.privacy)) {
+                        if(user.followings.indexOf(hostId)) {
+                            follows.Paginate(query, options, req, res); // Authorized
+                        }
+                        else{
+                            res.send({result:false,message:"Content is priovate"});
+                        }
+                    }
+                    else{ // not private
+                        follows.Paginate(query, options, req, res); // Authorized
+                    }
+                }
+            }
+            else{
+                res.send({result:false,message:"user info not found in cache"});
+            }
+        });
     },
     follow:function(req,res,user){
         let hostId = req.body.followingId;
