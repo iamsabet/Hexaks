@@ -35,11 +35,12 @@ var comments = {
                 let bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
                 let postOwnerId = bytes.toString().split(":--:")[0];
                 let query = {
-                    "ownerId": postOwnerId,
-                    "postId": postId,
+                    postId: postId,
                     deactive: false,
-
                 };
+                if(req.body.self){
+                    query.ownerId = user.userId
+                }
 
                 let options = {
                     select: 'commentId postId postOwnerId ownerId mentions hashtags fullText deactive deleted createdAt edited updatedAt',
@@ -47,9 +48,7 @@ var comments = {
                     page: pageNumber,
                     limit: parseInt(counts)
                 };
-
-
-                if (post.privacy && user.notAuth && user.notAuth === true) {
+                if (post.privacy && user===null) {
                     redisClient.hgetall(postOwnerId+":info",function(err,info) {
                         if(!err && info){
                             if(info.privacy){
@@ -68,17 +67,15 @@ var comments = {
                         message: "Content is private : follow the owner of the post to access these contents"
                     });
                 }
-                else if (post.privacy && !user.notAuth) {
+                else if (post.privacy && user) {
                     if(postOwnerId === user.userId){
-
                         comments.Paginate(query, options, req, res);
-
                     }
                     else {
                         redisClient.hgetall(postOwnerId+":info",function(err,info) {
                             if (!err && info) {
                                 if (!info.privacy) {
-                                    post.Paginate(query, options, req, res);
+                                    comments.Paginate(query, options, req, res);
                                 }
                                 else {
                                     followSchema.findOne({
@@ -110,7 +107,6 @@ var comments = {
                     }
                 }
                 else {
-
                     comments.Paginate(query, options, req, res);
                 }
             }
@@ -122,7 +118,7 @@ var comments = {
     },
 
     Create: function(req,res,user) {
-        // not blocked - check can see post
+        
         let postId = req.body.postId;
         let ownerId = req.body.ownerId;
         let postOwnerId = req.body.postOwnerId;
@@ -134,48 +130,66 @@ var comments = {
         let m;
         let hashtags = [];
         let mentions = [] ;
+        redisClient.hgetall(postOwnerId+":info",function(err,info) {
+            if(err) throw err;
+            if(info){
+                let blockList = JSON.parse(info.blockList);
+                if(blockList.indexOf(user.userId) === -1) {
+                    if(user.blockList.indexOf(postOwnerId) === -1) {
+                        while ((m = reHashtag.exec(str)) != null) {
+                            if (m.index === reHashtag.lastIndex) {
+                                reHashtag.lastIndex++;
+                            }
+                            if (hashtags.indexOf(m[0]) === -1) {
+                                hashtags.push(m[0]);
+                            }
+                        }
+                        let n;
+                        while ((n = reMention.exec(str)) != null) {
+                            if (m.index === reMention.lastIndex) {
+                                reMention.lastIndex++;
+                            }
+                            if (hashtags.indexOf(n[0]) === -1) {
+                                mentions.push(n[0]);
+                            }
+                        }
 
-        while ((m = reHashtag.exec(str)) != null) {
-            if (m.index === reHashtag.lastIndex) {
-                reHashtag.lastIndex++;
-            }
-            if(hashtags.indexOf(m[0]) === -1){
-                hashtags.push(m[0]);
-            }
-        }
-        let n;
-        while ((n = reMention.exec(str)) != null) {
-            if (m.index === reMention.lastIndex) {
-                reMention.lastIndex++;
-            }
-            if(hashtags.indexOf(n[0]) === -1){
-                mentions.push(n[0]);
-            }
-        }
-
-        if (postId) {
-            let commentObject = {
-                postId : postId,
-                postOwnerId : postOwnerId,
-                ownerId : ownerId,
-                mentions:[], // usernames @
-                hashtags : [], // #
-                fullText:text,
-                diactive:false,
-            };
-            post.create(commentObject, function (result) {
-                if (result !== null) {
-                    console.log("commentId : "+result);
-                    return callback(result);
+                        if (postId && postOwnerId && ownerId) {
+                            let commentObject = {
+                                postId: postId,
+                                postOwnerId: postOwnerId,
+                                ownerId: ownerId,
+                                mentions: [], // usernames @
+                                hashtags: [], // #
+                                fullText: text,
+                                deactive: false,
+                            };
+                            post.create(commentObject, function (result) {
+                                if (result !== null) {
+                                    console.log("commentId : " + result);
+                                    return callback(result);
+                                }
+                                else {
+                                    return callback(null);
+                                }
+                            });
+                        }
+                        else {
+                            return callback({result: false, message: "No posts uploaded yet"});
+                        }
+                    }
+                    else{
+                        res.send({result:false,message:"you have blocked the post owner "}); // redis
+                    }
                 }
-                else {
-                    return callback(null);
+                else{
+                    res.send({result:false,message:"you have been blocked by the post owner"}); // redis
                 }
-            });
         }
         else{
-            return callback({result:false,message:"No posts uploaded yet"});
-        }
+                res.send({result:false,message:"user info not found in cache"}); // redis
+            }
+        });
     },
     edit:function(req,res,user){
 
