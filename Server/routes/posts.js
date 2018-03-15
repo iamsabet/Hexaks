@@ -47,7 +47,7 @@ var posts = {
                 categoryQuery = {$in:category};
         }
         console.log(timeEdgeIn);
-        var timeEdge = timeEdgeIn;
+        let timeEdge = timeEdgeIn;
         if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.value" || orderedBy === "views" || orderedBy === "rate") {
             // timeWindow
 
@@ -58,7 +58,7 @@ var posts = {
             if(privateOrNot === true){
                 privateOrNot = {$exists:true};
             }
-            var userId = {$in:userIds};
+            let userId = {$in:userIds};
             if(userIds ==="all"){
                 userId = {$exists:true}
             }
@@ -84,15 +84,13 @@ var posts = {
                 query.createdAt = {$gte: timeEdge,$lt:timeOrigin} // time edge up to 31 days
             }
             if (isCurated===true) {
-                query.isCurated = isCurated;
+                query.curatorId =  {$exists:true};
                 if(curator !== "" && curator !== undefined) {
-                    query.curator = {
-                        username: curator
-                    };
+                    query.curatorId = curator;
                 }
             }
             let options = {
-                select: 'postId owner createdAt ownerId mentions caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
+                select: 'postId owner createdAt ownerId mentions caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views ext advertise rate',
                 sort: {createdAt: +1},
                 page: pageNumber,
                 limit: parseInt(counts)
@@ -107,7 +105,7 @@ var posts = {
                 options.sort = {"rate.value" : +1};
             }
             else if (orderBy === "rate") {
-                options.sort = {rate: -1};
+                options.sort = {"rate.points": -1};
             }
             else if(orderBy === "views"){ // "views"
                 options.sort = {views: -1};
@@ -139,20 +137,17 @@ var posts = {
                 caption: "",
                 rate: {
                     value: 0.0,
+                    points : 0.0,
                     counts: 0,
                 },
                 views: 0,
                 // viewers: [],// usernames // length
-                curator: {
-                    username: "",
-                    profilePicUrl: "",
-                },
+                curatorId:"",
                 private: false,
                 rejected: {
                     value: false,
                     reason: "",
                 },
-                isCurated : false,
                 advertise: {},
                 activated: false,
                 deleted:false,

@@ -341,7 +341,7 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                     let self = false;
                     let canQuery = true;
                     let privatePosts = false;
-                    if (hostUser.privacy && user.userId !== userId) {
+                    if (JSON.parse(hostUser.privacy) && user.userId !== userId) {
                         if (user.followings.indexOf(userId) > -1) {
                             privatePosts = true;
                             canQuery = true;
@@ -349,10 +349,18 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         else {
                             canQuery = false;
                         }
+                        console.log("1");
                     }
                     else if (user.userId === userId) {
                         privatePosts = true;
                         self = true;
+                        console.log("2");
+                    }
+                    else if(!JSON.parse(hostUser.privacy)){
+                        privatePosts = true;
+                        canQuery = true;
+                        self = false;
+                        console.log("3");
                     }
                     redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
                         if (err) throw err;
@@ -389,7 +397,7 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                             if (self) {
                                 timeEdge = 0;
                             }
-                            posts.getPostsByFiltersAndOrders(req, res, user, [req.params.uuid], orderBy, isCurated, hashtags, category, curator, false, true, privatePosts, 0, 1000000, timeOrigin, timeEdge, counts, pageNumber);
+                            posts.getPostsByFiltersAndOrders(req, res, user, [userId], orderBy, isCurated, hashtags, category, curator, false, true, privatePosts, 0, 1000000, timeOrigin, timeEdge, counts, pageNumber);
                         }
                         else {
                             res.send({result: false, message: "403 - Forbidden Account is Private"});
@@ -397,7 +405,7 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                     });
                 }
                 else {
-                    if (!hostUser.isPrivate) {
+                    if (!JSON.parse(hostUser.privacy)) {
                         redisClient.get(requestIp.getClientIp(req), function (err, requestOrigin) {
                             if (err) throw err;
                             let category = undefined;

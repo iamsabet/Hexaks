@@ -24,9 +24,9 @@ var followSchema = new Schema({
     updatedAt : Number
 });
 
-followSchema.methods.Create = function(req,res,followObject,info){
+followSchema.methods.create = function(req,res,followObject,info){
 
-    let updateFields = {deactive: false , accepted:true};
+    var updateFields = {deactive: false , accepted:true};
     if(info.privacy){
         updateFields.accepted = false;
     }
@@ -39,7 +39,7 @@ followSchema.methods.Create = function(req,res,followObject,info){
         if (result && result.n === 0) {
             followObject.createdAt = Date.now();
             followObject.deactive = false;
-            followObject.accepted = !info.privacy;
+            followObject.accepted = !JSON.parse(info.privacy);
             followObject.followId = random.generate(14);
             newFollow = new Follow(followObject);
             newFollow.save(function (err) {
@@ -48,10 +48,10 @@ followSchema.methods.Create = function(req,res,followObject,info){
             });
         }
         else if(!result){
-            console.log(!info.privacy);
+            console.log(!JSON.parse(info.privacy));
             followObject.createdAt = Date.now();
             followObject.deactive = false;
-            followObject.accepted = !info.privacy;
+            followObject.accepted = !JSON.parse(info.privacy);
             followObject.followId = random.generate(14);
             newFollow = new Follow(followObject);
             newFollow.save(function (err) {
@@ -69,7 +69,7 @@ followSchema.methods.Create = function(req,res,followObject,info){
 followSchema.methods.Remove = function(req,res,unfollowOject){
     follow.findOneAndUpdate({follower:unfollowOject.follower,following:unfollowOject.following,deactive:false},{deactive:true,accepted:false},function(err,result){
        if(err) res.send({result:false,message:"Oops Something went wrong"});
-       if(result.nModified === 1) {
+       if(result && result.n === 1) {
            res.send(true);
        }
        else{

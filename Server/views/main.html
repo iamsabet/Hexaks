@@ -674,8 +674,8 @@
                     requestHandler("/api/v1/posts/home", "POST", Filters, "getPostsByFilter");
             }break;
             default : {
-                console.log(pageType);
-                if (input.isPrivate) {
+                debugger;
+                if (input.privacy) {
                     if (input.following) {
                         if(host.userId) {
                             requestHandler("/api/v1/posts/" + host.userId, "POST", Filters, "getPostsByFilter");
@@ -1223,7 +1223,7 @@
             host.profilePictureUrls = res.user.profilePictureUrls || [];
             host.following = res.following;
             host.followed = res.followed;
-            debugger;
+
             $(".profileTop .loader").addClass("hide");
 
             if (res.followed !== null && res.following !== null) {
@@ -1251,7 +1251,7 @@
             }
             Filters.hashtags = ""; // to lowwer case
             Filters.category = "";
-            getPostsByFilter({username:res.user.username ,followed:res.followed , following:res.following,privacy:res.user.privacy});
+            getPostsByFilter({userId:host.userId ,followed:res.followed , following:res.following,privacy:host.privacy});
         }
         else {
             alert("User not found !");

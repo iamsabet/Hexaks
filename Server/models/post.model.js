@@ -40,13 +40,11 @@ var postSchema = new mongoose.Schema({
     caption:String,
     rate:{
         value:Float,
+        points : Float, // value * counts
         counts: Number
     },
     views : Schema.Types.Long ,     // viewers.length length
-    curator : {
-        username:String,
-        profilePicUrl:String,
-    },
+    curatorId:String,
     private:Boolean,
     rejected : {
         value: Boolean,
@@ -55,7 +53,6 @@ var postSchema = new mongoose.Schema({
     advertise:{
         link:String,
     },
-    isCurated : Boolean,
     activated:Boolean,
     createdAt:Number,
     deleted:Boolean,
@@ -75,34 +72,39 @@ postSchema.methods.Paginate = function(query,options,req,res){
     post.paginate(query,options,function(err,posts){
         if(err) {
             console.log(err);
-            res.send([]);
+            res.send({docs:[],total:0});
         }
         else {
             if(posts){
                 posts.owners = {};
-                for(let x = 0 ; x < posts.docs.length ; x++){
-                    if(!posts.owners[posts.docs[x].ownerId]) {
-                        redisClient.hgetall(posts.docs[x].ownerId + ":info", function (err, info) {
-                            if (!err && info) {
-                                console.log(info);
-                                posts.owners[posts.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
-                            }
-                            else {
-                                console.log("err :" + err + " / values : " + info);
-                                posts.owners[posts.docs[x].ownerId] = "notfound" + "/" + "male.png";
-                            }
+                if(posts.docs.length > 0) {
+                    for (let x = 0; x < posts.docs.length; x++) {
+                        if (!posts.owners[posts.docs[x].ownerId]) {
+                            redisClient.hgetall(posts.docs[x].ownerId + ":info", function (err, info) {
+                                if (!err && info) {
+                                    console.log(info);
+                                    posts.owners[posts.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
+                                }
+                                else {
+                                    console.log("err :" + err + " / values : " + info);
+                                    posts.owners[posts.docs[x].ownerId] = "notfound" + "/" + "male.png";
+                                }
 
+                                if (x === posts.docs.length - 1) {
+                                    res.send(posts);
+                                }
+                            });
+                        }
+                        else {
                             if (x === posts.docs.length - 1) {
+                                console.log(posts);
                                 res.send(posts);
                             }
-                        });
-                    }
-                    else{
-                        if (x === posts.docs.length - 1) {
-                            console.log(posts);
-                            res.send(posts);
                         }
                     }
+                }
+                else{
+                    res.send({docs:[],total:0});
                 }
             }
             else{

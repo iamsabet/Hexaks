@@ -29,45 +29,83 @@ redisClient.select(2,function(){
 
 var follows = {
 
-    getFollowersPaginated: function(req, res,user,timeOrigin,counts,pageNumber) {
-
-        // Decrypt
-        var bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-        var plaintext = bytes.toString();
+    getFollowersPaginated: function(req, res,user,hostId,timeOrigin,counts,pageNumber) {
 
         let query = {
-            "ownerId" : ownerId,
-            "postId" : postId,
-            diactive: false,
+            "follower": {$exists: true},
+            "following": hostId,
+            deactive: false,
 
         };
-        if (timeEdge <= (31*24) && timeEdge > -1) {
-            if(timeEdge !== 0) {
-                timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
-                query.createdAt = {$gte:timeEdge,$lt:timeOrigin} // time edge up to 31 days
-            }
-        }
-        else{
-            timeEdge = (timeOrigin - (3600 * 1000)); // 1day
-            query.createdAt = {$gte: timeEdge,$lt:timeOrigin} // time edge up to 31 days
-        }
-        if (isCurated===true) {
-            query.isCurated = isCurated;
-            if(curator !== "" && curator !== undefined) {
-                query.curator = {
-                    username: curator
-                };
-            }
-        }
+
         let options = {
-            select: 'postId owner createdAt caption largeImage views private rejected activated updatedAt curator hashtags categories exifData originalImage views isCurated ext advertise rate',
-            sort: {createdAt: +1},
+            select: 'follower followId',
+            sort: {updatedAt: +1},
             page: pageNumber,
-            limit:counts
+            limit: parseInt(counts)
         };
-        // console.log(query);
-        // console.log(options);
-        post.Paginate(query, options,req,res);
+        redisClient.hgetall(hostId + ":info", function (err, info) {
+            if(err) throw err;
+            if(info){
+        var host = {};
+        var canQuery = false;
+        if (hostId === user.userId) {
+            host = user; // self
+            canQuery = true;
+        }
+        else {
+            if (!JSON.parse(info.privacy)){
+
+                follows.Paginate(query, options, req, res);
+
+
+                res.send({
+                    result: false,
+                    message: "Content is private only available for private user followers"
+                });
+            }
+        }
+        else if (post.privacy && !user.notAuth) {
+            if (postOwnerId === user.userId) {
+
+                comments.Paginate(query, options, req, res);
+
+            }
+            else {
+                redisClient.hgetall(postOwnerId + ":info", function (err, info) {
+                    if (!err && info) {
+                        if (!info.privacy) {
+                            post.Paginate(query, options, req, res);
+                        }
+                        else {
+                            followSchema.findOne({
+                                follower: user.userId,
+                                following: postOwnerId,
+                                accepted: true,
+                                deactive: false
+                            }, function (err, flw) {
+                                if (err) res.send({
+                                    result: false,
+                                    message: "500 follow not found error for comments"
+                                });
+                                if (flw) { // access authorized user to private data
+
+                                    comments.Paginate(query, options, req, res);
+
+                                }
+                                else {
+
+                                    res.send({result: false, message: "401 Unauthorized"});
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        res.send({result: false, message: "user info not found in cache"}); // redis
+                    }
+                });
+            }
+        }
     },
     getFollowingsPaginated: function(req, res,user,postId,timeOrigin,timeEdgeIn,counts,pageNumber) {
 
@@ -128,15 +166,24 @@ var follows = {
                     if(user.followings.indexOf(req.body.followingId) === -1) {
                         if(!JSON.parse(info.privacy)){
                             console.log(JSON.parse(info.privacy));
-                            userSchema.findOneAndUpdate({userId: followObject.follower,deactive:false}, {
-                                $inc: {followingsCount: +1},
-                                $addToSet: {followings: followObject.following}
+                            user.save();
+                            userSchema.update({userId: followObject.follower}, {
+                                    $inc: {followingsCount: +1},
+                                    $addToSet: {followings: followObject.following}
+                            },function(err,result){
+                                if(err) throw err;
+                                if(result)
+                                    console.log(result);
                             });
-                            userSchema.findOneAndUpdate({userId: followObject.following,deactive:false}, {
+                            userSchema.update({userId: followObject.following}, {
                                 $inc: {followersCount: +1},
+                            },function(err,result){
+                                if(err) throw err;
+                                if(result)
+                                    console.log(result);
                             });
                         }
-                        Follow.Create(req, res, followObject, info);
+                        Follow.create(req, res, followObject, info);
                     }
                     else {
                         res.send({result: true, message: "already followed"});
@@ -160,12 +207,21 @@ var follows = {
                     follower: user.userId,
                     following: req.body.followingId,
                 };
-                userSchema.findOneAndUpdate({userId: unfollowObject.follower},{
+                user.save();
+                userSchema.update({userId: unfollowObject.follower},{
                     $inc: {followingsCount: -1},
                     $pull: {followings: unfollowObject.following}
+                },function(err,result){
+                    if(err) throw err;
+                    if(result)
+                        console.log(result);
                 });
-                userSchema.findOneAndUpdate({userId: unfollowObject.following}, {
+                userSchema.update({userId: unfollowObject.following}, {
                     $inc: {followersCount: -1}
+                },function(err,result){
+                    if(err) throw err;
+                    if(result)
+                        console.log(result);
                 });
                 Follow.Remove(req, res, unfollowObject);
             }

@@ -1,7 +1,6 @@
 var fs = require("fs"),
     rimraf = require("rimraf"),
     mkdirp = require("mkdirp");
-
 var postSchema = require('../models/post.model');
 var post = new postSchema();
 var userSchema = require('../models/user.model');
@@ -20,19 +19,16 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
-
 var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
     originalPath ='/Users/sabet/Projects/Hexaks/Server/Pictures/',
     smallAndMediumPath ='/Users/sabet/Projects/Hexaks/Web-Client/Statics/Pictures/',
     chunkDirName = "chunks",
     maxFileSize =  100000000, // in bytes, 0 for unlimited 100MB
     minFileSizeToChunk = 1000000; // in bytes 1MB
-// routes
-/* GET home page. */
+
 var uploader = {
 
     onUpload: function (req, res,user) {
-
         var form = new multiparty.Form();
         form.parse(req, function (err, fields, files) {
             if (err) throw err;
