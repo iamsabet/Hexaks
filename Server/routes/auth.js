@@ -33,7 +33,7 @@ var auth = {
             redisClient.hgetall(userDbObject.userId+":info",function(err,info) {
                 if (!err && !info) {
                     redisClient.hmset([userDbObject.userId+":info","username",userDbObject.username, "privacy", userDbObject.privacy,"emailVerified",userDbObject.emailVerified,
-                            "profilePictureSet",userDbObject.profilePictureSet,"profilePictureUrls",userDbObject.profilePictureUrls,"phoneVerified",userDbObject.phoneVerified]);
+                            "profilePictureSet",userDbObject.profilePictureSet,"profilePictureUrls",userDbObject.profilePictureUrls,"phoneVerified",userDbObject.phoneVerified,"blockList",[],"rate",userDbObject.rate]); // must add to a zset --> points
                 }
             });
             redisClient.set(userDbObject.username + ":userId",userDbObject.userId);
@@ -59,7 +59,7 @@ var auth = {
     validate: function(username, password,callback) {
         // spoofing the DB response for simplicity
 
-        userSchema.findOne({username:username,password:password},{_id:0,userId:1,username:1,profilePictureSet:1,profilePictureUrls:1,privacy:1,emailVerified:1,phoneVerified:1},function(err,user) {
+        userSchema.findOne({username:username,password:password},{_id:0,userId:1,username:1,blockList:1,interestCategories:1,favouriteProfiles:1,profilePictureSet:1,profilePictureUrls:1,privacy:1,emailVerified:1,rate:1,phoneVerified:1},function(err,user) {
             if (err) throw err;
             if (user) {
                 return callback(user);

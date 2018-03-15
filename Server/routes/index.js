@@ -184,6 +184,37 @@ router.post('/api/v1/:uuid/followers',function(req,res) {
     });
 });
 
+router.post('/api/v1/users/disconnect',function(req,res) {
+    validateRequest(req,res,function(callback) {
+        if(callback) {
+            users.disconnect(req, res, callback);
+        }
+        else{
+            res.send({result:false,message:"Not Authenticated"});
+        }
+    });
+});
+
+router.post('/api/v1/users/block',function(req,res) {
+    validateRequest(req,res,function(callback) {
+        if(callback) {
+            users.block(req, res, callback);
+        }
+        else{
+            res.send({result:false,message:"Not Authenticated"});
+        }
+    });
+});
+router.post('/api/v1/users/unblock',function(req,res) {
+    validateRequest(req,res,function(callback) {
+        if(callback) {
+            users.unblock(req, res, callback);
+        }
+        else{
+            res.send({result:false,message:"Not Authenticated"});
+        }
+    });
+});
 
 router.get('/api/v1/users/getMe',function(req,res){
     validateRequest(req,res,function(callback){

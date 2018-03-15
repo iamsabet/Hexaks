@@ -60,7 +60,7 @@ var posts = {
             }
             let userId = {$in:userIds};
             if(userIds ==="all"){
-                userId = {$exists:true}
+                userId = {$nin:user.blockList}
             }
             console.log(userId);
             let query = {
@@ -288,10 +288,14 @@ var posts = {
 
     },
     rate:function(req,res,user){
+        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
 
+        }
     },
     view:function(req,res,user,postId,redisClient) {
+        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
 
+        }
     },
 
     delete: function(req, res,next,data) {

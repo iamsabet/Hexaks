@@ -67,6 +67,7 @@ var users = {
                             favouriteProfiles: [], // user ids  //  up to 6   // -->   get most popular profile
                             interestCategories: [], // categories  //  up to 6   // -->   field of their interest for suggest and advertise
                             followings: [], // userIds
+                            blockList : [], //
                             rate: {
                                 number: 0.0,
                                 counts: 0,
@@ -102,7 +103,7 @@ var users = {
                             "emailVerified", false, "phoneVerified", false]);
                         redisClient.hmset([userObject.userId + ":info", "username", userObject.username.toString(), "privacy", userObject.privacy,
                             "profilePictureSet", userObject.profilePictureSet, "profilePictureUrls", userObject.profilePictureUrls,
-                            "emailVerified", false, "phoneVerified", false]);
+                            "emailVerified", false, "phoneVerified", false,"blockList",[]]);
                         redisClient.set(userObject.username + ":userId", userObject.userId);
 
                         // sendVerificationEmail();
@@ -171,26 +172,63 @@ var users = {
 
     },
 
-    block: function (req, res, user) {
-
-
-        // disconnect + add in a block relation between them ( redis or mongo ? )first privlidges
-    },
     disconnect: function (req, res, user) {
         if(req.body && req.body.hostId) {
-
             let hostId = req.body.hostId;
-            flw.unfollow(req, user,hostId,res);
+            flw.unfollow(req, user,hostId);
             userSchema.findOne({userId:hostId},{username:1,privacy:1,followings:1,userId:1},function(err,host){
                 if(err) throw err;
                 if(host) {
-                    flw.unfollow(req, host, user.userId, res);
+                    flw.unfollow(req, host, user.userId);
                 }
             });
         }
     },
+
+    block: function (req, res, user) {
+        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
+            userSchema.update({userId: user.userId}, {
+                $addToSet: {blockList: req.body.blockId.toString()}
+            }, function (err, result) {
+                if (err) res.send({result: false, message: "Block failed"});
+                if (result) {
+                    redisClient.hget(user.userId + ":info","blockList",function(err,blockList) {
+                        if (err) throw err;
+                        if(blockList) {
+                            let newBlockList = JSON.parse(blockList);
+                            if(newBlockList.indexOf(req.body.blockId) === -1){
+                                newBlockList.append(req.body.blockId);
+                                redisClient.hset(user.userId + ":info", "blockList", newBlockList);
+                                res.send(true);
+                            }
+                        }
+                    });
+                }
+            });
+            user.disconnect(req, res, user);
+        }
+        // disconnect + add in a block relation between them ( redis or mongo ? )first privlidges
+    },
+
     unblock: function (req, res, user) {
-        //
+        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) > -1) {
+            userSchema.update({userId: user.userId}, {
+                pull: {blockList: req.body.blockId.toString()}
+            }, function (err, result) {
+                if (err) res.send({result: false, message: "Unblock failed"});
+                if (result) {
+                    redisClient.hget(user.userId + ":info","blockList",function(err,blockList) {
+                        if (err) throw err;
+                        if(blockList) {
+                            let newBlockList = JSON.parse(blockList);
+                            newBlockList.pull(req.body.blockId);
+                            redisClient.hset(user.userId + ":info", "blockList", newBlockList);
+                            res.send(true);
+                        }
+                    });
+                }
+            });
+        }
     },
 
     getHostProfile: function (req, res, user) { // no privacy considered !.
@@ -267,9 +305,7 @@ var users = {
         res.send({username:user.username,fullName:user.fullName,email:user.email,bio:user.bio,city:user.city});
     },
     updateProfileInfo:function(req,res,user){
-
         if(!user.ban.is){
-
             if(user.username === req.body["username"]){
                 user.fullName = req.body["fullName"];
                 user.email = req.body["email"];

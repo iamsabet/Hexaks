@@ -18,6 +18,7 @@ var userSchema = new Schema({
     },
     followingsCount:Number,
     followings:[],
+    blockList:[], // redis cache --> upto 12 block each person
     followersCount:Number,
     location:String,
     phoneNumber:String,

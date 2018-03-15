@@ -23,6 +23,54 @@ var followSchema = new Schema({
     updatedAt : Number
 });
 
+
+followSchema.methods.Paginate = function(query,options,req,res){
+    follow.paginate(query,options,function(err,follows){
+        if(err) {
+            console.log(err);
+            res.send({docs:[],total:0});
+        }
+        else {
+            if(follows){
+                follows.owners = {};
+                if(follows.docs.length > 0) {
+                    for (let x = 0; x < follows.docs.length; x++) {
+                        if (!follows.owners[follows.docs[x].ownerId]) {
+                            redisClient.hgetall(follows.docs[x].ownerId + ":info", function (err, info) {
+                                if (!err && info) {
+                                    console.log(info);
+                                    follows.owners[follows.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
+                                }
+                                else {
+                                    console.log("err :" + err + " / values : " + info);
+                                    follows.owners[follows.docs[x].ownerId] = "notfound" + "/" + "male.png";
+                                }
+
+                                if (x === follows.docs.length - 1) {
+                                    res.send(follows);
+                                }
+                            });
+                        }
+                        else {
+                            if (x === follows.docs.length - 1) {
+                                console.log(follows);
+                                res.send(follows);
+                            }
+                        }
+                    }
+                }
+                else{
+                    res.send({docs:[],total:0});
+                }
+            }
+            else{
+                res.send(follows);
+            }
+        }
+    });
+};
+
+
 followSchema.methods.create = function(req,res,followObject,info){
 
     var updateFields = {deactive: false , accepted:true};
