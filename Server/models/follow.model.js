@@ -4,7 +4,6 @@ const random = require('randomstring');
 require('mongoose-long')(mongoose);
 let mongoosePaginate = require('mongoose-paginate');
 let redis = require("redis");
-let requestIp = require("request-ip");
 
 let redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -66,20 +65,22 @@ followSchema.methods.create = function(req,res,followObject,info){
     });
 };
 
-followSchema.methods.Remove = function(req,res,unfollowOject){
+followSchema.methods.Remove = function(req,unfollowOject,res){
     follow.findOneAndUpdate({follower:unfollowOject.follower,following:unfollowOject.following,deactive:false},{deactive:true,accepted:false},function(err,result){
        if(err) res.send({result:false,message:"Oops Something went wrong"});
        if(result && result.n === 1) {
-           res.send(true);
+           if(res)
+                res.send(true);
        }
        else{
-           res.send({result:false,message:"Unfollow failed"});
+           if(res)
+                res.send({result:false,message:"Unfollow failed"});
        }
     });
 };
 
 followSchema.pre('save', function(next){
-    var now = Date.now();
+    let now = Date.now();
     if(this.updatedAt) {
         this.updatedAt = now;
     }

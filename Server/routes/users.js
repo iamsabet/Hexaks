@@ -2,6 +2,7 @@ var userSchema = require('../models/user.model');
 var User = new userSchema();
 var followSchema = require('../models/follow.model');
 var Follow = new followSchema();
+var flw = require("./follow");
 var redis = require('redis');
 var random = require('randomstring');
 var redisClient = redis.createClient({
@@ -172,12 +173,24 @@ var users = {
 
     block: function (req, res, user) {
 
+
+        // disconnect + add in a block relation between them ( redis or mongo ? )first privlidges
     },
     disconnect: function (req, res, user) {
-        // remove both follows
+        if(req.body && req.body.hostId) {
+
+            let hostId = req.body.hostId;
+            flw.unfollow(req, user,hostId,res);
+            userSchema.findOne({userId:hostId},{username:1,privacy:1,followings:1,userId:1},function(err,host){
+                if(err) throw err;
+                if(host) {
+                    flw.unfollow(req, host, user.userId, res);
+                }
+            });
+        }
     },
     unblock: function (req, res, user) {
-
+        //
     },
 
     getHostProfile: function (req, res, user) { // no privacy considered !.

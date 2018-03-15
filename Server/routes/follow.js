@@ -158,8 +158,8 @@ var follows = {
             }
         });
     },
-    unfollow:function(req,res,user){
-        if(user.followings.indexOf(req.body.followingId) > -1) {
+    unfollow:function(req,user,hostId,res){
+        if(user.followings.indexOf(hostId) > -1) {
             if (req.body && req.body.followingId) {
                 let unfollowObject = {
                     follower: user.userId,
@@ -181,7 +181,7 @@ var follows = {
                     if(result)
                         console.log(result);
                 });
-                Follow.Remove(req, res, unfollowObject);
+                Follow.Remove(req,unfollowObject,res);
             }
             else {
                 res.send({result: false, message: "Bad input"});
