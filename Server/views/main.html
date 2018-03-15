@@ -471,10 +471,10 @@
     });
 
     $("body").on("click","#follow",function(){
-        follow($(".userInfo .username").html());
+        follow(host.userId);
     });
     $("body").on("click","#unfollow",function(){
-        unfollow($(".userInfo .username").html());
+        unfollow(host.userId);
     });
     $("body").on("click","#loginBtn",function(e){
         if (window.innerWidth > 768) {
@@ -627,11 +627,11 @@
     function updateProfileInfo(input){
         requestHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
     }
-    function follow(hostUsername){
+    function follow(hostId){
         requestHandler("/api/v1/users/follow","POST",{followingId:host.userId},"follow");
     }
-    function unfollow(hostUsername){
-        requestHandler("/api/v1/users/unfollow","POST",{following:host.userId},"unfollow");
+    function unfollow(hostId){
+        requestHandler("/api/v1/users/unfollow","POST",{followingId:host.userId},"unfollow");
     }
 
 
@@ -1221,6 +1221,9 @@
             host.privacy = (res.user.privacy);
             host.profilePictureSet = res.user.profilePictureSet;
             host.profilePictureUrls = res.user.profilePictureUrls || [];
+            host.following = res.following;
+            host.followed = res.followed;
+            debugger;
             $(".profileTop .loader").addClass("hide");
 
             if (res.followed !== null && res.following !== null) {

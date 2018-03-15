@@ -114,42 +114,67 @@ var follows = {
         post.Paginate(query, options,req,res);
     },
     follow:function(req,res,user){
-        if(req.body && req.body.followingId) {
-            var followObject = {
-                follower: user.userId,
-                following: req.body.followingId,
-            };
-
-            userSchema.update({username: followObject.follower}, {
-                $inc: {followingsCount: 1},
-                $addToSet: {followings: followObject.following}
-            }, function (err, rest) {
-                if (err) throw err;
-                console.log(rest);
-            });
-            Follow.Create(req, res, followObject);
-        }
-        else{
-            res.send({result:false,message:"Bad input"});
-        }
+        let hostId = req.body.followingId;
+        console.log(hostId);
+        console.log(user.userId);
+        redisClient.hgetall(hostId+":info",function(err,info) {
+            if(err) res.send({result:false,message:"500 error in follow"});
+            if(!err && info) {
+                if (req.body && req.body.followingId) {
+                    let followObject = {
+                        follower: user.userId,
+                        following: req.body.followingId,
+                    };
+                    if(user.followings.indexOf(req.body.followingId) === -1) {
+                        if(!JSON.parse(info.privacy)){
+                            console.log(JSON.parse(info.privacy));
+                            userSchema.findOneAndUpdate({userId: followObject.follower,deactive:false}, {
+                                $inc: {followingsCount: +1},
+                                $addToSet: {followings: followObject.following}
+                            });
+                            userSchema.findOneAndUpdate({userId: followObject.following,deactive:false}, {
+                                $inc: {followersCount: +1},
+                            });
+                        }
+                        Follow.Create(req, res, followObject, info);
+                    }
+                    else {
+                        res.send({result: true, message: "already followed"});
+                    }
+                }
+                else {
+                    if(!err)
+                        res.send({result: false, message: "Bad input"});
+                }
+            }
+            else{
+                if(!err)
+                    res.send({result:false,message:"404 - user info not found in cache"});
+            }
+        });
     },
     unfollow:function(req,res,user){
-        if(req.body && req.body.followingId) {
-            var unfollowObject = {
-                follower: user.username,
-                following: req.body.followingId,
-            };
-            userSchema.update({username: unfollowObject.follower}, {
-                $inc: {followingsCount: -1},
-                $pull: {followings: unfollowObject.following}
-            }, function (err, rest) {
-                if (err) throw err;
-                console.log(rest);
-            });
-            Follow.Remove(req, res, unfollowObject);
+        if(user.followings.indexOf(req.body.followingId) > -1) {
+            if (req.body && req.body.followingId) {
+                let unfollowObject = {
+                    follower: user.userId,
+                    following: req.body.followingId,
+                };
+                userSchema.findOneAndUpdate({userId: unfollowObject.follower},{
+                    $inc: {followingsCount: -1},
+                    $pull: {followings: unfollowObject.following}
+                });
+                userSchema.findOneAndUpdate({userId: unfollowObject.following}, {
+                    $inc: {followersCount: -1}
+                });
+                Follow.Remove(req, res, unfollowObject);
+            }
+            else {
+                res.send({result: false, message: "Bad input"});
+            }
         }
         else{
-            res.send({result:false,message:"Bad input"});
+            res.send({result:true,message:"not followed yet"});
         }
     },
 

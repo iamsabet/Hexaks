@@ -14,66 +14,67 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
-let followSchema = new Schema({
+var followSchema = new Schema({
     followId : String,
-    follower : String, // userIds
-    following : String , // userIds
+    follower : String, // userId
+    following : String , // userId
     deactive : Boolean,
     accepted : Boolean,
     createdAt : Number,
-    updatedAt : Number,
+    updatedAt : Number
 });
 
-followSchema.methods.Create = function(req,res,followObject){
-    redisClient.hget(followObject.following+":info","privacy",function(err,value) {
-        if(err) res.send({result:false,message:"Oops Something went wrong"});
-        else {
-            var updateFields = {deactive: false , accepted:true};
-            if(value === true){
-                updateFields.accepted = false;
-            }
+followSchema.methods.Create = function(req,res,followObject,info){
 
-            followSchema.findOneAndUpdate({
-                follower: followObject.follower,
-                following: followObject.following,
-                deactive: true
-            }, updateFields , function (err, result) {
-                console.log(result);
-                if (err) res.send({result: false, message: "Oops something went wrong"});
-                if (result && result.nMatched === 0) {
-                    let newFollow = new Follow(followObject);
-                    newFollow.createdAt = Date.now();
-                    newFollow.deactive = false;
-
-                    if (value === true) {
-                        newFollow.accepted = false;
-                    }
-                    else {
-                        newFollow.accepted = true;
-                    }
-                    newFollow.followId = random.generate(14);
-                    newFollow.save(function (err) {
-                        if (err) throw err;
-
-                    });
-                }
-                else if(result && result.nMatched === 1 && result.nModified === 0){
-                    res.send({result:false,message:"Oops something went wrong"})
-                }
-                else {
-                     // follow object exists Then )=> updated
-                }
+    let updateFields = {deactive: false , accepted:true};
+    if(info.privacy){
+        updateFields.accepted = false;
+    }
+    var newFollow = {};
+    follow.findOneAndUpdate({
+        follower: followObject.follower,
+        following: followObject.following,
+    }, updateFields , function (err, result) {
+        if (err) res.send({result: false, message: "Oops something went wrong"});
+        if (result && result.n === 0) {
+            followObject.createdAt = Date.now();
+            followObject.deactive = false;
+            followObject.accepted = !info.privacy;
+            followObject.followId = random.generate(14);
+            newFollow = new Follow(followObject);
+            newFollow.save(function (err) {
+                if (err) res.send({result:false,message:"err in follow object"});
                 res.send(true);
-
             });
         }
+        else if(!result){
+            console.log(!info.privacy);
+            followObject.createdAt = Date.now();
+            followObject.deactive = false;
+            followObject.accepted = !info.privacy;
+            followObject.followId = random.generate(14);
+            newFollow = new Follow(followObject);
+            newFollow.save(function (err) {
+                if (err) res.send({result:false,message:"err in follow object"});
+                res.send(true);
+            });
+        }
+        else {
+             // follow object exists Then )=> updated
+        }
+
     });
 };
 
 followSchema.methods.Remove = function(req,res,unfollowOject){
-    followSchema.findOneAndUpdate({follower:unfollowOject.follower,following:unfollowOject.following,deactive:false},{deactive:true,accepted:false},function(err,result){
+    follow.findOneAndUpdate({follower:unfollowOject.follower,following:unfollowOject.following,deactive:false},{deactive:true,accepted:false},function(err,result){
        if(err) res.send({result:false,message:"Oops Something went wrong"});
-       res.send(true);
+       if(result.nModified === 1) {
+           res.send(true);
+       }
+       else{
+           res.send({result:false,message:"Unfollow failed"});
+       }
     });
 };
 

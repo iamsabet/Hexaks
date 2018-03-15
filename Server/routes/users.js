@@ -219,7 +219,7 @@ var users = {
                                 res.send({user: userx, following: null, followed: null});
                             }
                             else {
-                                if (user.username === hostUsername) {
+                                if (user.userId === userId) {
                                     res.send({user: userx, following: null, followed: null});
                                 }
                                 else {
@@ -231,7 +231,7 @@ var users = {
                                     if (userx.followings.indexOf(user.userId) > -1) {
                                         response.followed = true;
                                     }
-                                    if (user.followings.indexOf(hostUsername) > -1) {
+                                    if (user.followings.indexOf(userId) > -1) {
                                         response.following = true;
                                     }
                                     res.send(response);

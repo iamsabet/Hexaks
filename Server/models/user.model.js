@@ -17,6 +17,7 @@ var userSchema = new Schema({
         date : Date,
     },
     followingsCount:Number,
+    followings:[],
     followersCount:Number,
     location:String,
     phoneNumber:String,
