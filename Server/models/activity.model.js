@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
-var notificationSchema = new Schema({
+var activitySchema = new Schema({
     name : String,
     userId : String,
-    notificationId:String,
+    activityId:String,
     owner:String,// username
     text:String,
     link:String,
@@ -15,20 +15,20 @@ var notificationSchema = new Schema({
 
 });
 
-notificationSchema.methods.Create = function(req,res){
+activitySchema.methods.Create = function(req,res){
 
 };
-notificationSchema.methods.Edit = function(req,res){
-
-
-};
-
-notificationSchema.methods.Remove = function(req,res){
+activitySchema.methods.Edit = function(req,res){
 
 
 };
 
-notificationSchema.pre('save', function(next){
+activitySchema.methods.Remove = function(req,res){
+
+
+};
+
+activitySchema.pre('save', function(next){
     if(this.updatedAt) {
         this.updatedAt = Date.now();
     }
@@ -40,6 +40,6 @@ notificationSchema.pre('save', function(next){
     next();
 });
 
-var Notification = mongoose.model('notifications', notificationSchema);
-var notification = mongoose.model('notifications');
-module.exports = notification;
+var Activity = mongoose.model('activities', activitySchema);
+var activity = mongoose.model('activities');
+module.exports = activity;

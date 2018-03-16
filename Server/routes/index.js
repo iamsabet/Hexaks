@@ -433,6 +433,7 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
                     redisClient.set(user.username+"::requestOrigin",requestOrigin);
                     redisClient.expire(user.username+"::requestOrigin",30000);
                 }
+                user.followings.push(user.userId);
                 posts.getPostsByFiltersAndOrders(req, res, user, user.followings, orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
 
             });

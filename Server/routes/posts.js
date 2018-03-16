@@ -10,6 +10,8 @@ var Jimp = require("jimp");
 var pixelSchema = require('../models/pixel.model');
 var pixel = new pixelSchema();
 var rateSchema = require('../models/rate.model');
+var Rate = new rateSchema();
+var rateSchema = require('../models/rate.model');
 var rate = new rateSchema();
 var bcrypt = require("bcrypt-nodejs");
 var ExifImage = require('exif').ExifImage;
@@ -48,7 +50,7 @@ var posts = {
         }
         console.log(timeEdgeIn);
         let timeEdge = timeEdgeIn;
-        if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.value" || orderedBy === "views" || orderedBy === "rate") {
+        if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.points" || orderedBy === "rate.value" || orderedBy === "views") {
             // timeWindow
 
             let costQuery = {cost: {$gte: left, $lte: right}};
@@ -87,6 +89,9 @@ var posts = {
                 query.curatorId =  {$exists:true};
                 if(curator !== "" && curator !== undefined) {
                     query.curatorId = curator;
+                }
+                else{
+                    query.curatorId = {$ne:""};
                 }
             }
             let options = {
@@ -589,12 +594,59 @@ var posts = {
         //     });
     },
 
-    rate:function(req,res,user){
-        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
-
+    rate:function(req,res,user){ // caching for later
+        if(user) {
+            if(req.body && req.body.postId && typeof req.body.postId === "string" && req.body.rateNumber && parseInt(req.body.rateNumber) <= 7 && parseInt(req.body.rateNumber) >= 1) {
+                let bytes = CryptoJS.AES.decrypt(req.body.postId, 'postSecretKey 6985');
+                let postOwnerId = bytes.toString().split(":--:")[0];
+                if(user.blockList.indexOf(postOwnerId) === -1) {
+                    redisClient.hgetall(postOwnerId + ":info", function (err, info) {
+                        if (err) throw err;
+                        if (info) {
+                            let blockList = JSON.parse(info.blockList);
+                            if (blockList.indexOf(user.userId) === -1) {
+                                postSchema.find({postId:req.body.postId},{privacy:1},function(err,post){
+                                    if(err) throw err;
+                                    if(post) {
+                                        if (JSON.parse(info.privacy)) {
+                                            if (user.followings.indexOf(postOwnerId)) {
+                                            // Create Rate Object
+                                            }
+                                            else {
+                                                res.send({result: false, message: "Cant Rate Private Post"});
+                                            }
+                                        }
+                                        else {
+                                            // Create Rate Object
+                                        }
+                                    }
+                                    else{
+                                        res.send({result: false, message: "Post Not Found"});
+                                    }
+                                });
+                            }
+                            else {
+                                res.send({result: false, message: "post owner has blocked you"});
+                            }
+                        }
+                        else {
+                            res.send({result: false, message: "user info not found in cache"});
+                        }
+                    });
+                }
+                else{
+                    res.send({result: false, message: "you have blocked the post owner"});
+                }
+            }
+            else{
+                res.send({result:false,message:"504 Bad Request"});
+            }
+        }
+        else{
+            res.send({result:false,message:"Not Authenticated"});
         }
     },
-    view:function(req,res,user,postId) {
+    view:function(req,res,user,postId) { // caching for later
         if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
 
         }
