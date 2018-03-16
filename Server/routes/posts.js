@@ -168,113 +168,144 @@ var posts = {
     },
     getPostInfo: function(req,res,user,postId){
 
-        let bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-        let postOwnerId = bytes.toString().split(":--:")[0];
-        let authorized = false;
-        let options = {
-            albumId:1, // null if not
-            postId : 1,
-            ownerId:1,
-            originalImage:1,
-            ext:1,
-            exifData:1,
-            // largeImage:1,
-            buyers:1, // user id
-            hashtags:1,
-            generatedHashtags:1,
-            categories:1,
-            caption:1,
-            rate:1,
-            views : 1,    // viewers.length length
-            curatorId:1,
-            private:1,
-            rejected : 1,
-            advertise:1,
-            activated:1,
-            createdAt:1,
-            deleted:1,
-            updatedAt:1
-        };
-        redisClient.hgetall(postOwnerId + ":info", function (err, info) {
-            if (err) throw err;
-            if (info) {
-                if(user === null) {
-                    if (!JSON.parse(info.privacy)) {
-                        postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},activated:true}, options , function (err,post){
-                            if(err) throw err;
-                                if(post){
+        if(postId && typeof postId === "string") {
+            let bytes = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
+            let postOwnerId = bytes.toString().split(":--:")[0];
+            let options = {
+                albumId: 1, // null if not
+                postId: 1,
+                ownerId: 1,
+                originalImage: 1,
+                ext: 1,
+                exifData: 1,
+                // largeImage:1,
+                buyers: 1, // user id
+                hashtags: 1,
+                generatedHashtags: 1,
+                categories: 1,
+                caption: 1,
+                rate: 1,
+                views: 1,    // viewers.length length
+                curatorId: 1,
+                private: 1,
+                rejected: 1,
+                advertise: 1,
+                activated: 1,
+                createdAt: 1,
+                deleted: 1,
+                updatedAt: 1
+            };
+            redisClient.hgetall(postOwnerId + ":info", function (err, info) {
+                if (err) throw err;
+                if (info) {
+                    if (user === null) {
+                        if (!JSON.parse(info.privacy)) {
+                            postSchema.findOne({
+                                postId: postId,
+                                deleted: false,
+                                rejected: {value: false, reason: ""},
+                                activated: true
+                            }, options, function (err, post) {
+                                if (err) throw err;
+                                if (post) {
                                     res.send(post);
                                 }
-                                else{
-                                    res.send({result:false,message:"404 - Post not found"});
+                                else {
+                                    res.send({result: false, message: "404 - Post not found"});
                                 }
-                        });
-                    }
-                    else{
-                        postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},private:false,activated:true}, options , function (err,post){
-                            if(err) throw err;
-                            if(post){
-                                res.send(post);
-                            }
-                            else{
-                                res.send({result:false,message:"404 - Post not found"}); // or private content access denied
-                            }
-                        });
-                    }
-                }
-                else {
-                    if (user.blockList.indexOf(postOwnerId) === -1) {
-                        let blockList = JSON.parse(info.blockList);
-                        if (blockList.indexOf(user.userId) === -1) {
-                            if (JSON.parse(info.privacy)) {
-                                if(user.followings.indexOf(postOwnerId) > -1) {
-                                    postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},activated:true}, options , function (err,post){
-                                        if(err) throw err;
-                                        if(post){
-                                            res.send(post);
-                                        }
-                                        else{
-                                            res.send({result:false,message:"404 - Post not found"});
-                                        }
-                                    });
-                                }
-                                else{
-                                    postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},private:false,activated:true}, options , function (err,post){
-                                        if(err) throw err;
-                                        if(post){
-                                            res.send(post);
-                                        }
-                                        else{
-                                            res.send({result:false,message:"404 - Post not found"}); // or private content access denied
-                                        }
-                                    });
-                                }
-                            }
-                            else{
-                                postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},activated:true}, options , function (err,post){
-                                    if(err) throw err;
-                                    if(post){
-                                        res.send(post);
-                                    }
-                                    else{
-                                        res.send({result:false,message:"404 - Post not found"});
-                                    }
-                                });
-                            }
+                            });
                         }
                         else {
-                            res.send({result: false, message: "the post owner has blocked you"});
+                            postSchema.findOne({
+                                postId: postId,
+                                deleted: false,
+                                rejected: {value: false, reason: ""},
+                                private: false,
+                                activated: true
+                            }, options, function (err, post) {
+                                if (err) throw err;
+                                if (post) {
+                                    res.send(post);
+                                }
+                                else {
+                                    res.send({result: false, message: "404 - Post not found"}); // or private content access denied
+                                }
+                            });
                         }
                     }
                     else {
-                        res.send({result: false, message: "you blocked the post owner"});
+                        if (user.blockList.indexOf(postOwnerId) === -1) {
+                            let blockList = JSON.parse(info.blockList);
+                            if (blockList.indexOf(user.userId) === -1) {
+                                if (JSON.parse(info.privacy)) {
+                                    if ((user.followings.indexOf(postOwnerId) > -1) || (user.userId === postOwnerId) || (user.roles.indexOf("superuser") > -1) || (user.roles.indexOf("sabet") > -1) ||  (user.roles.indexOf("admin") > -1)) {
+                                        postSchema.findOne({
+                                            postId: postId,
+                                            deleted: false,
+                                            rejected: {value: false, reason: ""},
+                                            activated: true
+                                        }, options, function (err, post) {
+                                            if (err) throw err;
+                                            if (post) {
+                                                res.send(post);
+                                            }
+                                            else {
+                                                res.send({result: false, message: "404 - Post not found"});
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        postSchema.findOne({
+                                            postId: postId,
+                                            deleted: false,
+                                            rejected: {value: false, reason: ""},
+                                            private: false,
+                                            activated: true
+                                        }, options, function (err, post) {
+                                            if (err) throw err;
+                                            if (post) {
+                                                res.send(post);
+                                            }
+                                            else {
+                                                res.send({result: false, message: "404 - Post not found"}); // or private content access denied
+                                            }
+                                        });
+                                    }
+                                }
+                                else {
+                                    postSchema.findOne({
+                                        postId: postId,
+                                        deleted: false,
+                                        rejected: {value: false, reason: ""},
+                                        activated: true
+                                    }, options, function (err, post) {
+                                        if (err) throw err;
+                                        if (post) {
+                                            res.send(post);
+                                        }
+                                        else {
+                                            res.send({result: false, message: "404 - Post not found"});
+                                        }
+                                    });
+                                }
+                            }
+                            else {
+                                res.send({result: false, message: "the post owner has blocked you"});
+                            }
+                        }
+                        else {
+                            res.send({result: false, message: "you blocked the post owner"});
+                        }
                     }
                 }
+                else {
+                    res.send({result: false, message: "host user not found in cache"});
+                }
+            });
         }
         else{
-                res.send({result: false, message: "host user not found in cache"});
+            res.send({result:false,message:"504 Bad request"});
         }
-        });
     },
     activate:function(req,res,user){
         redisClient.get(user.userId+":uploadingPost",function(err,postId){
@@ -427,9 +458,7 @@ var posts = {
             res.send({result:false,message:"504 Bad request"});
         }
     },
-
     delete: function(req, res,user) {
-
         if(req.body && req.body.postId && typeof req.body.postId === "string") {
             let bytes = CryptoJS.AES.decrypt(req.body.postId, 'postSecretKey 6985');
             let postOwnerId = bytes.toString().split(":--:")[0];
@@ -458,9 +487,40 @@ var posts = {
             res.send({result:false,message:"504 Bad request"});
         }
     },
+    deactive: function(req, res,user,postId) {
 
+        if(postId && typeof postId === "string") {
+            let bytes = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
+            let postOwnerId = bytes.toString().split(":--:")[0];
+            if(( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
+                if(req.body.reject && typeof req.body.reject === "string") {
+                    postSchema.update({
+                        postId: postId,
+                        ownerId: postOwnerId,
+                        activated:false,
+                    }, {
+                        $set: {
+                            activated:true,
+                        }
+                    }, function (err, result) {
+                        if (err) throw err;
+                        console.log(result);
+                        res.send(true);
+                    });
+                }
+                else{
+                    res.send({result:false,message:"bad request"});
+                }
+            }
+            else{
+                res.send({result:false,message:"401 Unauthorized"});
+            }
+        }
+        else{
+            res.send({result:false,message:"504 Bad request"});
+        }
+    },
     reject: function(req, res,user) {
-
         if(req.body && req.body.postId && typeof req.body.postId === "string") {
             let bytes = CryptoJS.AES.decrypt(req.body.postId, 'postSecretKey 6985');
             let postOwnerId = bytes.toString().split(":--:")[0];
@@ -496,39 +556,7 @@ var posts = {
     },
 
 
-    deactive: function(req, res,user,postId) {
 
-        if(postId && typeof postId === "string") {
-            let bytes = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-            let postOwnerId = bytes.toString().split(":--:")[0];
-            if(( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
-                if(req.body.reject && typeof req.body.reject === "string") {
-                    postSchema.update({
-                        postId: postId,
-                        ownerId: postOwnerId,
-                        activated:false,
-                    }, {
-                        $set: {
-                            activated:true,
-                        }
-                    }, function (err, result) {
-                        if (err) throw err;
-                        console.log(result);
-                        res.send(true);
-                    });
-                }
-                else{
-                    res.send({result:false,message:"bad request"});
-                }
-            }
-            else{
-                res.send({result:false,message:"401 Unauthorized"});
-            }
-        }
-        else{
-            res.send({result:false,message:"504 Bad request"});
-        }
-    },
 
     imageProcessing:function(imageUrl){ // image processing on medium size
         console.log(imageUrl + " -- > image processing starts");
@@ -561,15 +589,12 @@ var posts = {
         //     });
     },
 
-    increaseViews:function(req,res,user){
-
-    },
     rate:function(req,res,user){
         if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
 
         }
     },
-    view:function(req,res,user,postId,redisClient) {
+    view:function(req,res,user,postId) {
         if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
 
         }

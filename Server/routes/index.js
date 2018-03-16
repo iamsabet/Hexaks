@@ -99,7 +99,17 @@ router.get('/post/:uuid', function(req,res){
             res.render("post.html");    // not authenticated
         }
     });
+
 });
+
+router.post('/post/:uuid', function(req,res){
+
+    validateRequest(req,res,function(callback){
+        posts.getPostInfo(req,res,callback,req.params.uuid);    // html only static file preload some datas for authenticated
+    });
+
+});
+
 router.get('/:uuid', function(req,res){
     res.render("main.html");
 });
