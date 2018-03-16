@@ -360,7 +360,176 @@ var posts = {
     },
     editPost : function(req,res,user){
 
+        if(req.body && req.body.postId && typeof req.body.postId === "string") {
+            let bytes = CryptoJS.AES.decrypt(req.body.postId, 'postSecretKey 6985');
+            let postOwnerId = bytes.toString().split(":--:")[0];
+
+            if(user.userId === postOwnerId || ( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1)){ // owner access + superuser access
+
+                let change = true;
+                let updates = {};
+                if(req.body.caption) {
+                    let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
+                    let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
+                    let str = 'Hey I love #apple and #orange and #apple!@ also #banana';
+                    let m;
+                    let hashtags = [];
+                    let mentions = [];
+                    while ((m = reHashtag.exec(str)) != null) {
+                        if (m.index === reHashtag.lastIndex) {
+                            reHashtag.lastIndex++;
+                        }
+                        if (hashtags.indexOf(m[0]) === -1) {
+                            hashtags.push(m[0]);
+                        }
+                    }
+                    let n;
+                    while ((n = reMention.exec(str)) != null) {
+                        if (m.index === reMention.lastIndex) {
+                            reMention.lastIndex++;
+                        }
+                        if (hashtags.indexOf(n[0]) === -1) {
+                            mentions.push(n[0]);
+                        }
+                    }
+                    updates.hashtags = hashtags;
+                    updates.mentions = mentions;
+                    updates.caption = req.body.caption;
+                }
+                else if(req.body.category){
+                    updates.categories = req.body.categories;
+                }
+                else if(req.body.private){
+                    updates.private = req.body.private;
+                }
+                else{
+                    change = false;
+                }
+                if(change) {
+                    postSchema.update({
+                        postId: req.body.postId,
+                        ownerId:postOwnerId,
+                        activated: true,
+                    }, {
+                        $set: updates
+                    }, function (err, result) {
+                        if (err) throw err;
+                        console.log(result);
+                        res.send(true);
+                    });
+                }
+            }
+            else{
+                res.send({result:false,message:"401 Unauthorized"});
+            }
+        }
+        else{
+            res.send({result:false,message:"504 Bad request"});
+        }
     },
+
+    delete: function(req, res,user) {
+
+        if(req.body && req.body.postId && typeof req.body.postId === "string") {
+            let bytes = CryptoJS.AES.decrypt(req.body.postId, 'postSecretKey 6985');
+            let postOwnerId = bytes.toString().split(":--:")[0];
+            if(user.userId === postOwnerId || ( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1)){ // owner access + superuser access
+
+                postSchema.update({
+                    postId: req.body.postId,
+                    ownerId:postOwnerId,
+                    delete:false,
+                }, {
+                    $set: {
+                        delete:true,
+                    }
+                }, function (err, result) {
+                    if (err) throw err;
+                    console.log(result);
+                    res.send(true);
+                });
+
+            }
+            else{
+                res.send({result:false,message:"401 Unauthorized"});
+            }
+        }
+        else{
+            res.send({result:false,message:"504 Bad request"});
+        }
+    },
+
+    reject: function(req, res,user) {
+
+        if(req.body && req.body.postId && typeof req.body.postId === "string") {
+            let bytes = CryptoJS.AES.decrypt(req.body.postId, 'postSecretKey 6985');
+            let postOwnerId = bytes.toString().split(":--:")[0];
+            if(user.userId === postOwnerId || ( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
+                if(req.body.reject && typeof req.body.reject === "string") {
+                    postSchema.update({
+                        postId: req.body.postId,
+                        ownerId: postOwnerId,
+                    }, {
+                        $set: {
+                            reject: {
+                                value:true,
+                                reason : req.body.reason
+                            },
+                        }
+                    }, function (err, result) {
+                        if (err) throw err;
+                        console.log(result);
+                        res.send(true);
+                    });
+                }
+                else{
+                    res.send({result:false,message:"bad request"});
+                }
+            }
+            else{
+                res.send({result:false,message:"401 Unauthorized"});
+            }
+        }
+        else{
+            res.send({result:false,message:"504 Bad request"});
+        }
+    },
+
+
+    deactive: function(req, res,user,postId) {
+
+        if(postId && typeof postId === "string") {
+            let bytes = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
+            let postOwnerId = bytes.toString().split(":--:")[0];
+            if(( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
+                if(req.body.reject && typeof req.body.reject === "string") {
+                    postSchema.update({
+                        postId: postId,
+                        ownerId: postOwnerId,
+                        activated:false,
+                    }, {
+                        $set: {
+                            activated:true,
+                        }
+                    }, function (err, result) {
+                        if (err) throw err;
+                        console.log(result);
+                        res.send(true);
+                    });
+                }
+                else{
+                    res.send({result:false,message:"bad request"});
+                }
+            }
+            else{
+                res.send({result:false,message:"401 Unauthorized"});
+            }
+        }
+        else{
+            res.send({result:false,message:"504 Bad request"});
+        }
+    },
+
     imageProcessing:function(imageUrl){ // image processing on medium size
         console.log(imageUrl + " -- > image processing starts");
 
@@ -391,6 +560,7 @@ var posts = {
         //
         //     });
     },
+
     increaseViews:function(req,res,user){
 
     },
@@ -404,12 +574,11 @@ var posts = {
 
         }
     },
+    report:function(req,res,user){
+        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
 
-    delete: function(req, res,next,data) {
-        var id = req.params.id;
-        data.splice(id, 1); // Spoof a DB call
-        res.json(true);
-    }
+        }
+    },
 };
 
 
