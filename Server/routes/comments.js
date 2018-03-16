@@ -292,6 +292,7 @@ var comments = {
                                                 postId: postId,
                                                 ownerId: ownerId,
                                                 commentId: commentId,
+                                                postOwnerId : postOwnerId,
                                                 deactive: false,
                                                 delete: false,
                                             };
@@ -366,25 +367,67 @@ var comments = {
         if (req.body && req.body.commentId && typeof req.body.commentId === "string" && req.body.postId && typeof req.body.postId === "string") {
             let bytes = CryptoJS.AES.decrypt(req.body.postId, 'postSecretKey 6985');
             let postOwnerId = bytes.toString().split(":--:")[0];
-            if (user.userId === postOwnerId || (user.roles.indexOf("superuser") > -1) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)) { // owner access + superuser access
-                commentSchema.findOneAndUpdate({
-                    postId: req.body.postId,
-                    commentId: req.body.commentId,
-                    ownerId: postOwnerId,
-                    delete: false,
-                }, {
-                    $set: {
-                        delete: true,
-                    }
-                }, function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    res.send(true);
-                });
+            if(user) {
+                if ((user.roles.indexOf("superuser") > -1) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)) { // owner access + superuser access
+                    commentSchema.findOneAndUpdate({
+                        postId: req.body.postId,
+                        commentId: req.body.commentId,
+                        delete: false,
+                    }, {
+                        $set: {
+                            delete: true,
+                        }
+                    }, function (err, result) {
+                        if (err) throw err;
+                        console.log(result);
+                        res.send(true);
+                    });
 
+                }
+                else {
+                    if (user.userId === postOwnerId) { // owner access + superuser access
+                        commentSchema.findOneAndUpdate({
+                            postId: req.body.postId,
+                            commentId: req.body.commentId,
+                            postOwnerId: postOwnerId,
+                            delete: false,
+                        }, {
+                            $set: {
+                                delete: true,
+                            }
+                        }, function (err, result) {
+                            if (err) throw err;
+                            console.log(result);
+                            res.send(true);
+                        });
+
+                    }
+                    else{ // try to be comment owner
+                        commentSchema.findOneAndUpdate({
+                            postId: req.body.postId,
+                            commentId: req.body.commentId,
+                            postOwnerId: postOwnerId,
+                            ownerId : user.userId,
+                            delete: false,
+                        }, {
+                            $set: {
+                                delete: true,
+                            }
+                        }, function (err, result) {
+                            if (err) throw err;
+                            if(result.n > 0) {
+                                res.send(true);
+                            }
+                            else{
+                                res.send({result:false,message:"404/401 --> Comment not found or Unauthorized access"});
+                            }
+
+                        });
+                    }
+                }
             }
-            else {
-                res.send({result: false, message: "401 Unauthorized"});
+            else{
+                res.send({result:false,message:"403 Not authorized"});
             }
         }
         else {
