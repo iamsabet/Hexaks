@@ -1321,11 +1321,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width: auto;
 	max-width: 1000px;
 	max-height: 90%;
-	-webkit-transition: all 0.4s;
-	-moz-transition: all 0.4s;
-	-ms-transition: all 0.4;
-	-o-transition: all 0.4s;
-	transition: all 0.4s;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3 ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 	-webkit-backface-visibility: hidden;
 	-moz-backface-visibility: hidden;
 	-ms-backface-visibility: hidden;
@@ -1354,7 +1354,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 
 .post .pictureBox .rightPic{
-	left: 120vw;
+	left: 150vw;
 	-webkit-transform: translate(0,-50%);
 	-moz-transform: translate(0,-50%);
 	-ms-transform: translate(0,-50%);

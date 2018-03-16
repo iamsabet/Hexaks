@@ -102,7 +102,7 @@ var posts = {
                 options.sort = {"originalImage.cost": -1};
             }
             else if (orderBy === "rate.value") {
-                options.sort = {"rate.value" : +1};
+                options.sort = {"rate.value" : -1};
             }
             else if (orderBy === "rate") {
                 options.sort = {"rate.points": -1};
@@ -166,8 +166,115 @@ var posts = {
             return callback({result:false,message:"No posts uploaded yet"});
         }
     },
-    getPostInfo: function(req,res,user){
+    getPostInfo: function(req,res,user,postId){
 
+        let bytes  = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
+        let postOwnerId = bytes.toString().split(":--:")[0];
+        let authorized = false;
+        let options = {
+            albumId:1, // null if not
+            postId : 1,
+            ownerId:1,
+            originalImage:1,
+            ext:1,
+            exifData:1,
+            // largeImage:1,
+            buyers:1, // user id
+            hashtags:1,
+            generatedHashtags:1,
+            categories:1,
+            caption:1,
+            rate:1,
+            views : 1,    // viewers.length length
+            curatorId:1,
+            private:1,
+            rejected : 1,
+            advertise:1,
+            activated:1,
+            createdAt:1,
+            deleted:1,
+            updatedAt:1
+        };
+        redisClient.hgetall(postOwnerId + ":info", function (err, info) {
+            if (err) throw err;
+            if (info) {
+                if(user === null) {
+                    if (!JSON.parse(info.privacy)) {
+                        postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},activated:true}, options , function (err,post){
+                            if(err) throw err;
+                                if(post){
+                                    res.send(post);
+                                }
+                                else{
+                                    res.send({result:false,message:"404 - Post not found"});
+                                }
+                        });
+                    }
+                    else{
+                        postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},private:false,activated:true}, options , function (err,post){
+                            if(err) throw err;
+                            if(post){
+                                res.send(post);
+                            }
+                            else{
+                                res.send({result:false,message:"404 - Post not found"}); // or private content access denied
+                            }
+                        });
+                    }
+                }
+                else {
+                    if (user.blockList.indexOf(postOwnerId) === -1) {
+                        let blockList = JSON.parse(info.blockList);
+                        if (blockList.indexOf(user.userId) === -1) {
+                            if (JSON.parse(info.privacy)) {
+                                if(user.followings.indexOf(postOwnerId) > -1) {
+                                    postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},activated:true}, options , function (err,post){
+                                        if(err) throw err;
+                                        if(post){
+                                            res.send(post);
+                                        }
+                                        else{
+                                            res.send({result:false,message:"404 - Post not found"});
+                                        }
+                                    });
+                                }
+                                else{
+                                    postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},private:false,activated:true}, options , function (err,post){
+                                        if(err) throw err;
+                                        if(post){
+                                            res.send(post);
+                                        }
+                                        else{
+                                            res.send({result:false,message:"404 - Post not found"}); // or private content access denied
+                                        }
+                                    });
+                                }
+                            }
+                            else{
+                                postSchema.findOne({postId: postId,deleted:false,rejected:{value:false,reason:""},activated:true}, options , function (err,post){
+                                    if(err) throw err;
+                                    if(post){
+                                        res.send(post);
+                                    }
+                                    else{
+                                        res.send({result:false,message:"404 - Post not found"});
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            res.send({result: false, message: "the post owner has blocked you"});
+                        }
+                    }
+                    else {
+                        res.send({result: false, message: "you blocked the post owner"});
+                    }
+                }
+        }
+        else{
+                res.send({result: false, message: "host user not found in cache"});
+        }
+        });
     },
     activate:function(req,res,user){
         redisClient.get(user.userId+":uploadingPost",function(err,postId){

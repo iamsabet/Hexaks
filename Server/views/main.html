@@ -484,7 +484,7 @@
     });
 
     $("body").on("click",".caption .notEditable",function(e){
-        if(Me.username === postsList[currentPostItterator].owner.username){
+        if(Me.userId === postsList[currentPostItterator].ownerId){
             $(".caption .editSurface").addClass("show");
         }
         setTimeout(function(){
@@ -494,7 +494,7 @@
 
 
     $("body").on("click",".caption .editSurface",function(e){
-        if(Me.username === postsList[currentPostItterator].owner.username){
+        if(Me.userId === postsList[currentPostItterator].ownerId){
             $(".caption .notEditable").removeClass("show");
             $(".caption .editSurface").removeClass("show");
             $(".caption .editable").addClass("show").focus();
@@ -507,7 +507,7 @@
     });
 
     $("body").on("keydown",".caption .editable",function(e){
-        if (Me.username === postsList[currentPostItterator].owner.username) {
+        if (Me.userId === postsList[currentPostItterator].ownerId) {
             if ($(".caption .saveCaption")[0].className.split("show")[1]) {
                 $(".caption .saveCaption").removeClass("show");
             }
@@ -529,7 +529,7 @@
         $(".caption .editable").val(postsList[currentPostItterator].caption);
     });
     $("body").on("click",".caption .saveCaption.show",function(e){
-        if(Me.username === postsList[currentPostItterator].owner.username) {
+        if(Me.userId === postsList[currentPostItterator].ownerId) {
             if(postsList[currentPostItterator].caption !== $(".editable").val()) {
                 if ($(".caption .spinner")) {
                     $(".caption .spinner").addClass("show");
@@ -819,6 +819,7 @@
                 newUrl += "/" + category + "/" + hashtag;
             }
             if(category !== ""){
+                debugger;
                 newUrl += "/" + category + "/" + hashtag;
             }
             window.history.replaceState("", "", "/");
@@ -1394,7 +1395,6 @@
 
                 }
             }
-            loadPostDatas(currentPostObject,currentPostItterator);
         }
         else if (situation === "initial") {
 
