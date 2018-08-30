@@ -575,15 +575,15 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
 
 router.post('/api/v1/posts/:uuid',function(req,res){
     let userId = req.params.uuid;
-    users.getUserInfosFromCache(userId,function(info) {
-        console.log("info : " + info);
-        if (!info.message) {
+    users.getUserInfosFromCache(userId,function(hostUser) {
+        console.log("hostUser : " + hostUser);
+        if (!hostUser.message) {
             validateRequest(req, res, function (user) {
                 if (user) {
                     let self = false;
                     let canQuery = true;
                     let privatePosts = false;
-                    if (JSON.parse(user.privacy) && user.userId !== userId) {
+                    if (JSON.parse(hostUser.privacy) && user.userId !== userId) {
                         if (user.followings.indexOf(userId) > -1) {
                             privatePosts = true;
                             canQuery = true;

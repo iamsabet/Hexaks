@@ -12,6 +12,7 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
+
 var hashtagSchema = new Schema({
     name : String,
     counts : Number,
