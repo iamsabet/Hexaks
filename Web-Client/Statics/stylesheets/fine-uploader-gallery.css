@@ -46,13 +46,11 @@
     min-height: 200px;
     max-height: 490px;
     overflow-y: hidden;
-    width: 96%;
-    left: 1%;
+    width: inherit;
     border-radius: 6px;
-    border: 1px solid #636363;
+    border: 1px dashed #CCCCCC;
     background-color: #FAFAFA;
-    padding: 2px;
-    height: 96%;
+    padding: 20px;
 }
 .qq-gallery.qq-uploader:before {
     content: attr(qq-drop-area-text) " ";
@@ -98,35 +96,22 @@
     border-radius: 4px;
 }
 .qq-gallery .qq-upload-list {
-    margin: 0;
-    padding: 10px 0 0;
+    margin: 40px 0 0;
+    padding: 0 0 0;
     list-style: none;
     max-height: 450px;
-    overflow-y: auto;
-    clear: both;
+    overflow-y: hidden;
+    overflow-x: auto;
+    clear: left;
     box-shadow: none;
+    width:100%;
+    height: 100%;
 }
 
 
 /* Uploaded Elements
 ------------------------------------------ */
-.qq-gallery .qq-upload-list li {
-    display: inline-block;
-    position: relative;
-    max-width: 120px;
-    line-height: 16px;
-    font-size: 13px;
-    color: #424242;
-    background-color: #FFFFFF;
-    border-radius: 2px;
-    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.22);
-    vertical-align: top;
-    text-align:center;
-    /* to ensure consistent size of tiles - may need to change if qq-max-size attr on preview img changes */
-    height: 200px;
-    padding:0 5px;
-    margin:2px auto;
-}
+
 
 .qq-gallery .qq-upload-spinner,
 .qq-gallery .qq-upload-size,
@@ -193,7 +178,6 @@
     padding: 4px;
     position: absolute;
     right: -5px;
-    top: -6px;
     margin: 0;
     line-height: 17px;
 }
@@ -202,14 +186,10 @@
 }
 .qq-gallery .qq-upload-retry {
     cursor: pointer;
-    position: absolute;
-    top: 30px;
-    left: 50%;
-    margin-left: -31px;
     box-shadow: 0 1px 1px rgba(255, 255, 255, 0.37) inset,
-                1px 0 1px rgba(255, 255, 255, 0.07) inset,
-                0 4px 4px rgba(0, 0, 0, 0.5),
-                0 -2px 12px rgba(0, 0, 0, 0.08) inset;
+    1px 0 1px rgba(255, 255, 255, 0.07) inset,
+    0 4px 4px rgba(0, 0, 0, 0.5),
+    0 -2px 12px rgba(0, 0, 0, 0.08) inset;
     padding: 3px 4px;
     border: 1px solid #d2ddc7;
     border-radius: 2px;
@@ -246,7 +226,7 @@
 }
 .qq-gallery .qq-upload-spinner {
     display: inline-block;
-    background: url("../images/gif/loading.gif");
+    background: url("loading.gif");
     position: absolute;
     left: 50%;
     margin-left: -7px;
@@ -260,7 +240,7 @@
 }
 .qq-gallery .qq-drop-processing-spinner {
     display: inline-block;
-    background: url("../images/gif/processing.gif");
+    background: url("processing.gif");
     width: 24px;
     height: 24px;
     vertical-align: text-bottom;
@@ -283,7 +263,6 @@
     display: inline;
 }
 .qq-gallery .qq-upload-list li.qq-upload-success {
-    text-align:center;
     background-color: #F2F7ED;
 }
 .qq-gallery .qq-upload-list li.qq-upload-fail {
@@ -360,20 +339,20 @@
 
 .qq-gallery .qq-edit-filename-icon {
     display: none;
-    background: url("../images/gif/edit.gif");
+    background: url("edit.gif");
     width: 15px;
     height: 15px;
     vertical-align: text-bottom;
 }
 .qq-gallery .qq-delete-icon {
-    background: url("../images/gif/trash.gif");
+    background: url("trash.gif");
     width: 15px;
     height: 15px;
     vertical-align: sub;
     display: inline-block;
 }
 .qq-gallery .qq-retry-icon {
-    background: url("../images/gif/retry.gif");
+    background: url("retry.gif");
     width: 15px;
     height: 15px;
     vertical-align: sub;
@@ -381,14 +360,14 @@
     float: none;
 }
 .qq-gallery .qq-continue-icon {
-    background: url("../images/gif/continue.gif");
+    background: url("continue.gif");
     width: 15px;
     height: 15px;
     vertical-align: sub;
     display: inline-block;
 }
 .qq-gallery .qq-pause-icon {
-    background: url("../images/gif/pause.gif");
+    background: url("pause.gif");
     width: 15px;
     height: 15px;
     vertical-align: sub;
@@ -425,17 +404,20 @@
     /* center the thumb horizontally in the tile */
     margin:auto;
     display: block;
+    width:100%;
 }
 
 /* hack to ensure we don't try to center preview in IE8, since -ms-filter doesn't mimic translateY as expected in all cases */
 :root *> .qq-gallery .qq-thumbnail-selector {
     /* vertically center preview image on tile */
     position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
+    top: 0 !important;
+    width:auto !important;
+    height: 80% !important;
+    transform: translate(0,0) !important;
+    -moz-transform: translate(0,0) !important;
+    -ms-transform: translate(0,0) !important;
+    -webkit-transform: translate(0,0) !important;
 }
 
 /* <dialog> element styles */
@@ -471,15 +453,4 @@
 
 .qq-gallery .qq-uploader DIALOG::backdrop {
     background-color: rgba(0, 0, 0, 0.7);
-}
-
-
-/* uploader override css */
-
-
-.qq-upload-list > li:nth-child(3n+1),.qq-upload-list > li:nth-child(3n+2){
-    display: none !important;
-}
-.qq-upload-list > li:nth-child(3n){
-    display: block;
 }

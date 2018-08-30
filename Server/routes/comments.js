@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 var postSchema = require('../models/post.model');
 var post = new postSchema();
 var userSchema = require('../models/user.model');
@@ -11,18 +10,13 @@ var rate = new rateSchema();
 var commentSchema = require('../models/comment.model');
 var Comment = new commentSchema();
 var bcrypt = require("bcrypt-nodejs");
-var ExifImage = require('exif').ExifImage;
-var Float = require('mongoose-float').loadType(mongoose);
 var users = require('./users');
 var redis = require("redis");
-var requestIp = require("request-ip");
-var findHashtags = require('find-hashtags');
-var CryptoJS = require("crypto-js");
-
+var random = require('randomstring');
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
-});    // Create the client
+});    // Create the client // Create the client
 redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
@@ -34,11 +28,12 @@ var comments = {
             if (err) res.send({result: false, message: "500 post found for comments"});
             if (post) {
                 // Decrypt post id to get owner id from it
-                let bytes = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-                let postOwnerId = bytes.toString().split(":--:")[0];
+                let postOwnerId = postId.split("|-p-|")[0];
                 let query = {
                     postId: postId,
                     deactive: false,
+                    deleted:false,
+                    ownerId:{$exists:true}
                 };
                 if (req.body.self) {
                     query.ownerId = user.userId
@@ -46,11 +41,11 @@ var comments = {
 
                 let options = {
                     select: 'commentId postId postOwnerId ownerId mentions hashtags fullText deactive deleted createdAt edited updatedAt',
-                    sort: {createdAt: +1},
+                    sort: {createdAt: -1},
                     page: pageNumber,
                     limit: parseInt(counts)
                 };
-                if (post.privacy && user === null) {
+                if (post.privacy && user.notAuth) {
                     redisClient.hgetall(postOwnerId + ":info", function (err, info) {
                         if (!err && info) {
                             if (info.privacy) {
@@ -67,12 +62,8 @@ var comments = {
                             res.send({result: false, message: "owner info not found"});
                         }
                     });
-                    res.send({
-                        result: false,
-                        message: "Content is private : follow the owner of the post to access these contents"
-                    });
                 }
-                else if (post.privacy && user) {
+                else if (post.privacy && !user.notAuth) {
                     if (postOwnerId === user.userId) {
                         Comment.Paginate(query, options, req, res);
                     }
@@ -112,7 +103,7 @@ var comments = {
                     }
                 }
                 else {
-                    Comment.Paginate(query, options, req, res);
+                    Comment.Paginate(query, options,user, req, res);
                 }
             }
             else {
@@ -126,8 +117,9 @@ var comments = {
 
         let postId = req.body.postId;
         if (postId && typeof postId === "string" && req.body && typeof req.body.text === "string") {
-            let bytes = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-            let postOwnerId = bytes.toString().split(":--:")[0];
+            let postId = req.body.postId.split("%7C").join("|");
+            let postOwnerId = postId.split("|-p-|")[0];
+            console.log(postOwnerId,postId);
             let ownerId = user.userId;
             let text = req.body.text;
             if (user) {
@@ -149,7 +141,10 @@ var comments = {
                         redisClient.hgetall(postOwnerId + ":info", function (err, info) {
                             if (err) throw err;
                             if (info) {
-                                let blockList = JSON.parse(info.blockList);
+                                let blockList=[];
+                                if(info.blockList !== "") {
+                                    blockList = JSON.parse(info.blockList);
+                                }
                                 if (blockList.indexOf(user.userId) === -1) {
                                     if (user.blockList.indexOf(postOwnerId) === -1) {
                                         while ((m = reHashtag.exec(str)) != null) {
@@ -162,10 +157,10 @@ var comments = {
                                         }
                                         let n;
                                         while ((n = reMention.exec(str)) != null) {
-                                            if (m.index === reMention.lastIndex) {
+                                            if (n.index === reMention.lastIndex) {
                                                 reMention.lastIndex++;
                                             }
-                                            if (hashtags.indexOf(n[0]) === -1) {
+                                            if (mentions.indexOf(n[0]) === -1) {
                                                 mentions.push(n[0]);
                                             }
                                         }
@@ -184,7 +179,7 @@ var comments = {
                                             if (postId && postOwnerId && ownerId) {
                                                 Comment.create(commentObject, function (callback) {
                                                     if (callback) {
-                                                        res.send(true);
+                                                        res.send(callback);
                                                     }
                                                     else {
                                                         res.send({result: false, message: "create comment failed"});
@@ -199,7 +194,7 @@ var comments = {
                                             if (user.followings.indexOf(postOwnerId) > -1) {
                                                 Comment.create(commentObject, function (callback) {
                                                     if (callback) {
-                                                        res.send(true);
+                                                        res.send(callback);
                                                     }
                                                     else {
                                                         res.send({result: false, message: "create comment failed"});
@@ -245,9 +240,7 @@ var comments = {
             let commentId = req.body.commentId;
             if (ownerId && typeof ownerId === "string" && commentId && typeof commentId === "string") {
 
-                let bytes = CryptoJS.AES.decrypt(postId, 'postSecretKey 6985');
-                let postOwnerId = bytes.toString().split(":--:")[0];
-                let ownerId = req.body.ownerId;
+                let postOwnerId = req.body.postId.split("|-p-|")[0];
                 let text = req.body.text;
                 if (user) {
                     postSchema.findOne({postId: postId, ownerId: postOwnerId}, {
@@ -268,8 +261,11 @@ var comments = {
                             redisClient.hgetall(postOwnerId + ":info", function (err, info) {
                                 if (err) throw err;
                                 if (info) {
-                                    let blockList = JSON.parse(info.blockList);
-                                    if (blockList.indexOf(user.userId) === -1) {
+                                    let blockList ="";
+                                    if(info.blockList !== "") {
+                                        blockList = JSON.parse(info.blockList);
+                                    }
+                                    if (blockList.indexOf(user.userId) === -1 || blockList==="") {
                                         if (user.blockList.indexOf(postOwnerId) === -1) {
                                             while ((m = reHashtag.exec(str)) != null) {
                                                 if (m.index === reHashtag.lastIndex) {
@@ -294,20 +290,20 @@ var comments = {
                                                 commentId: commentId,
                                                 postOwnerId : postOwnerId,
                                                 deactive: false,
-                                                delete: false,
+                                                deleted: false,
                                             };
                                             let updates = {
                                                 mentions: mentions, // usernames @
                                                 hashtags: hashtags, // #
                                                 fullText: text,
-                                                updatedAt: Date.now()
+                                                updatedAt: Date.now(),
+                                                edited:true
                                             };
                                             if (!JSON.parse(info.privacy)) {
                                                 if (postId && postOwnerId && ownerId) {
-
-                                                    commentSchema.findOneAndUpdate(query, updates, function (err, result) {
+                                                    commentSchema.findOneAndUpdate(query,{$set:updates}, function (err, result) {
                                                         if (err) throw err;
-                                                        if (result.n > 0) {
+                                                        if (result) {
                                                             res.send(true);
                                                         }
                                                         else {
@@ -316,14 +312,14 @@ var comments = {
                                                     });
                                                 }
                                                 else {
-                                                    return callback({result: false, message: "No posts uploaded yet"});
+                                                    res.send({result: false, message: "No posts uploaded yet"});
                                                 }
                                             }
                                             else {
                                                 if (user.followings.indexOf(postOwnerId) > -1) {
-                                                    commentSchema.findOneAndUpdate(query, updates, function (err, result) {
+                                                    commentSchema.findOneAndUpdate(query,{$set:updates}, function (err, result) {
                                                         if (err) throw err;
-                                                        if (result.n > 0) {
+                                                        if (result) {
                                                             res.send(true);
                                                         }
                                                         else {
@@ -365,22 +361,25 @@ var comments = {
     },
     delete: function (req, res, user) {
         if (req.body && req.body.commentId && typeof req.body.commentId === "string" && req.body.postId && typeof req.body.postId === "string") {
-            let bytes = CryptoJS.AES.decrypt(req.body.postId, 'postSecretKey 6985');
-            let postOwnerId = bytes.toString().split(":--:")[0];
+            let postOwnerId = req.body.postId.split("|-p-|")[0];
             if(user) {
                 if ((user.roles.indexOf("superuser") > -1) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)) { // owner access + superuser access
                     commentSchema.findOneAndUpdate({
                         postId: req.body.postId,
                         commentId: req.body.commentId,
-                        delete: false,
+                        deleted: false,
                     }, {
                         $set: {
-                            delete: true,
+                            deleted: true,
                         }
                     }, function (err, result) {
                         if (err) throw err;
-                        console.log(result);
-                        res.send(true);
+                        if(result) {
+                            res.send(true);
+                        }
+                        else{
+                            res.send({result:false,message:"Delete Comment Failed"});
+                        }
                     });
 
                 }
@@ -397,8 +396,12 @@ var comments = {
                             }
                         }, function (err, result) {
                             if (err) throw err;
-                            console.log(result);
-                            res.send(true);
+                            if(result) {
+                                res.send(true);
+                            }
+                            else{
+                                res.send({result:false,message:"Delete Comment Failed"});
+                            }
                         });
 
                     }

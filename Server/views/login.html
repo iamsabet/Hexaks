@@ -1,6 +1,7 @@
 <html>
 <script src="../Statics/javascripts/jquery.min.js"></script>
 <script src="../Statics/javascripts/cookies.js"></script>
+<script src="../Statics/javascripts/crypto-js/crypto-js.min.js"></script>
 <link rel="stylesheet" href="../Statics/stylesheets/register-login.css">
 <link rel="stylesheet" href="../Statics/stylesheets/bootstrap.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,12 +14,23 @@
     <div class="loginRegForm">
         <h2>Login to Hexaks </h2>
         <form action="/login">
-            <input type="text" placeholder="username" id="username"/>
-            <input type="password" placeholder="username" id="password"/>
+            <div>
+                <input type="text" placeholder="username or email" id="username"/>
+                <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
+            </div>
+            <div>
+                <input type="password" placeholder="password" id="password"/>
+                <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+            </div>
             <button id="logBtn">Login</button>
-            <p class="messageBox">
+            <ul class="messageBox">
+
+            </ul>
+            <div class="socialBox">
+                <button id="insta"></button>
+                <button id="google"></button>
+            </div>
         </form>
-        </p>
     </div>
 
     <div class="footer">
@@ -33,13 +45,26 @@
 
 <script>
     // Events.js
+    let loginKey = "none";
+
+
+
+
+
+    $(document).ready(function(event){
+        requestHandler("/login/getKey", "GET", {}, "getKey");
+    });
+
+
     $('.loginRegForm').on("submit",".loginRegForm form",function(event) {
         event.preventDefault();
     });
-    $('.loginRegForm').on("click","#logBtn",function(){
+
+    $('.loginRegForm').on("click","#logBtn",function(event){
+        event.preventDefault();
+        let encryptedInfo = CryptoJS.AES.encrypt(($("#username").val().toString()+"/"+$("#password").val().toString()),loginKey).toString();
         var input = {
-            username : $("#username").val(),
-            password: $("#password").val()
+            info : encryptedInfo
         };
         requestHandler("/login", "POST", input, "loginHandler");
     });
@@ -68,12 +93,27 @@
     function responseActionHandler(caller, res) {
         switch (caller) {
             case "loginHandler" : {
-                console.log(res);
+              if(!res.message){
                 createCookie("X-ACCESS-TOKEN",res["token"],1);
-                createCookie("KEY",res["key"],1);
-                window.location.pathname = "/";
+                window.location.pathname = "/explore";
+              }
+              else{
+                  showLoginError(res.message);
+                  $("#password").val("");
+              }
             }break;
+            case "getKey":{
+                loginKey = res;
+                $("#loginBtn").addClass("enable");
+            }
         }
+    }
+    function showLoginError(message){
+      $(".messageBox").html(`
+          <li>
+            ${message}
+          </li>
+        `);
     }
 </script>
 </html>

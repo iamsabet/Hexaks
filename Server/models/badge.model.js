@@ -4,17 +4,18 @@ const random = require('randomstring');
 var bcrypt   = require('bcrypt-nodejs');
 var Float = require('mongoose-float').loadType(mongoose);
 var badgeSchema = new Schema({
-    badgeId:String,
-    usernames:[],
-    pictureUrl:String,
-    category:String,
+    badgeId:String, // picture name
+    badgeName:String,
+    text : String,
+    rule:String, // conditions --> in cache too -->
+    isLeaf : Boolean,
     type:String,
     level:Number,
-    diactive:Boolean,
+    activated:Boolean,
     createdAt:Date,
     updatedAt:Date
 });
-
+ // basics in mongo --> badge Id to information in redis --> cache
 badgeSchema.methods.Create = function(req,res){
 
 };

@@ -4,7 +4,7 @@ const random = require('randomstring');
 require('mongoose-long')(mongoose);
 let mongoosePaginate = require('mongoose-paginate');
 let redis = require("redis");
-
+let users = require("../routes/users");
 let redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -41,8 +41,8 @@ followSchema.methods.Paginate = function(query,options,req,res){
                 if(follows.docs.length > 0) {
                     for (let x = 0; x < follows.docs.length; x++) {
                         if (!follows.owners[follows.docs[x][selector]]) {
-                            redisClient.hgetall(follows.docs[x][selector] + ":info", function (err, info) {
-                                if (!err && info) {
+                            users.getUserInfosFromCache(follows.docs[x][selector],function(info) {
+                                if (!info.message) {
                                     console.log(info);
                                     follows.owners[follows.docs[x][selector]] = info.username + "/" + info.profilePictureSet;
                                 }

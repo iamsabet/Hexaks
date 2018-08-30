@@ -1,34 +1,39 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
-var rateSchema = new Schema({ // 9 Pixels
+var Float = require('mongoose-float').loadType(mongoose);
+require('mongoose-long')(mongoose);
+var mongoosePaginate = require('mongoose-paginate');
+
+var rateSchema = new Schema({
     rateId : String,
-    members : [], // userNames
-    value:Number, // 1 --> 6
+    rater:String, // userId
+    value:Number, // 1 to 6
     postId:String,
+    changes : Number ,// only 4changes
+    activated:Boolean,
+    deleted:Boolean,
     createdAt:Number,
     updatedAt:Number
 });
 
-rateSchema.methods.Create = function(req,res,rateObject){
-    var newRate = new Rate(rateObject);
+rateSchema.methods.Create = function(rateObject,callback){
+
+    let newRate = new Rate(rateObject);
     newRate.createdAt = Date.now();
+    newRate.activated = true;
     newRate.rateId = random.generate();
-    newRate.save(function(err){
-        if(err) throw err;
-        console.log(newRate.username);
-        res.send({result:true,value:newRate.rateId});
+    newRate.deleted = false;
+    newRate.save(function(err,result){
+        if(result){
+            callback(true)
+        }
+        else{
+            callback(false);
+        }
     });
 };
-rateSchema.methods.Edit = function(req,res){
 
-
-};
-
-rateSchema.methods.Remove = function(req,res){
-
-
-};
 
 rateSchema.pre('save', function(next){
     if(this.updatedAt) {
@@ -41,7 +46,7 @@ rateSchema.pre('save', function(next){
     }
     next();
 });
-
-var Rate = mongoose.model('rates', rateSchema);
-var rate = mongoose.model('rates');
+rateSchema.plugin(mongoosePaginate);
+let Rate = mongoose.model('rates', rateSchema);
+let rate = mongoose.model('rates');
 module.exports = rate;

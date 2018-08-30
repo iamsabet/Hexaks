@@ -5,12 +5,12 @@ var Users = new userSchema();
 var auth = require('./auth');
 var posts = require('./posts');
 var comments = require('./comments');
-var rates = require('./rates');
-var views = require('./views');
 var albums = require('./albums');
 var uploader = require('./uploader');
 var follows = require('./follow');
 var users = require('./users');
+var categories = require('./category');
+var hashtags = require('./hashtag');
 var validateRequest = require('../middleWares/validateRequest');
 var redis = require('redis');
 var requestIp = require("request-ip");
@@ -33,21 +33,29 @@ router.get('/', function(req,res){
 
 });
 router.get('/login', function(req,res){
-    validateRequest(req,res,function (callback) {
-
-    if(callback){
-        res.render("main.html");
-    }
-    else {
-        res.render("login.html");
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            res.render("main.html");
+        }
+        else {
+            res.render("login.html");
         }
     });
-
+});
+router.get('/login/getKey', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback.message) {
+            users.generateAccessKey("login",req,res);
+        }
+        else{
+            res.send({result:false,message:" You are already logged in "});
+        }
+    });
 });
 
 router.get('/register', function(req,res){
-    validateRequest(req,res,function (callback) {
-        if (callback) {
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
             res.render("main.html");
         }
         else {
@@ -56,19 +64,37 @@ router.get('/register', function(req,res){
     });
 });
 
-router.get('/about', function(req,res){
-    validateRequest(req,res,function (callback) {
-        if (callback) {
-            res.redirect("/");
+router.get('/register/getKey', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback.message) {
+            users.generateAccessKey("register",req,res);
         }
-        else {
-            res.render("about.html");
+        else{
+            res.send({result:false,message:" You are already logged in "});
         }
     });
 });
+router.post('/register/checkIsTaken', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback.message) {
+            users.checkIsTaken(req,res);
+        }
+        else{
+            res.send({result:false,message:" You are already logged in "});
+        }
+    });
+});
+router.get('/about', function(req,res){
+    res.render("about.html");
+});
+
+router.get('/about/team', function(req,res){
+    res.render("about.html");
+});
+
 router.get('/terms', function(req,res){
-    validateRequest(req,res,function (callback) {
-        if (callback) {
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
             res.redirect("/");
         }
         else {
@@ -78,12 +104,17 @@ router.get('/terms', function(req,res){
 });
 
 router.get('/api/v1/admin/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback.roles.indexOf("admin") > -1) {
-            res.render('admin.html');
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            if (callback.roles.indexOf("admin") > -1) {
+                res.render('admin.html');
+            }
+            else {
+                res.send(callback);
+            }
         }
         else{
-            res.send("404 - Not Found");
+            res.send(callback);
         }
     });
 });
@@ -92,7 +123,7 @@ router.get('/api/v1/admin/', function(req,res){
 router.get('/post/:uuid', function(req,res){
 
     validateRequest(req,res,function(callback){
-        if(callback) {
+        if(!callback.message) {
             res.render("post.html");    // html only static file preload some datas for authenticated
         }
         else{
@@ -102,10 +133,93 @@ router.get('/post/:uuid', function(req,res){
 
 });
 
-router.post('/post/:uuid', function(req,res){
+
+
+
+router.post('/api/v1/post/initial/', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            users.initialUpload(req,res,callback);
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+router.post('/api/v1/post/activate/', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            posts.activate(req,res,callback);
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+
+router.post('/api/v1/post/submit/', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            posts.activate(req,res,callback);
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+router.post('/api/v1/post/editPost/', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            posts.editPost(req,res,callback);
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+
+
+router.post('/api/v1/album/create/', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            albums.submitAlbum(req,res,callback);
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+router.get('/api/v1/album/accessibles/', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            albums.get(req,res,callback);
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+router.post('/api/v1/album/getUserAlbums/', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            albums.submitAlbum(req,res,callback);
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+
+
+router.post('/api/v1/post/:uuid', function(req,res){
 
     validateRequest(req,res,function(callback){
-        posts.getPostInfo(req,res,callback,req.params.uuid);    // html only static file preload some datas for authenticated
+        if(!callback.message) {
+            posts.getPostInfo(req, res, callback, req.params.uuid);    // html only static file preload some datas for authenticated
+        }
+        else{
+            res.send(callback);
+        }
     });
 
 });
@@ -125,17 +239,16 @@ router.get('/:uuid/top', function(req,res){
 
 
 
-router.post('/api/v1/:uuid/followings',function(req,res) {
+router.post('/api/v1/users/:uuid/followings',function(req,res) {
     let hostId = req.params.uuid.toString();
-    validateRequest(req, res, function (user) {
-        if (user) {
+    validateRequest(req,res,function(user){
+        if(!user.message) {
             redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
                 if (err) throw err;
 
                 let timeOrigin;
                 let pageNumber = req.body.pageNumber || 1;
                 let counts = req.body.counts || 10;
-                let timeEdge = 0;
                 let now = Date.now();
                 if (requestOrigin) {
                     if (pageNumber === 1) {
@@ -156,21 +269,23 @@ router.post('/api/v1/:uuid/followings',function(req,res) {
                 follows.getFollowingsPaginated(req, res, user, hostId,timeOrigin, counts, pageNumber);
             });
         }
+        else{
+            res.send(user);
+        }
     });
 });
 
 
-router.post('/api/v1/:uuid/followers',function(req,res) {
+router.post('/api/v1/users/:uuid/followers',function(req,res) {
     let hostId = req.params.uuid.toString();
-    validateRequest(req, res, function (user) {
-        if (user) {
+    validateRequest(req,res,function(user){
+        if(!user.message) {
             redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
                 if (err) throw err;
 
                 let timeOrigin;
                 let pageNumber = req.body.pageNumber || 1;
                 let counts = req.body.counts || 10;
-                let timeEdge = 0;
                 let now = Date.now();
                 if (requestOrigin) {
                     if (pageNumber === 1) {
@@ -188,36 +303,50 @@ router.post('/api/v1/:uuid/followers',function(req,res) {
                     redisClient.set(user.username + "::requestOrigin", requestOrigin);
                     redisClient.expire(user.username + "::requestOrigin", 30000);
                 }
-                follows.getFollowingsPaginated(req, res, user, hostId,timeOrigin, counts, pageNumber);
+                follows.getFollowersPaginated(req, res, user, hostId,timeOrigin, counts, pageNumber);
             });
+        }
+        else{
+            res.send(user);
         }
     });
 });
 
 router.post('/api/v1/users/disconnect',function(req,res) {
-    validateRequest(req,res,function(callback) {
-        if(callback) {
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
             users.disconnect(req, res, callback);
         }
         else{
-            res.send({result:false,message:"Not Authenticated"});
+            res.send(callback);
+        }
+    });
+});
+
+router.post('/api/v1/users/disconnect',function(req,res) {
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            users.disconnect(req, res, callback);
+        }
+        else{
+            res.send(callback);
         }
     });
 });
 
 router.post('/api/v1/users/block',function(req,res) {
-    validateRequest(req,res,function(callback) {
-        if(callback) {
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
             users.block(req, res, callback);
         }
         else{
-            res.send({result:false,message:"Not Authenticated"});
+            res.send(callback);
         }
     });
 });
 router.post('/api/v1/users/unblock',function(req,res) {
-    validateRequest(req,res,function(callback) {
-        if(callback) {
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
             users.unblock(req, res, callback);
         }
         else{
@@ -228,31 +357,34 @@ router.post('/api/v1/users/unblock',function(req,res) {
 
 router.get('/api/v1/users/getMe',function(req,res){
     validateRequest(req,res,function(callback){
-       if(callback){
+        if(!callback.message) {
             users.getMe(req,res,callback)
        }
        else {
-           res.send(null);
+           res.send(callback);
        }
     });
 });
 
 router.post('/api/v1/users/getHostProfile',function(req,res){
-
     validateRequest(req,res,function(callback){
-        users.getHostProfile(req,res,callback)
+        if(!callback.message) {
+            users.getHostProfile(req, res, callback)
+        }
+        else{
+            res.send(callback);
+        }
     });
 });
 
 
 router.get('/api/v1/users/getProfileInfo',function(req,res){
-
     validateRequest(req,res,function(callback){
-        if(callback) {
+        if(!callback.message) {
             users.getProfileInfo(req, res, callback);
         }
         else{
-            res.send(null);
+            res.send(callback);
         }
     });
 });
@@ -261,11 +393,11 @@ router.get('/api/v1/users/getProfileInfo',function(req,res){
 router.post('/api/v1/users/updateProfileInfo',function(req,res){
 
     validateRequest(req,res,function(callback){
-        if(callback) {
+        if(!callback.message) {
             users.updateProfileInfo(req, res, callback)
         }
         else{
-            res.send(null);
+            res.send(callback);
         }
     });
 });
@@ -274,22 +406,22 @@ router.post('/api/v1/users/updateProfileInfo',function(req,res){
 router.post('/api/v1/users/follow',function(req,res){
 
     validateRequest(req,res,function(callback){
-        if(callback) {
+        if(!callback.message) {
             follows.follow(req, res, callback)
         }
         else{
-            res.send(null);
+            res.send(callback);
         }
     });
 });
 router.post('/api/v1/users/unfollow',function(req,res){
 
     validateRequest(req,res,function(callback){
-        if(callback) {
+        if(!callback.message) {
             follows.unfollow(req, res, callback)
         }
         else{
-            res.send(null);
+            res.send(callback);
         }
     });
 });
@@ -299,11 +431,11 @@ router.post('/api/v1/users/unfollow',function(req,res){
 
 router.post('/api/v1/upload',function(req,res){
     validateRequest(req,res,function(callback){
-        if(callback){
+        if(!callback.message) {
             uploader.onUpload(req,res,callback)
         }
         else {
-            res.send(null);
+            res.send(callback);
         }
     });
 });
@@ -341,9 +473,7 @@ router.post('/api/v1/posts/explore/',function(req,res){
         else{
             username = requestIp.getClientIp(req).toString();
         }
-
-        let now = Date.now();
-        redisClient.get(username+"::postRequestOrigin", function (err, requestOrigin) {
+        redisClient.get(username+"::requestOrigin", function (err, requestOrigin) {
             if(err) throw err;
             let category = undefined;
             if(req.body.category && req.body.category !==""){
@@ -364,22 +494,22 @@ router.post('/api/v1/posts/explore/',function(req,res){
             else if(req.body.order==="top") { // curated only
                 orderBy = req.body.orderBy || "rate.value";
             }
-
+            let now = Date.now();
             let curator = req.body.curator || undefined;
             if(pageNumber === 1){
-                if(requestOrigin){
-
+                console.log("request origin" + requestOrigin);
+                if(requestOrigin !== null){
                     requestOrigin = now;
-                    redisClient.set(username+"::postRequestOrigin",requestOrigin);
-                    redisClient.expire(username+"::postRequestOrigin",30000);
+                    redisClient.set(username+"::requestOrigin",requestOrigin);
+                    redisClient.expire(username+"::requestOrigin",30000);
                 }
                 timeOrigin = requestOrigin;
             }
             else{
                 requestOrigin = now;
                 timeOrigin = requestOrigin;
-                redisClient.set(username+"::postRequestOrigin",requestOrigin);
-                redisClient.expire(username+"::postRequestOrigin",30000);
+                redisClient.set(username+"::requestOrigin",requestOrigin);
+                redisClient.expire(username+"::requestOrigin",30000);
             }
             posts.getPostsByFiltersAndOrders(req, res, user, "all", orderBy, isCurated, hashtags, category, curator ,false, true, false, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
 
@@ -414,21 +544,19 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
                 else if(req.body.order==="top") {
                     orderBy = req.body.orderBy || "rate.value";
                 }
-
+                let now = Date.now();
                 let curator = req.body.curator || undefined;
-                if(requestOrigin){
-                    if(pageNumber === 1){
-                        requestOrigin = Date.now();
-                        redisClient.del(user.username+"::requestOrigin",function(index){
-                            console.log(index);
-                        });
+                if(pageNumber === 1){
+                    console.log("request origin" + requestOrigin);
+                    if(requestOrigin !== null){
+                        requestOrigin = now.toString();
                         redisClient.set(user.username+"::requestOrigin",requestOrigin);
                         redisClient.expire(user.username+"::requestOrigin",30000);
                     }
                     timeOrigin = requestOrigin;
                 }
                 else{
-                    requestOrigin = Date.now();
+                    requestOrigin = now.toString();
                     timeOrigin = requestOrigin;
                     redisClient.set(user.username+"::requestOrigin",requestOrigin);
                     redisClient.expire(user.username+"::requestOrigin",30000);
@@ -445,18 +573,17 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
 });
 
 
-
 router.post('/api/v1/posts/:uuid',function(req,res){
     let userId = req.params.uuid;
-    redisClient.hgetall(userId+":info",function(err,hostUser) {
-        if (err) res.send({result:false,message:"404 - User not found "});
-        if (hostUser) {
+    users.getUserInfosFromCache(userId,function(info) {
+        console.log("info : " + info);
+        if (!info.message) {
             validateRequest(req, res, function (user) {
                 if (user) {
                     let self = false;
                     let canQuery = true;
                     let privatePosts = false;
-                    if (JSON.parse(hostUser.privacy) && user.userId !== userId) {
+                    if (JSON.parse(user.privacy) && user.userId !== userId) {
                         if (user.followings.indexOf(userId) > -1) {
                             privatePosts = true;
                             canQuery = true;
@@ -489,21 +616,21 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         let curator = req.body.curator || undefined;
                         let timeEdge = 0;
                         let now = Date.now();
-                        if (requestOrigin) {
-                            if (pageNumber === 1) {
-                                redisClient.del(user.username + "::requestOrigin");
+                        console.log(requestOrigin);
+                        if(pageNumber === 1){
+                            console.log("request origin" + requestOrigin);
+                            if(requestOrigin !== null){
                                 requestOrigin = now;
-                                redisClient.set(user.username + "::requestOrigin", requestOrigin);
-                                redisClient.expire(user.username + "::requestOrigin", 30000);
+                                redisClient.set(user.username+"::requestOrigin",requestOrigin);
+                                redisClient.expire(user.username+"::requestOrigin",30000);
                             }
                             timeOrigin = requestOrigin;
-
                         }
-                        else {
+                        else{
                             requestOrigin = now;
                             timeOrigin = requestOrigin;
-                            redisClient.set(user.username + "::requestOrigin", requestOrigin);
-                            redisClient.expire(user.username + "::requestOrigin", 30000);
+                            redisClient.set(user.username+"::requestOrigin",requestOrigin);
+                            redisClient.expire(user.username+"::requestOrigin",30000);
                         }
                         if (canQuery) {
                             if (self) {
@@ -533,15 +660,14 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                             let curator = req.body.curator || undefined;
                             let timeEdge = 0;
                             let now = Date.now();
-                            if (requestOrigin) {
-                                if (pageNumber === 1) {
-                                    redisClient.del(requestIp.getClientIp(req) + "::requestOrigin");
+                            console.log(requestOrigin);
+                            if (pageNumber === 1) {
+                                if (requestOrigin !== null) {
                                     requestOrigin = now;
                                     redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
                                     redisClient.expire(requestIp.getClientIp(req) + "::requestOrigin", 30000);
                                 }
                                 timeOrigin = requestOrigin;
-
                             }
                             else {
                                 requestOrigin = now;
@@ -566,82 +692,12 @@ router.post('/api/v1/posts/:uuid',function(req,res){
     });
 });
 
+// categories controllers
 
+router.get('/api/v1/getDefinedCategories/',function(req,res) {
 
+    categories.getDefinedCategories(req,res,callback);
 
-router.post('/api/v1/post/initial/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            users.initialUpload(req,res,callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-router.post('/api/v1/post/activate/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            posts.activate(req,res,callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-
-router.post('/api/v1/post/submit/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            posts.activate(req,res,callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-router.post('/api/v1/post/editPost/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            posts.editPost(req,res,callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
-});
-
-router.post('/api/v1/post/initial/', function(req,res){
-    validateRequest(req,res,function(user) {
-        if(user) {
-            console.log("user"+user);
-            users.initialUpload(req,res,user);
-        }
-        else{
-            res.send({result:false,message:"404 Not Found"});
-        }
-    });
-});
-router.post('/api/v1/album/initial/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            users.initialUpload(req,res,callback);
-        }
-        else{
-            res.send({result:false,message:"404 Not Found"});
-        }
-    });
-});
-
-router.post('/api/v1/album/submit/', function(req,res){
-    validateRequest(req,res,function(callback) {
-        if(callback !==null) {
-            albums.submitAlbum(req,res,callback);
-        }
-        else{
-            res.send("404 Not Found");
-        }
-    });
 });
 
 
@@ -652,9 +708,17 @@ router.post('/api/v1/album/submit/', function(req,res){
 
 // comment controllers
 
-router.post('/api/v1/getComments/',function(req,res){
+router.post('/api/v1/getPostComments/',function(req,res){
 
-    if( req.body &&  typeof req.body.postId === "string") {
+
+
+    if(!isNaN(parseInt(req.body.pageNumber)) && parseInt(req.body.pageNumber) > 0 && parseInt(req.body.pageNumber) < 100){
+        //
+    }
+    else{
+        req.body.pageNumber = 1;
+    }
+    if( req.body &&  typeof req.body.postId === "string" && !isNaN(parseInt(req.body.counts)) && parseInt(req.body.counts) < 20 ) { // max number
         validateRequest(req, res, function (user) {
             var username;
             if (user) {
@@ -662,7 +726,7 @@ router.post('/api/v1/getComments/',function(req,res){
 
             }
             else {
-                username = user.username;
+                username = "requestIp.getClientIp(req).toString()";
                 user = {
                     notAuth : true,
                     userIp : requestIp.getClientIp(req).toString()
@@ -706,11 +770,74 @@ router.post('/api/v1/getComments/',function(req,res){
 });
 
 
+router.post('/api/v1/users/addComment/',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback){
+            comments.Create(req,res,callback);
+        }
+        else{
+            res.send({result:false,message:"403 Unauthorized"})
+        }
+    });
+});
 
 
+router.post('/api/v1/users/editComment/',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback){
+            comments.edit(req,res,callback);
+        }
+        else{
+            res.send({result:false,message:"403 Unauthorized"})
+        }
+    });
+});
 
+router.post('/api/v1/users/deleteComment/',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback){
+            comments.delete(req,res,callback);
+        }
+        else{
+            res.send({result:false,message:"403 Unauthorized"})
+        }
+    });
+});
+
+
+// rate
+router.post('/api/v1/users/rate',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback) {
+            posts.rate(req, res, callback);
+        }
+        else{
+            res.send(null);
+        }
+    });
+});
+router.post('/api/v1/users/view',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(callback) {
+            posts.view(req, res, callback);
+        }
+        else{
+            res.send(null);
+        }
+    });
+});
 router.delete('/api/v1/admin/user/:id', users.delete);
 
+router.post('/api/v1/admin/createCategory/', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(callback) {
+            categories.addNewCategory(req, res, callback);
+        }
+        else{
+            res.send({result:false,message:"Unauthorized"});
+        }
+    });
+});
 
 
 module.exports = router;

@@ -1,10 +1,2013 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <script src="../Statics/javascripts/jquery.min.js"></script>
+    <link rel="stylesheet" href="../Statics/stylesheets/fine-uploader-gallery.css">
+    <link rel="stylesheet" href="../Statics/stylesheets/style.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="../Statics/javascripts/cookies.js"></script>
+    <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js"></script>
+    <title>Hexaks</title>
 </head>
 <body>
 
+<div id="homeContainer" class="containerDiv">
+    <div id="alertTop">
+        <h3></h3>
+    </div>
+    <div class="accountCard">
+        <a href="/login" id="loginBtn">Login</a>
+        <a href="/register">Register</a>
+    </div>
+    <div class="loginSmall">
+        <form action="/login">
+            <input placeholder="username or email" type="text">
+            <input type="password" placeholder="password">
+            <button id="loginSubmit">Login</button>
+        </form>
+    </div>
+    <div class="nav rightSide">
+        <img id="logo" src="../Statics/images/images/LOGO.png">
+        <!--// parse dynamicly for clients - authenticated - and role based-->
+        <!--<ul>-->
+            <!--<li class="navRightButtons">Home</li>-->
+            <!--<li class="navRightButtons">Explore</li>-->
+            <!--<li class="navRightButtons">Subscriptions</li>-->
+            <!--<li class="navRightButtons">People</li>-->
+            <!--<li class="navRightButtons">Settings</li>-->
+            <!--<li class="navRightButtons" id="about">About</li>-->
+        <!--</ul>-->
+    </div>
+    <div class="settingsContainer" id="settings">
+        <div class="menu">
+            <h2>Account Information</h2>
+            <h2>Account Settings</h2>
+            <h2>Change Password</h2>
+            <h2>Badges</h2>
+            <h2>Deactive or Delete</h2>
+        </div>
+        <div class="formContainer">
+            <div class="accountSettings">
+                <label>Username</label>
+                <input type="text" class="username">
+                <label>Full Name</label>
+                <input type="text" class="fullName">
+                <label>Email</label>
+                <input type="text" class="email">
+                <label>City</label>
+                <input type="text" class="city">
+                <label>Bio</label>
+                <textarea type="text" class="bio">
+
+                </textarea>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="post" id="post">
+
+    <button class="closePost">
+
+    </button>
+    <div class="pictureBox">
+
+    </div>
+
+    <div class="commentsContainer show">
+        <button class="closeInfo show"></button>
+        <h3 class="header">Comments</h3>
+        <ul class="commentsList">
+
+        </ul>
+        <div class="newCommentDiv">
+            <textarea rows='1' class="editable show" id="newComment" maxlength="500"  placeholder="Write your comment here ... "></textarea>
+            <button class="cancelComment show"></button>
+            <button class="newComment"></button>
+        </div>
+        <div class="commentCommands">
+            <div class="cover">
+
+            </div>
+        </div>
+        <h3 class="commentsFooter">
+            <button class="new show"></button>
+        </h3>
+    </div>
+    <div class="infoContainer">
+        <button class="closeInfo show"></button>
+        <h3 class="header">Photo Information</h3>
+        <ul class="infoList">
+
+        </ul>
+    </div>
+    <div class="downloadContainer">
+        <button class="closeInfo show"></button>
+        <h3 class="header">Download Post</h3>
+    </div>
+    <div class="rateDiv">
+        <button class="closeInfo show"></button>
+        <h3 class="header">Rate this post ( 1 to 6 )</h3>
+        <div class="ratePad">
+
+        </div>
+        <h2 class="Rate Value">?</h2>
+        <button class="doRate" disabled>Rate</button>
+    </div>
+</div>
+<div class="postFooter">
+    <button class="leftButton show"></button>
+    <div class="ownerProfile">
+        <svg class="clip-svg">
+            <defs>
+                <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                    <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                </clipPath>
+            </defs>
+        </svg>
+        <div class="polygon-each-img-wrap">
+            <img class="ownerProfilePicture polygon-clip-hexagon" src=""/>
+        </div>
+        <a href="/" class="ownerUsername usernameLink"></a>
+    </div>
+    <button class="rightButton show"></button>
+    <div class="caption">
+        <button class="editSurface"></button>
+        <textarea readonly class="notEditable show"></textarea>
+        <textarea class="editable" maxlength="250"></textarea>
+        <button class="cancelCaption"></button>
+        <button class="saveCaption"></button>
+    </div>
+    <div class="rateButton">
+        <span class="rateValue">4.5</span>
+        <button class="openRateBtn"></button>
+        <span class="rateCounts"><img class="peopleIcon" src="../Statics/images/icons/users-group.png"/> 4 </span>
+        <span class="views">25</span>
+        <img src="../Statics/images/icons/glasses.png" class="viewIcon">
+    </div>
+    <div class="buttonGroup">
+        <button class="info"></button>
+        <button class="comments"></button>
+        <button class="download"></button>
+    </div>
+
+</div>
+
+
+
+<div class="contactContainer" id="contact">
+
+</div>
+
+<div class="policyContainer" id="policy">
+
+</div>
+
+<div class="newPostContainer" id="newPost">
+    <div class="newPostForm">
+        <select name="category" id="category">
+            <option value="Nature">Nature</option>
+            <option value="Industrial">Industrial</option>
+            <option value="Society">Society</option>
+            <option value="Color Full">Folan</option>
+        </select>
+        <div id="uploadArea" >
+            <strong>Drag one or more files to this Drop Zone ...</strong>
+            <input type="file" accept="image/*" class="browseSingle">
+        </div>
+        <div name="caption" id="caption" contenteditable="true"></div>
+        <button id="submitPost" > Post </button>
+    </div>
+</div>
+
+
+<script type="text/template" id="qq-template">
+    <div class="qq-uploader-selector qq-uploader qq-gallery" qq-drop-area-text="Drop files here">
+        <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+            <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+        </div>
+        <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+            <span class="qq-upload-drop-area-text-selector"></span>
+        </div>
+        <div class="qq-upload-button-selector qq-upload-button">
+            <div>Upload a file</div>
+        </div>
+        <span class="qq-drop-processing-selector qq-drop-processing">
+                <span>Processing dropped files...</span>
+                <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+            </span>
+        <ul class="qq-upload-list-selector qq-upload-list" role="region" aria-live="polite" aria-relevant="additions removals">
+            <li>
+                <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                <div class="qq-progress-bar-container-selector qq-progress-bar-container">
+                    <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+                </div>
+                <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                <div class="qq-thumbnail-wrapper">
+                    <img class="qq-thumbnail-selector" qq-max-size="120" qq-server-scale>
+                </div>
+                <button type="button" class="qq-upload-cancel-selector qq-upload-cancel"></button>
+                <button type="button" class="qq-upload-retry-selector qq-upload-retry">
+                    <span class="qq-btn qq-retry-icon" aria-label="Retry"></span>
+                    Retry
+                </button>
+
+                <div class="qq-file-info">
+                    <div class="qq-file-name">
+                        <span class="qq-upload-file-selector qq-upload-file"></span>
+                        <span class="qq-edit-filename-icon-selector qq-btn qq-edit-filename-icon" aria-label="Edit filename"></span>
+                    </div>
+                    <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                    <span class="qq-upload-size-selector qq-upload-size"></span>
+                    <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">
+                        <span class="qq-btn qq-delete-icon" aria-label="Delete"></span>
+                    </button>
+                    <button type="button" class="qq-btn qq-upload-pause-selector qq-upload-pause">
+                        <span class="qq-btn qq-pause-icon" aria-label="Pause"></span>
+                    </button>
+                    <button type="button" class="qq-btn qq-upload-continue-selector qq-upload-continue">
+                        <span class="qq-btn qq-continue-icon" aria-label="Continue"></span>
+                    </button>
+                </div>
+            </li>
+        </ul>
+
+        <dialog class="qq-alert-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">Close</button>
+            </div>
+        </dialog>
+
+        <dialog class="qq-confirm-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">No</button>
+                <button type="button" class="qq-ok-button-selector">Yes</button>
+            </div>
+        </dialog>
+
+        <dialog class="qq-prompt-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <input type="text">
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">Cancel</button>
+                <button type="button" class="qq-ok-button-selector">Ok</button>
+            </div>
+        </dialog>
+    </div>
+
+    <div class="">
+
+    </div>
+
+</script>
+
+
 </body>
+<script>
+    // Global Variables.JS
+    // import * as Jimp from "jimp";
+    var Me = {};
+    var host = {};
+    var currentPostObject = {};
+    var currentPost = {};
+    var left = {};
+    var right = {};
+    var currentPostItterator = 0;
+    var currentPostId = "";
+    var postsList = [];
+    var pageType="";
+    var total=0;
+    var usersInfo = {};
+    var originalUploader = {};
+    // initial by url parsing
+    var currentPage = "";
+    var historyPointer = -1;
+    var historyList = [];
+    // Events.Js
+    var commentsLastLength = [];
+    var commentsPageNumber = 1;
+    var commentsList = [];
+    var commentCounts = 10;
+    var selectedComment = 0; // last comment to do shit
+    var commentMode = false; // false = create / true = edit
+    var lastScroolValue = 0;
+    var newText = "";
+    var rates = {};
+    var rateObject = {};
+    var selectedRate = false;
+    var views = {};
+
+
+    $(document).ready(function(){
+        if( readCookie("X-ACCESS-TOKEN") !==null) {
+            getMe();
+            setUploaders();
+            ratePadInitial();
+            let postId = window.location.pathname.split("/")[2].toString();
+            urlParser(true,postId);
+        }
+        else {
+
+
+            let postId = window.location.pathname.split("/")[2].toString();
+            urlParser(true,postId);
+        }
+    });
+    $("body").on("click",".navRightButtons",function(event){
+        event.preventDefault();
+        var pageName = $(this).html().toLowerCase();
+        makeUrl(pageName);
+    });
+    $("body").on("click","#newPostBtn",function(event){
+        event.preventDefault();
+        window.history.replaceState("","","/");
+        window.history.replaceState("","","/newpost");
+        urlParser(true);
+    });
+
+    $("body").on("submit",".loginSmall form",function(event){
+        event.preventDefault();
+    });
+
+    $('body').on("click","#loginSubmit",function(){
+        var input = {
+            username : $(".loginSmall").children("input")[0].value,
+            password: $(".loginSmall").children("input")[1].value
+        };
+        login(input);
+    });
+    $("body").on("click","#forwardBtn",function(){
+        forward();
+    });
+    $("body").on("click","#backwardBtn",function(){
+        backward();
+    });
+    $("body").on("click","#logo",function(){
+        slideNav(this);
+    });
+
+    $("body").on("click","#loginBtn",function(e){
+        if (window.innerWidth > 768) {
+            e.preventDefault();
+            $(".loginSmall").slideDown(300);
+        }
+    });
+
+    $("body").on("click","#logoutBtn",function(){
+        window.location.reload();
+    });
+    $("body").on("click","#submitPost",function(e){
+        e.preventDefault();
+        var list = $("#caption").html().toString().match(/#\w+/g);
+        var categories = $("#category").val().toString();
+        requestHandler("/api/v1/post/submit","POST",
+            {
+                caption:$("#caption").html(),
+                hashtagsList:list,
+                cost:0,
+                isPrivate: $("#isPrivate").val() || false,
+                categories:categories
+            }
+            ,"submitPost");
+
+    });
+
+    $("body").on("click",".postFooter .leftButton",function(){
+        slideAction(0,"left");
+    });
+    $("body").on("click",".postFooter .rightButton",function(){
+        slideAction(0,"right");
+    });
+
+
+
+
+    $("body").on("click",".caption .notEditable",function(e){
+        if(Me.userId === postsList[currentPostItterator].ownerId){
+            $(".caption .editSurface").addClass("show");
+        }
+        setTimeout(function(){
+            $(".caption .editSurface").removeClass("show");
+        },5000);
+    });
+
+
+    $("body").on("click",".caption .editSurface",function(e){
+        if(Me.userId === postsList[currentPostItterator].ownerId){
+            $(".caption .notEditable").removeClass("show");
+            $(".caption .editSurface").removeClass("show");
+            $(".caption .editable").addClass("show").focus();
+            $(".caption .editable").val($(".caption .editable").val());
+            setTimeout(function(){
+                // cursor set at end
+            },50);
+            $(".caption .cancelCaption").addClass("show");
+        }
+    });
+
+    $("body").on("keydown",".caption .editable",function(e){
+        if (Me.userId === postsList[currentPostItterator].ownerId) {
+            if ($(".caption .saveCaption")[0].className.split("show")[1]) {
+                $(".caption .saveCaption").removeClass("show");
+            }
+            else {
+                if ($(".caption .saveCaption")[0].className.split("show")[1] === undefined) {
+                    $(".caption .saveCaption").addClass("show");
+                }
+            }
+        }
+    });
+
+
+    $("body").on("click",".caption .cancelCaption.show",function(e){
+        $(".caption .notEditable").addClass("show");
+        $(".caption .editable").removeClass("show");
+        $(".caption .cancelCaption").removeClass("show");
+        $(".caption .saveCaption").removeClass("show");
+        $(".caption .notEditable").val(postsList[currentPostItterator].caption);
+        $(".caption .editable").val(postsList[currentPostItterator].caption);
+    });
+    $("body").on("click",".caption .saveCaption.show",function(e){
+        if(Me.userId === postsList[currentPostItterator].ownerId) {
+            if(postsList[currentPostItterator].caption !== $(".postFooter .editable").val()) {
+                if ($(".caption .spinner")) {
+                    $(".caption .spinner").addClass("show");
+                }
+
+                var newCaptionText = $(".editable").val().toString();
+                var postId = window.location.pathname.split("/")[2].toString();
+                editCaption(newCaptionText, postId);
+            }
+            else {
+                $(".caption .cancelCaption").click();
+            }
+        }
+    });
+    $("body").on("click",".rateButton .openRateBtn",function(e){
+        if(Me === null){
+            $(".rateDiv").addClass("show");
+        }
+        else {
+            if(rates[postsList[currentPostItterator].postId] !== {} && rates[postsList[currentPostItterator].postId] !== undefined){
+                preLoadRatePad(postsList[currentPostItterator].postId,rates[postsList[currentPostItterator].postId]); // rate object == >
+            }
+            else{
+                $(".rateDiv").addClass("show");
+            }
+        }
+    });
+    $("body").on("click","#postMoreBtn button",function(e){
+        if(Me === null){
+            showLoginOrReg("You must Login first to do such action","Post Actions"); // modal full view middle
+        }
+        else {
+            showPostCommands(Me.userId);
+        }
+    });
+    $("body").on("click",".postCommands button.cancelPostCommand",function(e){
+
+        showPostCommands();
+    });
+    $("body").on("click",".commentsContainer .new.show",function(e){
+        $(".commentsContainer .cancelComment").addClass("show");
+        commentMode = false;
+        $(this).removeClass("show");
+        $(".commentsContainer .newCommentDiv").addClass("show");
+        setTimeout(function(){
+            $("#newComment").focus()
+        },50);
+
+    });
+    $("body").on("click",".eachComment .commentMoreButton",function(e){
+        if(Me === null){
+            showLoginOrReg("You must Login first to do such action","Comment Actions"); // modal full view middle
+        }
+        else {
+            $(".commentMoreDiv").addClass("show");
+
+            selectedComment = parseInt($(this).parents("li").children("p")[0].innerHTML); //
+            if (selectedComment < 0) {
+                selectedComment *= -1; // >
+            }
+            showCommentCommands(selectedComment);
+        }
+    });
+
+    $("body").on("click",".commentCommands.show .editComment",function(e){
+        commentMode = true;
+        $(".commentCommands.show .cancel").click();
+        $(".commentsContainer .editable").val(commentsList[selectedComment].fullText);
+        newText = commentsList[selectedComment].fullText;
+        $(".commentsContainer .cancelComment").addClass("show");
+        $(".commentsContainer .new.show").removeClass("show");
+        $(".commentsContainer .newCommentDiv").addClass("show");
+        autoResizeTextArea(true);
+        setTimeout(function(){
+            $("#newComment").focus()
+        },50);
+    });
+    $("body").on("click",".commentCommands.show .deleteComment",function(e){
+
+        deleteComment({commentId:commentsList[selectedComment].commentId,postId:postsList[currentPostItterator].postId});
+
+    });
+    $("body").on("click",".commentCommands.show .reportComment",function(e){
+        commentMode = true;
+        // reportComment();
+
+    });
+    $("body").on("click",".commentCommands.show .cancel",function(e){
+        $(".commentsContainer .commentCommands.show").removeClass("show");
+
+    });
+    $("body").on("keydown",".commentsContainer .editable.show",function(e){
+        autoResizeTextArea();
+
+        if (commentMode && Me.userId === commentsList[selectedComment].ownerId) {
+            if ($(".commentsContainer .newComment")[0].className.split("show")[1]) {
+                $(".commentsContainer .newComment").removeClass("show");
+            }
+            else {
+                if ($(".commentsContainer .newComment")[0].className.split("show")[1] === undefined) {
+                    $(".commentsContainer .newComment").addClass("show");
+                }
+            }
+        }
+        else{
+            if ($(".commentsContainer .newComment")[0].className.split("show")[1]) {
+                $(".commentsContainer .newComment").removeClass("show");
+            }
+            else {
+                if ($(".commentsContainer .newComment")[0].className.split("show")[1] === undefined) {
+                    $(".commentsContainer .newComment").addClass("show");
+                }
+            }
+        }
+    });
+
+    $("body").on("click",".commentsContainer .cancelComment",function(e){
+        if($(".commentsContainer .newCommentDiv.show")) {
+            $(".commentsContainer .newCommentDiv.show").removeClass("show");
+        }
+        $(".commentsContainer .newCommentDiv .newComment").removeClass("show");
+        $(".commentsContainer .new").addClass("show");
+        $(".commentsContainer .editable").val("");
+    });
+    $("body").on("click",".commentsContainer .newComment.show",function(e){
+        if(commentMode) { // editMode
+            if (Me.userId === commentsList[selectedComment].ownerId) { // your comment
+                if (commentsList[selectedComment].fullText !== $(".commentsContainer .editable").val()) {
+                    if ($(".commentsContainer .spinner")) {
+                        $(".commentsContainer .spinner").addClass("show");
+                    }
+                    var newCommentText = $(".commentsContainer .editable").val().toString();
+                    editComment({commentId:commentsList[selectedComment].commentId,postId:postsList[currentPostItterator].postId,text:newCommentText});
+
+                    $(".caption .cancelComment").click();
+                }
+                else {
+                    $(".caption .cancelComment").click();
+                }
+            }
+        }
+        else{
+
+            if ($(".commentsContainer .editable").val().toString().length > 0){
+                if ($(".commentsContainer .spinner")) {
+                    $(".commentsContainer .spinner").addClass("show");
+                }
+                var newCommentText = $(".commentsContainer .editable").val().toString();
+                var postId = window.location.pathname.split("/")[2].toString();
+                addComment({postId:postId,text:newCommentText});
+            }
+            else {
+                $(".caption .cancelComment").click();
+            }
+        }
+    });
+    $("body").on("click",".rateDiv .closeInfo",function(){
+        $(".downloadContainer.show").removeClass("show");
+        $(".commentsContainer.show").removeClass("show");
+        $(".infoContainer.show").removeClass("show");
+        $(".rateDiv.show").removeClass("show");
+        $(".commentsContainer.show .cancelComment").click();
+    });
+    $("body").on("click",".downloadContainer .closeInfo",function(){
+        $(".downloadContainer.show").removeClass("show");
+        $(".commentsContainer.show").removeClass("show");
+        $(".infoContainer.show").removeClass("show");
+        $(".rateDiv.show").removeClass("show");
+        $(".commentsContainer.show .cancelComment").click();
+    });
+    $("body").on("click",".commentsContainer .closeInfo",function(){
+
+        $(".downloadContainer.show").removeClass("show");
+        $(".commentsContainer.show").removeClass("show");
+        $(".infoContainer.show").removeClass("show");
+        $(".rateDiv.show").removeClass("show");
+        $(".commentsContainer.show .cancelComment").click();
+    });
+    $("body").on("click",".infoContainer .closeInfo",function(){
+        $(".downloadContainer.show").removeClass("show");
+        $(".commentsContainer.show").removeClass("show");
+        $(".infoContainer.show").removeClass("show");
+        $(".rateDiv.show").removeClass("show");
+        $(".commentsContainer.show .cancelComment").click();
+    });
+
+    // $("body").on("change",".categories.insideInfos");
+
+
+    function requestHandler(url, method, input, caller) {
+        $.ajax({
+            url: url || "/",
+            method: method || "GET",
+            data: input || {},
+            beforeSend: function () {
+            },
+            success: function (res) {
+                if(res.message && res.result===false){
+                    alert(res.message);
+                }
+                else if(res.message && res.result===true){
+                    alert(res.message);
+                    responseActionHandler(caller, res);
+                }
+                else{
+                    responseActionHandler(caller, res);
+                }
+            },
+            timeout: function () {
+                alert("Request Time Out");// get from developer
+            },
+            fail: function () {
+                alert("Oops Something Went wrong");
+            },
+            err: function () {
+                alert("Oops Something Went Wrong");
+            }
+        });
+    }
+    // 3.Handlers
+    // Request handlers
+    // users
+    function logout() {
+        eraseCookie("KEY");
+        eraseCookie("X-ACCESS-TOKEN");
+    }
+    function login(input) {
+        requestHandler("/login", "POST", input, "loginHandler");
+    }
+    function getMe(){
+        requestHandler("/api/v1/users/getMe","GET",{},"getMe");
+    }
+    function getProfileInfo(){
+        requestHandler("/api/v1/users/getProfileInfo","GET",{},"getProfileInfo");
+    }
+    function updateProfileInfo(input){
+        requestHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function editCaption(newCaptionText, postId){
+        requestHandler("/api/v1/post/editPost","POST",{caption:newCaptionText , postId:postId},"editCaption");
+    }
+
+    function editCategory(newCategory, postId){
+        requestHandler("/api/v1/post/editPost","POST",{category:newCategory , postId:postId},"editCategory");
+    }
+
+    function editPrivacy(newPrivacy, postId){
+        requestHandler("/api/v1/post/editPost","POST",{privacy:newPrivacy , postId:postId},"editPrivacy");
+    }
+
+    function getPostInfos(postId){
+        requestHandler("/api/v1/post/"+postId,"POST",{},"getPostInfos");
+    }
+
+
+    function addComment(input){
+        requestHandler("/api/v1/users/addComment","POST",input,"addComment");
+    }
+
+    function editComment(input){
+        requestHandler("/api/v1/users/editComment","POST",input,"editComment");
+    }
+
+    function deleteComment(input){
+        requestHandler("/api/v1/users/deleteComment","POST",input,"deleteComment");
+    }
+
+    function getPostComments(input){
+        requestHandler("/api/v1/getPostComments","POST",input,"getPostComments");
+    }
+
+    // Post(Picture) Handlers
+
+    function rate(rateObject){
+        requestHandler("/api/v1/users/rate","POST",rateObject,"rate");
+    }
+
+    function view(postId){ // no response needed for now
+        if(postId) {
+            requestHandler("/api/v1/users/view", "POST", {postId: postId}, "view");
+        }
+    }
+
+    function sendPagesInitialRequest(pageName,albumOrPost,postid){
+
+        if(pageName.toLowerCase() === "newpost"){
+            if(albumOrPost === "post"){
+                requestHandler("/api/v1/post/initial","POST",{type:"post"},pageName);
+            }
+            else if(albumOrPost === "album"){
+                requestHandler("/api/v1/album/initial","POST",{type:"album"},pageName);
+            }
+            else{
+                alert("invalid post type");
+            }
+        }
+        else if("post"){
+
+            slideAction(currentPostItterator,"initial");
+
+        }
+    }
+    // Actions.js
+    function responseActionHandler(caller, res) {
+
+        switch (caller) {
+            case "loginHandler" : {
+                loginResponse(res);
+            }break;
+            case "getProfile" : {
+                placeProfileInfo(res);
+            }break;
+            case "updateProfileInfo" : {
+                updateProfileResponse(res);
+            }break;
+            case "loadProfile" : {
+                loadProfileResponse(res);
+            }break;
+            case "follow" : {
+                followAction(res);
+            }break;
+            case "unfollow" : {
+                unfollowAction(res);
+            }break;
+            case "getMe" : {
+                getMeResponseAction(res);
+            }break;
+            case "rate":{
+                rateResponseHandler(res);
+            }break;
+            case "view":{
+                views[postsList[currentPostItterator].postId] = 1;
+            }break;
+            case "newPost":{
+                newPostPageAction(res);
+            }break;
+            case "post":{
+                slideViewPageAction(res);
+            }break;
+
+            case  "loadPostInfos":{
+
+            }break;
+            case  "editCaption" || "editCategory" || "editPrivacy":{
+                editPostResponseAction(res,caller);
+            }break;
+            case  "addComment":{
+                commentsResponseActions(res,caller);
+            }break;
+            case "editComment" :{
+                commentsResponseActions(res,caller);
+            }break;
+            case "deleteComment" :{
+                commentsResponseActions(res,caller);
+            }break;
+            case "getPostComments":{
+                parseComments(res);
+            }break;
+            case "getPostInfos":{
+                getPostInfosAction(res);
+            }break;
+            case "submitPost":{
+                submitPostAction(res);
+            }break;
+        }
+    }
+
+
+    function makeUrl(pageName,postId) {
+
+        var urlArray = window.location.pathname.toLowerCase().split("/");
+        var newUrl = "";
+        var hashtag = "";
+        var category = "";
+        var order = "";
+        console.log(urlArray.join("/"));
+        if (pageName) {
+
+            if(pageName.startsWith("post")){
+                var postId = pageName.split("-")[1];
+                window.history.replaceState("", "", "/post/" + postId);
+            }
+            else {
+
+                window.history.replaceState("", "", "/" + pageName);
+                if (pageName === "following" || pageName === "explore") {
+                    Filters.order = "top";
+                    Filters.orderBy = "rate.value";
+                }
+                else {
+                    Filters.order = "latest";
+                    Filters.orderBy = "createdAt";
+
+                }
+                Filters.category = "";
+                Filters.hashtag = "";
+            }
+        }
+        else{
+
+            hashtag = Filters.hashtag || "";
+            category = Filters.category || "";
+            order = Filters.order || "";
+            if (Filters.isCurated === true) {
+                order = "curated";
+            }
+            if(urlArray[1]!=="" && urlArray[1] !== "latest" & urlArray[1] !== "top" && urlArray[1] !== "curated"){
+                newUrl += "/" + urlArray[1];
+            }
+            if(order !== "" && (order === "latest" || order === "top" || order === "curated")){
+                newUrl += "/" + order;
+            }
+            if(hashtag !== "" && category === ""){
+                category = "All";
+                newUrl += "/" + category + "/" + hashtag;
+            }
+            if(category !== ""){
+                newUrl += "/" + category + "/" + hashtag;
+            }
+            window.history.replaceState("", "", "/");
+            window.history.replaceState("", "", newUrl);
+        }
+        if(postId) {
+            urlParser(true,postId);
+        }
+        else{
+            urlParser(true);
+        }
+    }
+
+
+    function urlParser(writeState,postId){
+
+        if(window.location.pathname.split("/")[1]){
+            pageType = window.location.pathname.split("/")[1].toLowerCase();
+        }
+
+        if(pageType=== "post"|| pageType ==="settings" || pageType ==="about" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
+
+            if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "following" || pageType==="people" || pageType === "settings" || pageType === "about"){
+                if( pageType === "" ) {
+                    pageType = "explore";
+                }
+                selectRightNav(pageType);
+            }
+            if (pageType === "settings" || pageType === "post" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy") {
+                if(postId) {
+                    changePage(pageType + "/" + postId, pageType+"/"+postId, writeState,true);
+                }
+                else{
+                    changePage(pageType, pageType, writeState);
+                }
+
+            }
+            else
+                changePage("feed", pageType, writeState);// Feed
+
+        }
+        else{
+
+            changePage("profile",pageType+"/"+order,writeState);// Profile -->
+        }
+    }
+    // action functions
+    function setUploaders() {
+        originalUploader = new qq.FineUploader({
+            element: document.getElementById("uploadArea"),
+            request: {
+                endpoint: '/api/v1/upload',
+                customHeaders: {
+                    size:"Original"
+                }
+            },
+            chunking: {
+                enabled: true,
+                concurrent: {
+                    enabled: false
+                },
+                success:{
+                }
+            },
+            resume: {
+                enabled: true
+            },
+            retry: {
+                enableAuto: true,
+                showButton: true
+            },
+            allowedExtensions: ['gif','jpg','jpeg','png'],
+            onSubmit: function(id, fileName){
+
+            },
+            onComplete: function(id, fileName, responseJSON){ // Customize the output sent to responseJSON in demo.php
+                resetParams();
+                $(".qq-file-id-"+id).remove();
+
+                switch(responseJSON.ext){
+                    case 'gif':
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                        break;
+                    default:
+                        // Do nothing
+                        break;
+                }
+                if(originalUploader._filesInProgress < 1){
+                    $(".qq-file-id-"+parseInt(id+1)).remove();
+                    alert("Files Uploaded Successfully");
+                    // var t = setTimeout('location.href = location.href;', 10000)
+                }
+            },
+            showCropTool: 1,
+            scaling: {
+                sizes: [
+                    {name: "sss",maxSize: 500},
+                    {name: "mmm",maxSize: 1000}
+                ]
+            },
+        });
+
+    }
+
+    function changePage(pageName,pageType,newHistory,postid){
+
+        setTimeout(function(){
+            if(postid || false){
+                getPostInfos(pageType.split("/")[1]);
+            }
+            pageName = pageName.split("/")[0];
+            pageType = pageName.split("/")[1];
+            if (pageName === "settings" || pageName === "newpost" || pageName === "post" || pageName === "people" || pageName === "contact") {
+                if (pageName !== currentPage) {
+                    if (pageName === "post") {
+                        $(".postFooter").addClass("show");
+                    }
+                    else {
+                        $(".postFooter").removeClass("show");
+                    }
+                    var pageNames = ["settings", "newPost", "post", "contact", "people", "policy"];
+                    for (var x = 0; x < pageNames.length; x++) {
+
+                        if (pageName === pageNames[x].toLowerCase()) {
+                            $(`#${pageNames[x]}`).addClass("show");
+
+                            sendPagesInitialRequest(pageNames[x].toLowerCase(), "post", pageName.split("-")[1]);
+                        }
+                        else {
+                            if ($(`#${pageNames[x]}.show`)) {
+                                $(`#${pageNames[x]}.show`).removeClass("show");
+                            }
+                        }
+                    }
+                }
+                // => function calls :
+            }
+            else {
+                alert("Oops , Page Name Not Defined !");
+            }
+            currentPage = pageName;
+        },30);
+
+    }
+
+    function pushHistory(newPageName,url,data,changeUrl){
+        if(changeUrl || false){
+            window.history.replaceState("", "", "/");
+            window.history.replaceState("", "", url);
+        }
+        if (historyPointer === historyList.length-1 ) {
+            historyList.push({pageName: newPageName, urlData: url ,data:data, hashtag : window.location.hash});
+            currentPage = newPageName;
+            historyPointer++;
+
+        }
+        else if (historyPointer < historyList.length -1 ){
+            for(var x  = historyList.length -1 ; x > historyPointer ; x--){
+                historyList.pop();
+                if(x === historyPointer + 1){
+                    historyList.push({pageName: newPageName, urlData: url,data:data ,hashtag : window.location.hash});
+                    currentPage = newPageName;
+                    historyPointer++;
+                }
+            }
+        }
+    }
+    function checkForward(){
+        if(historyPointer < historyPointer.length -1){
+            $("#forwardBtn").show(100);
+        }
+        else{
+            $("#forwardBtn").hide(100);
+        }
+    }
+    function checkBackward(){
+        if(historyPointer > 0){
+            $("#backwardBtn").show(100);
+        }
+        else{
+            $("#backwardBtn").hide(100);
+        }
+    }
+    function backward(){
+        if(historyPointer >= 0){
+            historyPointer--;
+            changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
+            // window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
+        }
+        else{
+            window.history.back();
+        }
+    }
+    function forward(){
+        if(historyPointer < historyList.length ){
+            historyPointer++;
+            changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
+            // window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
+        }
+        else{
+            //
+        }
+    }
+    function loginResponse(res){
+        if(res["token"] && res["key"] && res["username"]){
+            createCookie("X-ACCESS-TOKEN",res["token"],1);
+            createCookie("KEY",res["key"],1);
+            $(".loginSmall").slideUp(300);
+            alert("Wellcome To Hexas");
+            getMe();
+        }
+        else {
+            window.location.pathname = "/login";
+        }
+    }
+    function getMeResponseAction(res){
+        Me = res;
+        if(res !== null && res !== false && res !== "") {
+            $(".accountCard").html(`
+    	<a href="" id="profileBtn">${res.username}</a>
+    	<a href="/getNotifs" id="newPostBtn"></a>
+    	<a href="" id="notifBtn"></a>
+    `);
+        }
+    }
+
+    function selectRightNav(pageType){
+        var rightNavBtns = $(".navRightButtons");
+        rightNavBtns.removeClass("selected");
+        for(var y = 0 ; y < rightNavBtns.length ; y++){
+            if(rightNavBtns[y].innerHTML.toLowerCase() === pageType){ // select rightNavBtns
+                rightNavBtns[y].className += " selected";
+            }
+            else{
+                rightNavBtns[y].className = "navRightButtons";
+            }
+        }
+    }
+    function slideNav(element){
+        if (window.innerWidth < 1025) {
+            if (element.className === "") {
+                if ($(".rightSide")[0]) {
+                    $(element).addClass("halfRight");
+                    $(".rightSide").addClass("hide");
+                    $(".accountCard").css("right","0");
+                }
+                else if ($(".leftSide")[0]) {
+                    $(element).addClass("halfLeft");
+                    $(".leftSide").addClass("hide");
+                    $(".accountCard").css("right","0");
+                }
+            }
+            else if (element.className === "halfLeft") {
+                $(element).removeClass("halfLeft");
+                $(".leftSide").removeClass("hide");
+                $(".accountCard").css("right","100px");
+            }
+            else if (element.className === "halfRight") {
+                $(element).removeClass("halfRight");
+                $(".rightSide").removeClass("hide");
+                $(".accountCard").css("right","100px");
+            }
+            else {
+                //
+            }
+        }
+    }
+
+    function loadProfileResponse(res) {
+        if (res.message) {
+            alert(res.message);
+        }
+        else if (res.user) {
+
+            var list = $(".profileTop .userInfo").children();
+            list[0].innerHTML = (res.user.fullName);
+            list[1].innerHTML = (res.user.followingsCount) + " Followings";
+            list[2].innerHTML = (res.user.followersCount) + " Followers";
+            list[3].innerHTML = (res.user.city) || "";
+            list[4].innerHTML = (res.user.roles.toString()) || "";
+            list[5].innerHTML = (res.user.username);
+            list[6].innerHTML = (res.user.privacy);
+
+            host.fullName = (res.user.fullName);
+            host.followingsCount = (res.user.followingsCount);
+            host.userId = (res.user.userId);
+            host.followersCount = (res.user.followersCount);
+            host.city = (res.user.city) || "";
+            host.roles = (res.user.roles.toString()) || [];
+            host.username = (res.user.username);
+            host.privacy = (res.user.privacy);
+            host.profilePictureSet = res.user.profilePictureSet;
+            host.profilePictureUrls = res.user.profilePictureUrls || [];
+            host.following = res.following;
+            host.followed = res.followed;
+
+            $(".profileTop .loader").addClass("hide");
+
+            if (res.followed !== null && res.following !== null) {
+                if (res.followed === true && res.following === false) { // following but not followed --> Follow Back
+                    $("#follow").addClass("show");
+                    $("#follow").html("Follow Back");
+                    if(res.user.isPrivate===false){
+
+                    }
+                }
+                else if (res.followed === false && res.following === true) { // followed but not following
+                    $("#unfollow").addClass("show");
+                }
+                else if (res.followed === true && res.following === true) { // both following and followed
+                    $("#unfollow").addClass("show");
+                }
+                else { // none
+                    $("#follow").addClass("show");
+                }
+            }
+            else {
+                if(res.user.isPrivate)
+                    $("#unfollow").remove();
+                $("#follow").remove();
+            }
+            Filters.hashtags = ""; // to lowwer case
+            Filters.category = "";
+            getPostsByFilter({userId:host.userId ,followed:res.followed , following:res.following,privacy:host.privacy});
+        }
+        else {
+            alert("User not found !");
+        }
+    }
+
+
+
+    function ratePadInitial(){
+        for(var x = 1 ; x < 7 ; x++) {
+            $(".rateDiv .ratePad").append(`
+                 <div><div class="triangle" id="peace-${x}">
+                    <span>
+                        ${x}
+                    </span>
+                </div></div>
+            `);
+        }
+
+        // setTimeout(function(){$(".ratePad").addClass("show")},200);
+
+        $("body").on("mouseenter",".ratePad > div .triangle",function(event){
+            if(!selectedRate) {
+                if (!rateObject.value || rateObject.value !== parseInt($(this).children("span").html())) {
+                    rateObject = {
+                        value: parseInt($(this).children("span").html()),
+                        postId: postsList[currentPostItterator].postId
+                    };
+                    if ($(".triangle.selected")) {
+                        $(".triangle.selected").removeClass("selected");
+                    }
+                    for (var x = 1; x <= rateObject.value; x++) {
+                        $(`#peace-${x}`).addClass("selected");
+                    }
+                    $(".rateDiv h2").html(rateObject.value);
+                }
+            }
+        });
+
+        $("body").on("click",".ratePad > div .triangle",function(event){
+
+            selectRateTringle(postsList[currentPostItterator].postId,parseInt($(this).children("span").html()));
+
+        });
+        $("body").on("click",".rateDiv .doRate",function(event){
+            if(Me !== null) {
+                if(rates[postsList[currentPostItterator].postId] !== undefined) {
+                    if(rates[postsList[currentPostItterator].postId].changes > -1 && rates[postsList[currentPostItterator].postId].changes < 3) {
+                        rate(rateObject);
+                    }
+                    else{
+                        alert("Maximum number for changing your rate on a post reached");
+                        $(".rateDiv .closeInfo").click();
+                    }
+                }
+                else{
+                    rate(rateObject);
+                }
+            }
+            else{
+                showLoginReg();
+            }
+        });
+
+
+    }
+
+
+
+
+    function slideAction(postNumber,situation) {
+        if($(".postFooter .rateButton.show")) {
+            $(".postFooter .rateButton.show").removeClass("show");
+        }
+        if($(".postFooter .caption.show")) {
+            $(".postFooter .caption.show").removeClass("show");
+        }
+        if($(".postFooter .buttonGroup.show")) {
+            $(".postFooter .buttonGroup.show").removeClass("show");
+        }
+        if (situation === "left") {
+            if (currentPostItterator > 0) {
+                currentPostItterator -= 1;
+                $(".pictureBox img:nth-child(1)").addClass("middlePic");
+                $(".pictureBox img:nth-child(1)").removeClass("leftPic");
+                $(".pictureBox img:nth-child(2)").addClass("rightPic");
+                $(".pictureBox img:nth-child(2)").removeClass("middlePic");
+                $(".pictureBox img:nth-child(3)").remove();
+                if ($(".postFooter .rightButton.show")[0] === undefined) {
+                    $(".postFooter .rightButton").addClass("show");
+                }
+                if (postsList[currentPostItterator - 1]) {
+                    if (postsList[currentPostItterator - 1]) {
+                        left = postsList[currentPostItterator - 1].postId +"-Medium===." + postsList[currentPostItterator - 1].ext;
+                        $(".pictureBox").prepend(`
+                            <img src="../pictures/${left}" class="leftPic"/>
+                        `);
+                        if (!$(".postFooter .leftButton.show")) {
+                            $(".postFooter .leftButton").addClass("show");
+                        }
+                    }
+                }
+                else {
+                    $(".pictureBox").prepend(`
+                        <img src="../pictures/empty.jpg" class="leftPic"/>
+                    `);
+                    $(".postFooter .leftButton").removeClass("show");
+                }
+                if (postsList[currentPostItterator]) {
+                    currentPost = postsList[currentPostItterator].postId +"-Medium===." + postsList[currentPostItterator].ext;
+                    currentPostObject = postsList[currentPostItterator];
+                    loadPostDatas(currentPostObject, currentPostItterator);
+                }
+                else {
+                    alert("post not found");
+                    loadPostDatas("post not found", -1);
+                }
+            }
+            else {
+                if (currentPostItterator === total - 1 && postsList.length === total) {
+                    alert("No More Posts");
+                    loadPostDatas("no more posts left", -1);
+                }
+            }
+        }
+        else if (situation === "right") {
+            if (currentPostItterator < postsList.length - 1) {
+                currentPostItterator += 1;
+
+                $(".pictureBox img:nth-child(2)").addClass("leftPic");
+                $(".pictureBox img:nth-child(2)").removeClass("middlePic");
+                $(".pictureBox img:nth-child(3)").addClass("middlePic");
+                $(".pictureBox img:nth-child(3)").removeClass("rightPic");
+                $(".pictureBox img:nth-child(1)").remove();
+                if ($(".postFooter .leftButton.show")[0] === undefined) {
+                    $(".postFooter .leftButton").addClass("show");
+                }
+                if (postsList[currentPostItterator + 1]) {
+                    if (postsList[currentPostItterator + 1]) {
+                        right = postsList[currentPostItterator + 1].postId + "-Medium===." + postsList[currentPostItterator + 1].ext;
+                        $(".pictureBox").append(`
+                        <img src="../pictures/${right}" class="rightPic"/>
+                    `);
+                    }
+                    if (!$(".postFooter .rightButton.show")) {
+                        $(".postFooter .rightButton").addClass("show");
+                    }
+                }
+                else {
+                    $(".pictureBox").append(`
+                        <img src="../pictures/empty.jpg" class="rightPic"/>
+                    `);
+                    if (total - 1 === currentPostItterator) {
+                        if ($(".postFooter .rightButton.loadMore")[0] === undefined) {
+                            $(".postFooter .rightButton").removeClass("loadMore");
+                            $(".postFooter .rightButton").removeClass("show");
+                        }
+                    }
+                    else {
+
+                        if ($(".postFooter .rightButton.loadMore")[0] === undefined) {
+                            $(".postFooter .rightButton.show").addClass("loadMore");
+                        }
+                    }
+                }
+                if (postsList[currentPostItterator]) {
+                    currentPost = postsList[currentPostItterator].postId+"-Medium===." + postsList[currentPostItterator].ext;
+                    currentPostObject = postsList[currentPostItterator];
+                    loadPostDatas(currentPostObject, currentPostItterator);
+                }
+                else {
+                    alert("post not found");
+                    loadPostDatas("post not found", -1);
+                }
+            }
+            else {
+                if (currentPostItterator === total - 1 && postsList.length === total) {
+                    alert("No More Posts");
+                    loadPostDatas("post not found", -1);
+
+                }
+            }
+        }
+        else if (situation === "initial") {
+
+            currentPostItterator = postNumber || 0;
+            var left = "";
+            var right = "";
+            if (currentPostItterator > -1 && currentPostItterator <= postsList.length - 1) {
+                if (postsList[currentPostItterator + 1]) {
+                    right = postsList[currentPostItterator + 1].postId+"-Medium===." + postsList[currentPostItterator + 1].ext;
+                    if (!$(".postFooter .rightButton.show")) {
+                        $(".postFooter .rightButton").addClass("show");
+                    }
+                    if (currentPostItterator === total - 1) {
+                        if ($(".postFooter .rightButton")) {
+                            $(".postFooter .rightButton.show").removeClass("loadMore");
+                            $(".postFooter .rightButton.show").removeClass("show");
+                        }
+                    }
+                    else {
+                        if ($(".postFooter .rightButton")) {
+                            $(".postFooter .rightButton").removeClass("loadMore");
+                        }
+                    }
+                }
+                else{
+                    if (currentPostItterator === total - 1) {
+                        if ($(".postFooter .rightButton")) {
+                            $(".postFooter .rightButton.show").removeClass("loadMore");
+                            $(".postFooter .rightButton.show").removeClass("show");
+                        }
+                    }
+                    else {
+                        if ($(".postFooter .rightButton")) {
+                            $(".postFooter .rightButton").removeClass("loadMore");
+                        }
+                    }
+                }
+                if (postsList[currentPostItterator - 1]) {
+                    left = postsList[currentPostItterator - 1].postId+"-Medium===." + postsList[currentPostItterator - 1].ext;
+                    if (!$(".postFooter .leftButton.show")) {
+                        $(".postFooter .leftButton").addClass("show");
+                    }
+                }
+                else {
+                    if (currentPostItterator === 0) {
+                        if ($(".postFooter .leftButton")) {
+                            $(".postFooter .leftButton").removeClass("show");
+                        }
+                    }
+                }
+                if (postsList[currentPostItterator]) {
+                    currentPost = postsList[currentPostItterator].postId+"-Medium===." + postsList[currentPostItterator].ext;
+                    currentPostObject = postsList[currentPostItterator];
+
+                    loadPostDatas(currentPostObject, currentPostItterator);
+                    if (left) {
+                        $(".pictureBox").html(`<img src="../pictures/${left}" class="leftPic"/>`);
+                    }
+                    else if(left===""){
+                        $(".pictureBox").html(`<img src="../pictures/empty.jpg" class="leftPic"/>`);
+                    }
+                    $(".pictureBox").append(`<img src="../pictures/${currentPost}" class="middlePic"/>`);
+                    if(right) {
+                        $(".pictureBox").append(`<img src="../pictures/${right}" class="rightPic"/>`);
+                    }
+                    else if(!right){
+                        $(".pictureBox").append(`<img src="../pictures/loadmore.jpg" class="rightPic"/>`);
+                    }
+
+                }
+                else {
+                    loadPostDatas("post not found", -1);
+                    alert("post not found");
+                }
+
+            }
+            else {
+                console.log("Invalid Command");
+            }
+        }
+        if(Me !== null){
+            if(!views[currentPostObject.postId]){
+                view(currentPostObject.postId);
+            }
+        }
+    }
+
+    function loadPostDatas(postObject,postNumber,updatePart){
+        // change url
+        if(postNumber !== -2){
+            pushHistory("post", "/post/" + postObject.postId, "/post/" + postObject.postId, true);
+        }
+        if(!updatePart) {
+            // pars post datas to template
+            $(".postFooter .caption .editable").val(postObject.caption);
+            $(".postFooter .caption .notEditable").val(postObject.caption);
+            $(".postFooter .caption").addClass("show");
+            $(".postFooter .ownerUsername").html(usersInfo[postObject.ownerId].username);
+            $(".postFooter .ownerProfilePicture").attr("src", "../profilePics/" + usersInfo[postObject.ownerId].profilePictureSet);
+            $(".post .infoContainer ul").html("");
+            $(".post .infoContainer ul").append(`
+                                                <li>
+                                                    <span>Width</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">${postObject.originalImage.resolution.x}</span>
+                                                </li>
+                                                <li>
+                                                    <span>Height</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">${postObject.originalImage.resolution.y}</span>
+                                                </li>
+                                                <li>
+                                                    <span>Format</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">${postObject.ext}</span>
+                                                </li>
+                                                <li>
+                                                    <span>Category</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">${postObject.categories.toString()}</span>
+                                                    <select class="categories insideInfos">
+                                                        <option value="Nature">Nature</option>
+                                                        <option value="Society">Society</option>
+                                                    </select>
+                                                </li>
+                                            `);
+            $(".post .downloadContainer").html("");
+
+            if (postObject.originalImage.cost === 0) {
+                $(".post .downloadContainer").append(`
+
+                                            <button class="closeInfo"></button>
+                                            <button id="downloadLarge">
+                                                <div class="cover">
+                                                    <span class="">Download</span>
+                                                    <span class="left">${postObject.originalImage.resolution.x} X ${postObject.originalImage.resolution.y}</span> pixels
+                                                    <span class="cost">Free</span>
+                                                </div>
+                                            </button>
+                                          `);
+                $(".post .downloadContainer #downloadLarge").css("background-image", `url(../pictures/${postObject.postId}-Small===.${postObject.ext})`);
+
+                if (postObject.originalImage.resolution.x > 250 && postObject.originalImage.resolution.y > 250) {
+                    initialDownloadButtonRatio(postObject.originalImage.resolution.x, postObject.originalImage.resolution.y);
+                }
+
+            }
+            else {
+                $(".post .downloadContainer").append(`
+                                            <button class="closeInfo"></button>
+                                            <button id="BuyLarge">
+                                                <div class="cover">
+                                                    <span>Buy</span>
+                                                    <span class="left">${postObject.originalImage.resolution.x} X ${postObject.originalImage.resolution.y} </span> pixels
+                                                    <span class="cost">${postObject.originalImage.cost}$</span>
+                                                </div>
+                                            </button>
+                                          `);
+                $(".post .downloadContainer #BuyLarge").css("background-image", `url(../pictures/${postObject.postId}-Small===.${postObject.ext})`);
+                if (postObject.originalImage.resolution.x > 250 && postObject.originalImage.resolution.y > 250) {
+                    initialDownloadButtonRatio(postObject.originalImage.resolution.x, postObject.originalImage.resolution.y);
+                }
+            }
+            $(".postFooter .views").html(postObject.views);
+            extractAndPlaceExifData(postObject.exifData);
+            initialRate(postObject.rate);
+            getPostComments({postId: postObject.postId, pageNumber: commentsPageNumber, counts: commentCounts});
+            $(".postFooter .buttonGroup").addClass("show");
+        }
+        else if(updatePart === "rates"){
+            initialRate(postObject.rate);
+        }
+        else{
+
+        }
+
+    }
+    function initialCategories(){
+
+    }
+    function slideViewPageAction(res) {
+        console.log(res);
+    }
+
+    function newPostPageAction(res) {
+        console.log(res);
+
+    }
+    function editPostResponseAction(res,type){
+
+        switch (type) {
+            case "editCaption": {
+                if ($(".caption .spinner.show")) {
+                    $(".caption .spinner").removeClass("show");
+                }
+                if (res.result) {
+                    $(".editable").val(res.newCaption);
+                    $(".notEditable").val(res.newCaption);
+                    postsList[currentPostItterator].caption = res.newCaption;
+                    $(".caption .notEditable").addClass("show");
+                    $(".caption .editable.show").removeClass("show");
+                    $(".caption .cancelCaption.show").removeClass("show");
+                    $(".caption .saveCaption.show").removeClass("show");
+                    if(res.message) {
+                        alert(res.message);
+                    }
+                }
+                else {
+                    alert(res.message);
+                }
+            }break;
+            case "editCategory":{
+
+            }break;
+            case "editPrivacy":{
+
+            }
+            default:break;
+        }
+    }
+    function parseComments(res,type){
+
+        if(type === "append"){
+            commentsList.push(res);
+        }
+        else {
+            if (res.docs.length === 0) {
+                $(".post .commentsContainer .header").html(" No comments yet ");
+            }
+            else if (res.docs === []) {
+                $(".post .commentsContainer .header").html(" No comments yet ");
+            }
+            else if (res === []) {
+                $(".post .commentsContainer .header").html(" Oops Something Went Wrong ");
+            }
+            else {
+                if (commentsPageNumber === 1) {
+                    commentsList = res.docs;
+                    usersInfo = res.owners;
+                    total = res.total;
+                    commentsLastLength = -1;
+                    $(".post .commentsContainer .header").html(res.total + " Comments");
+                    $(".post .commentsContainer .commentsList").html("");
+                }
+                else {
+                    for (var comment = 0; comment < res.docs.length; comment++) {
+                        commentsList.push(res.docs[comment]);
+                    }
+                    let tempUsersInfo = res.owners;
+                    let keys = Object.keys(tempUsersInfo);
+                    for (let x in keys) {
+                        if (!usersInfo[keys[x]]) {
+                            usersInfo[keys[x]] = tempUsersInfo[keys[x]];
+                        }
+                    }
+                }
+            }
+        }
+        for(var index = commentsLastLength+1 ; index < commentsList.length ; index++){
+            commentsLastLength++;
+            var timeAgo;
+            if( commentsList[index].createdAt) {
+                timeAgo = ((Date.now() - commentsList[index].createdAt) / (60000));
+            }
+            else{
+                timeAgo = Date.now() - 1;
+            }
+            var vahed = "minute";
+            if (parseInt(timeAgo) > 59) {
+                timeAgo = (timeAgo / 60);
+                vahed = "hour";
+                if (timeAgo > 23) {
+                    timeAgo = (timeAgo / 24);
+                    vahed = "day";
+                    if (timeAgo > 30) {
+                        timeAgo = timeAgo / 30;
+                        vahed = "month";
+                        if (timeAgo > 12) {
+                            vahed = "year";
+                            timeAgo = timeAgo / 12;
+                        }
+                    }
+                }
+            }
+            else if (parseInt(timeAgo) < 1) {
+                timeAgo = "in a minute";
+            }
+            if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
+                timeAgo = "a";
+            }
+            else if (parseInt(timeAgo) === 1 && vahed === "hour") {
+                timeAgo = "an";
+            }
+            else if (parseInt(timeAgo) !== 1) {
+                vahed += "s";
+                if (typeof timeAgo !== "string")
+                    timeAgo = parseInt(timeAgo);
+            }
+            let date ;
+            if(timeAgo !== "in a minute") {
+                date = timeAgo + " " + vahed;
+            }
+            else{
+                date = timeAgo;
+            }
+            if(type === "append"){
+                $(".post .commentsContainer .commentsList").append(`
+                                                            <li class="eachComment comment-${commentsList[index].commentId}">
+                                                            <p hidden>${-1*commentsLastLength}</p>
+                                                            <p hidden>${commentsList[index].commentId}</p>
+                                                                <div class="commentOwnerProfile">
+                                                                    <svg class="clip-svg">
+                                                                        <defs>
+                                                                            <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                                                                                <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                                                                            </clipPath>
+                                                                        </defs>
+                                                                    </svg>
+                                                                    <div class="polygon-each-img-wrap">
+                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[Me.userId].split("/")[1]}"/>
+                                                                    </div>
+                                                                    <a href="/${usersInfo[Me.userId].split("/")[0]}" class="ownerUsername usernameLink">${usersInfo[Me.userId].split("/")[0]}</a>
+                                                                <button class="commentMoreButton"></button>
+                                                                </div>
+                                                                <p class="text">
+                                                                    ${commentsList[index].fullText}
+                                                                </p>
+                                                                <span class="date">
+                                                                    ${date}
+                                                                </span>
+
+                                                            </li>
+                                                            `);
+
+            }
+            else{
+
+                $(".post .commentsContainer .commentsList").prepend(`
+                                                            <li class="eachComment comment-${commentsList[index].commentId}">
+                                                            <p hidden>${commentsLastLength}</p>
+                                                            <p hidden>${commentsList[index].commentId}</p>
+                                                                <div class="commentOwnerProfile">
+                                                                    <svg class="clip-svg">
+                                                                        <defs>
+                                                                            <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                                                                                <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                                                                            </clipPath>
+                                                                        </defs>
+                                                                    </svg>
+                                                                    <div class="polygon-each-img-wrap">
+                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[commentsList[index].ownerId].split("/")[1]}"/>
+                                                                    </div>
+                                                                    <a href="/${usersInfo[commentsList[index].ownerId].split("/")[0]}" class="ownerUsername usernameLink">${usersInfo[commentsList[index].ownerId].split("/")[0]}</a>
+                                                                <button class="commentMoreButton"></button>
+                                                                </div>
+                                                                <p class="text">
+                                                                    ${commentsList[index].fullText}
+                                                                </p>
+                                                                <span class="date">
+                                                                    ${date}
+                                                                </span>
+
+                                                            </li>
+                                                            `);
+            }
+            if(index === commentsList.length -1 ){
+                $(".commentsList")[0].scrollTop = 	20000;
+            }
+        }
+    }
+
+    function showCommentCommands(selectedComment){
+        $(".post .commentCommands .cover").html("");
+        var commentOwnerId = commentsList[selectedComment].ownerId ;
+        var postOwnerId = postsList[currentPostItterator].postOwnerId;
+        if(Me.userId === postOwnerId){ // post owner remove()
+            $(".post .commentCommands .cover").append(`
+                                                    <button class="deleteComment">Delete</button>
+                                               `);
+        }
+        if(Me.userId === commentOwnerId){ // comment owner ( edit - remove )
+            $(".post .commentCommands .cover").append(`
+                                                    <button class="editComment">Edit</button>
+                                               `);
+            if(!$(".post .commentCommands .cover .deleteComment")[0]) {
+                $(".post .commentCommands .cover").append(`
+                                                    <button class="deleteComment">Delete</button>
+                                               `);
+            }
+        }
+        if(Me.userId !== commentOwnerId){ // nobody report only
+            $(".post .commentCommands .cover").append(`
+                                                    <button class="reportComment">Report</button>
+                                               `);
+        }
+        $(".post .commentCommands .cover").append(`
+                                                    <button class="cancel">Cancel</button>
+                                               `);
+        $(".commentsContainer .commentCommands").addClass("show");
+    }
+    function commentsResponseActions(res,caller){
+
+        if(!res.message) {
+            if (caller === "addComment") {
+                commentsPageNumber = 1;
+                getPostComments({ postId : postsList[currentPostItterator].postId , pageNumber : commentsPageNumber , counts : commentCounts});
+                $(".commentsContainer .cancelComment.show").click();
+                $(".commentsList")[0].scrollTop = 	20000;
+            }
+            else if(caller === "editComment"){
+                if(res===true) {
+                    alert("your Comment edited successfully");
+                    $(".commentsContainer .cancelComment.show").click();
+                    commentsList[selectedComment].edited = true;
+                    commentsList[selectedComment].fullText = newText;
+                    $(`.commentsContainer .eachComment.comment-${commentsList[selectedComment].commentId} .text`).html(commentsList[selectedComment].fullText);
+                }
+            }
+            else if(caller === "deleteComment"){
+                alert("comment deleted successfully");
+                $(`.commentsContainer .eachComment.comment-${commentsList[selectedComment].commentId}`).remove();
+                $(".commentsContainer .cancelComment.show").click();
+                $(".commentsContainer .commentCommands.show").removeClass("show");
+            }
+            else{
+                console.log(res);
+            }
+        }
+        else{
+            $(".commentsContainer .cancelComment.show").click();
+            alert(res.message);
+        }
+    }
+    function selectRateTringle(postId,value,changes){
+        rateObject = {
+            value: value,
+            postId: postId
+        };
+        if ($(".triangle.selected")) {
+            $(".triangle.selected").removeClass("selected");
+        }
+        for (var x = 1; x <= rateObject.value; x++) {
+            $(`#peace-${x}`).addClass("selected");
+        }
+        if(changes=== undefined) {
+            selectedRate = true;
+            $(".rateDiv .doRate").removeAttr("disabled");
+            $(".rateDiv .doRate").addClass("active");
+            $(".rateDiv h2").addClass("change");
+            if($(".rateDiv h3").html().startsWith("You already")){
+                $(".rateDiv h3").html("Change your rate from Rate : " + rates[postId].value + " to "+ rateObject.value +" / 6");
+            }
+            else{
+                $(".rateDiv h3").html("You Rate : " + rateObject.value + " / 6");
+            }
+        }
+        $(".rateDiv h2").html(rateObject.value);
+
+    }
+    function getPostInfosAction(res) {
+
+        if(res.message){
+            alert(res.message);
+        }
+        else{
+            currentPostItterator = 0;
+            postsList.push(res.post);
+            total = 1;
+            host = res.owner;
+            rates = {};
+            usersInfo[host.userId] = host;
+            if(Me && (host.userId !== Me.userId)) {
+
+                for (let r = 0; r < res.rates.length; r++) {
+                    if (!rates[res.rates[r].postId]) {
+                        rates[res.rates[r].postId] = {
+                            "value": res.rates[r].value,
+                            "rateId": res.rates[r].rateId,
+                            "rater": res.rates[r].rater,
+                            "changes": res.rates[r].changes,
+                            "createdAt": res.rates[r].createdAt
+                        }
+                    }
+                }
+            }
+            //
+            console.log(rates);
+            slideAction(0,"initial");
+        }
+    }
+
+    function rateResponseHandler(res) {
+        if(!res.message){
+            if(rates[postsList[currentPostItterator].postId] !== undefined) {
+                rates[postsList[currentPostItterator].postId].value = parseFloat(res.split("/")[0]);
+            }
+            else{
+                rates[postsList[currentPostItterator].postId] = {
+                    "value" : parseFloat(res.split("/")[0]),
+                    "rater" : Me.userId,
+                }
+            }
+
+            postsList[currentPostItterator].rate.value = parseFloat(res.split("/")[0]);
+            if(res.split("/")[1] === "new"){
+                postsList[currentPostItterator].rate.counts++;
+            }
+            loadPostDatas(postsList[currentPostItterator],-2);
+            $(".rateDiv .closeInfo").click();
+        }
+        else{
+            alert(res.message);
+        }
+    }
+    function autoResizeTextArea(initial){
+        var textarea = $('.newCommentDiv textarea.editable.show');
+        var el = textarea[0];
+        if(lastScroolValue < el.scrollHeight || initial) { // characters
+            textarea.css("height", parseInt((parseInt(textarea.css("height").split("p")[0]) + el.scrollHeight - lastScroolValue)) + 'px');
+            if(el.scrollHeight < 80 || initial) {
+                textarea.css("bottom", parseInt((parseInt(textarea.css("bottom").split("p")[0]) + (el.scrollHeight - lastScroolValue)/2)) + 'px');
+            }
+            lastScroolValue = el.scrollHeight;
+        }
+    }
+    function preLoadRatePad(postId,value) {
+
+        rateObject = {
+            postId : postId,
+            value:   value.value
+        };
+
+        $(".rateDiv h2").html(rateObject.value);
+        $(".rateDiv h2").addClass("change");
+        $(".rateDiv h3").html("You already rated this post , wanna change ? ( "+ (3 - value.changes) +"more times allowed.");
+        $(".rateDiv h3").addClass("smallerFont");
+        $(".rateDiv").addClass("show");
+
+        selectRateTringle(postId,value.value,value.changes);
+    }
+    function initialDownloadButtonRatio(x,y){
+        let ratio;
+        let width;
+        let height;
+        if(x > y){
+            ratio = (x/250);
+            width = 250;
+            height = (y/ratio);
+        }
+        else{
+            ratio = (y/250);
+            height = 250;
+            width = (x/ratio);
+        }
+
+        $(".post .downloadContainer").css({"width":width+"px","height":height+"px"});
+    }
+    function extractAndPlaceExifData(exifData){
+
+        if(exifData && exifData !== {} && exifData !== undefined && exifData !== null) {
+
+            let exifDataKeys = Object.keys(exifData);
+            let done = false;
+
+            if(exifDataKeys.length > 0) {
+
+                for (let v in exifDataKeys) {
+                    if (exifData[exifDataKeys[v]] !== null && exifData[exifDataKeys[v]] !== undefined && exifData[exifDataKeys[v]] !== {}) {
+                        if(done === false){
+                            done = true;
+                        }
+                        $(".post .infoContainer ul").append(`
+                                                            <li>
+                                                                <span>${exifDataKeys[v]}</span>
+                                                                <span class="middleText">:</span>
+                                                                <span class="rightText">${exifData[exifDataKeys[v]].toString()}</span>
+                                                            </li>
+                        `);
+                    }
+                    else{
+                        console.log(exifDataKeys[v], " --- ", v);
+                    }
+                    if(v === exifDataKeys.length -1) {
+                        // actions ===>
+                        if(done === false){
+                            $(".post .infoContainer ul").prepend(`
+                                                                <li>
+                                                                    <span>Exif</span>
+                                                                    <span class="middleText">:</span>
+                                                                    <span class="rightText">Not Available</span>
+                                                                </li>
+                            `);
+                        }
+                    }
+                }
+            }
+            else{
+
+            }
+        }
+        else{
+            $(".post .infoContainer ul").prepend(`
+                                                <li>
+                                                    <span>Exif</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">Not Available</span>
+                                                </li>
+            `);
+        }
+    }
+    function initialRate(postRates){
+        $(".rateButton .rateValue").html(postRates.value.toString());
+        $(".rateCounts").html($(".rateCounts").html().toString().split(">")[0]+">"+postRates.counts);
+        $(".postFooter .rateButton").addClass("show");
+    }
+    function submitPostAction(res) {
+        if (!res.message) {
+            window.location.pathname = "/" + Me.username;
+        }
+        else {
+            console.log(res.message);
+        }
+    }
+
+    function alert(message) {
+        $("#alertTop h3").html(message);
+        $("#alertTop").addClass("show");
+        setTimeout(function () {
+            $("#alertTop").removeClass("show");
+            // Something you want delayed.
+        }, 3000); // 5seconds show
+    }
+
+
+</script>
 </html>

@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('../core.node');
 var debug = require('debug')('hexaks:server');
 var http = require('http');
 

@@ -48,7 +48,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	overflow-y: auto;
 	overflow-x: hidden;
 }
-
+.containerDiv .loginRegForm form{
+	position: relative;
+	height: auto;
+	width:100%;
+	top:50px;
+	text-align: center;
+}
 .containerDiv .loginRegForm h2,.containerDiv .loginRegForm input,.containerDiv .loginRegForm button{
 	position: relative;
 	float: left;
@@ -65,26 +71,128 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	color:white;
 	margin-bottom:20px;
 }
-.containerDiv .loginRegForm input{
-	background-color: white;
-	left:10%;
+.containerDiv .loginRegForm form{
+	display: inline-block;
+	width:100%;
+	position: relative;
+	height: auto;
+	text-align: center;
+}
+.containerDiv .loginRegForm form div{
+	left:0;
 	width:80%;
 	color:black;
-	font-size:21px;
-
+	background-color: transparent;
+	height: 60px;
+	position: relative;
+	display: inline-block;
 }
-.containerDiv .loginRegForm button{
+.containerDiv .loginRegForm form div input{
+	background-color: white;
+	position: relative;
+	float: left;
 	left:10%;
 	width:80%;
-	font-size:23px;
-	background-color: #4cae4c;
-	color:white;
-	height: 45px;
-	padding: 0;
-	margin:40px 0;
+	height: 40px;
+	color:black;
+	font-size:24px;
+	line-height: 35px;
+	top:10px;
+	text-align: center;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-ms-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
 }
-@media (max-width:700px){
+.containerDiv .loginRegForm form div input:focus{
+	outline: #ff0055;
+}
+.containerDiv .loginRegForm form div input.changed{
+	text-align: left;
+}
+.containerDiv .loginRegForm form div img{
+	background-color: white;
+	position: relative;
+	float: right;
+	right:0;
+	width:30px;
+	height: auto;
+	color:black;
+	font-size:21px;
+	top:30px;
+	opacity: 0;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-ms-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+	padding:1px 0;
+	background-color: transparent;
+}
+.containerDiv .loginRegForm form div img.show{
+	opacity: 1;
+}
+.containerDiv .loginRegForm form button{
+	display: block;
+	position: relative;
+	width: 64%;
+	font-size: 30px;
+	background-color: #4cae4c;
+	color: black;
+	height: 55px;
+	padding: 0;
+	margin: 40px auto;
+	left: 18.2%;
+}
+.containerDiv .loginRegForm form ul{
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	left:10%;
+}
+.containerDiv .loginRegForm form ul.show{
+	display: block;
+}
+
+
+@media (max-width:520px){
 	.containerDiv .loginRegForm{
 		max-width: none;
 	}
+	.containerDiv .loginRegForm form div input{
+		width:100%;
+		height: 42px;
+		padding:2px 0;
+		font-size:25px;
+		line-height: 28px;
+		left:0;
+	}
+	.containerDiv .loginRegForm form div img{
+		position: absolute ;
+		top:-10px;
+		right: 0;
+		z-index: 100;
+	}
+	.containerDiv .loginRegForm form button{
+		width:91.5%;
+		font-size:28px;
+		left:4%;
+	}
+	.containerDiv .loginRegForm form div {
+		left:0;
+		width:90%;
+	}
+}
+.containerDiv .loginRegForm form .socialBox{
+	opacity: 0;
+	height: 0;
+	position: relative;
+	display: inline-block;
+	width:100%;
+	padding:0;
+}
+.containerDiv .loginRegForm form .socialBox.show{
+	opacity: 1;
+	height: 70px;
 }

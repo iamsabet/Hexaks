@@ -1,19 +1,121 @@
 const mongoose = require('mongoose');
 var postSchema = require('../models/post.model');
 var post = new postSchema();
-var Jimp = require("jimp");
 var albumSchema = require('../models/album.model');
+var secret = require('../config/secret');
 var album = new albumSchema();
-var postSchema = mongoose.model("pixels");
-var posts = new postSchema();
+var posts = require("./posts");
+var users = require("./users");
 var bcrypt = require("bcrypt-nodejs");
 var randomString = require("randomstring");
 /* GET home page. */
 var albums = {
 
-    getAll: function(req, res,user) {
-        var allusers = data; // Spoof a DB call
-        res.json(allusers);
+    paginate: function(req, res,user,userIds,timeOrigin,timeEdgeIn,orderBy,hashtags,category) {
+
+        var orderedBy = orderBy || "counts";
+        var privateOrNot = isPrivate || false;
+        var hashtagQuery = {$exists:true};
+        var categoryQuery = {$exists:true};
+        if(hashtags && hashtags.length > 0){
+            if(hashtags[0]!=="")
+                hashtagQuery = {$in:hashtags};
+        }
+        if(category && category.length > 0){
+            if(category[0] !== "" && category[0] !== "All")
+                categoryQuery = {$in:category};
+        }
+
+        if (orderedBy === "createdAt" || orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.points" || orderedBy === "rate.value" || orderedBy === "views") {
+            // timeWindow
+
+            let costQuery = {cost: {$gte: left, $lte: right}};
+            if(left === 0 && right === 1000000){
+                costQuery = {$exists:true};
+            }
+            if(privateOrNot === true){
+                privateOrNot = {$exists:true};
+            }
+            let userId = {$in:userIds};
+            if(userIds.length === 1){
+                userId = userIds[0];
+            }
+
+            if(userIds ==="all"){
+                if(user) {
+                    userId = {$nin: user.blockList}
+                }
+                else{
+                    userId = {$exists: true}
+                }
+            }
+            console.log(userId);
+            let query = {
+                ownerId : userId,
+                activated: (activated || true),
+                hashtags:hashtagQuery,
+                categories:categoryQuery,
+                private: privateOrNot,
+                deleted:false,
+            };
+            if(userIds.length === 1 && user && (userIds[0] === user.userId)){
+                query.rejected = {$exists:true};
+            }
+
+            if (timeEdge <= (31 * 24) && timeEdge > -1) {
+                if (timeEdge !== 0) {
+                    timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
+                    query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
+                }
+            }
+            else {
+                timeEdge = (timeOrigin - (744 * 3600 * 1000)); // 1day
+                query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
+            }
+
+            let options = {
+                select: 'albumId postIds counts createdAt updatedAt reportsCount rate views',
+                sort: {createdAt: -1},
+                page: pageNumber,
+                limit: parseInt(counts)
+            };
+            if(userIds === "all"){
+                query.ownerId= {$exists:true};
+            }
+            else{
+                if(userIds.length === 1) {
+                    timeEdge = (timeOrigin - (120 * 744 * 3600 * 1000)); // 31 days
+                    query["updatedAt"] = {$lt: timeOrigin};  // time edge up to 31 days
+                }
+                else{
+                    query["updatedAt"] = {$gte: timeEdge, $lt: timeOrigin};
+                }
+            }
+            if (orderBy === "counts") {
+                options.sort = {"counts": -1};
+            }
+            else if (orderBy === "updatedAt") {
+                options.sort = {"updatedAt": -1};
+            }
+            else if (orderBy === "createdAt") {
+                options.sort = {"createdAt": -1};
+            }
+            else if (orderBy === "reports") {
+                options.sort = {"reportsCount": -1};
+            }
+            else if (orderBy === "rate.value") {
+                options.sort = {"rate.value" : -1};
+            }
+            else if (orderBy === "rate") {
+                options.sort = {"rate.points": -1};
+            }
+            else if(orderBy === "views"){ // "views"
+                options.sort = {views: -1};
+            }
+            console.log(query);
+            console.log(options);
+            album.Paginate(query, options,user,req,res);
+        }
     },
 
     getOne: function(req, res,next,user) {
@@ -23,7 +125,7 @@ var albums = {
     },
     addPost: function(req, res,user,albumId,postId) {
 
-        postSchema.updateOne({postId:postId},{$set:{albumId:user.uploadingAlbum}},function(err,result) {
+        postSchema.updateOne({postId:postId},{$set:{albumId:albumId}},function(err,result) {
             if (err) throw err;
             if (albume) {
                 console.log(result);
@@ -31,7 +133,7 @@ var albums = {
         });
     },
     create: function(req,res,user,callback) {
-        var albumId = randomString.generate(20);
+        var albumId = CryptoJS.AES.encrypt((user.userId + "|-a-|" + counts + ":" + random.generate(10)).toString(), secret.albumIdKey).toString();
         album.findOne({albumId:albumId},function(err,albume){
             if(err) {
                 res.send({result: false, message: "Oops Something went wrong - please try again"});
@@ -72,36 +174,6 @@ var albums = {
 
 
     },
-
-    //         Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
-
-    //                 image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
-    //                     // x, y is the position of this pixel on the image
-    //                     // idx is the position start position of this rgba tuple in the bitmap Buffer
-    //                     // this is the image
-    //                     var red = this.bitmap.data[idx];
-    //                     var green = this.bitmap.data[idx + 1];
-    //                     var blue = this.bitmap.data[idx + 2];
-    //                     var alpha = this.bitmap.data[idx + 3];
-    //                     gatheredPixels.push({postId: postId, position: idx, value: {r: red, g: green, b: blue, a: alpha}});
-    //                     // gather list of pixels --> insert many
-    //                     // rgba values run from 0 - 255
-    //                     // e.g. this.bitmap.data[idx] = 0; // removes red from this pixel
-    //                 }, function (cb) {
-    //                     pixels.collection.insertMany(gatheredPixels, [{
-    //                             ordered: true,
-    //                             rawResult: false
-    //                         }],
-    //                         function () {
-    //                             console.log(gatheredPixels.length + " inserted pixels");
-    //                         });
-    //
-    //                 });
-    //
-    //             }
-    //         });
-    //     }
-    // });
 
     update: function(req, res,next,data) {
         var updateuser = req.body;

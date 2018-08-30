@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 var redis = require('redis');
-var random = require('randomstring');
+let users = require("../routes/users");
+// resize and remove EXIF profile data
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -10,46 +11,71 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 var Float = require('mongoose-float').loadType(mongoose);
-require('mongoose-long')(mongoose);
+var long = require('mongoose-long')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
-
-var postSchema = new mongoose.Schema({
-    albumId:String, // null if not
-    postId : String,
-    ownerId:String,
-    originalImage:{ // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
-        cost:Number, // 0 if free
-        resolution:{
-            x : Number,
-            y : Number,
+var rateSchema = require('../models/rate.model');
+var postSchema = new Schema({
+    album:String,
+    number: Number, // images urls -->
+    postId: String,
+    ownerId: String,
+    originalImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
+        cost: Number, // 0 if free -1 disable
+        resolution: {
+            y: Number,
+            x: Number
         }
     },
-    ext:String,
-    exifData:{},
-    largeImage:{
-        cost:Number, // 0 if free
-        resolution:{
-            x : Number,
-            y : Number,
-        },
+    largeImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
+        cost: Number, // 0 if free -1 if disabled < 1000000 , Toman :D
+        resolution: {
+            y: Number,
+            x: Number
+        }
     },
-    buyers:[], // user id
+    fileName: String, // string
+    ext: String,
+    device: {
+        brand:String,
+        model : String
+    }, // strings device id
+    location: {},
+    exifData: {
+        ExposureTime: Float,
+        FNumber: Number,
+        ISO: Number,
+        DateTimeOriginal: String,
+        CreateDate: String,
+        ShutterSpeedValue: Float,
+        ApertureValue: Number,
+        ExposureCompensation: Float,
+        MaxApertureValue: Number,
+        MeteringMode: Number,
+        LightSource: Number,
+        Flash: Number,
+        FocalLength: Number,
+        CustomRendered: Number,
+        ExposureMode: Number,
+        WhiteBalance: Number
+    }, // exif object
+    reportsCount : Number,
     hashtags:[],
-    generatedHashtags:[],
-    categories:[],
+    mentions:[],
+    tags : [], // {userId :"" , position:{x:num,y:num}} // from relative in view
+    ContentTokens : [], // from AI
+    ContentFullText : String,
+    topColors : [], // {colorRange :  number // ( 0-10,11-20,.... 245-255) , abundancePercentage : Float }
+    categories:[], // 3 max
     caption:String,
     rate:{
-        value:Float,
-        points : Float, // value * counts
-        counts: Number
+        value: Float,
+        points : long, // value * counts
+        counts: long
     },
-    views : Schema.Types.Long ,     // viewers.length length
+    views : long ,     // viewers.length length
     curatorId:String,
-    private:Boolean,
-    rejected : {
-        value: Boolean,
-        reason : String,
-    },
+    isPrivate:Boolean,
+    rejected:String,
     advertise:{
         link:String,
     },
@@ -58,7 +84,8 @@ var postSchema = new mongoose.Schema({
     deleted:Boolean,
     updatedAt:Number
 });
-postSchema.methods.create = function(postObject,username,callback){
+postSchema.methods.create = function(postObject,user,callback){
+
     let newPost = new Post(postObject);
     let now = Date.now();
     newPost.createdAt = now;
@@ -68,7 +95,7 @@ postSchema.methods.create = function(postObject,username,callback){
     return callback(true);
 
 };
-postSchema.methods.Paginate = function(query,options,req,res){
+postSchema.methods.Paginate = function(query,options,user,req,res){
     post.paginate(query,options,function(err,posts){
         if(err) {
             console.log(err);
@@ -76,22 +103,40 @@ postSchema.methods.Paginate = function(query,options,req,res){
         }
         else {
             if(posts){
+                console.log(posts);
                 posts.owners = {};
                 if(posts.docs.length > 0) {
+                    let postIds = [];
                     for (let x = 0; x < posts.docs.length; x++) {
                         if (!posts.owners[posts.docs[x].ownerId]) {
-                            redisClient.hgetall(posts.docs[x].ownerId + ":info", function (err, info) {
-                                if (!err && info) {
+                            users.getUserInfosFromCache(posts.docs[x].ownerId,function(info) {
+                                if (!info.message){
                                     console.log(info);
-                                    posts.owners[posts.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
+                                    if(user && info.blockList.indexOf(user.userId) > -1) { // he is blocked by him
+                                        delete posts.docs[x];
+                                    }
+                                    else{
+                                        if(user && postIds.indexOf(posts.docs[x].ownerId) === -1){
+                                            postIds.push(posts.docs[x].ownerId);
+                                            posts.owners[posts.docs[x].ownerId] = info;
+                                        }
+                                    }
                                 }
                                 else {
                                     console.log("err :" + err + " / values : " + info);
-                                    posts.owners[posts.docs[x].ownerId] = "notfound" + "/" + "male.png";
+                                    posts.owners[posts.docs[x].ownerId] = {};
                                 }
-
                                 if (x === posts.docs.length - 1) {
-                                    res.send(posts);
+                                    if(user){
+                                        rateSchema.find({postId:{$in:postIds},rater : user.userId,deleted:false,activate:true},{value:1,rateId:1,rater:1,postId:1,createdAt:1},function(err,rates){
+                                            if(err) throw err;
+                                            posts.rates = rates || [];
+                                            res.send(posts);
+                                        });
+                                    }
+                                    else{
+                                        res.send(posts);
+                                    }
                                 }
                             });
                         }
@@ -117,6 +162,9 @@ postSchema.methods.Edit = function(req,res){
 
 };
 
+
+
+
 postSchema.methods.Remove = function(req,res){
 
 };
@@ -132,6 +180,7 @@ postSchema.pre('save', function(next){
     }
     next();
 });
+
 postSchema.plugin(mongoosePaginate);
 let Post = mongoose.model('posts', postSchema);
 let post = mongoose.model('posts');

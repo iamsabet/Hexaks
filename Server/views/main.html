@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <script src="../Statics/javascripts/cookies.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js"></script>
-    <title>Hexaks</title>
+    <title>Hexaks Post</title>
 </head>
 
 <body>
-
 
 <div id="homeContainer" class="containerDiv">
     <div id="alertTop">
@@ -27,100 +26,148 @@
             <img src="../Statics/images/sliders/slider3/2.jpg"/>
         </div>
     </div>
-    <div class="profileTop" id="profileTop">
-        <img src="../Statics/images/images/charkheshi.gif" class="loader"/>
-        <div class="profileTopContainer">
-            <div class="profPic">
-                <img class="hexShape" src="../Statics/images/images/hexShape200g.png">
-                <img src="../Statics/profilePics/avatar.png" class="image"/>
-            </div>
-            <div class="userInfo">
-                <span class="hostFullName"></span>
-                <a class="followersBtn"></a>
-                <a class="followingsBtn"></a>
-                <span class="hostLocation"></span>
-                <span class="roles"></span>
-                <p class="username" hidden></p>
-                <p class="private" hidden></p>
-            </div>
-            <button id="follow">Follow</button>
-            <button id="unfollow">Unfollow</button>
-            <ul class="badges">
-                <li class="eachBadge">
-                    <img src="../Statics/images/images/premiumBadge.png"/>
-                    <p hidden> badgeId</p>
-                </li>
-                <li class="eachBadge">
-                    <img src="../Statics/images/images/logoA.png"/>
-                    <p hidden> badgeId</p>
-                </li>
-                <li class="eachBadge">
-                    <img src="../Statics/images/images/loader6.png"/>
-                    <p hidden> badgeId</p>
-                </li>
-                <li class="allBadgesBtn">
-                    +5
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="profileTopSmall" id="profileTopSmall">
+    <div class="nav rightSide">
+        <img id="logo" src="../Statics/images/images/LOGO.png">
+        <!--// parse dynamicly for clients - authenticated - and role based-->
+        <!--<ul>-->
+        <!--<li class="navRightButtons">Home</li>-->
+        <!--<li class="navRightButtons">Explore</li>-->
+        <!--<li class="navRightButtons">Subscriptions</li>-->
+        <!--<li class="navRightButtons">People</li>-->
+        <!--<li class="navRightButtons">Settings</li>-->
+        <!--<li class="navRightButtons" id="about">About</li>-->
+        <!--</ul>-->
     </div>
     <div class="topNav">
         <ul>
             <li>Latest</li>
             <li>Top</li>
             <li>Curated</li>
+            <li>Following</li>
         </ul>
     </div>
-    <div class="accountCard">
-        <a href="/login" id="loginBtn">Login</a>
-        <a href="/register">Register</a>
+    <div id="search-box">
+        <input type="text" class="searchInput"/>
+        <ul class="autoComplete">
+            <li>Latest</li>
+            <li>Top</li>
+            <li>Curated</li>
+            <li>Following</li>
+        </ul>
+
     </div>
-    <div class="loginSmall">
+    <div id="notification-box" class="">
+        <ul class="follows">
+            <li>Latest</li>
+            <li>Top</li>
+            <li>Curated</li>
+            <li>Following</li>
+        </ul>
+        <ul class="likes">
+            <li>Latest</li>
+            <li>Top</li>
+            <li>Curated</li>
+            <li>Following</li>
+        </ul>
+        <ul class="hexes">
+            <li>Latest</li>
+            <li>Top</li>
+            <li>Curated</li>
+            <li>Following</li>
+        </ul>
+        <div class="notificationFooter">
+            <span class="followsCount">5</span>
+            <span class="likesCount">8</span>
+            <span class="hexesCount">3</span>
+            <button id="followsBtn"></button>
+            <button id="likesBtn"></button>
+            <button id="hexesBtn"></button>
+        </div>
+    </div>
+
+    <div id="profile-box">
+        <button id="profile"></button>
+    </div>
+</div>
+    <div class="timeNav">
+        <a class="username">taha</a>
+        <select class="timeLimit show">
+            <option value="1">an hour</option>
+            <option value="24">a day</option>
+            <option value="72">3 days</option>
+            <option value="168">a week</option>
+            <option value="720">a month</option>
+        </select>
+        <select class="orders" id="orderList">
+            <option>All Categories</option>
+            <option>Nature</option>
+        </select>
+        <select class="category show" id="categoryList">
+            <option value="All"> All Categories </option>
+        </select>
+        <span class="hashtagSearchDiv show">
+            # salam daie
+            <button class="removeHashtag"></button>
+        </span>
+
+
+
+
+
+        <div id="postsHeader" class="show">
+            <h3></h3>
+            <img class ="" src="../Statics/images/newIcons/post.svg">
+        </div>
+        <button class="rows-2 show"></button>
+        <button class="rows-3 show"></button>
+    </div>
+    <div class="accountCard">
+
+    </div>
+    <div class="loginSmall" id="loginSmall">
         <form action="/login">
             <input placeholder="username or email" type="text">
             <input type="password" placeholder="password">
         <button id="loginSubmit">Login</button>
         </form>
     </div>
-    <div class="timeNav">
-        <h3>For Last</h3>
-        <select>
-            <option value="hour"> hour</option>
-            <option value="day"> day</option>
-            <option value="3 days">  3 days</option>
-            <option value="week"> week</option>
-            <option value="month"> month</option>
-        </select>
 
-        <button class="closeTimeNav"></button>
-    </div>
-    <div class="nav rightSide">
-        <img id="logo" src="../Statics/images/images/LOGO.png">
-        // parse dynamicly for clients - authenticated - and role based
-        <ul>
-            <li class="navRightButtons">Home</li>
-            <li class="navRightButtons">Explore</li>
-            <li class="navRightButtons">Subscriptions</li>
-            <li class="navRightButtons">People</li>
-            <li class="navRightButtons">Settings</li>
-            <li class="navRightButtons" id="about">About</li>
-        </ul>
-
-    </div>
-    <!--<div class="footer">-->
-    <!--<a href="/terms">Terms Of Service</a>-->
-    <!--<a href="/faq">FAQ</a>-->
-    <!--<a href="/contact">Contact</a>-->
-    <!--</div>-->
-    <div class="postsContainer">
-        <div id="postsHeader">
-            <h3> 156 posts found</h3>
+<div class="postsContainerDiv">
+    <div class="profileTop" id="profileTop">
+        <img src="../Statics/images/images/charkheshi.gif" class="loader"/>
+        <div class="profileTopContainer">
+            <div class="profPic">
+                <svg class="clip-svg">
+                    <defs>
+                        <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                            <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                        </clipPath>
+                    </defs>
+                </svg>
+                <div class="polygon-each-img-wrap">
+                    <img class="ownerProfilePicture polygon-clip-hexagon image" src="../profilePics/avatar.png"/>
+                </div>
+            </div>
+            <div class="userInfo">
+                <h2 class="hostFullName"></h2>
+                <span class="photos">43 photos</span>
+                <span class="hostLocation">Tehran</span>
+                <span class="roles"></span>
+                <p class="username" hidden></p>
+                <p class="private" hidden></p>
+                <a class="followersBtn show"></a>
+                <a class="followingsBtn show"></a>
+            </div>
+            <button id="follow">Follow</button>
+            <button id="unfollow">Unfollow</button>
+            <button id="more"></button>
         </div>
-        <ul class="postsContainer" id="postsContainer">
+    </div>
+    <div class="profileTopSmall" id="profileTopSmall">
+    </div>
+    <div class="postsContainer">
 
-        </ul>
+    </div>
     </div>
     <div class="settingsContainer" id="settings">
         <div class="menu">
@@ -148,8 +195,12 @@
             </div>
         </div>
     </div>
+    <!--<div class="footer">-->
+    <!--<a href="/terms">Terms Of Service</a>-->
+    <!--<a href="/faq">FAQ</a>-->
+    <!--<a href="/contact">Contact</a>-->
+    <!--</div>-->
 </div>
-
 <div class="post" id="post">
 
     <button class="closePost">
@@ -160,67 +211,83 @@
     </div>
 
     <div class="commentsContainer">
+        <button class="closeInfo show"></button>
+        <h3 class="header">Comments</h3>
         <ul class="commentsList">
-            <li class="eachComment" id="cm-${comments[index].commentId}">
-                <svg class="clip-svg">
-                    <defs>
-                        <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
-                            <polygon points="0.5 0, 1 0.25, 1 0.75, 0.5 1, 0 0.75, 0 0.25" />
-                        </clipPath>
-                    </defs>
-                </svg>
-                <div class="polygon-each-img-wrap">
-                    <img class="ownerProfilePicture polygon-clip-hexagon" src="../Statics/images/images/avatar.png"/>
-                </div>
 
-            </li>
         </ul>
+        <div class="newCommentDiv">
+            <textarea rows='1' class="editable show" id="newComment" maxlength="500"  placeholder="Write your comment here ... "></textarea>
+            <button class="cancelComment show"></button>
+            <button class="newComment"></button>
+        </div>
+        <div class="commentCommands">
+            <div class="cover">
+
+            </div>
+        </div>
+        <h3 class="commentsFooter">
+            <button class="new show"></button>
+        </h3>
     </div>
     <div class="infoContainer">
+        <button class="closeInfo show"></button>
+        <h3 class="header">Photo Information</h3>
+        <ul class="infoList">
 
+        </ul>
     </div>
     <div class="downloadContainer">
-
+        <button class="closeInfo show"></button>
+        <h3 class="header">Download Post</h3>
     </div>
-    <div class="ratePad">
+    <div class="rateDiv">
+        <button class="closeInfo show"></button>
+        <h3 class="header">Rate this post ( 1 to 6 )</h3>
+        <div class="ratePad">
 
+        </div>
+        <h2 class="Rate Value">?</h2>
+        <button class="doRate" disabled>Rate</button>
     </div>
 </div>
 <div class="postFooter">
-    <button class="leftButton"></button>
+    <button class="leftButton show"></button>
     <div class="ownerProfile">
         <svg class="clip-svg">
             <defs>
                 <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
-                    <polygon points="0.5 0, 1 0.25, 1 0.75, 0.5 1, 0 0.75, 0 0.25" />
+                    <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
                 </clipPath>
             </defs>
         </svg>
         <div class="polygon-each-img-wrap">
-            <img class="ownerProfilePicture polygon-clip-hexagon" src="../Statics/images/images/avatar.png"/>
+            <img class="ownerProfilePicture polygon-clip-hexagon" src=""/>
         </div>
-        <a href="/" class="ownerUsername usernameLink">username</a>
+        <a href="/" class="ownerUsername usernameLink"></a>
     </div>
+    <button class="rightButton show"></button>
     <div class="caption">
         <button class="editSurface"></button>
-        <textarea readonly class="notEditable show">This Is Caption</textarea>
-        <textarea class="editable" maxlength="250">This Is Caption</textarea>
+        <textarea readonly class="notEditable show"></textarea>
+        <textarea class="editable" maxlength="250"></textarea>
         <button class="cancelCaption"></button>
         <button class="saveCaption"></button>
+    </div>
+    <div class="rateButton">
+        <span class="rateValue"></span>
+        <button class="openRateBtn"></button>
+        <span class="rateCounts"><img class="peopleIcon" src="../Statics/images/icons/users-group.png"/></span>
+        <span class="views"></span>
+        <img src="../Statics/images/icons/glasses.png" class="viewIcon">
     </div>
     <div class="buttonGroup">
         <button class="info"></button>
         <button class="comments"></button>
         <button class="download"></button>
     </div>
-    <div class="rateButton">
-        <button class="openRateBtn"></button>
-        <span class="rateValue"></span>
-        <span class="rateCounts"></span>
-    </div>
-    <button class="rightButton"></button>
-</div>
 
+</div>
 
 
 
@@ -235,19 +302,59 @@
 
 <div class="newPostContainer" id="newPost">
     <div class="newPostForm">
-        <select name="category" id="category">
-            <option value="Nature">Nature</option>
-            <option value="Industrial">Industrial</option>
-            <option value="Society">Society</option>
-            <option value="Color Full">Folan</option>
-        </select>
+        <button class="closeNewPost"></button>
         <div id="uploadArea" >
             <strong>Drag one or more files to this Drop Zone ...</strong>
             <input type="file" accept="image/*" class="browseSingle">
         </div>
-        <div name="caption" id="caption" contenteditable="true"></div>
-        <button id="submitPost" > Post </button>
+
+        <div id="formArea">
+            <textarea name="caption" id="caption" contenteditable="true"></textarea>
+            <div class="newPostCategories">
+                <button id="addCategory" class="addCategory">Categories</button>
+                <div class="slideList" id="catList">
+                    <ul class="allCategories">
+                        <li class="Nature">Nature
+                            <img src="" />
+                            <button></button>
+                        </li>
+                        <li class="Industrial selected">Industrial
+                            <img src="" />
+                            <button></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="albumSelectorContainer">
+                <button id="addAlbum" class="addAlbum">Add To Album</button>
+                <div class="slideList" id="albumList">
+                    <ul class="userAlbums">
+
+                    </ul>
+                    <button id="newAlbum" class=""></button>
+                    <div id="newAlbumForm" class="newAlbumForm">
+                        <input type="text" maxlength="36"/>
+                        <button class="cancel"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="newPostLocation">
+                <button id="addLocation" class="addLocation"><img src="../Statics/images" /> Location</button>
+                <div class="slideList" id="addLocationDiv">
+
+                </div>
+            </div>
+            <div class="downloadOptions">
+                <button class="disabled"></button>
+                <button class="newAlbumButton"></button>
+            </div>
+            <p>Payment Options Coming Soon</p>
     </div>
+    <div class="privacy">
+        <button class="private">Followers</button>
+        <button class="public">Public</button>
+    </div>
+    <button id="submitPost" > Post </button>
 </div>
 
 
@@ -260,7 +367,7 @@
             <span class="qq-upload-drop-area-text-selector"></span>
         </div>
         <div class="qq-upload-button-selector qq-upload-button">
-            <div>Upload a file</div>
+            <div></div>
         </div>
         <span class="qq-drop-processing-selector qq-drop-processing">
                 <span>Processing dropped files...</span>
@@ -270,11 +377,16 @@
             <li>
                 <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
                 <div class="qq-progress-bar-container-selector qq-progress-bar-container">
-                    <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+                    <svg class="progress qq-progress-bar-selector noselect" data-progress="55" x="0px" y="0px" viewBox="0 0 776 628">
+                        <path class="track" d="M723 314L543 625.77 183 625.77 3 314 183 2.23 543 2.23 723 314z"></path>
+                        <path class="fill" d="M723 314L543 625.77 183 625.77 3 314 183 2.23 543 2.23 723 314z"></path>
+                        <text class="value" x="50%" y="61%">0%</text>
+                        <text class="text" x="50%" y="122%">Blue</text>
+                    </svg>
                 </div>
                 <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
                 <div class="qq-thumbnail-wrapper">
-                    <img class="qq-thumbnail-selector" qq-max-size="120" qq-server-scale>
+                    <img class="qq-thumbnail-selector" >
                 </div>
                 <button type="button" class="qq-upload-cancel-selector qq-upload-cancel"></button>
                 <button type="button" class="qq-upload-retry-selector qq-upload-retry">
@@ -334,8 +446,11 @@
 
 
 <script>
+
+
     // Global Variables.JS
-    // import * as Jimp from "jimp";
+
+
     var Me = {};
     var host = {};
     var currentPostObject = {};
@@ -343,11 +458,18 @@
     var left = {};
     var right = {};
     var currentPostItterator = 0;
+    var currentImageItterator = 0;
+    var lastPostItterator = -1;
     var currentPostId = "";
     var postsList = [];
+    var colNumber = 0;
     var pageType="";
+    let postsColumns = 1;
     var total=0;
+    let uploadingsCurrentIndex=0;
+    var lastLength = 0;
     var usersInfo = {};
+    var columnsHeights = [];
     var Filters = {
         username:pageType,
         pageNumber : 1,
@@ -362,37 +484,83 @@
         rightCost:1000000,
         category : "",
     };
-
+    var boxes  = ["search","notification","profile","loginSmall"];
     var originalUploader = {};
     // initial by url parsing
     var currentPage = "";
     var historyPointer = -1;
     var historyList = [];
+    let currentUploadingSelected = 0;
     // Events.Js
+    var commentsLastLength = [];
+    var commentsPageNumber = 1;
+    var commentsList = [];
+    var commentCounts = 10;
+    var selectedComment = 0; // last comment to do shit
+    var commentMode = false; // false = create / true = edit
+    var lastScroolValue = 0;
+    var newText = "";
+    var rates = {};
+    var rateObject = {};
+    let currentUploadCounts = 0;
+    var selectedRate = false;
+    var views = {};
+    var lastPostsColumns=0;
+    var newPostsColumns = 1;
+    let storePostDatasInterval;
+    let storePostDatas = {
 
+    }; // {"id" : {datas}}
+    let storePostAlbumId = null;
+    let currentUploadingRoot = null;
+    let uploadRequestDatas = {};
     $(document).ready(function(){
-        if( readCookie("X-ACCESS-TOKEN") !==null) {
+        if( readCookie("X-ACCESS-TOKEN") !== null) {
             getMe();
             setUploaders();
             ratePadInitial();
-            urlParser(true);
+            urlParser(true,"first");
+            resize();
+            initialCategories();
+            initialAlbums();
         }
         else {
             getMe();
             urlParser(true);
         }
     });
-    $("body").on("click",".navRightButtons",function(event){
-        event.preventDefault();
-        var pageName = $(this).html().toLowerCase();
-        makeUrl(pageName);
+    $(window).resize(function() {
+        resize();
     });
     $("body").on("click","#newPostBtn",function(event){
-       event.preventDefault();
+        event.preventDefault();
         window.history.replaceState("","","/");
         window.history.replaceState("","","/newpost");
         urlParser(true);
     });
+    $("body").on("click","#notifBtn",function(event){
+        event.preventDefault();
+        showTopBox("notif");
+        urlParser(true);
+    });
+    $("body").on("click","#searchButton",function(event){
+        event.preventDefault();
+        showTopBox("search");
+        urlParser(true);
+    });
+    $("body").on("click","#profileButton",function(event){
+        event.preventDefault();
+        showTopBox("profile");
+        urlParser(true);
+    });
+
+    $("body").on("click",".usernameLink",function(event){
+        event.preventDefault();
+        let changeusername = $(this).attr("href").toString();
+        window.history.replaceState("","",changeusername);
+        urlParser(true);
+    });
+
     $("body").on("submit",".loginSmall form",function(event){
         event.preventDefault();
     });
@@ -403,17 +571,14 @@
         var order = $(this).html().toLowerCase();
         if (order === "curated" || order === "top") {
             if(host.username !== window.location.pathname.split("/")[1]) {
-                $(".timeNav").addClass("show");
-                setTimeout(function(){
-                    $(".timeNav").removeClass("show");
-                },3600000);
+
             }
             if (order === "curated") {
                 Filters.isCurated = true;
                 Filters.orderBy = "views";
             }
             else {
-                Filters.orderBy = "rate.points";
+                Filters.orderBy = "rate";
                 Filters.isCurated = false;
             }
             Filters.order = "top";
@@ -423,15 +588,47 @@
             Filters.isCurated = false;
             Filters.order = "latest";
             Filters.orderBy = "createdAt";
-            if ($(".timeNav.show")) {
-                $(".timeNav.show").removeClass("show");
+
+        }
+        else if (order === "following") {
+            Filters.timeEdge = 31*24; //744h  1month
+            Filters.isCurated = false;
+            Filters.order = "latest";
+            Filters.orderBy = "createdAt";
+        }
+        else{
+            Filters.timeEdge = 31*24; //744h  1month
+            Filters.isCurated = false;
+            Filters.order = "latest";
+            Filters.orderBy = "createdAt";
+        }
+        makeUrl(order);
+    });
+    $("body").on("click",".rows-2",function(){
+        $(this).addClass("selected");
+        $(".timeNav .rows-3").removeClass("selected");
+        if((window.innerWidth) >= 520 && (window.innerWidth < 1200)) {
+            newPostsColumns = 2;
+            if(lastPostsColumns !== newPostsColumns) {
+                postsColumns = 2;
+                parsePostsList(true);
             }
         }
-        makeUrl();
     });
-    $("body").on("click",".closeTimeNav",function(){
-        if($(".timeNav.show")) {
-            $(".timeNav.show").removeClass("show");
+    $("body").on("click",".rows-3",function(){
+        $(".timeNav .rows-2").removeClass("selected");
+        $(this).addClass("selected");
+        if(window.innerWidth >= 768){
+            newPostsColumns = 3;
+            if(lastPostsColumns !== newPostsColumns) {
+                postsColumns = 3;
+                parsePostsList(true);
+            }
+        }
+    });
+    $("body").on("change",".newPostForm #caption",function(){
+        if(storePostDatas[(currentUploadingSelected+1).toString()]) {
+            storePostDatas[(currentUploadingSelected + 1).toString()]["caption"] = this.value;
         }
     });
     $("body").on("change",".timeNav.show select",function(){
@@ -484,6 +681,151 @@
         }
     });
 
+    $("body").on("click","#logoutBtn",function(){
+        logout();
+    });
+    $("body").on("click","#submitPost",function(e){
+        e.preventDefault();
+        uploadRequestDatas = storePostDatas; // already set
+        for(let x = 1 ; x <= currentUploadCounts ; x++){ // remove all cookies --> reload them if failed :D
+            eraseCookie("uploading:"+x);
+            eraseCookie(x);
+            if(x === currentUploadCounts){
+                requestHandler("/api/v1/post/submit","POST",
+                uploadRequestDatas
+                ,"submitPost");
+            }
+        }
+
+
+    });
+    $("body").on("click",".eachPost .imgContainer",function(){
+        currentPostItterator = parseInt($(this).parents(".eachPost").children("p")[0].innerHTML);
+        currentPostId = postsList[currentPostItterator].postId;
+        lastPostItterator = -1;
+        makeUrl("post",currentPostId);
+    });
+
+
+
+
+    // New Post Events
+
+    $("body").on("click","#formArea .newPostCategories #addCategory",function(){
+
+        if($("#catList.show")[0]) {
+            $("#catList.show").removeClass("show");
+            $(this).removeClass("close");
+        }
+        else {
+            $("#catList").addClass("show");
+            $("#albumList").removeClass("show");
+            $(this).addClass("close");
+        }
+    });
+
+
+    $("body").on("click","#formArea .newPostCategories ul li",function(){
+        if(this.classList.contains("selected")){
+            $(this).removeClass("selected");
+            $(this).children("button").removeClass("removeCat");
+            removeCategoryFromSelectedPost(this.classList[0]);
+        }
+        else {
+            $(this).addClass("selected");
+            $(this).children("button").addClass("removeCat");
+            addCategoryToSelectedPost(this.classList[0]);
+        }
+    });
+
+
+    $("body").on("click","#formArea .albumSelectorContainer #addAlbum",function(){
+
+        if($("#albumList.show")[0]) {
+            $("#albumList.show").removeClass("show");
+            $(this).removeClass("close");
+        }
+        else {
+            $("#albumList").addClass("show");
+            $("#catList").removeClass("show");
+            $(this).addClass("close");
+        }
+    });
+
+
+    $("body").on("click","#formArea .albumSelectorContainer ul li",function(){
+        debugger;
+        if(!this.classList.contains("selected")){
+            let assignedToAlbumCounts = parseInt($(this).children("span.assignedToThisAlbum").html()) + 1;
+            $(".albumSelectorContainer ul li").removeClass("selected");
+            $(this).addClass("selected");
+            $("#addAlbum").html(`${$(this).children("span.albumTitle").html()} album`);
+            $(this).children("span.assignedToThisAlbum").html(`${assignedToAlbumCounts}`);
+            let lastAlbumId = storePostDatas[(currentUploadingSelected+1).toString()]["albumId"];
+            let lastAlbumElement = $(`.albumSelectorContainer #album-${lastAlbumId} span.assignedToThisAlbum`);
+            if(lastAlbumId){
+                let lastAlbumAssingedCounts = parseInt(lastAlbumElement.html()) - 1;
+                lastAlbumElement.html(lastAlbumAssingedCounts);
+            }
+
+
+            addAlbumToSelectedPost($(this).children("p").html());
+        }
+        else{
+            let assignedToAlbumCounts = parseInt($(this).children("span.assignedToThisAlbum").html()) - 1;
+            $(this).children("span.assignedToThisAlbum").html(`${assignedToAlbumCounts}`);
+            $(this).removeClass("selected");
+            $("#addAlbum").html(`Add To Album`);
+
+
+            addAlbumToSelectedPost(null);
+        }
+    });
+
+    $("body").on("click","#newAlbum",function(){
+        if(this.classList.contains("ok")){
+            createAlbum($("#newAlbumForm input").val().toString());
+        }
+        else {
+            $(".newAlbumForm").addClass("show");
+            $(this).addClass("ok");
+        }
+    });
+    $("body").on("click","#newAlbumForm .cancel",function(){
+        $(".newAlbumForm").removeClass("show");
+        $("#newAlbumForm input").val("");
+        $("#newAlbum").removeClass("ok");
+    });
+
+
+
+
+
+    // Post View Events
+    $("body").on("click",".postFooter .leftButton.show",function(){
+        slideAction(0,"left");
+    });
+    $("body").on("click",".postFooter .rightButton.show",function(){
+        if(this.className.split("loadMore").length > 1) {
+            Filters.pageNumber++;
+
+            var counter = historyPointer;
+            while(counter > -1){
+                if(historyList[counter].pageName === "feed"){
+                    getPostsByFilter({},historyList[counter].data);
+                    $(".postFooter .rightButton.show.loadMore").removeClass("loadMore");
+                    break;
+                }
+                counter--;
+            }
+
+        }
+        else {
+            slideAction(0, "right");
+        }
+    });
+
+
     $("body").on("click",".caption .notEditable",function(e){
         if(Me.userId === postsList[currentPostItterator].ownerId){
             $(".caption .editSurface").addClass("show");
@@ -507,7 +849,7 @@
         }
     });
 
-    $("body").on("keydown",".caption .editable",function(e){
+    $("body").on("keyup",".caption .editable",function(e){
         if (Me.userId === postsList[currentPostItterator].ownerId) {
             if ($(".caption .saveCaption")[0].className.split("show")[1]) {
                 $(".caption .saveCaption").removeClass("show");
@@ -531,12 +873,12 @@
     });
     $("body").on("click",".caption .saveCaption.show",function(e){
         if(Me.userId === postsList[currentPostItterator].ownerId) {
-            if(postsList[currentPostItterator].caption !== $(".editable").val()) {
+            if(postsList[currentPostItterator].caption !== $(".postFooter .editable").val()) {
                 if ($(".caption .spinner")) {
                     $(".caption .spinner").addClass("show");
                 }
 
-                var newCaptionText = $(".editable").val().toString();
+                var newCaptionText = $(".postFooter .editable").val().toString();
                 var postId = window.location.pathname.split("/")[2].toString();
                 editCaption(newCaptionText, postId);
             }
@@ -545,54 +887,224 @@
             }
         }
     });
-
-    $("body").on("click","#logoutBtn",function(){
-        logout();
+    $("body").on("click",".rateButton .openRateBtn",function(e){
+        if(Me === null){
+            $(".rateDiv").addClass("show");
+        }
+        else {
+            if(rates[postsList[currentPostItterator].postId] !== {} && rates[postsList[currentPostItterator].postId] !== undefined){
+                preLoadRatePad(postsList[currentPostItterator].postId,rates[postsList[currentPostItterator].postId]); // rate object == >
+            }
+            else{
+                $(".rateDiv").addClass("show");
+            }
+        }
     });
-    $("body").on("click","#submitPost",function(e){
-        e.preventDefault();
-        var list = $("#caption").html().toString().match(/#\w+/g);
+    $("body").on("click","#postMoreBtn button",function(e){
+        if(Me === null){
+            showLoginOrReg("You must Login first to do such action","Post Actions"); // modal full view middle
+        }
+        else {
+            showPostCommands(Me.userId);
+        }
+    });
+    $("body").on("click",".postCommands button.cancelPostCommand",function(e){
 
-        requestHandler("/api/v1/post/submit","POST",
-                {
-                caption:$("#caption").html(),
-                hashtagsList:list,
-                cost:0,
-                isPrivate: $("#isPrivate").val() || false,
-                categories:$("#category").val()
+        showPostCommands();
+    });
+    $("body").on("click",".commentsContainer .new.show",function(e){
+        $(".commentsContainer .cancelComment").addClass("show");
+        commentMode = false;
+        $(this).removeClass("show");
+        $(".commentsContainer .newCommentDiv").addClass("show");
+        setTimeout(function(){
+            $("#newComment").focus()
+        },50);
+
+    });
+    $("body").on("click",".eachComment .commentMoreButton",function(e){
+        if(Me === null){
+            showLoginOrReg("You must Login first to do such action","Comment Actions"); // modal full view middle
+        }
+        else {
+            $(".commentMoreDiv").addClass("show");
+
+            selectedComment = parseInt($(this).parents("li").children("p")[0].innerHTML); //
+            if (selectedComment < 0) {
+                selectedComment *= -1; // >
+            }
+            showCommentCommands(selectedComment);
+        }
+    });
+
+    $("body").on("click",".commentCommands.show .editComment",function(e){
+        commentMode = true;
+        $(".commentCommands.show .cancel").click();
+        $(".commentsContainer .editable").val(commentsList[selectedComment].fullText);
+        newText = commentsList[selectedComment].fullText;
+        $(".commentsContainer .cancelComment").addClass("show");
+        $(".commentsContainer .new.show").removeClass("show");
+        $(".commentsContainer .newCommentDiv").addClass("show");
+        autoResizeTextArea(true);
+        setTimeout(function(){
+            $("#newComment").focus()
+        },50);
+    });
+    $("body").on("click",".commentCommands.show .deleteComment",function(e){
+
+        deleteComment({commentId:commentsList[selectedComment].commentId,postId:postsList[currentPostItterator].postId});
+
+    });
+    $("body").on("click",".commentCommands.show .reportComment",function(e){
+        commentMode = true;
+        // reportComment();
+
+    });
+    $("body").on("click",".commentCommands.show .cancel",function(e){
+        $(".commentsContainer .commentCommands.show").removeClass("show");
+
+    });
+    $("body").on("keydown",".commentsContainer .editable.show",function(e){
+        autoResizeTextArea();
+
+        if (commentMode && Me.userId === commentsList[selectedComment].ownerId) {
+            if ($(".commentsContainer .newComment")[0].className.split("show")[1]) {
+                $(".commentsContainer .newComment").removeClass("show");
+            }
+            else {
+                if ($(".commentsContainer .newComment")[0].className.split("show")[1] === undefined) {
+                    $(".commentsContainer .newComment").addClass("show");
                 }
-                ,"submitPost");
+            }
+        }
+        else{
+            if ($(".commentsContainer .newComment")[0].className.split("show")[1]) {
+                $(".commentsContainer .newComment").removeClass("show");
+            }
+            else {
+                if ($(".commentsContainer .newComment")[0].className.split("show")[1] === undefined) {
+                    $(".commentsContainer .newComment").addClass("show");
+                }
+            }
+        }
+    });
 
+    $("body").on("click",".commentsContainer .cancelComment",function(e){
+        if($(".commentsContainer .newCommentDiv.show")) {
+            $(".commentsContainer .newCommentDiv.show").removeClass("show");
+        }
+        $(".commentsContainer .newCommentDiv .newComment").removeClass("show");
+        $(".commentsContainer .new").addClass("show");
+        $(".commentsContainer .editable").val("");
     });
-    $("body").on("click",".eachPost",function(){
+    $("body").on("click",".commentsContainer .newComment.show",function(e){
+        if(commentMode) { // editMode
+            if (Me.userId === commentsList[selectedComment].ownerId) { // your comment
+                if (commentsList[selectedComment].fullText !== $(".commentsContainer .editable").val()) {
+                    if ($(".commentsContainer .spinner")) {
+                        $(".commentsContainer .spinner").addClass("show");
+                    }
+                    var newCommentText = $(".commentsContainer .editable").val().toString();
+                    editComment({commentId:commentsList[selectedComment].commentId,postId:postsList[currentPostItterator].postId,text:newCommentText});
 
-        currentPostId = this.classList[1];
-        currentPostItterator = parseInt($(this).children("p")[0].innerHTML);
-        makeUrl(currentPostId);
+                    $(".caption .cancelComment").click();
+                }
+                else {
+                    $(".caption .cancelComment").click();
+                }
+            }
+        }
+        else{
+
+            if ($(".commentsContainer .editable").val().toString().length > 0){
+                if ($(".commentsContainer .spinner")) {
+                    $(".commentsContainer .spinner").addClass("show");
+                }
+                var newCommentText = $(".commentsContainer .editable").val().toString();
+                var postId = window.location.pathname.split("/")[2].toString();
+                addComment({postId:postId,text:newCommentText});
+            }
+            else {
+                $(".caption .cancelComment").click();
+            }
+        }
     });
-    $("body").on("click",".postFooter .leftButton",function(){
-        slideAction(0,"left");
+    $("body").on("click",".rateDiv .closeInfo",function(){
+        $(".downloadContainer .closeInfo").click();
+        $(".commentsContainer.show .cancelComment").click();
     });
-    $("body").on("click",".postFooter .rightButton",function(){
-        slideAction(0,"right");
+    $("body").on("click",".downloadContainer .closeInfo",function(){
+        $(".downloadContainer.show").removeClass("show");
+        $(".commentsContainer.show").removeClass("show");
+        $(".infoContainer.show").removeClass("show");
+        $(".rateDiv.show").removeClass("show");
+        $(".commentsContainer.show .cancelComment").click();
     });
+    $("body").on("click",".commentsContainer .closeInfo",function(){
+
+        $(".downloadContainer .closeInfo").click();
+        $(".commentsContainer.show .cancelComment").click();
+    });
+    $("body").on("click",".infoContainer .closeInfo",function(){
+        $(".downloadContainer .closeInfo").click();
+        $(".commentsContainer.show .cancelComment").click();
+    });
+
+
+    $("body").on("click",".post .closePost",function(){
+        $(".downloadContainer .closeInfo").click();
+        if($(".postFooter .rateButton.show")) {
+            $(".postFooter .rateButton.show").removeClass("show");
+        }
+        if($(".postFooter .caption.show")) {
+            $(".postFooter .caption.show").removeClass("show");
+        }
+        if($(".postFooter .buttonGroup.show")) {
+            $(".postFooter .buttonGroup.show").removeClass("show");
+        }
+        $(".commentsContainer.show .cancelComment").click();
+        for (let m = historyPointer ; m >= 0 ; m--){
+            if(historyList[m] && !historyList[m].pageName.startsWith("post")){
+                historyPointer = m;
+                window.history.replaceState("/","","/"+historyList[m].urlData);
+                urlParser(true);
+            }
+        }
+    });
+
+    $("body").on("click",".qq-upload-list li",function(){ // select an uploader post
+        $(".qq-upload-list li").removeClass("selected");
+        $(this).addClass("selected");
+        if(this.className.split("-")[3]){
+            currentUploadingSelected = parseInt((parseInt(this.className.split("-")[3].split(" qq")[0])/3));
+            loadUploadingPostDatasInForm(currentUploadingSelected);
+
+        }
+    });
+
+
     function requestHandler(url, method, input, caller) {
         $.ajax({
             url: url || "/",
             method: method || "GET",
             data: input || {},
+            headers: {
+                "Access-Control-Allow-Origin" : "*"
+            },
             beforeSend: function () {
             },
             success: function (res) {
                 if(res.message && res.result===false){
                     alert(res.message);
+                    responseActionHandler(caller, res);
                 }
                 else if(res.message && res.result===true){
-                    alert(res.message);
-                    responseActionHandler(caller, res);
+                    if(res.status !== 401)
+                        alert(res.message);
+                    responseActionHandler(caller, res,input);
                 }
                 else{
-                    responseActionHandler(caller, res);
+                    responseActionHandler(caller, res,input);
                 }
             },
             timeout: function () {
@@ -628,10 +1140,16 @@
     function updateProfileInfo(input){
         requestHandler("/api/v1/users/updateProfileInfo","POST",input,"updateProfileInfo");
     }
-    function follow(hostId){
+    function follow(){
         requestHandler("/api/v1/users/follow","POST",{followingId:host.userId},"follow");
     }
-    function unfollow(hostId){
+    function unfollow(){
+        requestHandler("/api/v1/users/unfollow","POST",{followingId:host.userId},"unfollow");
+    }
+    function block(){
+        requestHandler("/api/v1/users/follow","POST",{followingId:host.userId},"follow");
+    }
+    function unblock(){
         requestHandler("/api/v1/users/unfollow","POST",{followingId:host.userId},"unfollow");
     }
 
@@ -640,32 +1158,56 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     function editCaption(newCaptionText, postId){
-        requestHandler("/api/v1/post/editPost","POST",{newCaption:newCaptionText , postId:postId},"editCaption");
+        requestHandler("/api/v1/post/editPost","POST",{caption:newCaptionText , postId:postId},"editCaption");
     }
 
     function editCategory(newCategory, postId){
-        requestHandler("/api/v1/post/editPost","POST",{newCategory:newCategory , postId:postId},"editCategory");
+        requestHandler("/api/v1/post/editPost","POST",{category:newCategory , postId:postId},"editCategory");
+    }
+
+    function editPrivacy(newPrivacy, postId){
+        requestHandler("/api/v1/post/editPost","POST",{privacy:newPrivacy , postId:postId},"editPrivacy");
+    }
+
+    function getPostInfos(postId){
+        requestHandler("/api/v1/post/"+postId,"POST",{},"getPostInfos");
+    }
+
+
+    function addComment(input){
+        requestHandler("/api/v1/users/addComment","POST",input,"addComment");
+    }
+
+    function editComment(input){
+        requestHandler("/api/v1/users/editComment","POST",input,"editComment");
+    }
+
+    function deleteComment(input){
+        requestHandler("/api/v1/users/deleteComment","POST",input,"deleteComment");
+    }
+
+    function getPostComments(input){
+        requestHandler("/api/v1/getPostComments","POST",input,"getPostComments");
+    }
+
+    // Post(Picture) Handlers
+
+    function rate(rateObject){
+        requestHandler("/api/v1/users/rate","POST",rateObject,"rate");
+    }
+
+    function view(postId){ // no response needed for now
+        if(postId) {
+            requestHandler("/api/v1/users/view", "POST", {postId: postId}, "view");
+        }
     }
 
     // Post(Picture) Handlers
     function getPostsByFilter(input,pageType){
 
         switch (pageType) {
-            case "subscriptions":{
+            case "following":{
                     requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
             }break;
             case "explore":{
@@ -675,7 +1217,7 @@
                     requestHandler("/api/v1/posts/home", "POST", Filters, "getPostsByFilter");
             }break;
             default : {
-                debugger;
+
                 if (input.privacy) {
                     if (input.following) {
                         if(host.userId) {
@@ -694,19 +1236,10 @@
 
 
 
-
-
-    function rate(postId,rateNumber){
-        requestHandler("/api/v1/posts/rate","POST",{postId:postId,rateNumber:rateNumber},"rate");
-    }
-
     function sendPagesInitialRequest(pageName,albumOrPost,postid){
         if(pageName.toLowerCase() === "newpost"){
             if(albumOrPost === "post"){
                 requestHandler("/api/v1/post/initial","POST",{type:"post"},pageName);
-            }
-            else if(albumOrPost === "album"){
-                requestHandler("/api/v1/album/initial","POST",{type:"album"},pageName);
             }
             else{
                 alert("invalid post type");
@@ -719,7 +1252,7 @@
         }
     }
     // Actions.js
-    function responseActionHandler(caller, res) {
+    function responseActionHandler(caller, res,input) {
         switch (caller) {
             case "loginHandler" : {
                 loginResponse(res);
@@ -739,27 +1272,42 @@
             case "unfollow" : {
                 unfollowAction(res);
             }break;
+            case "block" : {
+                blockAction(res);
+            }break;
+            case "unblock" : {
+                unblockAction(res);
+            }break;
             case "getMe" : {
                 getMeResponseAction(res);
             }break;
             case "rate":{
                 rateResponseHandler(res);
             }break;
-            case "newPost":{
+            case "newpost":{
                 newPostPageAction(res);
             }break;
             case "post":{
                 slideViewPageAction(res);
-
             }break;
-
-            case  "loadPostInfos":{
-
+            case "view":{
+                views[postsList[currentPostItterator].postId] = 1;
             }break;
-            case  "editCaption":{
-                editCaptionResponseAction(res);
+            case  "editCaption" || "editCategory" || "editPrivacy":{
+                editPostResponseAction(res,caller);
             }break;
-
+            case  "addComment":{
+                commentsResponseActions(res,caller);
+            }break;
+            case "editComment" :{
+                commentsResponseActions(res,caller);
+            }break;
+            case "deleteComment" :{
+                commentsResponseActions(res,caller);
+            }break;
+            case "getPostComments":{
+                parseComments(res);
+            }break;
             case "getPostsByFilter":{
                 console.log("total :" + res.total + " - "+ res.page + " / " + res.pages);
                 parsePosts(res);
@@ -767,38 +1315,38 @@
             case "submitPost":{
                 submitPostAction(res);
             }break;
+            case "createAlbum":{
+                createAlbumResponseAction(res,input);
+            }break;
+            case "initialCategories":{
+                initialCategoriesResponseAction(res);
+            }break;
+            case "initialAlbums":{
+                initialAlbumsResponseAction(res);
+            }break;
         }
     }
 
 
     function makeUrl(pageName,postId) {
-
         var urlArray = window.location.pathname.toLowerCase().split("/");
         var newUrl = "";
         var hashtag = "";
         var category = "";
         var order = "";
         console.log(urlArray.join("/"));
-        if (pageName) {
 
+        if (pageName) {
             if(pageName.startsWith("post")){
-                var postId = pageName.split("-")[1];
                 window.history.replaceState("", "", "/post/" + postId);
             }
             else {
-
-                window.history.replaceState("", "", "/" + pageName);
-                if (pageName === "subscriptions" || pageName === "explore") {
-                    Filters.order = "top";
-                    Filters.orderBy = "rate.value";
+                if(pageName === "explore" || pageName === "curated" || pageName === "latest" || pageName === "top") {
+                    window.history.replaceState("", "", "/"+window.location.pathname.split("/")[1]+ "/" + pageName);
                 }
-                else {
-                    Filters.order = "latest";
-                    Filters.orderBy = "createdAt";
-
+                else{
+                    window.history.replaceState("", "", "/" + pageName + "/" + window.location.pathname.split("/")[2]);
                 }
-                Filters.category = "";
-                Filters.hashtag = "";
             }
         }
         else{
@@ -820,7 +1368,7 @@
                 newUrl += "/" + category + "/" + hashtag;
             }
             if(category !== ""){
-                debugger;
+
                 newUrl += "/" + category + "/" + hashtag;
             }
             window.history.replaceState("", "", "/");
@@ -836,70 +1384,80 @@
 
 
     function urlParser(writeState,postId){
-        var order = "latest";
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
         }
         if(window.location.pathname.split("/")[2]){
-            order = window.location.pathname.split("/")[2];
-            if( order === "curated" || order === "latest" || order === "top" ) {
+            let order = window.location.pathname.split("/")[2];
+            if( order === "curated" || order === "latest" || order === "top") {
                 Filters.order = order;
-                Filters.category = window.location.pathname.split("/")[3] || "";
-                Filters.hashtag = window.location.hash || "";
-                if(order === "curated"){
-                    Filters.order = "top";
-                    Filters.isCurated = true;
-                }
-                else{
-                    Filters.isCurated = false;
-                }
+            }
+            else {
+                Filters.order = "latest";
+            }
+            Filters.order = order;
+            Filters.category = window.location.pathname.split("/")[3] || "";
+            Filters.hashtag = window.location.hash || "";
+            if(order === "curated"){
+                Filters.order = "top";
+                Filters.isCurated = true;
+            }
+            else{
+                Filters.isCurated = false;
             }
         }
-        if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "subscriptions" || pageType === "followings" || pageType === "followers" ||
+        if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "following" || pageType === "followings" || pageType === "followers" ||
             pageType=== "post"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
-
-            if( pageType === "curated" || pageType === "latest" || pageType === "top") {
+            if (pageType === "home" || pageType === "" || pageType === "explore" || pageType === "following") {
+                if (pageType === "") {
+                    pageType = "explore";
+                }
+                if(Filters.isCurated) {
+                    changePage(pageType, pageType + "/curated", writeState);
+                }
+                else{
+                    changePage(pageType, pageType + "/"+Filters.order, writeState);
+                }
+            }
+            else if (pageType === "curated" || pageType === "latest" || pageType === "top") {
                 Filters.order = pageType;
                 Filters.category = window.location.pathname.split("/")[2] || "";
                 Filters.hashtag = window.location.hash || "";
-                if(pageType === "curated"){
+                if (pageType === "curated") {
                     Filters.order = "top";
                     Filters.isCurated = true;
+                    changePage("feed", "explore/curated", writeState);
                 }
-                else{
+                else {
                     Filters.isCurated = false;
+                    changePage("feed", "explore/" + pageType, writeState);
                 }
-                selectRightNav(pageType);
-                selectTopNav(pageType);
-                changePage("feed","explore", writeState);// Other Pages
+            }
+
+            else if (pageType === "settings" || pageType === "post" || pageType === "contact" || pageType === "people" || pageType === "newpost" || pageType === "policy") {
+                if (postId) {
+                    changePage(pageType + "/" + postId, pageType + "/" + postId, writeState, true);
+                }
+                else {
+                    changePage(pageType, pageType, writeState);
+                }
             }
             else {
 
-                if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "subscriptions" || pageType==="people" || pageType === "settings" || pageType === "about"){
-                    if( pageType === "" ) {
-                        pageType = "explore";
-                    }
-                   selectRightNav(pageType);
-                   selectTopNav(order);
-                }
-                if (pageType === "settings" || pageType === "post" || pageType === "contact" || pageType==="people" || pageType === "newpost" || pageType === "policy") {
-                    if(postId) {
-                        changePage(pageType + "/" + postId, pageType+"/"+postId, writeState,true);
-                    }
-                    else{
-                        changePage(pageType, pageType, writeState);
-                    }
-
-                }
-                else
-                    changePage("feed", pageType, writeState);// Feed
-
+                // changePage("profile", pageType + "/" + Filters.order, writeState);// Profile --> // page not found
             }
         }
-        else{
-
-            changePage("profile",pageType+"/"+order,writeState);// Profile -->
+        else {
+            if (window.location.pathname.split("/")[2] === "curated") {
+                Filters.order = "top";
+                Filters.isCurated = true;
+                changePage("profile", pageType + "/curated",writeState);// Profile -->
+            }
+            else {
+                Filters.isCurated = false;
+                changePage("profile", pageType + "/" + Filters.order, writeState);// Profile -->
+            }
         }
     }
     // action functions
@@ -923,18 +1481,26 @@
             resume: {
                 enabled: true
             },
+            xhrFields: {
+
+            },
             retry: {
-                enableAuto: true,
+                enableAuto: false,
                 showButton: true
             },
             allowedExtensions: ['gif','jpg','jpeg','png'],
             onSubmit: function(id, fileName){
+                console.log(fileName);
 
             },
-            onComplete: function(id, fileName, responseJSON){ // Customize the output sent to responseJSON in demo.php
-                resetParams();
+            onComplete: function(id,responseJSON){ // Customize the output sent to responseJSON in demo.php
+                debugger;
+                if(responseJSON["success"]){
+                    if(currentUploadingRoot === null){
+                        currentUploadingRoot = postId.split("===.")[0].slice(0.-2);
+                    }
+                }
                 $(".qq-file-id-"+id).remove();
-
                 switch(responseJSON.ext){
                     case 'gif':
                     case 'jpg':
@@ -947,133 +1513,136 @@
                 }
                 if(originalUploader._filesInProgress < 1){
                     $(".qq-file-id-"+parseInt(id+1)).remove();
-                    alert("Files Uploaded Successfuly");
-                    // var t = setTimeout('location.href = location.href;', 10000)
+                    alert("Files Uploaded Successfully");
                 }
             },
-            showCropTool: 1,
+            showCropTool: true,
             scaling: {
                 sizes: [
-                    {name: "sss",maxSize: 500},
-                    {name: "mmm",maxSize: 1000}
+                    {name: "sss",maxSize: 600},
+                    {name: "mmm",maxSize: 1400}
                 ]
             },
         });
 
     }
 
-    function changePage(pageName,pageType,newHistory,postid){
+    function changePage(pageName,pageType,newHistory,postid) {
 
-        setTimeout(function(){
-            if(postid || false) {
+        setTimeout(function () {
+            if (postid) {
                 pageName = pageName.split("/")[0];
-                pageType =  pageName.split("/")[1];
+                pageType = pageName.split("/")[1];
             }
-                if(pageName=== "feed" || pageName=== "home" || pageName=== ""){
-                    $(".postFooter").removeClass("show");
-                    // show feed items --> hide Others
-                    if( pageName !== currentPage ) {
+            if (pageName === "feed" || pageName === "home" || pageName === "" || pageName === "explore" || pageName === "following") {
+                $(".postFooter").removeClass("show");
+                // show feed items --> hide Others
+                if (pageName !== currentPage) {
+                    $("#postsContainer").addClass("show");
+                    if (pageName === "home" || pageName === "") {
+                        $("#homeSliders").addClass("show");
                         $("#postsContainer").addClass("show");
-                        if (pageName === "home" || pageName === "") {
-                            $("#homeSliders").addClass("show");
-                            $("#postsContainer").addClass("show");
-                        }
-                        if(pageName === "") {
-                            $(".topNav ul li")[0].addClass("selected");
-                        }
-                        // hide elements
-                        pageNames = ["settings", "newPost", "post", "profileTop", "people","profileTopSmall", "contact", "policy"];
-                        for (var x = 0; x < pageNames.length; x++) {
-                            if (pageName === pageNames[x].toLowerCase()) {
-                                $(`#${pageNames[x]}`).addClass("show");
-                            }
-                            else {
-                                if ($(`#${pageNames[x]}.show`)) {
-                                    $(`#${pageNames[x]}.show`).removeClass("show");
-                                }
-                            }
-                        }
                     }
-                    // --> Function Calls
-                    getPostsByFilter({},pageType);
-                    if(newHistory || false) {
-                        pushHistory(pageName,pageType ,pageType,true);
+                    if (pageName === "") {
+                        $(".topNav ul li:nth-child(1)").addClass("selected");
+                    }
+                    // hide elements
+                    pageNames = ["settings", "newPost", "post", "profileTop", "people", "profileTopSmall", "contact", "policy"];
+                    for (var x = 0; x < pageNames.length; x++) {
+                        if (pageName === pageNames[x].toLowerCase()) {
+                            $(`#${pageNames[x]}`).addClass("show");
+                        }
+                        else {
+                            if ($(`#${pageNames[x]}.show`)) {
+                                $(`#${pageNames[x]}.show`).removeClass("show");
+                            }
+                        }
                     }
                 }
-                else if(pageName === "profile"){
-                    $(".postFooter").removeClass("show");
-                    host.username = pageType.split("/")[0];
-                    Filters.order = pageType.split("/")[1];
-                    selectTopNav(Filters.order);
-                    if( pageName !== currentPage ) {
-                        $("#postsContainer").addClass("show");
-                        $("#profileTop").addClass("show");
-                        pageNames = ["settings", "newPost", "slideVvew", "homeSliders", "people","contact", "policy"];
-                        for (var x = 0; x < pageNames.length; x++) {
-                            if (pageName === pageNames[x]) {
-                                $(`#${pageNames[x]}`).addClass("show");
-                            }
-                            else {
-                                if ($(`#${pageNames[x]}.show`)) {
-                                    $(`#${pageNames[x]}.show`).removeClass("show");
-                                }
-                            }
-                        }
-                    }
-                    loadProfileInfo(host.username);
-                    if(newHistory || false) {
-                        pushHistory(pageName,pageType,pageType,true);
-                    }
-                }
-                else if(pageName=== "settings" || pageName==="newpost" || pageName==="post" || pageName==="people" || pageName==="contact"){
-                    if( pageName !== currentPage ) {
-                        if(pageName ==="post"){
-                            $(".postFooter").addClass("show");
-                        }
-                        else{
-                            $(".postFooter").removeClass("show");
-                        }
-                        var pageNames = ["settings", "newPost", "post", "contact", "people","policy"];
-                        for (var x = 0; x < pageNames.length; x++) {
+                // --> Function Calls
+                getPostsByFilter({}, pageType.split("/")[0]);
 
-                            if (pageName === pageNames[x].toLowerCase()) {
-                                $(`#${pageNames[x]}`).addClass("show");
+                if (newHistory || false) {
+                    pushHistory(pageName, pageType, window.location.pathname, true);
 
-                                    sendPagesInitialRequest(pageNames[x].toLowerCase(), "post",pageName.split("-")[1]);
-                            }
-                            else {
-                                if ($(`#${pageNames[x]}.show`)) {
-                                    $(`#${pageNames[x]}.show`).removeClass("show");
-                                }
+                }
+            }
+            else if (pageName === "profile") {
+
+                $(".postFooter").removeClass("show");
+                host.username = pageType.split("/")[0];
+                selectTopNav(pageType.split("/")[1]);
+
+
+                if (pageName !== currentPage) {
+                    $("#postsContainer").addClass("show");
+                    $("#profileTop").addClass("show");
+                    pageNames = ["settings", "newPost", "post", "homeSliders", "people", "contact", "policy"];
+                    for (var x = 0; x < pageNames.length; x++) {
+                        if (pageName === pageNames[x]) {
+                            $(`#${pageNames[x]}`).addClass("show");
+                        }
+                        else {
+                            if ($(`#${pageNames[x]}.show`)) {
+                                $(`#${pageNames[x]}.show`).removeClass("show");
                             }
                         }
                     }
-                    // => function calls :
                 }
-                else {
-                    alert("Oops , Page Name Not Defined !");
+                loadProfileInfo(host.username);
+                if (newHistory || false) {
+                    pushHistory(pageName, pageType, pageType, true);
                 }
-                currentPage = pageName ;
-        },50);
+            }
+            else if (pageName === "settings" || pageName === "newpost" || pageName === "post" || pageName === "people" || pageName === "contact") {
+                if (pageName !== currentPage) {
+                    if (pageName === "post") {
+                        $(".postFooter").addClass("show");
+                    }
+                    else {
+                        $(".postFooter").removeClass("show");
+                    }
+                    var pageNames = ["settings", "newPost", "post", "contact", "people", "policy"];
+                    for (var x = 0; x < pageNames.length; x++) {
+
+                        if (pageName === pageNames[x].toLowerCase()) {
+                            $(`#${pageNames[x]}`).addClass("show");
+
+                            sendPagesInitialRequest(pageNames[x].toLowerCase(), "post", pageName.split("-")[1]);
+                        }
+                        else {
+                            if ($(`#${pageNames[x]}.show`)) {
+                                $(`#${pageNames[x]}.show`).removeClass("show");
+                            }
+                        }
+                    }
+                }
+                // => function calls :
+            }
+            else {
+                alert("Oops , Page Name Not Defined !");
+            }
+            currentPage = pageName;
+        }, 20);
 
     }
 
-    function pushHistory(newPageName,url,data,changeUrl){
-        if(changeUrl || false){
+    function pushHistory(newPageName,url,data,changeUrl) {
+        if (changeUrl || false) {
             window.history.replaceState("", "", "/");
             window.history.replaceState("", "", url);
         }
-        if (historyPointer === historyList.length-1 ) {
-            historyList.push({pageName: newPageName, urlData: url ,data:data, hashtag : window.location.hash});
+        if (historyPointer === historyList.length - 1) {
+            historyList.push({pageName: newPageName, urlData: url, data: data, hashtag: window.location.hash});
             currentPage = newPageName;
             historyPointer++;
 
         }
-        else if (historyPointer < historyList.length -1 ){
-            for(var x  = historyList.length -1 ; x > historyPointer ; x--){
+        else if (historyPointer < historyList.length - 1) {
+            for (var x = historyList.length - 1; x > historyPointer; x--) {
                 historyList.pop();
-                if(x === historyPointer + 1){
-                    historyList.push({pageName: newPageName, urlData: url,data:data ,hashtag : window.location.hash});
+                if (x === historyPointer + 1) {
+                    historyList.push({pageName: newPageName, urlData: url, data: data, hashtag: window.location.hash});
                     currentPage = newPageName;
                     historyPointer++;
                 }
@@ -1099,8 +1668,9 @@
     function backward(){
         if(historyPointer >= 0){
             historyPointer--;
+
             changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
-            // window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
+            window.history.replaceState("","","/"+historyList[historyPointer].urlData);
         }
         else{
             window.history.back();
@@ -1110,7 +1680,7 @@
         if(historyPointer < historyList.length ){
             historyPointer++;
             changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
-            // window.history.replaceState("","",historyList[historyPointer].urlData+("/" + historyList[historyPointer].hashtag) || "");
+            window.history.replaceState("","","/"+historyList[historyPointer].urlData);
         }
         else{
             //
@@ -1125,17 +1695,32 @@
             getMe();
         }
         else {
-            window.location.pathname = "/login";
+            showLoginError(res.message);
         }
     }
     function getMeResponseAction(res){
-        Me = res;
-        if(res !== null && res !== false && res !== "") {
+        if(!res.message) {
+            Me = res;
+        }
+        else{
+            Me = null;
+        }
+        if(Me !== null && Me !== {}) {
+
+
+
             $(".accountCard").html(`
     	<a href="" id="profileBtn">${res.username}</a>
-    	<a href="/getNotifs" id="newPostBtn"></a>
+    	<a href="" id="newPostBtn"></a>
     	<a href="" id="notifBtn"></a>
-    `);
+    	<a href="" id="searchButton"></a>
+            `);
+        }
+        else{
+            $(".accountCard").html(`
+    	<a href="/login" id="loginBtn">Login</a>
+        <a href="/register">Register</a>
+        `);
         }
     }
 
@@ -1148,20 +1733,9 @@
             }
         }
     }
-    function selectRightNav(pageType){
-        var rightNavBtns = $(".navRightButtons");
-        rightNavBtns.removeClass("selected");
-        for(var y = 0 ; y < rightNavBtns.length ; y++){
-            if(rightNavBtns[y].innerHTML.toLowerCase() === pageType){ // select rightNavBtns
-                rightNavBtns[y].className += " selected";
-            }
-            else{
-                rightNavBtns[y].className = "navRightButtons";
-            }
-        }
-    }
+
     function slideNav(element){
-        if (window.innerWidth < 1025) {
+        if (window.innerWidth < 768) {
             if (element.className === "") {
                 if ($(".rightSide")[0]) {
                     $(element).addClass("halfRight");
@@ -1177,12 +1751,12 @@
             else if (element.className === "halfLeft") {
                 $(element).removeClass("halfLeft");
                 $(".leftSide").removeClass("hide");
-                $(".accountCard").css("right","100px");
+                $(".accountCard").css("right","120px");
             }
             else if (element.className === "halfRight") {
                 $(element).removeClass("halfRight");
                 $(".rightSide").removeClass("hide");
-                $(".accountCard").css("right","100px");
+                $(".accountCard").css("right","120px");
             }
             else {
                 //
@@ -1199,21 +1773,30 @@
     }
 
     function loadProfileResponse(res) {
+
         if (res.message) {
             alert(res.message);
+            showNotFound();
+            $(".profileTop .loader").addClass("hide");
         }
         else if (res.user) {
-
-            var list = $(".profileTop .userInfo").children();
-            list[0].innerHTML = (res.user.fullName);
-            list[1].innerHTML = (res.user.followingsCount) + " Followings";
-            list[2].innerHTML = (res.user.followersCount) + " Followers";
-            list[3].innerHTML = (res.user.city) || "";
-            list[4].innerHTML = (res.user.roles.toString()) || "";
-            list[5].innerHTML = (res.user.username);
-            list[6].innerHTML = (res.user.privacy);
+            $(".profileTop .profileTopContainer .userInfo a").removeClass("hide");
+            $(".profileTop .profileTopContainer .profPic button").removeClass("hide");
+            $(".profileTop .profileTopContainer .userInfo h2").html(res.user.fullName);
+            $(".profileTop .profileTopContainer .userInfo .followingsBtn").html((res.user.followingsCount) + " Followings");
+            $(".profileTop .profileTopContainer .userInfo .followersBtn").html((res.user.followersCount) + " Followers");
+            $(".profileTop .profileTopContainer .userInfo .hostLocation").html(res.user.city);
+            $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.profilePictureSet);
+            if(res.user.roles.length>0) {
+                // $(".profileTop .profileTopContainer .userInfo .roles").html((res.user.roles.toString()));
+            }
+            $(".timeNav .username").html(res.user.username);
+            $(".timeNav .username").addClass("show");
+            $(".timeNav .username").attr("href","/"+res.user.username);
+            // list[6].innerHTML = (res.user.privacy);
 
             host.fullName = (res.user.fullName);
+            host.username = (res.user.username);
             host.followingsCount = (res.user.followingsCount);
             host.userId = (res.user.userId);
             host.followersCount = (res.user.followersCount);
@@ -1249,7 +1832,7 @@
             else {
                 if(res.user.isPrivate)
                     $("#unfollow").remove();
-                    $("#follow").remove();
+                $("#follow").remove();
             }
             Filters.hashtags = ""; // to lowwer case
             Filters.category = "";
@@ -1260,29 +1843,65 @@
         }
     }
 
-    function followAction(res){
-        if(res===true){
-            $("#follow").removeClass("show");
-            $("#unfollow").addClass("show");
+
+    function parsePosts(res) {
+
+        if(res.docs.length === 0){
+            $("#postsHeader h3").html("No posts found");
         }
-        else{
-            alert("Oops Something Went Wrong");
+        else if(res.docs === []){
+            $("#postsHeader h3").html("No posts found");
+        }
+        else if(res === []){
+            $("#postsHeader h3").html("Oops");
+        }
+        else {
+            console.log(postsList);
+            if (Filters.pageNumber === 1) {
+                postsList = res.docs;
+                usersInfo = res.owners;
+                lastLength = -1;
+                total = res.total;
+                $(".profileTop .profileTopContainer .userInfo .photos").html(total + " photos");
+                $(".profileTop .profileTopContainer .userInfo .photos").removeClass("hide");
+                $("#postsHeader h3").html(total + " ");
+                $("#postsContainer").html("");
+            }
+            else{
+
+                for(var post = 0;post < res.docs.length ; post++){
+                    postsList.push(res.docs[post]);
+                    host = res.owner;
+                    rates = {};
+                    for(let r = 0;r < res.rates.length ; r++){
+                        if(!rates[res.rates[r].postId]){
+                            rates[res.rates[r].postId] = {
+                                "value":res.rates[r].value,
+                                "rateId":res.rates[r].rateId,
+                                "rater":res.rates[r].rater,
+                                "changes":res.rates[r].changes,
+                                "createdAt":res.rates[r].createdAt
+                            }
+                        }
+                    }
+                }
+                let tempUsersInfo = res.owners;
+                let keys = Object.keys(tempUsersInfo);
+                for(let x in keys){
+                    if(!usersInfo[keys[x]]){
+                        usersInfo[keys[x]] = tempUsersInfo[keys[x]];
+                    }
+                }
+            }
+            if(Filters.pageNumber === 1)
+                parsePostsList(true);
+            else
+                parsePostsList();
         }
     }
-    function unfollowAction(res){
-        if(res===true){
-            $("#unfollow").removeClass("show");
-            $("#follow").addClass("show");
-        }
-        else{
-            alert("Oops Something Went Wrong");
-        }
-    }
-
-
     function ratePadInitial(){
         for(var x = 1 ; x < 7 ; x++) {
-            $(".ratePad").append(`
+            $(".rateDiv .ratePad").append(`
                  <div><div class="triangle" id="peace-${x}">
                     <span>
                         ${x}
@@ -1290,68 +1909,117 @@
                 </div></div>
             `);
         }
-
         // setTimeout(function(){$(".ratePad").addClass("show")},200);
-
         $("body").on("mouseenter",".ratePad > div .triangle",function(event){
-            var number = parseInt($(this).children("span").html());
-            if($(".triangle.selected")){
-                $(".triangle.selected").removeClass("selected");
-            }
-            for(var x = 1 ; x < number ; x++){
-                $(`peace-${x}`).addClass("selected");
+            if(!selectedRate) {
+                if (!rateObject.value || rateObject.value !== parseInt($(this).children("span").html())) {
+                    rateObject = {
+                        value: parseInt($(this).children("span").html()),
+                        postId: postsList[currentPostItterator].postId
+                    };
+                    if ($(".triangle.selected")) {
+                        $(".triangle.selected").removeClass("selected");
+                    }
+                    for (var x = 1; x <= rateObject.value; x++) {
+                        $(`#peace-${x}`).addClass("selected");
+                    }
+                    $(".rateDiv h2").html(rateObject.value);
+                }
             }
         });
 
-        $("body").on("mouseenter",".ratePad > div .triangle",function(event){
-            var rateNumber = $(this).children("span").html();
-            var postId = "" ;// post id from list Or from template
+        $("body").on("click",".ratePad > div .triangle",function(event){
 
-            rate(rateNumber,postId);
+            selectRateTringle(postsList[currentPostItterator].postId,parseInt($(this).children("span").html()));
+
         });
+        $("body").on("click",".rateDiv .doRate",function(event){
+            if(Me !== null) {
+                if(rates[postsList[currentPostItterator].postId] !== undefined) {
+                    if(rates[postsList[currentPostItterator].postId].changes > -1 && rates[postsList[currentPostItterator].postId].changes < 3) {
+                        rate(rateObject);
+                    }
+                    else{
+                        alert("Maximum number for changing your rate on a post reached");
+                        $(".rateDiv .closeInfo").click();
+                    }
+                }
+                else{
+                    rate(rateObject);
+                }
+            }
+            else{
+                showLoginReg();
+            }
+        });
+
+
     }
+
+
+
+
+
+
+
+
     function slideAction(postNumber,situation) {
+        if($(".postFooter .rateButton.show")) {
+            $(".postFooter .rateButton.show").removeClass("show");
+        }
+        if($(".postFooter .caption.show")) {
+            $(".postFooter .caption.show").removeClass("show");
+        }
+        if($(".postFooter .buttonGroup.show")) {
+            $(".postFooter .buttonGroup.show").removeClass("show");
+        }
         if (situation === "left") {
-            if(currentPostItterator > 0) {
+            if (currentPostItterator > 0) {
                 currentPostItterator -= 1;
                 $(".pictureBox img:nth-child(1)").addClass("middlePic");
                 $(".pictureBox img:nth-child(1)").removeClass("leftPic");
                 $(".pictureBox img:nth-child(2)").addClass("rightPic");
                 $(".pictureBox img:nth-child(2)").removeClass("middlePic");
                 $(".pictureBox img:nth-child(3)").remove();
+                if ($(".postFooter .rightButton.show")[0] === undefined) {
+                    $(".postFooter .rightButton").addClass("show");
+                }
                 if (postsList[currentPostItterator - 1]) {
                     if (postsList[currentPostItterator - 1]) {
-                        left = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
+                        left = postsList[currentPostItterator - 1].postId +"-Medium===." + postsList[currentPostItterator - 1].ext;
                         $(".pictureBox").prepend(`
-                            <img src="../Statics/Pictures/${left}" class="leftPic"/>
+                            <img src="../pictures/${left}" class="leftPic"/>
                         `);
+                        if (!$(".postFooter .leftButton.show")) {
+                            $(".postFooter .leftButton").addClass("show");
+                        }
                     }
                 }
-                else{
+                else {
                     $(".pictureBox").prepend(`
-                        <img src="../Statics/Pictures/empty.jpg" class="leftPic"/>
+                        <img src="../pictures/empty.jpg" class="leftPic"/>
                     `);
                     $(".postFooter .leftButton").removeClass("show");
                 }
                 if (postsList[currentPostItterator]) {
-                    currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
+                    currentPost = postsList[currentPostItterator].postId +"-Medium===." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
-                    loadPostDatas(currentPostObject,currentPostItterator);
+                    loadPostDatas(currentPostObject, currentPostItterator);
                 }
                 else {
                     alert("post not found");
-                    loadPostDatas("post not found",-1);
+                    loadPostDatas("post not found", -1);
                 }
             }
-            else{
-                if(currentPostItterator === total - 1 && postsList.length === total){
+            else {
+                if (currentPostItterator === total - 1 && postsList.length === total) {
                     alert("No More Posts");
-                    loadPostDatas("no more posts left",-1);
+                    loadPostDatas("no more posts left", -1);
                 }
             }
         }
         else if (situation === "right") {
-            if(currentPostItterator < postsList.length -1) {
+            if (currentPostItterator < postsList.length - 1) {
                 currentPostItterator += 1;
 
                 $(".pictureBox img:nth-child(2)").addClass("leftPic");
@@ -1359,187 +2027,223 @@
                 $(".pictureBox img:nth-child(3)").addClass("middlePic");
                 $(".pictureBox img:nth-child(3)").removeClass("rightPic");
                 $(".pictureBox img:nth-child(1)").remove();
+                if ($(".postFooter .leftButton.show")[0] === undefined) {
+                    $(".postFooter .leftButton").addClass("show");
+                }
                 if (postsList[currentPostItterator + 1]) {
                     if (postsList[currentPostItterator + 1]) {
-                        right = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
+                        right = postsList[currentPostItterator + 1].postId + "-Medium===." + postsList[currentPostItterator + 1].ext;
                         $(".pictureBox").append(`
-                        <img src="../Statics/Pictures/${right}" class="rightPic"/>
+                        <img src="../pictures/${right}" class="rightPic"/>
                     `);
+                    }
+                    if (!$(".postFooter .rightButton.show")) {
+                        $(".postFooter .rightButton").addClass("show");
                     }
                 }
-                else{
+                else {
+
                     $(".pictureBox").append(`
-                        <img src="../Statics/Pictures/empty.jpg" class="rightPic"/>
+                        <img src="../pictures/empty.jpg" class="rightPic"/>
                     `);
-                    if(total=== currentPostItterator) {
-                        $(".postFooter .rightButton").removeClass("loadMore");
-                        $(".postFooter .rightButton").addClass("repeat");
+                    if (total - 1 === currentPostItterator) {
+                        if ($(".postFooter .rightButton.loadMore")[0] === undefined) {
+                            $(".postFooter .rightButton").removeClass("loadMore");
+                            $(".postFooter .rightButton").removeClass("show");
+                        }
                     }
                     else {
-                        $(".postFooter .rightButton").addClass("loadMore");
+
+                        if ($(".postFooter .rightButton.loadMore")[0] === undefined) {
+                            $(".postFooter .rightButton.show").addClass("loadMore");
+                        }
                     }
                 }
                 if (postsList[currentPostItterator]) {
-                    currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
+                    currentPost = postsList[currentPostItterator].postId+"-Medium===." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
-                    loadPostDatas(currentPostObject,currentPostItterator);
+                    loadPostDatas(currentPostObject, currentPostItterator);
                 }
                 else {
                     alert("post not found");
-                    loadPostDatas("post not found",-1);
+                    loadPostDatas("post not found", -1);
                 }
             }
-            else{
-                if(currentPostItterator === total - 1 && postsList.length === total){
+            else {
+                if (currentPostItterator === total - 1 && postsList.length === total) {
                     alert("No More Posts");
-                    loadPostDatas("post not found",-1);
+                    loadPostDatas("post not found", -1);
 
                 }
             }
         }
         else if (situation === "initial") {
 
-            currentPostItterator = postNumber;
+            currentPostItterator = postNumber || 0;
+            var left = "";
+            var right = "";
             if (currentPostItterator > -1 && currentPostItterator <= postsList.length - 1) {
                 if (postsList[currentPostItterator + 1]) {
-                    var right = postsList[currentPostItterator + 1].postId + "-Medium." + postsList[currentPostItterator + 1].ext;
+                    right = postsList[currentPostItterator + 1].postId+"-Medium===." + postsList[currentPostItterator + 1].ext;
+                    if (!$(".postFooter .rightButton.show")) {
+                        $(".postFooter .rightButton").addClass("show");
+                    }
+                    if (!$(".postFooter .rightButton.loadMore")) {
+                        $(".postFooter .rightButton").removeClass("loadMore");
+                    }
+                }
+                if (currentPostItterator === total - 1) {
+                    if (!$(".postFooter .rightButton.show")) {
+                        $(".postFooter .rightButton.show").addClass("loadMore");
+                    }
                 }
 
                 if (postsList[currentPostItterator - 1]) {
-                    var left = postsList[currentPostItterator - 1].postId + "-Medium." + postsList[currentPostItterator - 1].ext;
-
-                }
-                if(postsList[currentPostItterator]){
-                    currentPost = postsList[currentPostItterator].postId + "-Medium." + postsList[currentPostItterator].ext;
-                    currentPostObject = postsList[currentPostItterator];
-
-                    loadPostDatas(currentPostObject,currentPostItterator);
-                    if(left) {
-                        $(".pictureBox").html(`<img src="../Statics/Pictures/${left}" class="leftPic"/>`);
+                    left = postsList[currentPostItterator - 1].postId+"-Medium===." + postsList[currentPostItterator - 1].ext;
+                    if (!$(".postFooter .leftButton.show")) {
+                        $(".postFooter .leftButton").addClass("show");
                     }
-                    else{
-                        $(".pictureBox").html(`<img src="../Statics/Pictures/empty.jpg" class="leftPic"/>`);
-                    }
-                    $(".pictureBox").append(`<img src="../Statics/pictures/${currentPost}" class="middlePic"/>`);
-                    if(right) {
-                        $(".pictureBox").append(`<img src="../Statics/pictures/${right}" class="rightPic"/>`);
-                    }
-                    else{
-                        $(".pictureBox").append(`<img src="../Statics/pictures/loadmore.jpg" class="rightPic"/>`);
-                    }
-
                 }
-                else{
-                    loadPostDatas("post not found",-1);
-                    alert("post not found");
-                }
-            }
-        }
-        else{
-            console.log("Invalid Command");
-        }
-    }
-
-    
-    function loadPostDatas(postObject,postNumber){
-        console.log(postObject);
-        console.log(postNumber);
-        // change url
-        pushHistory("post","/post/"+postObject.postId,"/post/"+postObject.postId,true);
-
-        // change datas
-        $(".postFooter .caption .editable").val(postObject.caption);
-        $(".postFooter .caption .notEditable").val(postObject.caption);
-        $(".postFooter .ownerUsername").html(usersInfo[postObject.ownerId].split("/")[0]);
-        $(".postFooter .ownerProfilePicture").attr("src","../Statics/ProfilePics/"+ usersInfo[postObject.ownerId].split("/")[1]);
-        $(".post .infoContainer").html(postObject.originalImage); // complete page loads
-
-    }
-
-    function parsePosts(res) {
-
-        if(res.docs.length === 0){
-            $("#postsHeader h3").html(" No posts found ");
-        }
-        else if(res.docs === []){
-            $("#postsHeader h3").html(" No posts found ");
-        }
-        else if(res === []){
-            $("#postsHeader h3").html(" Oops Something Went Wrong ");
-        }
-        else {
-            postsList = res.docs;
-            usersInfo = res.owners;
-            total = res.total;
-            console.log(postsList);
-            if (Filters.pageNumber === 1) {
-                $("#postsHeader h3").html(total + " posts found");
-                $("#postsContainer").html("");
-            }
-            var length = postsList.length - 1;
-            $.each(postsList, function (index, data) {
-                var curator = ``;
-                if (postsList[index].isCurated) {
-                    curator = ``;
-                }
-                var timeAgo = ((Date.now() - postsList[index].createdAt) / (60000));
-                var vahed = "minute";
-                if (parseInt(timeAgo) > 59) {
-                    timeAgo = (timeAgo / 60);
-                    vahed = "hour";
-                    if (timeAgo > 23) {
-                        timeAgo = (timeAgo / 24);
-                        vahed = "day";
-                        if (timeAgo > 30) {
-                            timeAgo = timeAgo / 30;
-                            vahed = "month";
-                            if (timeAgo > 12) {
-                                vahed = "year";
-                                timeAgo = timeAgo / 12;
-                            }
+                else {
+                    if (currentPostItterator === 0) {
+                        if (!$(".postFooter .leftButton.show")) {
+                            $(".postFooter .leftButton").removeClass("show");
                         }
                     }
                 }
-                else if (parseInt(timeAgo) < 1) {
-                    timeAgo = "in a minute";
+                if (postsList[currentPostItterator]) {
+                    currentPost = postsList[currentPostItterator].postId+"-Medium===." + postsList[currentPostItterator].ext;
+                    currentPostObject = postsList[currentPostItterator];
+
+                    loadPostDatas(currentPostObject, currentPostItterator);
+                    if (left) {
+                        $(".pictureBox").html(`<img src="../pictures/${left}" class="leftPic"/>`);
+                    }
+                    else if(left===""){
+                        $(".pictureBox").html(`<img src="../pictures/empty.jpg" class="leftPic"/>`);
+                    }
+                    $(".pictureBox").append(`<img src="../pictures/${currentPost}" class="middlePic"/>`);
+                    if(right) {
+                        $(".pictureBox").append(`<img src="../pictures/${right}" class="rightPic"/>`);
+                    }
+                    else if(!right){
+                        $(".pictureBox").append(`<img src="../pictures/loadmore.jpg" class="rightPic"/>`);
+                    }
+
                 }
-                if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
-                    timeAgo = "a";
+                else {
+                    loadPostDatas("post not found", -1);
+                    alert("post not found");
                 }
-                else if (parseInt(timeAgo) === 1 && vahed === "hour") {
-                    timeAgo = "an";
-                }
-                else if (parseInt(timeAgo) !== 1) {
-                    vahed += "s";
-                    if (typeof timeAgo !== "string")
-                        timeAgo = parseInt(timeAgo);
-                }
-                let date = timeAgo + " " + vahed;
-                $("#postsContainer").append(`
-            <li class="eachPost post-${postsList[index].postId}" >
-            <p hidden>${index}</p>
-            <p hidden>${postsList[index].ext}</p>
-                <div class="header">
-                    <img class="profilePicture left" src="../Statics/ProfilePics/${usersInfo[postsList[index].ownerId].split("/")[1]}" />
-                    <span class="username left">${usersInfo[postsList[index].ownerId].split("/")[0]}</span>
-                    <div class="curatorContainer right">
-                        <img src="../Statics/images/images/curateSmallBtn.png"/>
-                    </div>
-                </div>
-                <div class="imgContainer">
-                    <img src="../Statics/Pictures/${postsList[index].postId}-Small.${postsList[index].ext}" />
-                </div>
-                <div class="footer">
-                    <div class="rate">
-                        <img class="rateIcon" src="../Statics/images/images/b_like_p.png" />
-                        <span>${postsList[index].rate.value}/6</span>
-                    </div>
-                    <span class="time right">${date}</span>
-                </div>
-            </li>
-        `);
-            });
+
+            }
+            else {
+                console.log("Invalid Command");
+            }
         }
+        if(Me !== null){
+            if(!views[currentPostObject.postId]){
+                view(currentPostObject.postId);
+            }
+        }
+    }
+
+    function loadPostDatas(postObject,postNumber,updatePart){
+        // change url
+        if(postNumber !== -2){
+            pushHistory("post", "/post/" + postObject.postId, "/post/" + postObject.postId, true);
+        }
+        if(!updatePart) {
+            // pars post datas to template
+            $(".postFooter .caption .editable").val(postObject.caption);
+            $(".postFooter .caption .notEditable").val(postObject.caption);
+            $(".postFooter .caption").addClass("show");
+            $(".postFooter .ownerUsername").html(usersInfo[postObject.ownerId].username);
+            $(".postFooter .ownerProfilePicture").attr("src", "../profilePics/" + usersInfo[postObject.ownerId].profilePictureSet);
+            $(".post .infoContainer ul").html("");
+            $(".post .infoContainer ul").append(`
+                                                <li>
+                                                    <span>Width</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">${postObject.originalImage.resolution.x}</span>
+                                                </li>
+                                                <li>
+                                                    <span>Height</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">${postObject.originalImage.resolution.y}</span>
+                                                </li>
+                                                <li>
+                                                    <span>Format</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">${postObject.ext}</span>
+                                                </li>
+                                                <li>
+                                                    <span>Category</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">${postObject.categories.toString()}</span>
+                                                    <select class="categories insideInfos">
+                                                        <option value="Nature">Nature</option>
+                                                        <option value="Society">Society</option>
+                                                    </select>
+                                                </li>
+                                            `);
+            $(".post .downloadContainer").html("");
+
+            if (postObject.originalImage.cost === 0) {
+                $(".post .downloadContainer").append(`
+
+                                            <button class="closeInfo"></button>
+                                            <button id="downloadLarge">
+                                                <div class="cover">
+                                                    <span class="">Download</span>
+                                                    <span class="left">${postObject.originalImage.resolution.x} X ${postObject.originalImage.resolution.y}</span> pixels
+                                                    <span class="cost">Free</span>
+                                                </div>
+                                            </button>
+                                          `);
+                $(".post .downloadContainer #downloadLarge").css("background-image", `url(../pictures/${postObject.postId}}--Small===.${postObject.ext})`);
+
+                if (postObject.originalImage.resolution.x > 250 && postObject.originalImage.resolution.y > 250) {
+                    initialDownloadButtonRatio(postObject.originalImage.resolution.x, postObject.originalImage.resolution.y);
+                }
+
+            }
+            else {
+                $(".post .downloadContainer").append(`
+                                            <button class="closeInfo"></button>
+                                            <button id="BuyLarge">
+                                                <div class="cover">
+                                                    <span>Buy</span>
+                                                    <span class="left">${postObject.originalImage.resolution.x} X ${postObject.originalImage.resolution.y} </span> pixels
+                                                    <span class="cost">${postObject.originalImage.cost}$</span>
+                                                </div>
+                                            </button>
+                                          `);
+                $(".post .downloadContainer #BuyLarge").css("background-image", `url(../pictures/${postObject.postId}-Small===.${postObject.ext})`);
+                if (postObject.originalImage.resolution.x > 250 && postObject.originalImage.resolution.y > 250) {
+                    initialDownloadButtonRatio(postObject.originalImage.resolution.x, postObject.originalImage.resolution.y);
+                }
+            }
+            $(".postFooter .views").html(postObject.views);
+            extractAndPlaceExifData(postObject.exifData);
+            initialRate(postObject.rate);
+            getPostComments({postId: postObject.postId, pageNumber: commentsPageNumber, counts: commentCounts});
+            $(".postFooter .buttonGroup").addClass("show");
+        }
+        else if(updatePart === "rates"){
+            initialRate(postObject.rate);
+        }
+        else{
+
+        }
+
+    }
+    function initialCategories(){
+        requestHandler("/category/initial","GET",{},"initialCategories");
+    }
+    function initialAlbums(){
+        if((Me !== null && Me !== {}))
+            requestHandler("/album/accessible","GET",{},"initialAlbums");
     }
 
     function slideViewPageAction(res) {
@@ -1547,30 +2251,423 @@
     }
 
     function newPostPageAction(res) {
-        console.log(res);
+        if(!res.message) {
+            storePostDatasByInterval(true);
+            if(res.postId){
+                storePostDatas = {};
+                initialCategories();
+                initialAlbums();
+                loadNewPostDatas(res.postId,parseInt(res.uploadCounts));
+            }
+        }
+        else{
+            alert(res.message);
+        }
 
     }
-    function editCaptionResponseAction(res){
-        if($(".caption .spinner")) {
-            $(".caption .spinner").removeClass("show");
+    function editPostResponseAction(res,type){
+
+        switch (type) {
+            case "editCaption": {
+                if ($(".caption .spinner.show")) {
+                    $(".caption .spinner").removeClass("show");
+                }
+                if (res.result) {
+                    $(".editable").val(res.newCaption);
+                    $(".notEditable").val(res.newCaption);
+                    postsList[currentPostItterator].caption = res.newCaption;
+                    $(".caption .notEditable").addClass("show");
+                    $(".caption .editable.show").removeClass("show");
+                    $(".caption .cancelCaption.show").removeClass("show");
+                    $(".caption .saveCaption.show").removeClass("show");
+                    if(res.message) {
+                        alert(res.message);
+                    }
+                }
+                else {
+                    alert(res.message);
+                }
+            }break;
+            case "editCategory":{
+
+            }break;
+            case "editPrivacy":{
+
+            }
+            default:break;
         }
-        if(!res.message && res.result){
-            $(".editable").val(res.newCaption);
-            $(".notEditable").val(res.newCaption);
-            postsList[currentPostItterator].caption = res.newCaption;
-            $(".caption .notEditable").addClass("show");
-            $(".caption .editable").removeClass("show");
-            $(".caption .cancelCaption").removeClass("show");
-            $(".caption .saveCaption").removeClass("show");
+    }
+    function parseComments(res,type){
+
+        if(type === "append"){
+            commentsList.push(res);
+        }
+        else {
+            if (res.docs.length === 0) {
+                $(".post .commentsContainer .header").html(" No comments yet ");
+            }
+            else if (res.docs === []) {
+                $(".post .commentsContainer .header").html(" No comments yet ");
+            }
+            else if (res === []) {
+                $(".post .commentsContainer .header").html(" Oops Something Went Wrong ");
+            }
+            else {
+                if (commentsPageNumber === 1) {
+                    commentsList = res.docs;
+                    usersInfo = res.owners;
+                    total = res.total;
+                    commentsLastLength = -1;
+                    $(".post .commentsContainer .header").html(res.total + " Comments");
+                    $(".post .commentsContainer .commentsList").html("");
+                }
+                else {
+                    for (var comment = 0; comment < res.docs.length; comment++) {
+                        commentsList.push(res.docs[comment]);
+                    }
+                    let tempUsersInfo = res.owners;
+                    let keys = Object.keys(tempUsersInfo);
+                    for (let x in keys) {
+                        if (!usersInfo[keys[x]]) {
+                            usersInfo[keys[x]] = tempUsersInfo[keys[x]];
+                        }
+                    }
+                }
+            }
+        }
+        for(var index = commentsLastLength+1 ; index < commentsList.length ; index++){
+            commentsLastLength++;
+            var timeAgo;
+            if( commentsList[index].createdAt) {
+                timeAgo = ((Date.now() - commentsList[index].createdAt) / (60000));
+            }
+            else{
+                timeAgo = Date.now() - 1;
+            }
+            var vahed = "minute";
+            if (parseInt(timeAgo) > 59) {
+                timeAgo = (timeAgo / 60);
+                vahed = "hour";
+                if (timeAgo > 23) {
+                    timeAgo = (timeAgo / 24);
+                    vahed = "day";
+                    if (timeAgo > 30) {
+                        timeAgo = timeAgo / 30;
+                        vahed = "month";
+                        if (timeAgo > 12) {
+                            vahed = "year";
+                            timeAgo = timeAgo / 12;
+                        }
+                    }
+                }
+            }
+            else if (parseInt(timeAgo) < 1) {
+                timeAgo = "in a minute";
+            }
+            if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
+                timeAgo = "a";
+            }
+            else if (parseInt(timeAgo) === 1 && vahed === "hour") {
+                timeAgo = "an";
+            }
+            else if (parseInt(timeAgo) !== 1) {
+                vahed += "s";
+                if (typeof timeAgo !== "string")
+                    timeAgo = parseInt(timeAgo);
+            }
+            let date ;
+            if(timeAgo !== "in a minute") {
+                date = timeAgo + " " + vahed;
+            }
+            else{
+                date = timeAgo;
+            }
+            if(type === "append"){
+                $(".post .commentsContainer .commentsList").append(`
+                                                            <li class="eachComment comment-${commentsList[index].commentId}">
+                                                            <p hidden>${-1*commentsLastLength}</p>
+                                                            <p hidden>${commentsList[index].commentId}</p>
+                                                                <div class="commentOwnerProfile">
+                                                                    <svg class="clip-svg">
+                                                                        <defs>
+                                                                            <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                                                                                <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                                                                            </clipPath>
+                                                                        </defs>
+                                                                    </svg>
+                                                                    <div class="polygon-each-img-wrap">
+                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[Me.userId].split("/")[1]}"/>
+                                                                    </div>
+                                                                    <a href="/${usersInfo[Me.userId].split("/")[0]}" class="ownerUsername usernameLink">${usersInfo[Me.userId].split("/")[0]}</a>
+                                                                <button class="commentMoreButton"></button>
+                                                                </div>
+                                                                <p class="text">
+                                                                    ${commentsList[index].fullText}
+                                                                </p>
+                                                                <span class="date">
+                                                                    ${date}
+                                                                </span>
+
+                                                            </li>
+                                                            `);
+
+            }
+            else{
+
+                $(".post .commentsContainer .commentsList").prepend(`
+                                                            <li class="eachComment comment-${commentsList[index].commentId}">
+                                                            <p hidden>${commentsLastLength}</p>
+                                                            <p hidden>${commentsList[index].commentId}</p>
+                                                                <div class="commentOwnerProfile">
+                                                                    <svg class="clip-svg">
+                                                                        <defs>
+                                                                            <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                                                                                <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                                                                            </clipPath>
+                                                                        </defs>
+                                                                    </svg>
+                                                                    <div class="polygon-each-img-wrap">
+                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[commentsList[index].ownerId].split("/")[1]}"/>
+                                                                    </div>
+                                                                    <a href="/${usersInfo[commentsList[index].ownerId].split("/")[0]}" class="ownerUsername usernameLink">${usersInfo[commentsList[index].ownerId].split("/")[0]}</a>
+                                                                <button class="commentMoreButton"></button>
+                                                                </div>
+                                                                <p class="text">
+                                                                    ${commentsList[index].fullText}
+                                                                </p>
+                                                                <span class="date">
+                                                                    ${date}
+                                                                </span>
+
+                                                            </li>
+                                                            `);
+            }
+            if(index === commentsList.length -1 ){
+                $(".commentsList")[0].scrollTop = 	20000;
+            }
+        }
+    }
+
+    function showCommentCommands(selectedComment){
+        $(".post .commentCommands .cover").html("");
+        var commentOwnerId = commentsList[selectedComment].ownerId ;
+        var postOwnerId = postsList[currentPostItterator].postOwnerId;
+        if(Me.userId === postOwnerId){ // post owner remove()
+            $(".post .commentCommands .cover").append(`
+                                                    <button class="deleteComment">Delete</button>
+                                               `);
+        }
+        if(Me.userId === commentOwnerId){ // comment owner ( edit - remove )
+            $(".post .commentCommands .cover").append(`
+                                                    <button class="editComment">Edit</button>
+                                               `);
+            if(!$(".post .commentCommands .cover .deleteComment")[0]) {
+                $(".post .commentCommands .cover").append(`
+                                                    <button class="deleteComment">Delete</button>
+                                               `);
+            }
+        }
+        if(Me.userId !== commentOwnerId){ // nobody report only
+            $(".post .commentCommands .cover").append(`
+                                                    <button class="reportComment">Report</button>
+                                               `);
+        }
+        $(".post .commentCommands .cover").append(`
+                                                    <button class="cancel">Cancel</button>
+                                               `);
+        $(".commentsContainer .commentCommands").addClass("show");
+    }
+
+    function commentsResponseActions(res,caller){
+
+        if(!res.message) {
+            if (caller === "addComment") {
+                commentsPageNumber = 1;
+                getPostComments({ postId : postsList[currentPostItterator].postId , pageNumber : commentsPageNumber , counts : commentCounts});
+                $(".commentsContainer .cancelComment.show").click();
+                $(".commentsList")[0].scrollTop = 	20000;
+            }
+            else if(caller === "editComment"){
+                if(res===true) {
+                    alert("your Comment edited successfully");
+                    $(".commentsContainer .cancelComment.show").click();
+                    commentsList[selectedComment].edited = true;
+                    commentsList[selectedComment].fullText = newText;
+                    $(`.commentsContainer .eachComment.comment-${commentsList[selectedComment].commentId} .text`).html(commentsList[selectedComment].fullText);
+                }
+            }
+            else if(caller === "deleteComment"){
+                alert("comment deleted successfully");
+                $(`.commentsContainer .eachComment.comment-${commentsList[selectedComment].commentId}`).remove();
+                $(".commentsContainer .cancelComment.show").click();
+                $(".commentsContainer .commentCommands.show").removeClass("show");
+            }
+            else{
+                console.log(res);
+            }
+        }
+        else{
+            $(".commentsContainer .cancelComment.show").click();
+            alert(res.message);
+        }
+    }
+    function selectRateTringle(postId,value,changes){
+        rateObject = {
+            value: value,
+            postId: postId
+        };
+        if ($(".triangle.selected")) {
+            $(".triangle.selected").removeClass("selected");
+        }
+        for (var x = 1; x <= rateObject.value; x++) {
+            $(`#peace-${x}`).addClass("selected");
+        }
+        if(changes=== undefined) {
+            selectedRate = true;
+            $(".rateDiv .doRate").removeAttr("disabled");
+            $(".rateDiv .doRate").addClass("active");
+            $(".rateDiv h2").addClass("change");
+            if($(".rateDiv h3").html().startsWith("You already")){
+                $(".rateDiv h3").html("Change your rate from Rate : " + rates[postId].value + " to "+ rateObject.value +" / 6");
+            }
+            else{
+                $(".rateDiv h3").html("You Rate : " + rateObject.value + " / 6");
+            }
+        }
+        $(".rateDiv h2").html(rateObject.value);
+
+    }
+
+    function rateResponseHandler(res) {
+        if(!res.message){
+            if(rates[postsList[currentPostItterator].postId] !== undefined) {
+                rates[postsList[currentPostItterator].postId].value = parseFloat(res.split("/")[0]);
+            }
+            else{
+                rates[postsList[currentPostItterator].postId] = {
+                    "value" : parseFloat(res.split("/")[0]),
+                    "rater" : Me.userId,
+                }
+            }
+
+            postsList[currentPostItterator].rate.value = parseFloat(res.split("/")[0]);
+            if(res.split("/")[1] === "new"){
+                postsList[currentPostItterator].rate.counts++;
+            }
+            loadPostDatas(postsList[currentPostItterator],-2);
+            $(".rateDiv .closeInfo").click();
         }
         else{
             alert(res.message);
         }
     }
-    function rateResponseHandler(res) {
-        console.log(res);
+    function autoResizeTextArea(initial){
+        var textarea = $('.newCommentDiv textarea.editable.show');
+        var el = textarea[0];
+        if(lastScroolValue < el.scrollHeight || initial) { // characters
+            textarea.css("height", parseInt((parseInt(textarea.css("height").split("p")[0]) + el.scrollHeight - lastScroolValue)) + 'px');
+            if(el.scrollHeight < 80 || initial) {
+                textarea.css("bottom", parseInt((parseInt(textarea.css("bottom").split("p")[0]) + (el.scrollHeight - lastScroolValue)/2)) + 'px');
+            }
+            lastScroolValue = el.scrollHeight;
+        }
     }
+    function preLoadRatePad(postId,value) {
 
+        rateObject = {
+            postId : postId,
+            value:   value.value
+        };
+
+        $(".rateDiv h2").html(rateObject.value);
+        $(".rateDiv h2").addClass("change");
+        $(".rateDiv h3").html("You already rated this post , wanna change ? ( "+ (3 - value.changes) +"more times allowed.");
+        $(".rateDiv h3").addClass("smallerFont");
+        $(".rateDiv").addClass("show");
+
+        selectRateTringle(postId,value.value,value.changes);
+    }
+    function initialDownloadButtonRatio(x,y){
+        let ratio;
+        let width;
+        let height;
+        if(x > y){
+            ratio = (x/250);
+            width = 250;
+            height = (y/ratio);
+        }
+        else{
+            ratio = (y/250);
+            height = 250;
+            width = (x/ratio);
+        }
+        $(".post .downloadContainer").css({"width":width+"px","height":height+"px"});
+    }
+    function extractAndPlaceExifData(exifData){
+
+        if(exifData && exifData !== {} && exifData !== undefined && exifData !== null) {
+
+            let exifDataKeys = Object.keys(exifData);
+            let done = false;
+
+            if(exifDataKeys.length > 0) {
+
+                for (let v in exifDataKeys) {
+                    if (exifData[exifDataKeys[v]] !== null && exifData[exifDataKeys[v]] !== undefined && exifData[exifDataKeys[v]] !== {}) {
+                        if(done === false){
+                            done = true;
+                        }
+                        $(".post .infoContainer ul").append(`
+                                                            <li>
+                                                                <span>${exifDataKeys[v]}</span>
+                                                                <span class="middleText">:</span>
+                                                                <span class="rightText">${exifData[exifDataKeys[v]].toString()}</span>
+                                                            </li>
+                        `);
+                    }
+                    else{
+                        console.log(exifDataKeys[v], " --- ", v);
+                    }
+                    if(v === exifDataKeys.length -1) {
+                        // actions ===>
+                        if(done === false){
+                            $(".post .infoContainer ul").prepend(`
+                                                                <li>
+                                                                    <span>Exif</span>
+                                                                    <span class="middleText">:</span>
+                                                                    <span class="rightText">Not Available</span>
+                                                                </li>
+                            `);
+                        }
+                    }
+                }
+            }
+            else{
+
+            }
+        }
+        else{
+            $(".post .infoContainer ul").prepend(`
+                                                <li>
+                                                    <span>Exif</span>
+                                                    <span class="middleText">:</span>
+                                                    <span class="rightText">Not Available</span>
+                                                </li>
+            `);
+        }
+    }
+    function showNotFound(){
+        $(".profileTop .profileTopContainer .userInfo h2").html("Not Found");
+        $(".profileTop .profileTopContainer .userInfo .photos").addClass("hide");
+        $(".profileTop .profileTopContainer .userInfo .hostLocation").addClass("hide");
+        $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/notFound.jpg");
+        $(".profileTop .profileTopContainer .profPic button").addClass("hide");
+    }
+    function initialRate(postRates){
+        $(".rateButton .rateValue").html(postRates.value.toString());
+        $(".rateCounts").html($(".rateCounts").html().toString().split(">")[0]+">"+postRates.counts);
+        $(".rateButton").addClass("show");
+    }
     function submitPostAction(res) {
         if (!res.message) {
             window.location.pathname = "/" + Me.username;
@@ -1580,6 +2677,488 @@
         }
     }
 
+    function parsePostsList(clear){
+        postsColumns = lastPostsColumns;
+        if(clear){
+            $(".postsContainer").html("");
+            lastLength = -1;
+            columnsHeights = [];
+            let cls = "one";
+            if(postsColumns===2){
+                cls = "two";
+            }
+            else if(postsColumns === 3){
+                cls = "three";
+            }
+
+            for(let g = 1 ; g < (postsColumns+1) ; g++){
+                $(".postsContainer").append(`<ul class="${cls} col-${g}"></ul>`);
+                columnsHeights.push(0);
+            }
+
+        }
+
+        for(let index = lastLength+1 ; index < postsList.length ; index++) {
+
+            let curator = ``;
+            lastLength++;
+            if (postsList[index].curator) {
+                curator = `${postsList[index].curator}`;
+            }
+            var timeAgo = ((Date.now() - postsList[index].createdAt) / (60000));
+            var vahed = "minute";
+            if (parseInt(timeAgo) > 59) {
+                timeAgo = (timeAgo / 60);
+                vahed = "hour";
+                if (timeAgo > 23) {
+                    timeAgo = (timeAgo / 24);
+                    vahed = "day";
+                    if (timeAgo > 30) {
+                        timeAgo = timeAgo / 30;
+                        vahed = "month";
+                        if (timeAgo > 12) {
+                            vahed = "year";
+                            timeAgo = timeAgo / 12;
+                        }
+                    }
+                }
+            }
+            else if (parseInt(timeAgo) < 1) {
+                timeAgo = "in a minute";
+            }
+            if (parseInt(timeAgo) === 1 && (vahed === "minute" || vahed === "day" || vahed === "month" || vahed === "year")) {
+                timeAgo = "a";
+            }
+            else if (parseInt(timeAgo) === 1 && vahed === "hour") {
+                timeAgo = "an";
+            }
+            else if (parseInt(timeAgo) !== 1) {
+                vahed += "s";
+                if (typeof timeAgo !== "string")
+                    timeAgo = parseInt(timeAgo);
+            }
+            let date;
+            if (timeAgo !== "in a minute") {
+                date = timeAgo + " " + vahed;
+            }
+            else {
+                date = timeAgo;
+            }
+            if (postsList[index].rejected === null) {
+                postsList[index].rejected = "";
+            }
+            let curated = "white"; // false
+            if (postsList[index].curatorId !== "") {
+                curated = "red"; // true
+            }
+            let points = ``;
+            let rateValue = null;
+            if(postsList[index].rate.value !== null) {
+                rateValue = postsList[index].rate.value.toString();
+                if (rateValue.split(".").length > 1) {
+                    points += `<h5>.${rateValue.split(".")[1]}</h5>`
+                }
+            }
+            getColWithMinimumHeight(); // find colNumber
+            if(postsList[index].originalImage.resolution.y > postsList[index].originalImage.resolution.x){
+                columnsHeights[colNumber] += 500;
+            }
+            else{
+                columnsHeights[colNumber] += (postsList[index].originalImage.resolution.y/(postsList[index].originalImage.resolution.x/500));
+            }
+            let rate = "";
+            if(postsList[index].rate.value !== null) {
+                rate = `<h2>${rateValue.split(".")[0]}</h2>
+                 <h5>${points}</h5>`;
+                if (rateValue.startsWith("0")) {
+                    rate = "";
+                }
+            }
+            $(`.postsContainer .col-${(colNumber+1)}`).append(`
+                    <li class="eachPost" id="post-${postsList[index].postId}">
+                    <p hidden>${lastLength}</p>
+                    <p hidden>${postsList[index].number}</p>
+                        <div class="header">
+                            <h3 class="reject">${postsList[index].rejected}</h3>
+                        </div>
+                        <div class="imgContainer">
+                            <img src="../pictures/${postsList[index].postId}-Small===.${postsList[index].ext}" />
+                        </div>
+                        <div class="footer">
+                        <a class="ownerUsername usernameLink left" href="/${usersInfo[postsList[index].ownerId].username}">${usersInfo[postsList[index].ownerId].username}</a>
+                        <div class="hexRate ${curated}">${rate}</div>
+                        <span class="time right">${date}</span>
+                        </div>
+                    </li>
+                `);
+
+            if (rates[postsList[index].postId]) {
+
+            }
+            if (Filters.pageNumber > 1 && historyList[historyPointer].pageName === "post") {
+                slideAction(currentPostItterator, "initial");
+            }
+        }
+    }
+
+    function followAction(res){
+        if(!res.message) {
+            host.followersCount +=1;
+            $(".profileTop .userInfo .followersBtn").html(host.followersCount + " Followers");
+            $(".profileTop #follow").removeClass("show");
+            $(".profileTop #unfollow").addClass("show");
+        }
+    }
+    function  unfollowAction(res) {
+        if(!res.message) {
+            host.followersCount -=1;
+            $(".profileTop .userInfo .followersBtn").html(host.followersCount + " Followers");
+            $(".profileTop #follow").addClass("show");
+            $(".profileTop #unfollow").removeClass("show");
+        }
+    }
+
+    function blockAction(res){
+        $(".profileTop #follow").addClass("unblock");
+        unfollowAction(res);
+
+    }
+
+    function unblockAction(res){
+
+
+
+    }
+
+    function getColWithMinimumHeight(){
+        let minHeight = 999999;
+        let minCole = 0;
+
+        if(columnsHeights.length > 1) {
+            for (let x = 0; x < columnsHeights.length; x++) {
+                if(columnsHeights[x] !== 0) {
+                    if (columnsHeights[x] < minHeight) {
+                        minCole = x;
+                        minHeight = columnsHeights[x];
+                    }
+                }
+                else{
+                    colNumber = x;
+                    break;
+                }
+                if (x === columnsHeights.length-1) {
+                    colNumber = minCole;
+                }
+            }
+        }
+        else{
+            colNumber = 0;
+        }
+    }
+    function resize(){
+
+        if(window.innerWidth < 520){
+            Filters.counts = 10;
+            newPostsColumns = 1;
+            if(lastPostsColumns !== newPostsColumns){
+                lastPostsColumns = 1;
+                parsePostsList(true);
+                $(".timeNav .rows-2").removeClass("show");
+                $(".timeNav .rows-3").removeClass("show");
+                $(".timeNav .rows-3").removeClass("show");
+            }
+        }
+        else if(window.innerWidth < 1100 && window.innerWidth > 520 ){
+            if($(".timeNav .rows-3.show")[0] !== undefined) {
+                if(window.innerWidth < 768) {
+                    $(".timeNav .rows-3").removeClass("show");
+                }
+            }
+            Filters.counts = 15;
+            newPostsColumns = 2;
+            if(lastPostsColumns !== newPostsColumns){
+                lastPostsColumns = 2;
+                if($(".timeNav .rows-2.show")[0] === undefined){
+                    $(".timeNav .rows-2").addClass("show");
+                }
+                $(".timeNav .rows-2").addClass("selected");
+                $(".timeNav .rows-3").removeClass("selected");
+                parsePostsList(true);
+            }
+        }
+        else {
+            newPostsColumns = 3;
+            if(lastPostsColumns !== newPostsColumns){
+                if($(".timeNav .rows-3.show")[0] === undefined){
+                    $(".timeNav .rows-3").addClass("show");
+                }
+                $(".timeNav .rows-3").addClass("selected");
+                $(".timeNav .rows-2").removeClass("selected");
+                lastPostsColumns = 3;
+                parsePostsList(true);
+            }
+            Filters.counts = 25;
+            if(window.innerWidth > 1200) {
+                if ($(".timeNav .rows-2.show")[0] !== undefined) {
+                    $(".timeNav .rows-2").removeClass("show");
+                }
+            }
+
+        }
+    }
+
+    function initialAlbumsResponseAction(albumsList){
+        if(!albumsList.message) {
+            if (Me !== null && Me !== {}) {
+                if(albumsList.message){
+                    alert(albumsList.message);
+                }
+            }
+            else {
+                // remove albumLists Loaders album loader;
+
+                initialAlbumsElements("newPost", albumsList);
+                initialAlbumsElements("albumManage", albumsList);
+            }
+        }
+        else{
+            alert(albumsList.message);
+        }
+    }
+    function initialCategoriesResponseAction(categoriesList){
+        if(!categoriesList.message) {
+            if (Me !== null && Me !== {}) {
+                initialCategoriesElements("newPost",categoriesList);
+            }
+            initialCategoriesElements("timeNav",categoriesList);
+        }
+        else{
+            alert(categoriesList.message);
+        }
+    }
+
+    function storePostDatasByInterval(fire) { // in cookies :)
+        storePostDatasToCookie();
+        if(!fire)
+            clearInterval(storePostDatasInterval);
+        else {
+            storePostDatasInterval = setInterval(function(){
+                console.log("update cookies");
+                storePostDatasToCookie();
+            }, 5000);
+        }
+
+    }
+    function initialCategoriesElements(position,list){
+
+    }
+
+    function initialAlbumsElements(position,list){
+
+        let target = "";
+        if(position === "newPost"){
+            target = "#albumList ul";
+        }
+        else if(position === "albumManage"){
+
+        }
+        if(target !== "") {
+            $.each(list,function(index,data){
+                if (list[index] && list[index].id) {
+                    let owner = "";
+                    if(list[index].ownerId !== Me.userId) {
+                        owner = `<span class="owner"> Owner : ${usersInfo[list[index].ownerId].username}</span>`
+                    }
+                    $(target).append(`
+                        <li class="selected" id="album-${list[index].albumId}">
+                            <p hidden>${list[index].albumId}</p>
+                            <span class="albumTitle">${list[index].title}</span>
+                            <span class="assignedToThisAlbum">${list[index].counts}</span>${owner}
+                        </li>`);
+                    $(`#album-${list[index].albumId}`).click();
+                }
+                else{
+                    console.log("curropt album datas");
+                }
+            });
+        }
+    }
+    function loadNewPostDatas(postId,uploadCounts){ // red post Infos from cookie if theyre available
+        currentUploadCounts = parseInt(uploadCounts);
+        if(isNaN(currentUploadCounts)){
+            debugger;
+        }
+        if(currentUploadCounts > 0) {
+            currentUploadingRoot = postId.split("===.")[0];
+            let tempData = JSON.parse(readCookie("storedPostDatas"));
+            if(tempData) {
+                storePostDatas = tempData;
+                for(let j = 0 ; j < currentUploadCounts; j++){
+                    addPostTemplate(j);
+                    if(j === currentUploadCounts -1){
+                        // slide to last one and select it
+                    }
+
+                }
+
+            }
+        }
+        else{
+            storePostDatas = {};
+        }
+    }
+
+
+
+    function loadUploadingPostDatasInForm(currentUploadingSelected) {
+
+
+        if((storePostDatas[currentUploadingSelected]) && (storePostDatas[currentUploadingSelected] !== null) && (storePostDatas[currentUploadingSelected] !=={})) {
+            // load caption
+            $("#caption").html(storePostDatas[currentUploadingSelected].caption);
+
+            // load location
+            $(".location input").val(storePostDatas[currentUploadingSelected].location);
+
+
+            // load privacy situation
+            if (storePostDatas[currentUploadingSelected].privacy) {
+                $(".privacy .private").addClass("selected");
+                $(".privacy .public").remove("selected");
+            }
+            else {
+                $(".privacy .public").addClass("selected");
+                $(".privacy .private").remove("selected");
+            }
+
+            // load format
+        }
+        else{ // data doesnt exists --> cleanup all inputs
+
+        }
+
+    }
+
+    function removeUploadingPost(id){
+        delete storePostDatas[(id+1).toString()];
+        $(`qq-file-id-${(id*3 + 2)}`).removeClass("show");
+        setTimeout(200,function(){
+            $(`qq-file-id-${(id*3 + 2)}`).remove();
+            $(`qq-file-id-${(id*3 + 1)}`).remove();
+            $(`qq-file-id-${(id*3)}`).remove();
+        });
+    }
+    function addPostTemplate(id){
+        $("#uploadArea .qq-upload-list").append(`
+            <li class="qq-file-id-${(id * 3)} qq-upload-success" qq-file-id="${(id * 3)}">
+
+            </li>
+             <li class="qq-file-id-${(id * 3 + 1)} qq-upload-success" qq-file-id="${(id * 3 + 1)}">
+
+            </li>
+            <li class="qq-file-id-${(id*3 + 2)} qq-upload-success" qq-file-id="${(id*3 + 2)}"
+                <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                <div class="qq-thumbnail-wrapper">
+                    <img class="qq-thumbnail-selector" src="../pictures/${currentUploadingRoot}-${(id+1)}--Small===.${storePostDatas[(id+1).toString()].format}">
+                </div>
+                <div class="qq-file-info">
+                    <div class="qq-file-name">
+                        <span class="qq-upload-file-selector qq-upload-file" title="${storePostDatas[(id+1).toString()].name}">${storePostDatas[(id+1).toString()].name}</span>
+                        <span class="qq-upload-file-selector qq-upload-file" title="${(id+1)}">Stored ${(id+1)}</span>
+                    </div>
+                </div>
+            </li>`
+        );
+
+    }
+
+
+    function addCategoryToSelectedPost(category){
+        if(storePostDatas[(currentUploadingSelected+1).toString()]) {
+            if (storePostDatas[(currentUploadingSelected+1).toString()]["category"].indexOf(category) === -1)
+                storePostDatas[(currentUploadingSelected+1).toString()]["category"].push(category);
+                $("#addCategory").html("Categories : "+`<span>${storePostDatas[(currentUploadingSelected+1).toString()]["category"].join(", ").toString()}</span>`);
+        }
+        else{
+            console.log("Post Datas not found");
+        }
+    }
+    function removeCategoryFromSelectedPost(category){
+        if(storePostDatas[(currentUploadingSelected+1).toString()]["category"]) {
+            let catIndex = storePostDatas[(currentUploadingSelected+1).toString()]["category"].indexOf(category);
+            if (catIndex > -1)
+                storePostDatas[(currentUploadingSelected+1).toString()]["category"].splice(catIndex, 1);
+                $("#addCategory").html("Categories : "+`<span>${storePostDatas[(currentUploadingSelected+1).toString()]["category"].join(", ").toString()}</span>`);
+        }
+    }
+    function addAlbumToSelectedPost(albumId){
+        storePostDatas[(currentUploadingSelected+1).toString()]["albumId"] = albumId;
+    }
+    function createAlbum(albumTitle){
+        requestHandler("/api/v1/album/create","POST",{title:albumTitle},"createAlbum");
+    }
+    function createAlbumResponseAction(res,input){
+        if(res.message){
+            alert("create album failed ... please try again");
+        }
+        else {
+
+            // remove create album loader;
+
+            if(res.albumId) {
+                $("#addAlbum").html(res.title + " album");
+                $("#albumList").prepend(`
+                        <li class="selected" id="album-${res.albumId}">
+                            <p hidden>${res.albumId}</p>
+                            <span class="albumTitle">${res.title}</span>
+                            <span class="assignedToThisAlbum">1</span>
+                        </li>`);
+                $(`#album-${res.albumId}`).click();
+            }
+            else{
+                alert("Album create failed ");
+                $("#newAlbumForm .cancel").click();
+            }
+        }
+    }
+    function setPrivacyForSelectedPost(situation){ // true --> public , false --> followings
+        if(storePostDatas[(currentUploadingSelected+1).toString()]){
+            storePostDatas[(currentUploadingSelected+1).toString()]["privacy"] = situation
+        }
+    }
+    function setDownloadOptionsForPost(cost){ // -1 for disable , 0 for free $ :/
+        if(storePostDatas[(currentUploadingSelected+1).toString()]){
+            if(cost < 1000000 && cost >= -1)
+                storePostDatas[(currentUploadingSelected+1).toString()]["cost"] = cost;
+            else
+                alert(" Invalid Cost Input ");
+        }
+    }
+    function setLocationForPost(locationObject){ //
+        if(storePostDatas[(currentUploadingSelected+1).toString()]){
+            storePostDatas[(currentUploadingSelected+1).toString()]["location"] = locationObject;
+        }
+    }
+    //
+
+
+    function storePostDatasToCookie(){
+        if((currentUploadingRoot !== null) || (currentUploadCounts > 0)){
+            createCookie("storedPostDatas", JSON.stringify(storePostDatas), 1);
+        }
+
+    }
+
+    function showTopBox(type){
+       for(let z = 0 ; z  < boxes.length ; z++){
+           if(boxes[z] === type) {
+               $(`#${boxes[z]}-box`).addClass("show");
+           }
+           else{
+               $(`#${boxes[z]}-box`).removeClass("show");
+           }
+       }
+    }
     function alert(message) {
         $("#alertTop h3").html(message);
         $("#alertTop").addClass("show");
@@ -1589,11 +3168,5 @@
         }, 3000); // 5seconds show
     }
 
-
-
 </script>
-
-
-
-
 </html>

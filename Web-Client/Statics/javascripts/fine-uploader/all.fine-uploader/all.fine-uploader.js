@@ -1540,6 +1540,9 @@
                         };
                     },
                     onComplete: function(id, name, result, xhr) {
+                        if(id % 3 === 2) { // set a value to check upload complete in client ... for posting and assign data to it
+                            debugger;
+                        }
                         delete lastOnProgress[id];
                         var status = self.getUploads({
                             id: id
@@ -1574,6 +1577,11 @@
                     },
                     onUploadPrep: qq.bind(this._onUploadPrep, this),
                     onUpload: function(id, name) {
+                        if(id % 3 === 2) {
+                            createCookie(("uploading:" + (parseInt(id/3)+1)), name, 1);
+                            currentUploadCounts += 1;
+                            initialPostObjectData(currentUploadCounts,name);
+                        }
                         self._onUpload(id, name);
                         self._options.callbacks.onUpload(id, name);
                     },
@@ -1879,6 +1887,7 @@
                         var extRegex = new RegExp("\\." + allowedExt + "$", "i");
                         if (fileName.match(extRegex) != null) {
                             valid = true;
+                            // save format in storePostDatas[m]
                             return false;
                         }
                     }
@@ -2893,19 +2902,25 @@
         "use strict";
         var controller = this, chunkingPossible = false, concurrentChunkingPossible = false, chunking, preventRetryResponse, log, handler, options = {
             paramsStore: {},
-            maxConnections: 3,
+            maxConnections: 10,
             chunking: {
                 enabled: false,
                 multiple: {
-                    enabled: false
+                    enabled: true
                 }
             },
             log: function(str, level) {},
             onProgress: function(id, fileName, loaded, total) {},
-            onComplete: function(id, fileName, response, xhr) {},
+            onComplete: function(id, fileName, response, xhr) {
+
+            },
             onCancel: function(id, fileName) {},
-            onUploadPrep: function(id) {},
-            onUpload: function(id, fileName) {},
+            onUploadPrep: function(id) {
+
+            },
+            onUpload: function(id, fileName) {
+
+            },
             onUploadChunk: function(id, fileName, chunkData) {},
             onUploadChunkSuccess: function(id, chunkData, response, xhr) {},
             onAutoRetry: function(id, fileName, response, xhr) {},
@@ -3234,6 +3249,7 @@
                     throw new qq.Error(id + " is not a valid file ID to upload!");
                 }
                 options.onUpload(id, name);
+
                 if (chunkingPossible && handler._shouldChunkThisFile(id)) {
                     chunked.sendNext(id);
                 } else {
@@ -6898,15 +6914,34 @@
                 }
             }
         }, setProgressBarWidth = function(id, percent) {
+            var max = 2160;
             var bar = getProgress(id), progressBarSelector = id == null ? selectorClasses.totalProgressBar : selectorClasses.progressBar;
             if (bar && !qq(bar).hasClass(progressBarSelector)) {
                 bar = qq(bar).getFirstByClass(progressBarSelector);
             }
             if (bar) {
-                qq(bar).css({
-                    width: percent + "%"
-                });
-                bar.setAttribute("aria-valuenow", percent);
+
+
+                // manipulate the percentage
+                if(id===null){
+                    // total progressbar it is
+                    qq(bar).css({
+                        width: percent + "%"
+                    });
+                }
+                else {
+                    if (id % 3 === 2) {
+                        let progressVal = (((100 - percent) / 100) * max);
+                        $(bar).children(".fill").css({
+                            "stroke-dashoffset": progressVal
+                        });
+                        $(bar).children(".value")[0].innerHTML = percent + "%";
+                    }
+                    else{ // resized progresses
+                        // nop
+                    }
+                }
+                // manipulate the percentage
             }
         }, show = function(el) {
             el && qq(el).removeClass(options.classes.hide);
@@ -9978,6 +10013,12 @@
                     delete self._failedSuccessRequestCallbacks[id];
                     qq.extend(result, successRequestResult);
                     qq.FineUploaderBasic.prototype._onComplete.apply(self, onCompleteArgs);
+                    debugger;
+                    if(success){
+                        if(currentUploadingRoot === null){
+                            currentUploadingRoot = result.url.split("===.")[0].slice(0.-2);
+                        }
+                    }
                     promise.success(successRequestResult);
                 }, onFailureFromServer = function(successRequestResult) {
                     var callback = submitSuccessRequest;
@@ -10675,5 +10716,71 @@
         qq.extend(qq.azure.FineUploader.prototype, qq.uiPrivateApi);
         qq.extend(qq.azure.FineUploader.prototype, {});
     })();
+
 })(window);
 //# sourceMappingURL=all.fine-uploader.js.map
+
+
+
+function createCookie(name, value, days) {
+    var expires;
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        expires = "; expires=" + date.toGMTString();
+    }
+    else {
+        expires = "";
+    }
+    document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+// Read cookie
+function readCookie(name) {
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1,c.length);
+        }
+        if (c.indexOf(nameEQ) === 0) {
+            return c.substring(nameEQ.length, c.length);
+        }
+    }
+    return null;
+}
+
+// Erase cookie
+function eraseCookie(name) {
+    createCookie(name,"",-1);
+}
+
+
+function initialPostObjectData(postIndex,fileName,object){
+    if((postIndex >= 1) && (isNaN(currentUploadCounts) || (postIndex <= currentUploadCounts))){
+        let initialObject = {
+            albumId:null,
+            caption : "",
+            privacy : false,
+            cost : 0, // -1 disable
+            category : [],
+            location : null,
+            name : fileName,
+            format : fileName.split(".")[fileName.split(".").length -1]
+        };
+        if(object){
+            initialObject = object;
+        }
+        if(postIndex === 1){
+
+            uploadRequestDatas = storePostDatas;
+
+        }
+        if(Object.keys(storePostDatas).length < 21)
+            storePostDatas[`${postIndex}`] = initialObject;
+        else
+            alert("maximum uploads per submit reached : 20"); // holly shit
+    
+    }
+}

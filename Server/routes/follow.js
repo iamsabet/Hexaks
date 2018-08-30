@@ -4,8 +4,6 @@ var postSchema = require('../models/post.model');
 var post = new postSchema();
 var userSchema = require('../models/user.model');
 var User = new userSchema();
-var pixelSchema = require('../models/pixel.model');
-var pixel = new pixelSchema();
 var rateSchema = require('../models/rate.model');
 var rate = new rateSchema();
 var bcrypt = require("bcrypt-nodejs");
@@ -113,7 +111,7 @@ var follows = {
         let hostId = req.body.followingId;
         console.log(hostId);
         console.log(user.userId);
-        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.followingId.toString()) === -1) {
+        if(req.body && user.blockList.indexOf(req.body.followingId.toString()) === -1) {
             redisClient.hgetall(hostId + ":info", function (err, info) {
                 if (err) res.send({result: false, message: "500 error in follow"});
                 if (!err && info) {
@@ -163,8 +161,8 @@ var follows = {
             res.send({result:false,message:"This action fails on Blocked user"})
         }
     },
-    unfollow:function(req,user,hostId,res){
-        if(user.followings.indexOf(hostId) > -1) {
+    unfollow:function(req,res,user){
+        if(user.followings.indexOf(req.body.followingId) > -1) {
             if (req.body && req.body.followingId) {
                 let unfollowObject = {
                     follower: user.userId,

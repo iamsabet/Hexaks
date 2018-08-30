@@ -1,5 +1,7 @@
 <html>
 <script src="../Statics/javascripts/jquery.min.js"></script>
+<script src="../Statics/javascripts/cookies.js"></script>
+<script src="../Statics/javascripts/crypto-js/crypto-js.min.js"></script>
 <link rel="stylesheet" href="../Statics/stylesheets/register-login.css">
 <link rel="stylesheet" href="../Statics/stylesheets/bootstrap.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,21 +13,35 @@
 <body>
 <div id="homeContainer" class="containerDiv">
     <div class="loginRegForm">
-
         <h2>Register</h2>
-            <form action="/register">
+        <form action="/register">
+            <div>
                 <input type="text" placeholder="username" id="username"/>
-                <input type="text" placeholder="full name" id="fullName"/>
+                <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
+            </div>
+            <div>
                 <input type="email" placeholder="email@example.com" id="email"/>
+                <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
+            </div>
+            <div>
                 <input type="password" placeholder="password" id="password"/>
+                <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+            </div>
+            <div>
                 <input type="password" placeholder="confirm password" id="confPassword"/>
-                <button id="regBtn">Register</button>
-            <form>
-        <p class="messageBox">
+                <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
+            </div>
+            <button id="regBtn">Register</button>
+            <ul class="messageBox">
 
-        </p>
+            </ul>
+            <div class="socialBox">
+                <button id="instagram"></button>
+                <button id="google"></button>
+            </div>
+        </form>
     </div>
-
+</div>
     <div class="footer">
         <a href="/faq">FAQ</a>
         <a href="/tutorials">Tutorials</a>
@@ -37,28 +53,90 @@
 
 
 <script>
+    let registerKey = "none"; // fill with server response on initial register
     // Events.js
-    $('.loginRegForm').on("submit",".loginRegForm form",function(event) {
+
+    $(document).ready(function(event){
+        requestHandler("/register/getKey", "GET", {}, "getKey");
+    });
+    $("body").on("keyup","#username",function(e){
+        if($(this).val().toString().length > 3) {
+            checkInputValidation("username",$(this).val().toString());
+        }
+    });
+    $("body").on("keyup","#email",function(e){
+        if($(this).val().toString().length > 6) {
+            if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
+                checkInputValidation("email", $(this).val().toString());
+            }
+        }
+    });
+
+    $("body").on("keyup","#confPassword",function(e){
+        if(($(this).val().toString().length >= 6)) {
+            if($("#confPassword").val().toString() === $("#password").val().toString()){
+                $("#confirmPasswordStatus").attr("src","../Statics/images/newIcons/tik.svg");
+                $("#confirmPasswordStatus").addClass("show");
+            }
+            else{
+                $("#confirmPasswordStatus").attr("src","../Statics/images/newIcons/cross.svg");
+                $("#confirmPasswordStatus").addClass("show");
+                $(".loginRegForm form ul").append(`
+                    <li class="confirmPasswordError">passwords does not match</li>
+                `);
+            }
+        }
+    });
+    $("body").on("keyup","#password",function(e){
+        console.log($(this).val());
+        if(($(this).val().toString().length < 6)) {
+            $("#passwordStatus").attr("src","../Statics/images/newIcons/cross.svg");
+            $("#passwordStatus").addClass("show");
+            if($(".loginRegForm form ul .passwordError")[0]===undefined){
+                $(".loginRegForm form ul").append(`
+                    <li class="passwordError">password must have at least 6 characters</li>
+                `);
+            }
+        }
+        else{
+            $("#passwordStatus").attr("src","../Statics/images/newIcons/tik.svg");
+            $("#passwordStatus").addClass("show");
+            if($(".loginRegForm form ul .passwordError")[0]!==undefined){
+                $(".loginRegForm form ul .passwordError").remove();
+            }
+        }
+    });
+
+    $('body').on("submit",".loginRegForm form",function(event) {
         event.preventDefault();
     });
     $('.loginRegForm').on("click","#regBtn",function(){
+        console.log(registerKey);
+        var encryptedInfo = CryptoJS.AES.encrypt((($("#username").val().toString())+"/"+($("#email").val().toString())+"/"+($("#password").val().toString())).toString(),registerKey).toString();
         var input = {
-            username : $("#username").val(),
-            email : $("#email").val(),
-            fullName : $("#fullName").val(),
-            password: $("#password").val()
+            info : encryptedInfo
         };
-        requestHandler("/register", "POST", input)
+        requestHandler("/register", "POST", input,"registerHandler");
     });
-    function requestHandler(url, method, input) {
+
+
+
+
+
+
+
+
+
+
+    function requestHandler(url, method, input,caller) {
         $.ajax({
             url: url || "/",
-            method: method || "GET",
+            method: method || "POST",
             data: input || {},
             before: function () {
             },
             success: function (res) {
-                responseActionHandler(res);
+                responseActionHandler(res,caller);
             },
             timeout: function () {
                 window.alert("time out");
@@ -71,13 +149,74 @@
             }
         });
     }
+    function checkInputValidation(type,text){
+
+        // characteric limiations -- check both sides later then => {
+        requestHandler("/register/checkIsTaken/","POST",{text:text,type:type},"check"+type);
+    }
+
     // Response Actions Handler
-    function responseActionHandler(res) {
-        if(res.result===false){
-            window.alert(res.message);
-        }
-        else{
-            window.location.pathname="/login";
+    function responseActionHandler(res,caller) {
+        switch (caller) {
+            case "registerHandler" : {
+                if(!res.message) {
+                    createCookie("X-ACCESS-TOKEN",res["token"],1);
+                    createCookie("KEY",res["key"],1);
+                    window.location.pathname = "/settings";
+                }
+                else{
+                    if($(".loginRegForm ul .attemptError")[0]===undefined) {
+                        $(".loginRegForm ul").append(`
+                        <li class="attemptError">${res.message}</li>
+                    `);
+                    }
+                    else{
+                        $(".loginRegForm ul .attemptError").html(`${res.message}`);
+                    }
+                }
+            }break;
+            case "getKey":{
+                registerKey = res;
+                $("#loginBtn").addClass("enable");
+            }break;
+            case "checkemail":{
+                if(!res.message){
+                    $("#emailStatus").attr("src","../Statics/images/newIcons/tik.svg");
+                    $("#emailStatus").addClass("show");
+                    $(".loginRegForm ul .emailError").remove();
+                }
+                else{
+                    $("#emailStatus").attr("src","../Statics/images/newIcons/cross.svg");
+                    $("#emailStatus").addClass("show");
+                    if($(".loginRegForm ul .mailError")[0]===undefined) {
+                        $(".loginRegForm ul").append(`
+                        <li class="mailError">${res.message}</li>
+                    `);
+                    }
+                    else{
+                        $(".loginRegForm ul .mailError").html(`${res.message}`);
+                    }
+                }
+            }break;
+            case "checkusername":{
+                if(!res.message){
+                    $("#usernameStatus").attr("src","../Statics/images/newIcons/tik.svg");
+                    $("#usernameStatus").addClass("show");
+                    $(".loginRegForm ul .usernameError").remove();
+                }
+                else{
+                    $("#usernameStatus").attr("src","../Statics/images/newIcons/cross.svg");
+                    $("#usernameStatus").addClass("show");
+                    if($(".loginRegForm ul .usernameError")[0]===undefined) {
+                        $(".loginRegForm ul").append(`
+                        <li class="usernameError">${res.message}</li>
+                    `);
+                    }
+                    else{
+                        $(".loginRegForm ul .usernameError").html(`${res.message}`);
+                    }
+                }
+            }
         }
     }
 </script>
