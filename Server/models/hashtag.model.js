@@ -16,8 +16,9 @@ redisClient.select(2,function(){
 var hashtagSchema = new Schema({
     name : String,
     counts : Number,
+    hour:Number, //0 - 23 -- > 24 means daily record
+    day : Number,
     createdAt:Number,
-    hour:Number, //0 - 23
     updatedAt:Number,
     activated:Boolean,
     deleted:Boolean,
