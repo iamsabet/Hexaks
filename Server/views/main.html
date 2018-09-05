@@ -686,7 +686,7 @@
     });
     $("body").on("click","#submitPost",function(e){
         e.preventDefault();
-        uploadRequestDatas = storePostDatas; // already set
+        uploadRequestDatas = {postsList:JSON.stringify(storePostDatas)}; // already set
         for(let x = 1 ; x <= currentUploadCounts ; x++){ // remove all cookies --> reload them if failed :D
             eraseCookie("uploading:"+x);
             eraseCookie(x);
