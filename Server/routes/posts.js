@@ -503,219 +503,225 @@ var posts = {
                 redisClient.get(user.userId+":uploadCounts",function(err,uploadCountsx) {
                     if (err) throw err;
                     let uploadCounts = parseInt(uploadCountsx);
-                    let removedIndexes = req.body["removedIndexes"];
-                    if(postId && uploadCounts && (uploadCounts <= 20)) {
-                        let now = new Date();
-                        let allCategories = [];
-                        let categories = req.body.categories || [];
-                        for (let c = 0; c < categories.length; c++) {
-                            if (categories[c] !== undefined) {
-                                Category.Create(now, 0, categories[c], function (callback) {
-                                    console.log("category create callback : " + callback);
-                                    if (callback === true) {
-                                        if (allCategories.indexOf(categories[c]) === -1)
-                                            allCategories.push(categories[c]);
-
-                                        if (c === categories.length - 1) {
-
-                                            let str2 = postId.split("===.")[0];
-                                            let rootPostId = str2.slice(0, -2);
-                                            if ((req.body.privacyList) && (req.body.categories) && (req.body.locations) && (req.body.captions) && (req.body.tags) && (req.body.locations) && (req.body.costs) &&
-                                                (typeof req.body.privacyList === "object") && (typeof req.body.categories === "object") && (typeof req.body.costs === "object") && (typeof req.body.captions === "object") && (req.body.costs.length > 0) &&
-                                                (req.body.privacyList.length > 0) && (req.body.privacyList.length > 0) && (req.body.categories.length > 0) && (req.body.captions.length > 0)) {
-                                                let postIds = [];
-                                                let privacyList = req.body.privacyList;
-                                                let captions = req.body.captions;
-                                                let costs = req.body.costs;
-                                                let categories = req.body.categories;
-                                                let locations = req.body.locations;
-                                                let tags = req.body.tags;
-                                                let albumId = req.body.albumId || null;
-
-                                                albumSchema.findOne({
-                                                    albumId: albumId,
-                                                    $or: [{ownerId: user.userId}, {collaborators: {$elemMatch: user.userId}}],
-                                                    activated: true
-                                                }, {
-                                                    counts: 1,
-                                                    title: 1,
-                                                    albumId: 1,
-                                                    isPrivate
-                                                }, function (err, albumx) {
-                                                    if (err) throw err;
-                                                    let albumPrivacy = false;
-                                                    if (albumx) {
-                                                        albumId = albumx.albumId;
-                                                        albumPrivacy = albumx.isPrivate;
-                                                    }
-                                                    else {
-                                                        albumId = null;
-                                                    }
-                                                    console.log("post Id before update post:" + postId.split("===.")[0]);
-
-
-                                                    for (let t = 0; t < uploadCounts; t++) {
-
-                                                        let costx = 0;
-                                                        if (!isNaN(parseInt(costs[t])) && costs[t] > -1 && costs[t] < 1000000) {
-                                                            costx = costs[t];
-                                                        }
-                                                        let str = "";
-                                                        if (typeof captions[t] === "string" && (captions[t].length > 0)) {
-                                                            str = captions[t];
-                                                        }
-                                                        let category = "";
-                                                        if (typeof categories[t] === "string" && (categories[t].length > 0)) {
-                                                            str = categories[t];
-                                                        }
-                                                        let privacy = albumPrivacy;
-
-                                                        if (!albumPrivacy) {
-                                                            if (typeof privacyList[t] === "boolean") {
-                                                                privacy = privacyList[t];
-                                                            }
-                                                        }
-                                                        let location = null;
-                                                        if (typeof locations[t] === "string") {
-                                                            location = locations[t];
-                                                        }
-                                                        let tagsList = [];
-                                                        if (tags[t.toString()] && (typeof tags[t.toString()] === "object")) { // userIds
-                                                            tagsList = tags[t.toString()]; // json list json["1"] === "list"
-                                                        }
-                                                        let hashtags = [];
-                                                        let mentions = [];
-                                                        if (str !== "") {
-
-
-                                                            let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
-                                                            let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
-                                                            str = str.split("&nbsp;")[0];
-                                                            let m;
-                                                            while ((m = reHashtag.exec(str)) != null) {
-                                                                if (m.index === reHashtag.lastIndex) {
-                                                                    reHashtag.lastIndex++;
-                                                                }
-                                                                if (hashtags.indexOf(m[0].split("#")) === -1) {
-                                                                    hashtags.push(m[0].split("#")[1]);
-
-                                                                }
-                                                            }
-                                                            let n;
-                                                            while ((n = reMention.exec(str)) != null) {
-                                                                if (n.index === reMention.lastIndex) {
-                                                                    reMention.lastIndex++;
-                                                                }
-                                                                if (mentions.indexOf(n[0]) === -1) {
-                                                                    mentions.push(n[0]);
-                                                                }
-                                                            }
-
-                                                        }
-                                                        else {
-
-                                                        }
-
-                                                        postIds.push(rootPostId + "-" + t);
-                                                        let postQuery = {
-                                                            postId: rootPostId + "-" + t,
-                                                            albumId: null,
-                                                            activated: false
-                                                        };
-
-
-                                                        postSchema.update(postQuery, { //// jeezzz
-                                                            $set: {
-                                                                album: albumId,
-                                                                activated: true,
-                                                                hashtags: hashtags,
-                                                                isPrivate: privacy,
-                                                                mentions: mentions,
-                                                                caption: str || "",
-                                                                categories: category,
-                                                                location: location,
-                                                                tags: tagsList,
-                                                                "originalImage.cost": costx// 0 if free // must complete tonight
-                                                            }
-                                                        }, function (err, result) {
-                                                            if (err) throw err;
-                                                            if (result.n === 1) {
-                                                                console.log(postQuery + " updated!");
-                                                            }
-                                                            else {
-                                                                res.send({
-                                                                    result: false,
-                                                                    message: "Oops something went wrong"
-                                                                });
-                                                            }
-                                                        });
-
-                                                        for (let h = 0; h < hashtags.length; h++) {
-                                                            if ((hashtags[h] !== undefined) && (hashtags[h].length > 2)) {
-                                                                console.log("hashes:" + hashtags[h]);
-                                                                Hashtag.Create(now, hashtags[h], function (callback) {
-                                                                    if (callback === true) {
-                                                                        console.log(hashtags[h] + " : hashtag -> created");
-                                                                    }
-                                                                    else {
-                                                                        callback({
-                                                                            result: false,
-                                                                            message: "create hashtag failed"
-                                                                        });
-                                                                    }
-                                                                });
-                                                            }
-                                                        }
-                                                        for (let t in mentions) {
-                                                            // push notification to the mentioned user if exists // func()
-                                                        }
-                                                        if (t === uploadCounts - 1) {
-                                                            redisClient.del(user.userId + ":uploadingPost");
-                                                            redisClient.del(user.userId + ":uploading");
-                                                            redisClient.del(user.userId + ":uploadCounts");
-
-                                                            if (albumId !== null) {
-                                                                albumSchema.update({albumId: albumId}, {
-                                                                    $addToSet: {
-                                                                        postIds: postId,
-                                                                    },
-                                                                    $inc: {counts: 1}
-                                                                }, function (err, albums) {
-                                                                    if (err) throw err;
-                                                                    if (albums.n === 1) {
-                                                                        res.send(true);
-                                                                    }
-                                                                    else {
-                                                                        res.send({
-                                                                            result: false,
-                                                                            message: "album did not updated"
-                                                                        });
-                                                                    }
-                                                                });
-                                                            }
-                                                            res.send(true);
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                            else {
-                                                res.send({result: false, message: "504 Bad Request"});
-                                            }
-                                        }
-                                    }
-                                    else {
-                                        if (c === 0) {
-                                            res.send(callback);
-                                        }
-                                    }
-                                });
-                            }
-
-                        }
+                    let postList = req.body["storePostDatas"];
+                    let keys = Object.keys(storePostDatas);
+                    if(!postId || !uploadCounts){
+                        res.send({result:false,message:"uploading infos not found in cache"});
                     }
                     else{
-                        res.send({result:false,message:"not found post counts in cache"});
-                    }
+                      for(let postsItterator = 0 ; x < keys.length ; x++){
+                        if(postsItterator < 20 && postList[keys[postsItterator]]) {
+                            let now = new Date();
+                            let newPostDatas = postList[keys[postsItterator]];
+                            let allCategories = [];
+                            let categories = newPostDatas.categories || [];
+                            for (let c = 0; c < categories.length; c++) {
+                                if (categories[c] !== undefined) {
+                                    Category.Create(now, 0, categories[c], function (callback) {
+                                        console.log("category create callback : " + callback);
+                                        if (callback === true) {
+                                            if (allCategories.indexOf(categories[c]) === -1)
+                                                allCategories.push(categories[c]);
+
+                                            if (c === categories.length - 1) {
+
+                                                let str2 = postId.split("===.")[0];
+                                                let rootPostId = str2.slice(0, -2);
+                                                if ((newPostDatas.privacyList) && (newPostDatas.categories) && (newPostDatas.locations) && (newPostDatas.captions) && (newPostDatas.tags) && (newPostDatas.locations) && (newPostDatas.costs) &&
+                                                    (typeof newPostDatas.privacyList === "object") && (typeof newPostDatas.categories === "object") && (typeof newPostDatas.costs === "object") && (typeof newPostDatas.captions === "object") && (newPostDatas.costs.length > 0) &&
+                                                    (newPostDatas.privacyList.length > 0) && (newPostDatas.privacyList.length > 0) && (req.body.categories.length > 0) && (req.body.captions.length > 0)) {
+                                                    let postIds = [];
+                                                    let privacyList = newPostDatas.privacyList;
+                                                    let captions = newPostDatas.captions;
+                                                    let costs = newPostDatas.costs;
+                                                    let categories = newPostDatas.categories;
+                                                    let locations = newPostDatas.locations;
+                                                    let tags = newPostDatas.tags;
+                                                    let albumId = newPostDatas.albumId || null;
+
+                                                    albumSchema.findOne({
+                                                        albumId: albumId,
+                                                        $or: [{ownerId: user.userId}, {collaborators: {$elemMatch: user.userId}}],
+                                                        activated: true
+                                                    }, {
+                                                        counts: 1,
+                                                        title: 1,
+                                                        albumId: 1,
+                                                        isPrivate
+                                                    }, function (err, albumx) {
+                                                        if (err) throw err;
+                                                        let albumPrivacy = false;
+                                                        if (albumx) {
+                                                            albumId = albumx.albumId;
+                                                            albumPrivacy = albumx.isPrivate;
+                                                        }
+                                                        else {
+                                                            albumId = null;
+                                                        }
+                                                        console.log("post Id before update post:" + postId.split("===.")[0]);
+
+
+                                                        for (let t = 0; t < uploadCounts; t++) {
+
+                                                            let costx = 0;
+                                                            if (!isNaN(parseInt(costs[t])) && costs[t] > -1 && costs[t] < 1000000) {
+                                                                costx = costs[t];
+                                                            }
+                                                            let str = "";
+                                                            if (typeof captions[t] === "string" && (captions[t].length > 0)) {
+                                                                str = captions[t];
+                                                            }
+                                                            let category = "";
+                                                            if (typeof categories[t] === "string" && (categories[t].length > 0)) {
+                                                                str = categories[t];
+                                                            }
+                                                            let privacy = albumPrivacy;
+
+                                                            if (!albumPrivacy) {
+                                                                if (typeof privacyList[t] === "boolean") {
+                                                                    privacy = privacyList[t];
+                                                                }
+                                                            }
+                                                            let location = null;
+                                                            if (typeof locations[t] === "string") {
+                                                                location = locations[t];
+                                                            }
+                                                            let tagsList = [];
+                                                            if (tags[t.toString()] && (typeof tags[t.toString()] === "object")) { // userIds
+                                                                tagsList = tags[t.toString()]; // json list json["1"] === "list"
+                                                            }
+                                                            let hashtags = [];
+                                                            let mentions = [];
+                                                            if (str !== "") {
+
+
+                                                                let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
+                                                                let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
+                                                                str = str.split("&nbsp;")[0];
+                                                                let m;
+                                                                while ((m = reHashtag.exec(str)) != null) {
+                                                                    if (m.index === reHashtag.lastIndex) {
+                                                                        reHashtag.lastIndex++;
+                                                                    }
+                                                                    if (hashtags.indexOf(m[0].split("#")) === -1) {
+                                                                        hashtags.push(m[0].split("#")[1]);
+
+                                                                    }
+                                                                }
+                                                                let n;
+                                                                while ((n = reMention.exec(str)) != null) {
+                                                                    if (n.index === reMention.lastIndex) {
+                                                                        reMention.lastIndex++;
+                                                                    }
+                                                                    if (mentions.indexOf(n[0]) === -1) {
+                                                                        mentions.push(n[0]);
+                                                                    }
+                                                                }
+
+                                                            }
+                                                            else {
+
+                                                            }
+
+                                                            postIds.push(rootPostId + "-" + t);
+                                                            let postQuery = {
+                                                                postId: rootPostId + "-" + t,
+                                                                albumId: null,
+                                                                activated: false
+                                                            };
+
+
+                                                            postSchema.update(postQuery, { //// jeezzz
+                                                                $set: {
+                                                                    album: albumId,
+                                                                    activated: true,
+                                                                    hashtags: hashtags,
+                                                                    isPrivate: privacy,
+                                                                    mentions: mentions,
+                                                                    caption: str || "",
+                                                                    categories: category,
+                                                                    location: location,
+                                                                    tags: tagsList,
+                                                                    "originalImage.cost": costx// 0 if free // must complete tonight
+                                                                }
+                                                            }, function (err, result) {
+                                                                if (err) throw err;
+                                                                if (result.n === 1) {
+                                                                    console.log(postQuery + " updated!");
+                                                                }
+                                                                else {
+                                                                    res.send({
+                                                                        result: false,
+                                                                        message: "Oops something went wrong"
+                                                                    });
+                                                                }
+                                                            });
+
+                                                            for (let h = 0; h < hashtags.length; h++) {
+                                                                if ((hashtags[h] !== undefined) && (hashtags[h].length > 2)) {
+                                                                    console.log("hashes:" + hashtags[h]);
+                                                                    Hashtag.Create(now, hashtags[h], function (callback) {
+                                                                        if (callback === true) {
+                                                                            console.log(hashtags[h] + " : hashtag -> created");
+                                                                        }
+                                                                        else {
+                                                                            callback({
+                                                                                result: false,
+                                                                                message: "create hashtag failed"
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+                                                            for (let t in mentions) {
+                                                                // push notification to the mentioned user if exists // func()
+                                                            }
+                                                            if (t === uploadCounts - 1) {
+                                                                redisClient.del(user.userId + ":uploadingPost");
+                                                                redisClient.del(user.userId + ":uploading");
+                                                                redisClient.del(user.userId + ":uploadCounts");
+
+                                                                if (albumId !== null) {
+                                                                    albumSchema.update({albumId: albumId}, {
+                                                                        $addToSet: {
+                                                                            postIds: postId,
+                                                                        },
+                                                                        $inc: {counts: 1}
+                                                                    }, function (err, albums) {
+                                                                        if (err) throw err;
+                                                                        if (albums.n === 1) {
+                                                                            res.send(true);
+                                                                        }
+                                                                        else {
+                                                                            res.send({
+                                                                                result: false,
+                                                                                message: "album did not updated"
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                }
+                                                                res.send(true);
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                                else {
+                                                    res.send({result: false, message: "504 Bad Request"});
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            if (c === 0) {
+                                                res.send(callback);
+                                            }
+                                        }
+                                    });
+                                }
+
+                            }
+                        }
+                      }
+                  }
                 });
         });
     },
