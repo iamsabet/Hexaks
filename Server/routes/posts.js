@@ -524,6 +524,7 @@ var posts = {
                                                 allCategories.push(categories[c]);
 
                                             if (c === categories.length - 1) {
+                                              
 
                                                 let str2 = postId.split("===.")[0];
                                                 let rootPostId = str2.slice(0, -2);
