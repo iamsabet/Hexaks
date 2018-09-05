@@ -529,7 +529,8 @@ var posts = {
                                             }
                                         });
                                   }
-                                } // create other things
+                                }
+                                // create other things
                                 let str2 = postId.split("===.")[0];
                                 let rootPostId = str2.slice(0, -2);
                                 if ((newPostDatas.privacyList) && (newPostDatas.categories) && (newPostDatas.locations) && (newPostDatas.captions) && (newPostDatas.tags) && (newPostDatas.locations) && (newPostDatas.costs) &&
