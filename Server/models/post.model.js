@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 var redis = require('redis');
-let users = require("../routes/users");
 // resize and remove EXIF profile data
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -16,7 +15,6 @@ var mongoosePaginate = require('mongoose-paginate');
 var rateSchema = require('../models/rate.model');
 var postSchema = new Schema({
     album:String,
-    number: Number, // images urls -->
     postId: String,
     ownerId: String,
     originalImage: { // yeki beyne 2000 ta 3000 yeki balaye 4000 --> age balaye 4000 bud yekiam miari azash roo 2000 avali bozorge 2vomi kuchike -- > suggest --> half resolution half price .
@@ -36,10 +34,11 @@ var postSchema = new Schema({
     fileName: String, // string
     ext: String,
     device: {
-        brand:String,
+        brand : String,
         model : String
     }, // strings device id
     location: {},
+    gps:{},
     exifData: {
         ExposureTime: Float,
         FNumber: Number,
@@ -84,6 +83,7 @@ var postSchema = new Schema({
     deleted:Boolean,
     updatedAt:Number
 });
+
 postSchema.methods.create = function(postObject,user,callback){
 
     let newPost = new Post(postObject);
@@ -95,66 +95,13 @@ postSchema.methods.create = function(postObject,user,callback){
     return callback(true);
 
 };
-postSchema.methods.Paginate = function(query,options,user,req,res){
+postSchema.methods.Paginate = function(query,options,user,callback){
     post.paginate(query,options,function(err,posts){
         if(err) {
-            console.log(err);
-            res.send({docs:[],total:0});
+            throw err;
         }
         else {
-            if(posts){
-                console.log(posts);
-                posts.owners = {};
-                if(posts.docs.length > 0) {
-                    let postIds = [];
-                    for (let x = 0; x < posts.docs.length; x++) {
-                        if (!posts.owners[posts.docs[x].ownerId]) {
-                            users.getUserInfosFromCache(posts.docs[x].ownerId,function(info) {
-                                if (!info.message){
-                                    console.log(info);
-                                    if(user && info.blockList.indexOf(user.userId) > -1) { // he is blocked by him
-                                        delete posts.docs[x];
-                                    }
-                                    else{
-                                        if(user && postIds.indexOf(posts.docs[x].ownerId) === -1){
-                                            postIds.push(posts.docs[x].ownerId);
-                                            posts.owners[posts.docs[x].ownerId] = info;
-                                        }
-                                    }
-                                }
-                                else {
-                                    console.log("err :" + err + " / values : " + info);
-                                    posts.owners[posts.docs[x].ownerId] = {};
-                                }
-                                if (x === posts.docs.length - 1) {
-                                    if(user){
-                                        rateSchema.find({postId:{$in:postIds},rater : user.userId,deleted:false,activate:true},{value:1,rateId:1,rater:1,postId:1,createdAt:1},function(err,rates){
-                                            if(err) throw err;
-                                            posts.rates = rates || [];
-                                            res.send(posts);
-                                        });
-                                    }
-                                    else{
-                                        res.send(posts);
-                                    }
-                                }
-                            });
-                        }
-                        else {
-                            if (x === posts.docs.length - 1) {
-                                console.log(posts);
-                                res.send(posts);
-                            }
-                        }
-                    }
-                }
-                else{
-                    res.send({docs:[],total:0});
-                }
-            }
-            else{
-                res.send(posts);
-            }
+            return callback(posts);
         }
     });
 };

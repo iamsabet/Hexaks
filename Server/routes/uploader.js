@@ -158,9 +158,9 @@ var uploader = {
 
 onSimpleUpload: function (fields, file, path,fileName ,res,postId) {
     let uuid = fields.qquuid,
-        responseData = {
-            success: false
-        };
+    responseData = {
+        success: false
+    };
 
     file.name = fields.qqfilename;
     file.fullName = fileName;
@@ -288,7 +288,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                             }
                                             let device = null;
                                             if (exif && exifData.image !== {} && exifData.image) {
-                                                let location = exifData.gps || "";
+                                                let gpsLocation = exifData.gps || "";
                                                 Device.Create(exifData.image.Make, exifData.image.Model, function (resultId) {
                                                     if (resultId !== null) {
                                                         device = {
@@ -306,7 +306,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                                 device: device,
                                                                 "originalImage.resolution.x": data.size.width,
                                                                 "originalImage.resolution.y": data.size.height,
-                                                                location: location
+                                                                gps: gpsLocation
                                                             }
                                                         }
                                                         , function (err, result) {
@@ -331,7 +331,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                             device: null,
                                                             "originalImage.resolution.x": data.size.width,
                                                             "originalImage.resolution.y": data.size.height,
-                                                            location: null,
+                                                            gps: null,
                                                             rejected: rejectReason
                                                         }
                                                     }

@@ -9,7 +9,6 @@ var long = require('mongoose-long')(mongoose);
 var albumSchema = new Schema({
     albumId : String, // must have ownerId after Encryption
     ownerId : String,
-    postIds:[],
     thumbnail : String, // 1 post id - default - first one - can be chosen by user
     collaborators : [], // userIds who can attach posts in this album shared by the owner [] default
     title : String,
@@ -35,7 +34,6 @@ albumSchema.methods.Create = function(albumObject,callback){
         newAlbum.title = albumObject.title;
         newAlbum.albumId = albumObject.albumId;
         newAlbum.createdAt = now;
-        newAlbum.postIds = [];
         newAlbum.updatedAt = now;
         newAlbum.thumbnail = ""; // 1 post id - default - first one - can be chosen by user
         newAlbum.collaborators = []; // userIds who can attach posts in this album shared by the owner [] default
@@ -47,7 +45,6 @@ albumSchema.methods.Create = function(albumObject,callback){
         };
         newAlbum.reportsCount = 0;
         newAlbum.views = 0;
-        newAlbum.isPrivate = albumObject.privacy || false; // overrides all children statuses --> must handle in client cant be changed
         newAlbum.deleted = false;
         newAlbum.ownerId = albumObject.ownerId;
         newAlbum.save();

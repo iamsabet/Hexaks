@@ -2782,7 +2782,7 @@
                             <h3 class="reject">${postsList[index].rejected}</h3>
                         </div>
                         <div class="imgContainer">
-                            <img src="../pictures/${postsList[index].postId}-Small===.${postsList[index].ext}" />
+                            <img src="../pictures/${postsList[index].postId}--Small===.${postsList[index].ext}" />
                         </div>
                         <div class="footer">
                         <a class="ownerUsername usernameLink left" href="/${usersInfo[postsList[index].ownerId].username}">${usersInfo[postsList[index].ownerId].username}</a>
@@ -3018,8 +3018,9 @@
             $("#caption").html(storePostDatas[currentUploadingSelected].caption);
 
             // load location
-            $(".location input").val(storePostDatas[currentUploadingSelected].location);
+            // $(".location input").val(storePostDatas[currentUploadingSelected].location);
 
+            // categories and album
 
             // load privacy situation
             if (storePostDatas[currentUploadingSelected].privacy) {

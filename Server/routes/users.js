@@ -449,7 +449,7 @@ var users = {
     getUserInfosFromCache:function(userId,callback){
 
         redisClient.hgetall(userId + ":info", function (err, info) {
-            if (err) throw err;
+            if (err) callback(err);
             if (info) {
                 return callback(info);
             }
@@ -535,6 +535,7 @@ var users = {
         res.send(false);
     }
 };
+module.exports = users;
 function genToken(userId) {
     let expires = expiresIn(1); // 1 day
     let token = jwt.encode({
@@ -552,4 +553,4 @@ function expiresIn(numDays) {
     return dateObj.setDate(dateObj.getDate() + numDays);
 }
 
-module.exports = users;
+
