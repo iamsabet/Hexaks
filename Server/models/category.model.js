@@ -8,6 +8,8 @@ var redisClient = redis.createClient({
 });    // Create the client // Create the client
 redisClient.select(2,function(){
     console.log("Connected to redis Database");
+
+
 });
 
 var categorySchema = new Schema({
