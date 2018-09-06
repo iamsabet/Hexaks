@@ -5,7 +5,10 @@ var albumSchema = require('../models/album.model');
 var secret = require('../config/secret');
 var album = new albumSchema();
 var posts = require("./posts");
-var users = require("./users");
+var CryptoJS = require("crypto-js");
+var Float = require('mongoose-float').loadType(mongoose);
+var users = require('./users');
+var random = require('randomstring');
 var bcrypt = require("bcrypt-nodejs");
 var redis = require('redis');
 // resize and remove EXIF profile data
@@ -140,8 +143,8 @@ var albums = {
     },
     create: function(req,res,user) {
         if(typeof req.body.title==="string" && req.body.title.length > 0){
-            var albumId = CryptoJS.AES.encrypt((user.userId + "|-a-|" + counts + ":" + random.generate(10)).toString(), secret.albumIdKey).toString();
-            album.findOne({albumId:albumId},function(err,albume){
+            var albumId = CryptoJS.AES.encrypt((user.userId + "|-a-|" + random.generate(10)).toString(), secret.albumIdKey).toString();
+            albumSchema.findOne({albumId:albumId},function(err,albume){
                 if(err) {
                     res.send({result: false, message: "Oops Something went wrong - please try again"});
                 }
@@ -168,7 +171,7 @@ var albums = {
                         createdAt : Date.now(),
                         updatedAt : Date.now()
                     };
-                    album.create(albumObject,function(resultxx){
+                    album.Create(albumObject,function(resultxx){
                         if(resultxx)
                             res.send(albumId);
                     });

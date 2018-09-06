@@ -691,7 +691,7 @@
             eraseCookie("uploading:"+x);
             eraseCookie(x);
             if(x === currentUploadCounts){
-                requestHandler("/api/v1/post/submit","POST",
+                requestHandler("/api/v1/create/category","POST",
                 uploadRequestDatas
                 ,"submitPost");
             }
@@ -754,20 +754,26 @@
 
 
     $("body").on("click","#formArea .albumSelectorContainer ul li",function(){
-        debugger;
+
         if(!this.classList.contains("selected")){
             let assignedToAlbumCounts = parseInt($(this).children("span.assignedToThisAlbum").html()) + 1;
             $(".albumSelectorContainer ul li").removeClass("selected");
             $(this).addClass("selected");
             $("#addAlbum").html(`${$(this).children("span.albumTitle").html()} album`);
+            lastAlbumId = null;
+            let lastAlbumElement = null;
             $(this).children("span.assignedToThisAlbum").html(`${assignedToAlbumCounts}`);
-            let lastAlbumId = storePostDatas[(currentUploadingSelected+1).toString()]["albumId"];
-            let lastAlbumElement = $(`.albumSelectorContainer #album-${lastAlbumId} span.assignedToThisAlbum`);
+            if(storePostDatas[(currentUploadingSelected+1).toString()]["albumId"]){
+                lastAlbumId = storePostDatas[(currentUploadingSelected+1).toString()]["albumId"];
+                lastAlbumElement = $(`#album-${lastAlbumId.split("/").join("-")} span.assignedToThisAlbum`);
+            }
             if(lastAlbumId){
                 let lastAlbumAssingedCounts = parseInt(lastAlbumElement.html()) - 1;
                 lastAlbumElement.html(lastAlbumAssingedCounts);
             }
-
+            else{
+                lastAlbumId = $(this).children("p").html();
+            }
 
             addAlbumToSelectedPost($(this).children("p").html());
         }
@@ -2239,11 +2245,11 @@
 
     }
     function initialCategories(){
-        requestHandler("/category/initial","GET",{},"initialCategories");
+        requestHandler("/api/v1/category/initial","GET",{},"initialCategories");
     }
     function initialAlbums(){
         if((Me !== null && Me !== {}))
-            requestHandler("/album/accessible","GET",{},"initialAlbums");
+            requestHandler("/api/v1/album/accessibles","GET",{},"initialAlbums");
     }
 
     function slideViewPageAction(res) {
@@ -2910,13 +2916,6 @@
     function initialAlbumsResponseAction(albumsList){
         if(!albumsList.message) {
             if (Me !== null && Me !== {}) {
-                if(albumsList.message){
-                    alert(albumsList.message);
-                }
-            }
-            else {
-                // remove albumLists Loaders album loader;
-
                 initialAlbumsElements("newPost", albumsList);
                 initialAlbumsElements("albumManage", albumsList);
             }
@@ -2960,27 +2959,29 @@
             target = "#albumList ul";
         }
         else if(position === "albumManage"){
-
+            target ="#albumManageList ul"
         }
         if(target !== "") {
-            $.each(list,function(index,data){
-                if (list[index] && list[index].id) {
-                    let owner = "";
-                    if(list[index].ownerId !== Me.userId) {
-                        owner = `<span class="owner"> Owner : ${usersInfo[list[index].ownerId].username}</span>`
+            if($(target)[0]){
+                $(target).html();
+                $.each(list,function(index,data){
+                    if (list[index] && list[index].albumId) {
+                        let owner = "";
+                        if(list[index].ownerId !== Me.userId) {
+                            owner = `<span class="owner"> Owner : ${usersInfo[list[index].ownerId].username}</span>`
+                        }
+                        $(target).append(`
+                            <li class="" id="album-${list[index].albumId.split("/").join("-")}">
+                                <p hidden>${list[index].albumId}</p>
+                                <span class="albumTitle">${list[index].title}</span>
+                                <span class="assignedToThisAlbum">${list[index].counts}</span>${owner}
+                            </li>`);
                     }
-                    $(target).append(`
-                        <li class="selected" id="album-${list[index].albumId}">
-                            <p hidden>${list[index].albumId}</p>
-                            <span class="albumTitle">${list[index].title}</span>
-                            <span class="assignedToThisAlbum">${list[index].counts}</span>${owner}
-                        </li>`);
-                    $(`#album-${list[index].albumId}`).click();
-                }
-                else{
-                    console.log("curropt album datas");
-                }
-            });
+                    else{
+                        console.log("curropt album datas");
+                    }
+                });
+            }
         }
     }
     function loadNewPostDatas(postId,uploadCounts){ // red post Infos from cookie if theyre available
@@ -3106,13 +3107,13 @@
 
             // remove create album loader;
 
-            if(res.albumId) {
-                $("#addAlbum").html(res.title + " album");
+            if(typeof albumId==="string") {
+                $("#addAlbum").html('"'+ input.title + '" album');
                 $("#albumList").prepend(`
-                        <li class="selected" id="album-${res.albumId}">
-                            <p hidden>${res.albumId}</p>
-                            <span class="albumTitle">${res.title}</span>
-                            <span class="assignedToThisAlbum">1</span>
+                        <li class="selected" id="album-${albumId}">
+                            <p hidden>${albumId}</p>
+                            <span class="albumTitle">${input.title}</span>
+                            <span class="assignedToThisAlbum">0</span>
                         </li>`);
                 $(`#album-${res.albumId}`).click();
             }
