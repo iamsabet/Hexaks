@@ -1139,7 +1139,10 @@ var posts = {
     view:function(req,res,user) { // caching for later
         if(user) {
             if(req.body && req.body.postId && typeof req.body.postId === "string") {
-                let postOwnerId = req.body.postId.split("|-p-|")[0];
+                let changedPostId = req.body.postId.split("|").join("/").slice(0,-2); // rooted
+                let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
+                let decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                let postOwnerId = decrypted.split("|-p")[0].toString();
                 if(user.blockList.indexOf(postOwnerId) === -1) {
                     users.getUserInfosFromCache(postOwnerId,function(info) {
                         if (info.message) {

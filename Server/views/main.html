@@ -1986,7 +1986,7 @@
                 }
                 if (postsList[currentPostItterator - 1]) {
                     if (postsList[currentPostItterator - 1]) {
-                        left = postsList[currentPostItterator - 1].postId +"-Medium===." + postsList[currentPostItterator - 1].ext;
+                        left = postsList[currentPostItterator - 1].postId +"--Medium===." + postsList[currentPostItterator - 1].ext;
                         $(".pictureBox").prepend(`
                             <img src="../pictures/${left}" class="leftPic"/>
                         `);
@@ -2002,7 +2002,7 @@
                     $(".postFooter .leftButton").removeClass("show");
                 }
                 if (postsList[currentPostItterator]) {
-                    currentPost = postsList[currentPostItterator].postId +"-Medium===." + postsList[currentPostItterator].ext;
+                    currentPost = postsList[currentPostItterator].postId +"--Medium===." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
                     loadPostDatas(currentPostObject, currentPostItterator);
                 }
@@ -2032,7 +2032,7 @@
                 }
                 if (postsList[currentPostItterator + 1]) {
                     if (postsList[currentPostItterator + 1]) {
-                        right = postsList[currentPostItterator + 1].postId + "-Medium===." + postsList[currentPostItterator + 1].ext;
+                        right = postsList[currentPostItterator + 1].postId + "--Medium===." + postsList[currentPostItterator + 1].ext;
                         $(".pictureBox").append(`
                         <img src="../pictures/${right}" class="rightPic"/>
                     `);
@@ -2060,7 +2060,7 @@
                     }
                 }
                 if (postsList[currentPostItterator]) {
-                    currentPost = postsList[currentPostItterator].postId+"-Medium===." + postsList[currentPostItterator].ext;
+                    currentPost = postsList[currentPostItterator].postId+"--Medium===." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
                     loadPostDatas(currentPostObject, currentPostItterator);
                 }
@@ -2084,7 +2084,7 @@
             var right = "";
             if (currentPostItterator > -1 && currentPostItterator <= postsList.length - 1) {
                 if (postsList[currentPostItterator + 1]) {
-                    right = postsList[currentPostItterator + 1].postId+"-Medium===." + postsList[currentPostItterator + 1].ext;
+                    right = postsList[currentPostItterator + 1].postId+"--Medium===." + postsList[currentPostItterator + 1].ext;
                     if (!$(".postFooter .rightButton.show")) {
                         $(".postFooter .rightButton").addClass("show");
                     }
@@ -2099,7 +2099,7 @@
                 }
 
                 if (postsList[currentPostItterator - 1]) {
-                    left = postsList[currentPostItterator - 1].postId+"-Medium===." + postsList[currentPostItterator - 1].ext;
+                    left = postsList[currentPostItterator - 1].postId+"--Medium===." + postsList[currentPostItterator - 1].ext;
                     if (!$(".postFooter .leftButton.show")) {
                         $(".postFooter .leftButton").addClass("show");
                     }
@@ -2112,7 +2112,7 @@
                     }
                 }
                 if (postsList[currentPostItterator]) {
-                    currentPost = postsList[currentPostItterator].postId+"-Medium===." + postsList[currentPostItterator].ext;
+                    currentPost = postsList[currentPostItterator].postId+"--Medium===." + postsList[currentPostItterator].ext;
                     currentPostObject = postsList[currentPostItterator];
 
                     loadPostDatas(currentPostObject, currentPostItterator);
