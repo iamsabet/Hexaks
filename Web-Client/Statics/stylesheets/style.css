@@ -26,7 +26,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .footer{
 	position: relative;
-	float: left;display: inline-block;
+	display: inline-block;
 	clear: both;
 	height: 40px;
 	background-color:black;

@@ -7,6 +7,12 @@ var album = new albumSchema();
 var posts = require("./posts");
 var users = require("./users");
 var bcrypt = require("bcrypt-nodejs");
+var redis = require('redis');
+// resize and remove EXIF profile data
+var redisClient = redis.createClient({
+    password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
+
+});
 var randomString = require("randomstring");
 /* GET home page. */
 var albums = {
@@ -132,65 +138,73 @@ var albums = {
             }
         });
     },
-    create: function(req,res,user,callback) {
-        var albumId = CryptoJS.AES.encrypt((user.userId + "|-a-|" + counts + ":" + random.generate(10)).toString(), secret.albumIdKey).toString();
-        album.findOne({albumId:albumId},function(err,albume){
-            if(err) {
-                res.send({result: false, message: "Oops Something went wrong - please try again"});
-            }
-            if(albume){
-                res.send({result:false,message:"albume already exists"});
+    create: function(req,res,user) {
+        if(typeof req.body.title==="string" && req.body.title.length > 0){
+            var albumId = CryptoJS.AES.encrypt((user.userId + "|-a-|" + counts + ":" + random.generate(10)).toString(), secret.albumIdKey).toString();
+            album.findOne({albumId:albumId},function(err,albume){
+                if(err) {
+                    res.send({result: false, message: "Oops Something went wrong - please try again"});
+                }
+                if(albume){
+                    res.send({result:false,message:"albume already exists"});
+                }
+                else {
+                    var albumObject = {
+                        albumId : albumId, // must have ownerId after Encryption
+                        ownerId : user.userId,
+                        thumbnail : "", // 1 post id - default - first one - can be chosen by user
+                        collaborators : [], // userIds who can attach posts in this album shared by the owner [] default
+                        title : req.body.title,
+                        views : 0, // all children views
+                        rate : {      // for all childrennew and old
+                            points: 0,
+                            counts : 0,
+                            value : 0.0
+                        },
+                        activated:true,
+                        deleted:false,
+                        reportsCount : 0,
+                        counts : 0, // number of children // max size : 500
+                        createdAt : Date.now(),
+                        updatedAt : Date.now()
+                    };
+                    album.create(albumObject,function(resultxx){
+                        if(resultxx)
+                            res.send(albumId);
+                    });
+                }
+            });
+        }
+        else{
+            res.send({result:false,message:"Cant Create Album Without Title"});
+        }
+    },
+    getAccessibles : function(req,res,user) {
+        albumSchema.find({
+            $or: [{ownerId: user.userId}, {collaborators:[user.userId]}],
+            activated: true
+        }, {
+            title:1,
+            albumId:1,
+            createdAt:1,
+            ownerId:1,
+            updatedAt:1,
+            counts:1
+        }, function (err, albumsList) {
+            if (err) throw err;
+            if (albumsList) {
+                res.send(albumsList);
             }
             else {
-                var albumObject = {
-                    albumId : albumId,
-                    owner : {
-                        username: user.username,
-                        profilePicUrl:user.profilePictureUrl,
-                    },
-                    products: [],
-                    hashtags:[],
-                    category:"",
-                    title : "",
-                    caption : "",
-                    rate:{
-                        number:0.0,
-                        counts: 0,
-                    },
-                    albumArtUrl : "", // preview images
-                    curator : {
-                        username:"",
-                        profilePicUrl:"",
-                    },
-
-                };
-                album.create(albumObject,function(albumId){
-                    return callback(albumId);
-                });
-
-
+                console.log("album update failed err : " + JSON.stringify(albumsList));
             }
         });
-
-
     },
-
     update: function(req, res,next,data) {
         var updateuser = req.body;
         var id = req.params.id;
         data[id] = updateuser; // Spoof a DB call
         res.json(updateuser);
-    },
-    submitAlbum:function(req,res,user){
-        redisClient.get(user.username + "::uploadingPost", function (err, value) {
-            if(err) throw err;
-            if(value){
-
-            }
-            else{
-
-            }
-        });
     },
     delete: function(req, res,next,data) {
         var id = req.params.id;

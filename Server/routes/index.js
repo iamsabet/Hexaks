@@ -182,7 +182,7 @@ router.post('/api/v1/post/editPost/', function(req,res){
 router.post('/api/v1/album/create/', function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            albums.submitAlbum(req,res,callback);
+            albums.create(req,res,callback);
         }
         else{
             res.send(callback);
@@ -192,7 +192,7 @@ router.post('/api/v1/album/create/', function(req,res){
 router.get('/api/v1/album/accessibles/', function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            albums.get(req,res,callback);
+            albums.getAccessibles(req,res,callback);
         }
         else{
             res.send(callback);
