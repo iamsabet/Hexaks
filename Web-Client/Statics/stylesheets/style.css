@@ -545,20 +545,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	cursor: pointer;
 }
 
-.postsContainer .eachPost .imgContainer{
-	position: relative;
-	display: inline-block;
-	width: 100%;
-	height: auto;
-	max-height: 610px;
-	left: 0;
-	top: 0;
-	-moz-transform: translate(0,-50%);
-	-ms-transform: translate(0,-50%);
-	-o-transform: translate(0,-50%);
-	overflow: auto;
-	text-align: center;
-}
+
 .postsContainer .eachPost .imgContainer img{
 	max-width: 100%;
 	max-height: 100%;
@@ -606,21 +593,17 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	opacity: 0;
 }
 
-.eachPost .imgContainer{
-	position: absolute;
+.postsContainer .eachPost .imgContainer{
+	position: relative;
 	display: inline-block;
 	width: 100%;
-	height: 100%;
-	left:0;
-	top: 0;
-	-moz-transform: translate(0,-50%);
-	-ms-transform: translate(0,-50%);
-	-o-transform: translate(0,-50%);
+	height: auto;
+	max-height: 610px;
+	left: 0;
+	top:0;
 	overflow: auto;
 	text-align: center;
 }
-
-
 .eachPost .footer{
 	display: block;
 	position: absolute;
@@ -1050,13 +1033,18 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	background-color: #dedede;
 	color: #111111;
 	border: 0;
-	-webkit-transition: all 0.2s ease-in-out;
-	-moz-transition: all 0.2s ease-in-out;
-	-ms-transition: all 0.2s ease-in-out;
-	-o-transition: all 0.2s ease-in-out;
-	transition: all 0.2s ease-in-out;
+	-webkit-transition: all 0.2s ease-in;
+	-moz-transition: all 0.2s ease-in;
+	-ms-transition: all 0.2s ease-in;
+	-o-transition: all 0.2s ease-in;
+	transition: all 0.2s ease-in;
+	font-weight: normal;
 }
-
+.newPostForm .privacy button.selected{
+	background-color: #ff0055;
+	color:whitesmoke;
+	margin-bottom:5px;
+}
 
 .newPostForm button.closeNewPost{
 	position: absolute;

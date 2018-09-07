@@ -507,8 +507,8 @@
     var views = {};
     var lastPostsColumns=0;
     var newPostsColumns = 1;
-    let storePostDatasInterval;
-    let storePostDatas = {
+    let storedPostDatasInterval;
+    let storedPostDatas = {
 
     }; // {"id" : {datas}}
     let storePostAlbumId = null;
@@ -627,8 +627,8 @@
         }
     });
     $("body").on("change",".newPostForm #caption",function(){
-        if(storePostDatas[(currentUploadingSelected+1).toString()]) {
-            storePostDatas[(currentUploadingSelected + 1).toString()]["caption"] = this.value;
+        if(storedPostDatas[(currentUploadingSelected+1).toString()]) {
+            storedPostDatas[(currentUploadingSelected + 1).toString()]["caption"] = this.value;
         }
     });
     $("body").on("change",".timeNav.show select",function(){
@@ -686,7 +686,7 @@
     });
     $("body").on("click","#submitPost",function(e){
         e.preventDefault();
-        uploadRequestDatas = {postsList:JSON.stringify(storePostDatas)}; // already set
+        uploadRequestDatas = {postsList:JSON.stringify(storedPostDatas)}; // already set
         for(let x = 1 ; x <= currentUploadCounts ; x++){ // remove all cookies --> reload them if failed :D
             eraseCookie("uploading:"+x);
             eraseCookie(x);
@@ -763,8 +763,8 @@
             lastAlbumId = null;
             let lastAlbumElement = null;
             $(this).children("span.assignedToThisAlbum").html(`${assignedToAlbumCounts}`);
-            if(storePostDatas[(currentUploadingSelected+1).toString()]["albumId"]){
-                lastAlbumId = storePostDatas[(currentUploadingSelected+1).toString()]["albumId"];
+            if(storedPostDatas[(currentUploadingSelected+1).toString()]["albumId"]){
+                lastAlbumId = storedPostDatas[(currentUploadingSelected+1).toString()]["albumId"];
                 lastAlbumElement = $(`#album-${lastAlbumId.split("/").join("-")} span.assignedToThisAlbum`);
             }
             if(lastAlbumId){
@@ -802,9 +802,21 @@
         $("#newAlbumForm input").val("");
         $("#newAlbum").removeClass("ok");
     });
+    $("body").on("click",".privacy .public",function(){
+        if(!this.classList.contains("selected")){
+            $(".privacy .private").removeClass("selected");
+            $(this).addClass("selected");
+            setPrivacyForSelectedPost(false);
+        }
+    });
 
-
-
+     $("body").on("click",".privacy .private",function(){
+        if(!this.classList.contains("selected")){
+            $(".privacy .public").removeClass("selected");
+            $(this).addClass("selected");
+            setPrivacyForSelectedPost(true);
+        }
+    });
 
 
     // Post View Events
@@ -2258,11 +2270,12 @@
 
     function newPostPageAction(res) {
         if(!res.message) {
-            storePostDatasByInterval(true);
+            storedPostDatasByInterval(true);
             if(res.postId){
-                storePostDatas = {};
+                storedPostDatas = {};
                 initialCategories();
                 initialAlbums();
+            
                 loadNewPostDatas(res.postId,parseInt(res.uploadCounts));
             }
         }
@@ -2781,9 +2794,8 @@
                 }
             }
             $(`.postsContainer .col-${(colNumber+1)}`).append(`
-                    <li class="eachPost" id="post-${postsList[index].postId}">
+                    <li class="eachPost" id="post-${postsList[index].postId.split("|").join("-").split("+").join("-")}">
                     <p hidden>${lastLength}</p>
-                    <p hidden>${postsList[index].number}</p>
                         <div class="header">
                             <h3 class="reject">${postsList[index].rejected}</h3>
                         </div>
@@ -2936,14 +2948,14 @@
         }
     }
 
-    function storePostDatasByInterval(fire) { // in cookies :)
-        storePostDatasToCookie();
+    function storedPostDatasByInterval(fire) { // in cookies :)
+        storedPostDatasToCookie();
         if(!fire)
-            clearInterval(storePostDatasInterval);
+            clearInterval(storedPostDatasInterval);
         else {
-            storePostDatasInterval = setInterval(function(){
+            storedPostDatasInterval = setInterval(function(){
                 console.log("update cookies");
-                storePostDatasToCookie();
+                storedPostDatasToCookie();
             }, 5000);
         }
 
@@ -2987,13 +2999,13 @@
     function loadNewPostDatas(postId,uploadCounts){ // red post Infos from cookie if theyre available
         currentUploadCounts = parseInt(uploadCounts);
         if(isNaN(currentUploadCounts)){
-            debugger;
+
         }
         if(currentUploadCounts > 0) {
             currentUploadingRoot = postId.split("===.")[0];
             let tempData = JSON.parse(readCookie("storedPostDatas"));
-            if(tempData) {
-                storePostDatas = tempData;
+            if(tempData && Object.keys(tempData).length>0) {
+                storedPostDatas = tempData;
                 for(let j = 0 ; j < currentUploadCounts; j++){
                     addPostTemplate(j);
                     if(j === currentUploadCounts -1){
@@ -3003,9 +3015,13 @@
                 }
 
             }
+            else{
+                eraseCookie("storedPostDatas");
+                
+            }
         }
         else{
-            storePostDatas = {};
+            storedPostDatas = {};
         }
     }
 
@@ -3014,17 +3030,17 @@
     function loadUploadingPostDatasInForm(currentUploadingSelected) {
 
 
-        if((storePostDatas[currentUploadingSelected]) && (storePostDatas[currentUploadingSelected] !== null) && (storePostDatas[currentUploadingSelected] !=={})) {
+        if((storedPostDatas[currentUploadingSelected]) && (storedPostDatas[currentUploadingSelected] !== null) && (storedPostDatas[currentUploadingSelected] !=={})) {
             // load caption
-            $("#caption").html(storePostDatas[currentUploadingSelected].caption);
+            $("#caption").html(storedPostDatas[currentUploadingSelected].caption);
 
             // load location
-            // $(".location input").val(storePostDatas[currentUploadingSelected].location);
+            // $(".location input").val(storedPostDatas[currentUploadingSelected].location);
 
             // categories and album
 
             // load privacy situation
-            if (storePostDatas[currentUploadingSelected].privacy) {
+            if (storedPostDatas[currentUploadingSelected].privacy) {
                 $(".privacy .private").addClass("selected");
                 $(".privacy .public").remove("selected");
             }
@@ -3042,7 +3058,7 @@
     }
 
     function removeUploadingPost(id){
-        delete storePostDatas[(id+1).toString()];
+        delete storedPostDatas[(id+1).toString()];
         $(`qq-file-id-${(id*3 + 2)}`).removeClass("show");
         setTimeout(200,function(){
             $(`qq-file-id-${(id*3 + 2)}`).remove();
@@ -3051,6 +3067,7 @@
         });
     }
     function addPostTemplate(id){
+        
         $("#uploadArea .qq-upload-list").append(`
             <li class="qq-file-id-${(id * 3)} qq-upload-success" qq-file-id="${(id * 3)}">
 
@@ -3061,11 +3078,11 @@
             <li class="qq-file-id-${(id*3 + 2)} qq-upload-success" qq-file-id="${(id*3 + 2)}"
                 <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
                 <div class="qq-thumbnail-wrapper">
-                    <img class="qq-thumbnail-selector" src="../pictures/${currentUploadingRoot}-${(id+1)}--Small===.${storePostDatas[(id+1).toString()].format}">
+                    <img class="qq-thumbnail-selector" src="../pictures/${currentUploadingRoot}-${(id+1)}--Small===.${storedPostDatas[(id+1).toString()].format}">
                 </div>
                 <div class="qq-file-info">
                     <div class="qq-file-name">
-                        <span class="qq-upload-file-selector qq-upload-file" title="${storePostDatas[(id+1).toString()].name}">${storePostDatas[(id+1).toString()].name}</span>
+                        <span class="qq-upload-file-selector qq-upload-file" title="${storedPostDatas[(id+1).toString()].name}">${storedPostDatas[(id+1).toString()].name}</span>
                         <span class="qq-upload-file-selector qq-upload-file" title="${(id+1)}">Stored ${(id+1)}</span>
                     </div>
                 </div>
@@ -3076,25 +3093,25 @@
 
 
     function addCategoryToSelectedPost(category){
-        if(storePostDatas[(currentUploadingSelected+1).toString()]) {
-            if (storePostDatas[(currentUploadingSelected+1).toString()]["category"].indexOf(category) === -1)
-                storePostDatas[(currentUploadingSelected+1).toString()]["category"].push(category);
-                $("#addCategory").html("Categories : "+`<span>${storePostDatas[(currentUploadingSelected+1).toString()]["category"].join(", ").toString()}</span>`);
+        if(storedPostDatas[(currentUploadingSelected+1).toString()]) {
+            if (storedPostDatas[(currentUploadingSelected+1).toString()]["category"].indexOf(category) === -1)
+                storedPostDatas[(currentUploadingSelected+1).toString()]["category"].push(category);
+                $("#addCategory").html("Categories : "+`<span>${storedPostDatas[(currentUploadingSelected+1).toString()]["category"].join(", ").toString()}</span>`);
         }
         else{
             console.log("Post Datas not found");
         }
     }
     function removeCategoryFromSelectedPost(category){
-        if(storePostDatas[(currentUploadingSelected+1).toString()]["category"]) {
-            let catIndex = storePostDatas[(currentUploadingSelected+1).toString()]["category"].indexOf(category);
+        if(storedPostDatas[(currentUploadingSelected+1).toString()]["category"]) {
+            let catIndex = storedPostDatas[(currentUploadingSelected+1).toString()]["category"].indexOf(category);
             if (catIndex > -1)
-                storePostDatas[(currentUploadingSelected+1).toString()]["category"].splice(catIndex, 1);
-                $("#addCategory").html("Categories : "+`<span>${storePostDatas[(currentUploadingSelected+1).toString()]["category"].join(", ").toString()}</span>`);
+                storedPostDatas[(currentUploadingSelected+1).toString()]["category"].splice(catIndex, 1);
+                $("#addCategory").html("Categories : "+`<span>${storedPostDatas[(currentUploadingSelected+1).toString()]["category"].join(", ").toString()}</span>`);
         }
     }
     function addAlbumToSelectedPost(albumId){
-        storePostDatas[(currentUploadingSelected+1).toString()]["albumId"] = albumId;
+        storedPostDatas[(currentUploadingSelected+1).toString()]["albumId"] = albumId;
     }
     function createAlbum(albumTitle){
         requestHandler("/api/v1/album/create","POST",{title:albumTitle},"createAlbum");
@@ -3124,29 +3141,29 @@
         }
     }
     function setPrivacyForSelectedPost(situation){ // true --> public , false --> followings
-        if(storePostDatas[(currentUploadingSelected+1).toString()]){
-            storePostDatas[(currentUploadingSelected+1).toString()]["privacy"] = situation
+        if(storedPostDatas[(currentUploadingSelected+1).toString()]){
+            storedPostDatas[(currentUploadingSelected+1).toString()]["privacy"] = situation
         }
     }
     function setDownloadOptionsForPost(cost){ // -1 for disable , 0 for free $ :/
-        if(storePostDatas[(currentUploadingSelected+1).toString()]){
+        if(storedPostDatas[(currentUploadingSelected+1).toString()]){
             if(cost < 1000000 && cost >= -1)
-                storePostDatas[(currentUploadingSelected+1).toString()]["cost"] = cost;
+                storedPostDatas[(currentUploadingSelected+1).toString()]["cost"] = cost;
             else
                 alert(" Invalid Cost Input ");
         }
     }
     function setLocationForPost(locationObject){ //
-        if(storePostDatas[(currentUploadingSelected+1).toString()]){
-            storePostDatas[(currentUploadingSelected+1).toString()]["location"] = locationObject;
+        if(storedPostDatas[(currentUploadingSelected+1).toString()]){
+            storedPostDatas[(currentUploadingSelected+1).toString()]["location"] = locationObject;
         }
     }
     //
 
 
-    function storePostDatasToCookie(){
+    function storedPostDatasToCookie(){
         if((currentUploadingRoot !== null) || (currentUploadCounts > 0)){
-            createCookie("storedPostDatas", JSON.stringify(storePostDatas), 1);
+            createCookie("storedPostDatas", JSON.stringify(storedPostDatas), 1);
         }
 
     }

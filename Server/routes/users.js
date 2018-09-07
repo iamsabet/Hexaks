@@ -181,6 +181,14 @@ var users = {
     },
 
     initialUpload: function (req, res, user) {
+
+        let cookiesList = parseCookies(req);
+    
+        let token = (req.body && req.body.storedPostDatas) || (req.query && req.query.storedPostDatas) || req.headers['storedPostDatas'] || cookiesList['toredPostDatas'];
+
+        if(!token){
+            users.removeUploading(user);
+        }
         redisClient.get(user.userId + ":uploadingPost", function (err, postId) {
             if (err) throw err;
             if (postId) {
@@ -198,6 +206,7 @@ var users = {
                 });
             }
         });
+        
     },
 
     removeUploading: function (user) {
@@ -547,7 +556,16 @@ function genToken(userId) {
         token: token,
     };
 }
+function parseCookies (request) {
+    let list = {},
+        rc = request.headers.cookie;
+    rc && rc.split(';').forEach(function( cookie ) {
+        let parts = cookie.split('=');
+        list[parts.shift().trim()] = decodeURI(parts.join('='));
+    });
 
+    return list;
+}
 function expiresIn(numDays) {
     let dateObj = new Date();
     return dateObj.setDate(dateObj.getDate() + numDays);

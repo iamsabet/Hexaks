@@ -1887,7 +1887,7 @@
                         var extRegex = new RegExp("\\." + allowedExt + "$", "i");
                         if (fileName.match(extRegex) != null) {
                             valid = true;
-                            // save format in storePostDatas[m]
+                            // save format in storedPostDatas[m]
                             return false;
                         }
                     }
@@ -10774,11 +10774,11 @@ function initialPostObjectData(postIndex,fileName,object){
         }
         if(postIndex === 1){
 
-            uploadRequestDatas = storePostDatas;
+            uploadRequestDatas = storedPostDatas;
 
         }
-        if(Object.keys(storePostDatas).length < 21)
-            storePostDatas[`${postIndex}`] = initialObject;
+        if(Object.keys(storedPostDatas).length < 21)
+            storedPostDatas[`${postIndex}`] = initialObject;
         else
             alert("maximum uploads per submit reached : 20"); // holly shit
     

@@ -288,7 +288,8 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                             }
                                             let device = null;
                                             if (exif && exifData.image !== {} && exifData.image) {
-                                                let gpsLocation = exifData.gps || "";
+                                                let gpsLocation = exifData.gps || {};
+                                                
                                                 Device.Create(exifData.image.Make, exifData.image.Model, function (resultId) {
                                                     if (resultId !== null) {
                                                         device = {
