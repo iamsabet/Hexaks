@@ -460,7 +460,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 .postsContainerDiv{
 	position: relative;
-	width: 90%;
+	width: 94%;
 	padding: 15px 0;
 	height: auto;
 	display: inline-block;
@@ -477,8 +477,8 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 @media (max-width:768px){
 	.postsContainerDiv {
-		width: 98%;
-		left: 51%;
+		width: 100%;
+		left: 50%;
 	}
 }
 .postsContainer{
@@ -501,6 +501,16 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		margin-left: 0;
 	}
 }
+@media (max-width:1100px){
+	.postsContainer{
+		padding:0;
+	}
+}
+@media (max-width:768){
+	.postsContainer{
+		padding:0 3px;
+	}
+}
 .postsContainer ul{
 	display: inline-block;
 	height: auto;
@@ -517,13 +527,22 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .postsContainer ul.two{
 	width: 48%;
-	margin:2% 1%;
+	margin:2% 0;
 }
+@media (max-width:1100px){
+	.postsContainer ul.two.col-2{
+		float: right;
+	}
+}
+
 .postsContainer ul.three{
 	width: 31.3%;
 	margin:2% 1%;
 }
-
+.postsContainer ul.four{
+	width: 23%;
+	margin:2% 1%;
+}
 .postsContainer .eachPost {
 	position: relative;
 	display: inline-block;
@@ -538,7 +557,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width: 100%;
 	margin-bottom: 40px;
 	vertical-align: top;
-	padding-bottom: 40px;
 }
 .postsContainer .eachPost:hover{
 	box-shadow: 7px 2px 15px 3px #151515;
@@ -601,7 +619,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	max-height: 610px;
 	left: 0;
 	top:0;
-	overflow: auto;
+	overflow: hidden;
 	text-align: center;
 }
 .eachPost .footer{

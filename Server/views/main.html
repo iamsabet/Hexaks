@@ -2280,10 +2280,10 @@
     function newPostPageAction(res) {
         if(!res.message) {
             storedPostDatasByInterval(true);
+            initialCategories();
+            initialAlbums();
             if(res.postId){
                 storedPostDatas = {};
-                initialCategories();
-                initialAlbums();
                 loadNewPostDatas(res.postId,parseInt(res.uploadCounts));
             }
             else if(res){
@@ -2721,7 +2721,9 @@
             else if(postsColumns === 3){
                 cls = "three";
             }
-
+            else if(postsColumns === 4){
+                cls = "four";
+            }
             for(let g = 1 ; g < (postsColumns+1) ; g++){
                 $(".postsContainer").append(`<ul class="${cls} col-${g}"></ul>`);
                 columnsHeights.push(0);
@@ -2904,7 +2906,7 @@
                     $(".timeNav .rows-3").removeClass("show");
                 }
             }
-            Filters.counts = 15;
+            Filters.counts = 20;
             newPostsColumns = 2;
             if(lastPostsColumns !== newPostsColumns){
                 lastPostsColumns = 2;
@@ -2916,7 +2918,7 @@
                 parsePostsList(true);
             }
         }
-        else {
+        else if(window.innerWidth < 1500 && window.innerWidth > 1101 ){
             newPostsColumns = 3;
             if(lastPostsColumns !== newPostsColumns){
                 if($(".timeNav .rows-3.show")[0] === undefined){
@@ -2928,6 +2930,24 @@
                 parsePostsList(true);
             }
             Filters.counts = 25;
+            if(window.innerWidth > 1500) {
+                if ($(".timeNav .rows-2.show")[0] !== undefined) {
+                    $(".timeNav .rows-2").removeClass("show");
+                }
+            }
+        }
+        else {
+            newPostsColumns = 4;
+            if(lastPostsColumns !== newPostsColumns){
+                if($(".timeNav .rows-3.show")[0] === undefined){
+                    $(".timeNav .rows-3").addClass("show");
+                }
+                $(".timeNav .rows-3").addClass("selected");
+                $(".timeNav .rows-2").removeClass("selected");
+                lastPostsColumns = 4;
+                parsePostsList(true);
+            }
+            Filters.counts = 35;
             if(window.innerWidth > 1200) {
                 if ($(".timeNav .rows-2.show")[0] !== undefined) {
                     $(".timeNav .rows-2").removeClass("show");
