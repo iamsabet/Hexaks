@@ -80,7 +80,6 @@ var posts = {
                     userId = {$exists: true}
                 }
             }
-            console.log(userId);
             let query = {
                 ownerId : userId,
                 activated: (activated || true),
@@ -116,16 +115,13 @@ var posts = {
 
             if (isCurated === true) {
                 if(curator !== undefined && curator !== "") {
-                    console.log(query);
                     query.curatorId = curator;
                 }
                 else{
-                    console.log(query);
                     query.curatorId = {$ne:""};
                 }
             }
             else{
-                console.log(isCurated);
                 query.curatorId =  {$exists:true};
             }
             let options = {
@@ -158,11 +154,8 @@ var posts = {
             else if(orderBy === "views"){ // "views"
                 options.sort = {views: -1};
             }
-            console.log(query);
-            console.log(options);
             post.Paginate(query, options,user,function(postsList){
                 if(postsList){
-                    console.log(postsList);
                     postsList.owners = {};
                     postsList.rates = [];
                     if(postsList.docs.length > 0) {
@@ -170,7 +163,6 @@ var posts = {
                         for (let x = 0; x < postsList.docs.length; x++) {
                             users.getUserInfosFromCache(postsList.docs[x].ownerId,function(info){
                                 if (!info.message){
-                                    console.log(info);
                                     if(user && info.blockList.indexOf(user.userId) > -1) { // user is blocked by the post owner
                                         postsList.docs.splice(x,1);
                                     }
@@ -181,7 +173,7 @@ var posts = {
                                     }
                                 }
                                 else {
-                                    console.log("err :" + err + " / values : " + info);
+
                                     
                                 }
                                 postIds.push(postsList.docs[x].postId);
@@ -642,7 +634,7 @@ var posts = {
                                 postIds.push(targetPostId);
                                 let postQuery = {
                                     postId: targetPostId,
-                                    albumId: albumIdx,
+                                    albumId: null,
                                     activated: false
                                 };
 

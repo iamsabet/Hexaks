@@ -338,8 +338,11 @@
                 </div>
             </div>
             <div class="downloadOptions">
-                <button class="disabled"></button>
-                <button class="newAlbumButton"></button>
+                <h4>
+                    Download Options
+                </h4>
+                <button id="disabled">Disabled</button>
+                <button id="free">Free</button>
             </div>
             <p>Payment Options Coming Soon</p>
     </div>
@@ -515,7 +518,7 @@
             urlParser(true,"first");
             resize();
             initialCategories();
-            initialAlbums();
+            // initialAlbums();
         }
         else {
             getMe();
@@ -802,7 +805,20 @@
             setPrivacyForSelectedPost(false);
         }
     });
-
+    $("body").on("click","#disabled",function(){
+        if(!this.classList.contains("selected")){
+            $("#free").removeClass("selected");
+            $(this).addClass("selected");
+            setDownloadOptionsForPost(-1);
+        }
+    });
+    $("body").on("click","#free",function(){
+        if(!this.classList.contains("selected")){
+            $("#disabled").removeClass("selected");
+            $(this).addClass("selected");
+            setDownloadOptionsForPost(0);
+        }
+    });
      $("body").on("click",".privacy .private",function(){
         if(!this.classList.contains("selected")){
             $(".privacy .public").removeClass("selected");
@@ -3073,7 +3089,9 @@ Wedding`;
                     if (list[index] && list[index].albumId) {
                         let owner = "";
                         if(list[index].ownerId !== Me.userId) {
-                            owner = `<span class="owner"> Owner : ${usersInfo[list[index].ownerId].username}</span>`
+                            if(usersInfo[list[index].ownerId]){
+                                owner = `<span class="owner"> Owner : ${usersInfo[list[index].ownerId].username}</span>`
+                            }
                         }
                         $(target).append(`
                             <li class="" id="album-${list[index].albumId.split("/").join("-")}">
