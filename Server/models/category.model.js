@@ -89,7 +89,7 @@ categorySchema.methods.initialCategoriesInCache = function(hours){
     });
 };
 
-categorySchema.methods.Create = function(now,mode,categoryName,postId,callback) {
+categorySchema.methods.Create = function(now,mode,categoryName,callback) {
     console.log(categoryName);
     if((categoryName) && (typeof categoryName === "string") && (categoryName.length > 0)) {
         let hours = now.getHours();
@@ -142,8 +142,7 @@ categorySchema.methods.Create = function(now,mode,categoryName,postId,callback) 
                             newCategory.updatedAt = nowTime;
                             newCategory.counts = 1;
                             newCategory.name = categoryName;
-                            if(postId)
-                                newCategory.thumbnailUrl="../pictures/"+postId; // 
+                            newCategory.thumbnailUrl=""; // 
                             if(mode === 0){
                                 newCategory.hour = hours;
                                 newCategory.day = -1;

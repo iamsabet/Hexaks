@@ -551,8 +551,7 @@ var posts = {
                     }
                     else{
                       let postIds = [];
-                      let str2 = postId.split("===.")[0];
-                      let rootPostId = str2.slice(0, -2);
+                      let rootPostId = postId.split("===.")[0];
                       if (rootPostId) {
 
                         for(let postsItterator = 0 ; postsItterator < keys.length ; postsItterator++){
@@ -647,8 +646,8 @@ var posts = {
                                     activated: false
                                 };
 
-
-                                postSchema.findOneAndUpdate(postQuery, { //// jeezzz
+                                console.log(postQuery);
+                                postSchema.update(postQuery, { //// jeezzz
                                     $set: {
                                         album: albumIdx,
                                         activated: true,
@@ -662,29 +661,27 @@ var posts = {
                                         tags: tagsList,
                                         "originalImage.cost": costx// 0 if free // must complete tonight
                                     }
-                                }, function (err, resultm) {
+                                }, function (err, resultx) {
                                     if (err) throw err;
-                                    if (resultm) {
-                                        console.log(postQuery + "post activated"); // post activated successfully 
-
-                                        
-                                        for (let c = 0; c < categories.length; c++) { // create hourly category
-                                            if (categories[c] && (categories[c] !== undefined)) {
-                                                Category.Create(now, 0, categories[c],targetPostId+"--Small===."+resultm.ext,function (callback) {
+                                    if (resultx.n===1) {
+                                        console.log(postQuery + "post activated"); // post activated successfully   
+                                        for (let c = 0; c < categoryx.length; c++) { // create hourly category
+                                            if (categoryx[c] && (categoryx[c] !== undefined)) {
+                                                Category.Create(now, 0, categoryx[c],function (callback) {
                                                     console.log("category create hourly callback : " + callback);
                                                     if (callback === true) {
-                                                        if (allCategories.indexOf(categories[c]) === -1)
-                                                            allCategories.push(categories[c]);
+                                                        if (allCategories.indexOf(categoryx[c]) === -1)
+                                                            allCategories.push(categoryx[c]);
                                                         }
                                                         else{
         
                                                         }
                                                     });
-                                                Category.Create(now, 1, categories[c],targetPostId,function (callback) {
+                                                Category.Create(now, 1, categoryx[c],function (callback) {
                                                     console.log("category create daily callback : " + callback);
                                                     if (callback === true) {
-                                                        if (allCategories.indexOf(categories[c]) === -1)
-                                                            allCategories.push(categories[c]);
+                                                        if (allCategories.indexOf(categoryx[c]) === -1)
+                                                            allCategories.push(categoryx[c]);
                                                         }
                                                         else{
         
@@ -746,10 +743,13 @@ var posts = {
                                         });
                                     }
                                     else {
-                                        res.send({
-                                            result: false,
-                                            message: "Oops something went wrong"
-                                        });
+                                        console.log("post update failed"); // 
+                                        if (postsItterator === 19 || (postsItterator === keys.length -1)){
+                                            res.send({
+                                                result:false,
+                                                message:"Update failed"
+                                            })
+                                        }
                                     }
                                 });
                             }

@@ -13,7 +13,7 @@ var categories = {
 
     addNewCategory: function(req, res,user) {
         let now = new Date();
-        Cagtegories.Create(now,-1,req.body.category,null,function(callback){
+        Cagtegories.Create(now,-1,req.body.category,function(callback){
             res.send(callback);
         });
     },
