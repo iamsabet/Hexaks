@@ -184,7 +184,7 @@ var users = {
 
         let cookiesList = parseCookies(req);
     
-        let token = (req.body && req.body.storedPostDatas) || (req.query && req.query.storedPostDatas) || req.headers['storedPostDatas'] || cookiesList['toredPostDatas'];
+        let token = (req.body && req.body.storedPostDatas) || (req.query && req.query.storedPostDatas) || req.headers['storedPostDatas'] || cookiesList['storedPostDatas'];
 
         if(!token){
             users.removeUploading(user);

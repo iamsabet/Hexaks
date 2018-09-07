@@ -551,31 +551,20 @@ var posts = {
                     }
                     else{
                       let postIds = [];
-                      for(let postsItterator = 0 ; postsItterator < keys.length ; postsItterator++){
-                        if(postsItterator < 20 && postsList[keys[postsItterator]]) {
-                            let now = new Date();
-                            let newPostDatas = postsList[keys[postsItterator]];
-                            let allCategories = [];
-                            let categories = newPostDatas.category || [];
-                            for (let c = 0; c < categories.length; c++) { // create categories
-                                if (categories[c] && (categories[c] !== undefined)) {
-                                    Category.Create(now, 0, categories[c], function (callback) {
-                                        console.log("category create callback : " + callback);
-                                        if (callback === true) {
-                                            if (allCategories.indexOf(categories[c]) === -1)
-                                                allCategories.push(categories[c]);
-                                            }
-                                            else{
+                      let str2 = postId.split("===.")[0];
+                      let rootPostId = str2.slice(0, -2);
+                      if (rootPostId) {
 
-                                            }
-                                        });
-                                  }
-                                }
-                            // create other things
-                            let str2 = postId.split("===.")[0];
-                            let rootPostId = str2.slice(0, -2);
-                            if (rootPostId) {
-
+                        for(let postsItterator = 0 ; postsItterator < keys.length ; postsItterator++){
+                            if(postsItterator < 20 && postsList[keys[postsItterator]]) {
+                                let now = new Date();
+                                let newPostDatas = postsList[keys[postsItterator]];
+                                let allCategories = [];
+                                let targetPostId = rootPostId+"-"+keys[postsItterator];
+                                let categoriesList = newPostDatas.category || [];
+                                
+                                // create other things
+                            
                                 
                                 let privacy = newPostDatas.privacy;
                                 let caption = newPostDatas.caption;
@@ -584,11 +573,11 @@ var posts = {
                                 let location = newPostDatas.location;
                                 let tags = newPostDatas.tags;
                                 
-   
+
                                 let albumId = newPostDatas.albumId || null;
-                                console.log("post Id before update post:" + postId.split("===.")[0]+"-"+keys[postsItterator]);
+                        
                                 // update album If Have
-                                let targetPostId = postId.split("===.")[0]+"-"+keys[postsItterator];
+                                
                                 // Gathering Datas
 
                                 let costx = 0;
@@ -601,10 +590,10 @@ var posts = {
                                     str = caption;
                                 }
                                 let categoryx = [];
-                                if (typeof categories === "object") {
-                                    categoryx = categories;
+                                if (typeof categoriesList === "object") {
+                                    categoryx = categoriesList;
                                 }
-                      
+                    
 
                                 
                                 let locationx = null;
@@ -645,7 +634,7 @@ var posts = {
 
                                 }
                                 else {
-																	
+                                                                    
                                 }
                                 let albumIdx =  null;
                                 if(typeof albumId === "string"){
@@ -659,7 +648,7 @@ var posts = {
                                 };
 
 
-                                postSchema.update(postQuery, { //// jeezzz
+                                postSchema.findOneAndUpdate(postQuery, { //// jeezzz
                                     $set: {
                                         album: albumIdx,
                                         activated: true,
@@ -673,12 +662,36 @@ var posts = {
                                         tags: tagsList,
                                         "originalImage.cost": costx// 0 if free // must complete tonight
                                     }
-                                }, function (err, result) {
-                                    
+                                }, function (err, resultm) {
                                     if (err) throw err;
-                                    if (result.n === 1) {
+                                    if (resultm) {
                                         console.log(postQuery + "post activated"); // post activated successfully 
 
+                                        
+                                        for (let c = 0; c < categories.length; c++) { // create hourly category
+                                            if (categories[c] && (categories[c] !== undefined)) {
+                                                Category.Create(now, 0, categories[c],targetPostId+"--Small===."+resultm.ext,function (callback) {
+                                                    console.log("category create hourly callback : " + callback);
+                                                    if (callback === true) {
+                                                        if (allCategories.indexOf(categories[c]) === -1)
+                                                            allCategories.push(categories[c]);
+                                                        }
+                                                        else{
+        
+                                                        }
+                                                    });
+                                                Category.Create(now, 1, categories[c],targetPostId,function (callback) {
+                                                    console.log("category create daily callback : " + callback);
+                                                    if (callback === true) {
+                                                        if (allCategories.indexOf(categories[c]) === -1)
+                                                            allCategories.push(categories[c]);
+                                                        }
+                                                        else{
+        
+                                                        }
+                                                    });
+                                            }
+                                        }
 
                                         // update album
                                         albumSchema.update({

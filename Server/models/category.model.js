@@ -15,7 +15,9 @@ redisClient.select(2,function(){
 var categorySchema = new Schema({
     name : String,
     counts:Number,
-    hour:Number, //0 - 23
+    thumbnailUrl:String,
+    hour:Number, // -1 - 23
+    day:Number, // -1 - 31
     createdAt:Number,
     updatedAt:Number,
     activated:Boolean,
@@ -87,50 +89,73 @@ categorySchema.methods.initialCategoriesInCache = function(hours){
     });
 };
 
-categorySchema.methods.Create = function(now,mode,categoryName,callback) {
+categorySchema.methods.Create = function(now,mode,categoryName,postId,callback) {
     console.log(categoryName);
     if((categoryName) && (typeof categoryName === "string") && (categoryName.length > 0)) {
         let hours = now.getHours();
-        let windowEdge = Date.now() - 3600000 + 60000; // 59 minutes before
+        let day = now.getDay();
+        let nowTime = now.getTime();
+        let windowEdge = (now.getTime() - 3600000 + 60000); // 59 minutes before
         if (mode === -1) {
-            category.findOne({name:categoryName,hour:mode},function(err,resultc){
+            category.findOne({name:categoryName,hour:mode,day:mode},function(err,resultc){
                 if(err) throw err;
                 if(!resultc) {
                     let newCategory = new Category({name: categoryName});
-                    newCategory.createdAt = Date.now();
-                    newCategory.updatedAt = Date.now();
+                    newCategory.createdAt = nowTime;
+                    newCategory.updatedAt = nowTime;
                     newCategory.hour = mode;
+                    newCategory.day = mode;
+                    newCategory.thumbnailUrl="../profilePics/avatar.png"; // 
+                    newCategory.counts = 0;
                     newCategory.name = categoryName;
-                    newCategory.hour = hours;
                     newCategory.activated = true;
                     newCategory.deleted = false;
                     newCategory.save();
+                    return callback(true);
                 }
                 else{
-                    callback({result:false,message:"Already exists category : "+categoryName});
+                    return callback({result:false,message:"Already exists category : "+categoryName});
                 }
             })
         }
         else {
-                category.update({name:categoryName,hour:-1},{$inc:{counts:1}},function(err,value){
+                //
+                if(mode === 0){
+                    day = -1;
+                }
+                else if(mode === 1){
+                    hours = -1;
+                }
+                category.update({name:categoryName,hour:-1,day:-1},{$inc:{counts:1},$set:{updatedAt:nowTime}},function(err,value){ 
                     if(err) throw err;
                     if(value.n > 0){
                         category.update({
                         name: categoryName,
                         hour: hours,
+                        day:day,
                         createdAt: {$gt: windowEdge}
-                    },{$inc: {counts: 1}}, function (err, resultx) {
+                    },{$inc: {counts: 1},$set:{updatedAt:nowTime}}, function (err, resultx) {
                         if (err) throw err;
                         if (resultx.n === 0) {
                             let newCategory = new Category({name: categoryName});
-                            newCategory.createdAt = Date.now();
-                            newCategory.updatedAt = Date.now();
+                            newCategory.createdAt = nowTime;
+                            newCategory.updatedAt = nowTime;
                             newCategory.counts = 1;
                             newCategory.name = categoryName;
-                            newCategory.hour = hours;
+                            if(postId)
+                                newCategory.thumbnailUrl="../pictures/"+postId; // 
+                            if(mode === 0){
+                                newCategory.hour = hours;
+                                newCategory.day = -1;
+                            }
+                            else if(mode === 1){
+                                newCategory.day = day;
+                                newCategory.hour = -1;
+                            }
                             newCategory.activated = true;
                             newCategory.deleted = false;
                             newCategory.save(function (err, result) {
+                                if(err) throw err;
                                 if (result) {
                                     redisClient.zincrby("categoriesTrend:6cache", 1, categoryName, function (err, counts) { // hourly 1time per hour
                                         if (err) throw err;

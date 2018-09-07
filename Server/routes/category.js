@@ -13,15 +13,15 @@ var categories = {
 
     addNewCategory: function(req, res,user) {
         let now = new Date();
-        Cagtegories.Create(now,-1,req.body.category,function(callback){
+        Cagtegories.Create(now,-1,req.body.category,null,function(callback){
             res.send(callback);
         });
     },
 
-    getDefinedCategories: function(req, res,user) {
-        categorySchema.find({$query:{hour: -1},$orderBy:{counts:1}},{name:1,counts:1}, function (err, defCategories) {
+    getDefinedCategories: function(req,res) {
+        categorySchema.find({$query:{hour: -1},$orderBy:{counts:1}},{name:1,counts:1,thumbnailUrl:1}, function (err, defCategories) {
             if (err) res.send([]);
-            res.send(defCategories);
+                res.send(defCategories);
         });
 
     }

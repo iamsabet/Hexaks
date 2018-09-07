@@ -694,9 +694,9 @@ router.post('/api/v1/posts/:uuid',function(req,res){
 
 // categories controllers
 
-router.get('/api/v1/getDefinedCategories/',function(req,res) {
+router.get('/api/v1/category/accessibles',function(req,res) {
 
-    categories.getDefinedCategories(req,res,callback);
+    categories.getDefinedCategories(req,res);
 
 });
 

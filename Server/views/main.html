@@ -314,14 +314,7 @@
                 <button id="addCategory" class="addCategory">Categories</button>
                 <div class="slideList" id="catList">
                     <ul class="allCategories">
-                        <li class="Nature">Nature
-                            <img src="" />
-                            <button></button>
-                        </li>
-                        <li class="Industrial selected">Industrial
-                            <img src="" />
-                            <button></button>
-                        </li>
+                    
                     </ul>
                 </div>
             </div>
@@ -691,7 +684,7 @@
             eraseCookie("uploading:"+x);
             eraseCookie(x);
             if(x === currentUploadCounts){
-                requestHandler("/api/v1/create/category","POST",
+                requestHandler("/api/v1/post/submit","POST",
                 uploadRequestDatas
                 ,"submitPost");
             }
@@ -2257,7 +2250,7 @@
 
     }
     function initialCategories(){
-        requestHandler("/api/v1/category/initial","GET",{},"initialCategories");
+        requestHandler("/api/v1/category/accessibles","GET",{},"initialCategories");
     }
     function initialAlbums(){
         if((Me !== null && Me !== {}))
@@ -2275,8 +2268,11 @@
                 storedPostDatas = {};
                 initialCategories();
                 initialAlbums();
-            
                 loadNewPostDatas(res.postId,parseInt(res.uploadCounts));
+            }
+            else if(res){
+                eraseCookie("storedPostDatas");
+                eraseCookie("uploading");
             }
         }
         else{
@@ -2947,7 +2943,78 @@
             alert(categoriesList.message);
         }
     }
+    function initialMasterCategories(){
+        uploadRequestDatas = {postsList:JSON.stringify(storedPostDatas)}; // already set
+        let categoriesText = `Abstract
+Aerial
+Animal
+Architecture
+Astrophotography
+Avian
+Black and White
+Cityscape
+Current Events
+Decisive Moment
+Defocused
+Documentary
+Emotive
+Expression
+Family
+Fashion
+Film
+Fine Art
+Food
+Glamour
+HDRI (High Dynamic Range Imaging)
+Humorous
+ICM (intentional camera movement)
+Industrial
+Infrared
+Interior
+Journalism
+Landscape
+Lomo
+Macro
+Nature
+Nude
+Panoramas/Mosaics
+Performance
+Pinhole
+Portrait
+Product
+Publicity
+Random
+Recycled Art
+Rough Camera
+Rural
+Sea and Sand
+Sky
+Snapshot
+Sports
+Still Life
+Stock
+Street Photography
+Suburban
+Swimsuit
+Tourist
+Travel
+Underwater
+Urban
+Vehicle
+Vintage
+Weather
+Wedding`;
 
+        let ctgs = categoriesText.split("\n");
+        for(let b = 0 ; b < ctgs.length ; b++){
+        if(ctgs[b]!==""){
+            uploadRequestDatas.category = ctgs[b];
+            requestHandler("/api/v1/admin/createCategory","POST",
+                    uploadRequestDatas
+                    ,"createCategories");
+            }
+        }
+    }
     function storedPostDatasByInterval(fire) { // in cookies :)
         storedPostDatasToCookie();
         if(!fire)
@@ -2961,7 +3028,33 @@
 
     }
     function initialCategoriesElements(position,list){
-
+        let target = "";
+        if(position === "newPost"){
+            target = "#catList ul";
+        }
+        else if(position === "timeNav"){
+            target ="#categoriesList ul"
+        }
+        if(target !== "") {
+            if($(target)[0]){
+                $(target).html();
+                $.each(list,function(index,data){
+                    if (list[index] && list[index].name) {
+                        let owner = "";
+                        $(target).append(`
+                        <li class="${list[index].name}">
+                            <span class="cat-name">${list[index].name}</span>
+                            <span class="cat-counts">${list[index].counts}</span>
+                            <img src="${list[index].thumbnailUrl}" />
+                            <button></button>
+                        </li>`);
+                    }
+                    else{
+                        console.log("curropt album datas");
+                    }
+                });
+            }
+        }
     }
 
     function initialAlbumsElements(position,list){
@@ -3124,15 +3217,15 @@
 
             // remove create album loader;
 
-            if(typeof albumId==="string") {
+            if(typeof res==="string") {
                 $("#addAlbum").html('"'+ input.title + '" album');
-                $("#albumList").prepend(`
-                        <li class="selected" id="album-${albumId}">
-                            <p hidden>${albumId}</p>
+                $("#albumList ul").prepend(`
+                        <li class="" id="album-${res.split("|").join("-").split("+").join("-")}">
+                            <p hidden>${res}</p>
                             <span class="albumTitle">${input.title}</span>
                             <span class="assignedToThisAlbum">0</span>
                         </li>`);
-                $(`#album-${res.albumId}`).click();
+                $(`#album-${res.split("|").join("-").split("+").join("-")}`).click();
             }
             else{
                 alert("Album create failed ");
