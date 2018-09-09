@@ -505,6 +505,22 @@ var users = {
             }
         });
     },
+    increasePostOwnerViews:function(postOwnerId,callback){
+        userSchema.update({userId:postOwnerId,activated:true},{
+            $inc: {
+                views: 1
+            }
+        },function(err,result){
+            if(err) throw err;
+            console.log(result);
+            if(result.n > 0){
+                return callback(true);
+            }
+            else{
+                return callback({result:false,message:"post owner views didnt increase"});
+            }
+        });
+    },
     updateSingleUserInfoInCache:function(userId,attr,value,callback){ // mongodb must change before or after this function updates cache without considering master db
         redisClient.hset("info:"+userId,attr,value); // must add to a zset --> points
         redisClient.expire("info:"+userId, 300000);

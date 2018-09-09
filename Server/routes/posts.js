@@ -1145,127 +1145,108 @@ var posts = {
     view:function(req,res,user) { // caching for later
         if(user) {
             if(req.body && req.body.postId && typeof req.body.postId === "string") {
-                let changedPostId = req.body.postId.split("|").join("/").slice(0,-2); // rooted
-                let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
-                let decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                let postOwnerId = decrypted.split("|-p")[0].toString();
-                let blocked = user.blockList.contains(postOwnerId);
-                if(blocked){
-                    res.send({result:false,message:"you blocked the post owner"});
-                }
-                else{
-                    let canQuery = false;
-                    if(user.followings.contains(postOwnerId)){
-                        canQuery = true;
+                let postId = req.body.postId;
+                viewSchema.findOne({viewer:user.userId,postId:req.body.postId,deleted:false,activated:true},{viewer:1,deleted:1},function(err,viewx) {
+                    if (err) throw err;
+                    if (viewx) {
+                        res.send({result:true,message:"already viewd"});
                     }
                     else{
-                        blocks.check(postOwnerId,user.userId,function(blocked2){
-                            if(blocked2){
-                                res.send({result:false,message:"youve been blocked by the post owner"});
-                            }
-                            else{
-                                canQuery = true;
-                            }
-                        });
-                    }
-                    users.getUserInfosFromCache(postOwnerId,function(info) {
-                        if (info.message) {
-                            res.send(info);
+                        let changedPostId = req.body.postId.split("|").join("/").slice(0,-2); // rooted
+                        let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
+                        let decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                        let postOwnerId = decrypted.split("|-p")[0].toString();
+                        if(user.followings.contains(postOwnerId)){
+                            posts.doView(user.userId,postId,true,res); // post and account privacy bypass
                         }
                         else{
-                            let blockList = "";
-                            if(info.blockList !== "") {
-                                blockList = JSON.parse(info.blockList);
+                            let blocked = user.blockList.contains(postOwnerId);
+                            if(blocked){
+                                res.send({result:false,message:"you blocked the post owner"});
                             }
-                            else{
-                                blockList = "";
-                            }
-                            if (blockList === "" || (blockList !== "" && blockList.indexOf(user.userId) === -1)) {
-                                postSchema.find({postId:req.body.postId},{isPrivate:1,views:1},function(err,postx){
-                                    if(err) throw err;
-                                    var viewObject = {
-                                        postId: req.body.postId,
-                                        viewer : user.userId
-                                    };
-                                    console.log(viewObject);
-                                    if(postx) {
-                                        if (JSON.parse(info.privacy)) {
-                                            if (user.followings.indexOf(postOwnerId)) {
-                                                // View
-                                                viewSchema.findOne({viewer:user.userId,postId:req.body.postId,deleted:false},{viewer:1,deleted:1},function(err,viewx) {
-                                                    if (err) throw err;
-
-                                                    if (!viewx) {
-                                                        View.Create({viewer:user.userId,postId:req.body.postId,deleted:false}, function (callback) {
-                                                            if (callback === true) {
-                                                                postx.save();
-                                                                posts.increasePostViews(req, res, req.body.postId);
-                                                            }
-                                                        });
-                                                    }
-                                                    else{
-                                                        res.send({result:true,message:"already viewed"});
-                                                    }
-                                                });
-                                            }
-                                            else {
-
-                                                res.send({result: false, message: "Cant view Private Post"});
-                                            }
-                                        }
-                                        else {
-                                            // View
-                                            viewSchema.findOne({viewer:user.userId,postId:req.body.postId,deleted:false},{viewer:1,deleted:1},function(err,viewx) {
-                                                if (err) throw err;
-                                                if (!viewx) {
-                                                    View.Create({viewer:user.userId,postId:req.body.postId,deleted:false}, function (callback) {
-                                                        if (callback === true) {
-                                                            posts.increasePostViews(req, res, req.body.postId);
-                                                        }
-                                                    });
-                                                }
-                                                else{
-                                                    res.send({result:true,message:"already viewed"});
-                                                }
-                                            });
-                                        }
+                            else{  
+                                blocks.check(postOwnerId,user.userId,function(blocked){
+                                    if(blocked){
+                                        res.send({result:false,message:"youve been blocked by the post owner"});
                                     }
                                     else{
-                                        res.send({result: false, message: "Post Not Found"});
+                                        users.getUserInfosFromCache(postOwnerId,function(hostUser){
+                                            if (hostUser.message) {
+                                                res.send(hostUser);
+                                            }
+                                            else{
+                                                let isPrivate = null;
+                                                if(!hostUser.privacy){
+                                                    posts.doView(user.userId,postId,true,res); // post privacy bypass
+                                                }
+                                                else{ // certainly didnt view so 
+
+                                                    posts.doView(user.userId,postId,false,res); // post privacy bypass
+                                                }
+                                            }          
+                                        });
                                     }
-                                });
-                            }
-                            else {
-                                res.send({result: false, message: "post owner has blocked you"});
+                                }); 
                             }
                         }
-                    });
-                }
-                }
-                else{
-                    res.send({result: false, message: "you have blocked the post owner"});
-                }
+                    }
+                });
             }
             else{
-                res.send({result:false,message:"504 Bad Request"});
+                res.send({result:true,message:"504 bad request"});
             }
+        }
+        else{
+            res.send({result:true,message:"Not Authenticated - view"});
+        }
     },
-    increasePostViews(req,res,postId){
-        postSchema.update({postId:postId,activated:true,"rejected":null,deleted:false},{
-            $inc: {
-                views: 1
+    doView:function(userId,postId,privacyStat,res){
+        let query = {
+            postId:postId,
+            rejected:null,
+            activated:true,
+            deleted:false,
+            isPrivate:{"$exists":true}
+        };
+        if(!privacyStat){
+            query.isPrivate = false;
+        }
+        postSchema.findOneAndUpdate(query,{"$inc":{views:1}},{
+            "fields":{
+                "albumId":1,
+                "isPrivate":1,
+            },
+            "new":true
+        },function(err,postx){
+            if(err){
+                res.send({result:false,message:"Oops Do view Went Wrong"});
             }
-        },function(err,result){
-            if(err) throw err;
-            console.log(result);
-            if(result.n > 0){
-                res.send(true);
+            if(postx){
+                users.increasePostOwnerViews(userId,function(resultc){
+                    if(!resultc.message){
+                        if(typeof postx.albumId==="string"){
+                            albums.increaseAlbumViews(postx.albumId,function(resulta){
+                                res.send(resulta);
+                            });
+                        }
+                        else{
+                            res.send(true);
+                        }
+                    }
+                    else{
+                        res.send(resultc);
+                    }
+                });
             }
             else{
-                res.send({result:true,message:"post view values failed to update"});
+                res.send({
+                    result:false,
+                    message:"Access Denied"
+                })
             }
         });
     },
+    
     report:function(req,res,user){
         if(user) {
             if(req.body && req.body.postId && typeof req.body.postId === "string" && req.body.reportId){

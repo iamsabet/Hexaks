@@ -203,6 +203,22 @@ var albums = {
             }
         });
     },
+    increaseAlbumViews:function(albumId,callback){
+        albumSchema.update({albumId:albumId,activated:true,deleted:false},{
+            $inc: {
+                views: 1
+            }
+        },function(err,result){
+            if(err) throw err;
+            console.log(result);
+            if(result.n > 0){
+                return callback(true);
+            }
+            else{
+                return callback({result:false,message:"post owner views didnt increase"});
+            }
+        });
+    },
     update: function(req, res,next,data) {
         var updateuser = req.body;
         var id = req.params.id;

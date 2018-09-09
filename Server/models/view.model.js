@@ -8,6 +8,7 @@ var viewSchema = new Schema({
     viewer : String, // userId
     postId : String,
     deleted : Boolean,
+    activated:Boolean,
     createdAt : Number,
     updatedAt : Number
 });
@@ -20,7 +21,7 @@ viewSchema.methods.Create = function(viewObject,callback){
     newView.postId = viewObject.postId;
     newView.viewId = random.generate(18);
     newView.deleted = false;
-
+    newView.activated = true;
     newView.save(function(err,result) {
         if (result) {
             callback(true);
