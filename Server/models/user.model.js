@@ -13,7 +13,8 @@ var userSchema = new Schema({
     password : String,
     gender:String,
     birthDate:Date,
-    followingsCount:Number, 
+    followingsCount:Number,
+    followings:[], 
     blockList:[],// <= 100 
     followersCount:Number,
     location:String,

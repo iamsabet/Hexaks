@@ -14,6 +14,7 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
+
 var blockSchema = new Schema({
     blocker : String,
     blocked : String, // userId
@@ -24,39 +25,33 @@ var blockSchema = new Schema({
 });
 
 
-blockSchema.methods.Paginate = function(query,options,req,res){
-    block.paginate(query,options,function(err,follows){
+blockSchema.methods.Paginate = function(query,options,res){
+    block.paginate(query,options,function(err,blocks){
         if(err) {
             console.log(err);
             res.send({docs:[],total:0});
         }
         else {
-            if(follows){
-                follows.owners = {};
-                let selector = "follower";
-                
-                if(follows.docs.length > 0) {
-                    for (let x = 0; x < follows.docs.length; x++) {
-                        if (!follows.owners[follows.docs[x][selector]]) {
-                            users.getUserInfosFromCache(follows.docs[x][selector],function(info) {
+            if(blocks){
+                blocks.owners = {};
+                if(blocks.docs.length > 0) {
+                    for (let x = 0; x < blocks.docs.length; x++) {
+                        if (!blocks.owners[blocks.docs[x]["blocked"]]) {
+                            users.getUserInfosFromCache(blocks.docs[x]["blocked"],function(info) {
                                 if (!info.message) {
-                                    console.log(info);
-                                    follows.owners[follows.docs[x][selector]] = info.username + "/" + info.profilePictureSet;
+                                    blocks.owners[blocks.docs[x]["blocked"]] = info.username + "/" + info.profilePictureSet;
                                 }
                                 else {
-                                    console.log("err :" + err + " / values : " + info);
-                                    follows.owners[follows.docs[x][selector]] = "notfound" + "/" + "male.png";
+                                    blocks.owners[blocks.docs[x]["blocked"]] = null;
                                 }
-
-                                if (x === follows.docs.length - 1) {
-                                    res.send(follows);
+                                if (x === blocks.docs.length - 1) {
+                                    res.send(blocks);
                                 }
                             });
                         }
                         else {
-                            if (x === follows.docs.length - 1) {
-                                console.log(follows);
-                                res.send(follows);
+                            if (x === blocks.docs.length - 1) {
+                                res.send(blocks);
                             }
                         }
                     }
@@ -66,19 +61,25 @@ blockSchema.methods.Paginate = function(query,options,req,res){
                 }
             }
             else{
-                res.send(follows);
+                res.send(blocks);
             }
         }
     });
 };
 
 
-blockSchema.methods.create = function(blockObject,callback){
+blockSchema.methods.create = function(blocker,blocked,callback){
+    let blockObject = {
+        blocker:blocker,
+        blocked:blocked
+    };
     block.update({
         blocker: blockObject.blocker,
         blocked: blockObject.blocked,
         activated:false
-    }, {updatedAt:Date.now(),activated:true} , function (err, result) {
+    }, {
+        $set:{updatedAt:Date.now(),activated:true}
+    }, function (err, result) {
         if (err) res.send({result: false, message: "Oops something went wrong"});
         if (result.n === 0) {
             let blockx = {};
@@ -89,9 +90,10 @@ blockSchema.methods.create = function(blockObject,callback){
             blockx = new Block(blockObject);
             blockx.save(function (err) {
                 if (err) 
-                    return callback({result:false,message:"err in block object"});
-                else 
+                    return callback({result:false,message:"Create Block Object Failed"});
+                else {
                     return callback(true);
+                }
             });
         }
         else{
@@ -100,6 +102,8 @@ blockSchema.methods.create = function(blockObject,callback){
 
     });
 };
+
+
 blockSchema.methods.check = function(blocker,blocked,callback){
     let hashed = CryptoJS.SHA1(blocker, blocked); //("content","key")
     block.findOne({blockId:hashed,activated:true},function(resultx){
@@ -111,21 +115,20 @@ blockSchema.methods.check = function(blocker,blocked,callback){
         }
     })
 };
-blockSchema.methods.remove = function(req,res,unblockObject){
-    block.update({blocker:unblockObject.blocker,blocked:unblockObject.blocked,activated:true},{$set:{deactive:false,updatedAt:Date.now()}},function(err,result){
+
+
+blockSchema.methods.remove = function(blocker,blocked,callback){
+    block.update({blocker:blocker,blocked:blocked,activated:true},{$set:{activated:false,updatedAt:Date.now()}},function(err,result){
        if(err) res.send({result:false,message:"Oops Something went wrong"});
        if(result && result.n === 1) {
-           if(res)
-                res.send(true);
-            else
-                res.send({result:false,message:"Not Blocked"})
+           return callback(true);
        }
        else{
-           if(res)
-                res.send({result:false,message:"Unblock failed"});
+            return callback({result:false,message:"Unblock failed"});
        }
     });
 };
+
 
 blockSchema.pre('save', function(next){
     let now = Date.now();

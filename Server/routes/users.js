@@ -121,6 +121,8 @@ var users = {
                                 birthDate: null,
                                 followingsCount: 0,
                                 followersCount: 0,
+                                blockList:[],
+                                followings:[],
                                 location: "",
                                 city: "",
                                 country: "",
@@ -216,11 +218,11 @@ var users = {
     },
 
     extendExpiration: function (user) {
-        redisClient.get(user.userId + ":online", function (err, value) {
+        redisClient.get("online:"+user.userId, function (err, value) {
             if (!value) {
-                redisClient.set(user.userId + ":online", true);
+                redisClient.set("online:"+user.userId, true);
             }
-            redisClient.expire(user.userId + ":online", 10000);
+            redisClient.expire("online:"+user.userId, 10000);
         });
 
     },
@@ -240,8 +242,19 @@ var users = {
 
     block: function (req, res, user) { // no cache for now
         
-        Block.create({blocker:user.userId,blocked:req.body.blocked},function(callback){
+        blocks.block({blocker:user.userId,blocked:req.body.blockId},function(callback){
             if(callback===true){
+                userSchema.update({userId: user.userId},{
+                    $addToSet: {blockList : req.body.blockId}
+                },function(err,resultx){
+                    if(err) throw err;
+                    if(result.n>0){
+                        res.send(true);
+                    }
+                    else{
+                        res.send(resultx);
+                    }
+                });
                 users.disconnect(user.userId,req.body.blockId);
             }
             else{
@@ -249,34 +262,33 @@ var users = {
             }
         });
     },
-
+    
     unblock: function (req, res, user) {
-        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) > -1) {
-            userSchema.update({userId: user.userId}, {
-                pull: {blockList: req.body.blockId.toString()}
-            }, function (err, result) {
-                if (err) res.send({result: false, message: "Unblock failed"});
-                if (result) {
-                    redisClient.hget(user.userId + ":info","blockList",function(err,blockList) {
-                        if (err) throw err;
-                        if(blockList) {
-                            let newBlockList = JSON.parse(blockList);
-                            newBlockList.pull(req.body.blockId);
-                            redisClient.hset(user.userId + ":info", "blockList", newBlockList);
-                            res.send(true);
-                        }
-                    });
-                }
-            });
-        }
+        blocks.unblock({blocker:user.userId,blocked:req.body.blockId},function(callback){
+            if(callback===true){
+                userSchema.update({userId: user.userId},{
+                    $pull: {blockList : req.body.blockId}
+                },function(err,resultz){
+                    if(err) throw err;
+                    if(result.n>0){
+                        res.send(true);
+                    }
+                    else{
+                        res.send(resultz);
+                    }
+                });
+            }
+            else{
+                res.send(callback);
+            }
+        });
     },
 
     getHostProfile: function (req, res, user) { // no privacy considered !.
         let hostUsername = req.body.host;
         if(typeof hostUsername === "string"){
-            redisClient.get(hostUsername+":userId",function(err,userId) {
-                if(err) res.send({result:false,message:" user name not found"});
-                if(userId) {
+            users.getUserIdFromCache(hostUsername,function(userId) {
+                if(userId && !userId.message && typeof (userId === "string")) {
                     userSchema.findOne({userId: userId}, {
                         username: 1,
                         fullName: 1,
@@ -448,6 +460,14 @@ var users = {
             }
         });
     },
+    getUserIdFromCache:function(username,callback){
+        redisClient.get("userId:"+username,function(err,userId) {
+            if(err) 
+                return callback({result:false,message:" user name not found"});
+            else
+                return callback(userId);
+        });
+    },
     updateAllUserInfosInCache:function(userId,callback){
         userSchema.findOne({userId: userId}, {
             _id: 0,
@@ -498,7 +518,15 @@ var users = {
 
         res.send(false);
     }
+
 };
+
+
+
+
+
+
+
 module.exports = users;
 function genToken(userId) {
     let expires = expiresIn(1); // 1 day
