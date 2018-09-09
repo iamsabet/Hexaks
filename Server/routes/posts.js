@@ -980,156 +980,7 @@ var posts = {
         //     });
     },
 
-    rate:function(req,res,user){ // caching for later
-        if(user) {
-            if(req.body && req.body.postId && typeof req.body.postId === "string" && req.body.value && parseInt(req.body.value) <= 7 && parseInt(req.body.value) >= 1) {
-                let postOwnerId = req.body.postId.split("|-p-|")[0];
-                if(user.blockList.indexOf(postOwnerId) === -1) {
-                    users.getUserInfosFromCache(postOwnerId,function(info) {
-                        if (info.message) {
-                            res.send(info);
-                        }
-                        else{
-                            let blockList = "";
-                            if(info.blockList !== "") {
-                                blockList = JSON.parse(info.blockList);
-                            }
-                            else{
-                                blockList = "";
-                            }
-                            if (blockList === "" || (blockList !== "" && blockList.indexOf(user.userId) === -1)) {
-                                postSchema.findOne({postId:req.body.postId},{privacy:1,rate:1},function(err,post){
-                                    if(err) throw err;
-                                    if(post) {
-                                        if (JSON.parse(info.privacy)) {
-                                            if (user.followings.indexOf(postOwnerId)) {
-                                            // Rate
-                                                info.userId = postOwnerId;
-                                                posts.doRate(req,res,user,req.body.postId,req.body.value,post,info);
-                                            }
-                                            else {
-                                                res.send({result: false, message: "Cant Rate Private Post"});
-                                            }
-                                        }
-                                        else {
-                                            // Rate
-                                            info.userId = postOwnerId;
-                                            posts.doRate(req,res,user,req.body.postId,req.body.value,post,info);
-                                        }
-                                    }
-                                    else{
-                                        res.send({result: false, message: "Post Not Found"});
-                                    }
-                                });
-                            }
-                            else {
-                                res.send({result: false, message: "post owner has blocked you"});
-                            }
-                        }
-                    });
-                }
-                else{
-                    res.send({result: false, message: "you have blocked the post owner"});
-                }
-            }
-            else{
-                res.send({result:false,message:"504 Bad Request"});
-            }
-        }
-        else{
-            res.send({result:false,message:"Not Authenticated"});
-        }
-    },
-    doRate:function(req,res,user,postId,rateNumber,post,hostUser){
-        rateSchema.findOne({rater:user.userId,postId:req.body.postId},{rateId:1,changes:1,rater:1,postId:1,value:1},function(err,ratex) {
-            if (err) throw err;
-            let rateObject = {};
-            if (ratex) {
-                if(ratex.changes < 4) {
-                    ratex.save();
-                    let now = Date.now();
-                    rateSchema.update({rateId:ratex.rateId},{
-                        $set:{
-                            value:rateNumber,
-                            changes : ratex.changes+1,
-                            updatedAt : now
-                        },
-                    },function(err,result){
-                        if(err) res.send({result:false,message:"Update rate object failed + err"});
-                        if(result.n > 0){
-
-                            let smallImageUrl = "../pictures/"+postId + "-Small===.";
-                            if(info.gender)
-
-                            users.pushNotification("environment","Changed rate post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,now);
-
-                            let diff = 0.0;
-                            let points = 0.0;
-                            if(parseFloat(rateNumber) > parseFloat(ratex.value)) {
-                                diff = parseFloat(parseFloat(rateNumber) - parseFloat(ratex.value));
-                                points = parseFloat(parseFloat(post.rate.points) + parseFloat(diff));
-                            }
-                            else {
-                                diff = parseFloat(parseFloat(ratex.value) - parseFloat(rateNumber));
-                                points = parseFloat(parseFloat(post.rate.points) - parseFloat(diff));
-                            }
-                            console.log(diff);
-                            console.log(points);
-                            let value = parseFloat(parseFloat(points)/ parseFloat(post.rate.counts));
-                            console.log(value);
-                            post.save();
-                            posts.updatePostRates(req,res,{postId:ratex.postId},{
-                                $set:{
-                                    rate:{
-                                        points : points,
-                                        value : value,
-                                        count : post.rate.counts,
-                                    }
-                                }
-                            },value.toString()+"/update");
-                        }
-                        else{
-                            res.send({result:false,message:"Update rate object failed"});
-                        }
-                    });
-                }
-                else{
-                    res.send({result:false,message:"Maximum changes for a Rate reached! please try no more"});
-                }
-            }
-            else {
-                rateObject.rater = user.userId;
-                rateObject.value = rateNumber;
-                rateObject.changes = 0;
-                rateObject.postId = postId;
-                post.save();
-                Rate.Create(rateObject,function(callback){
-                   if(callback){
-                       let counts = parseInt(post.rate.counts) + 1 ;
-                       let points = (parseFloat(post.rate.points) + parseFloat(rateNumber));
-                       let value = points / counts;
-                       let smallImageUrl = "../pictures/"+postId + "-Small===.";
-                       users.pushNotification("environment"," Rated your post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,function(resultx){
-                           console.log(" xxxxxxxxxx unread notifications after create " + resultx);
-                       });
-                       posts.updatePostRates(req,res,{postId:rateObject.postId},{
-                           $set:{
-                               rate:{
-                                   points : points,
-                                   value : value,
-                                   counts:counts
-                               }
-                           }
-                       },value.toString()+"/new");
-                   }
-                   else{
-                       res.send({result:false,message:"Rate Object Did not Created"});
-                   }
-                });
-
-            }
-        });
-    },
+    
     updatePostRates:function(req,res,query,updates,value){
         postSchema.update(query,updates,function(err,result){
 
@@ -1152,10 +1003,8 @@ var posts = {
                         res.send({result:true,message:"already viewd"});
                     }
                     else{
-                        let changedPostId = req.body.postId.split("|").join("/").slice(0,-2); // rooted
-                        let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
-                        let decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                        let postOwnerId = decrypted.split("|-p")[0].toString();
+                        viewx.save();
+                        let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
                         if(user.followings.contains(postOwnerId)){
                             posts.doView(user.userId,postId,true,res); // post and account privacy bypass
                         }
@@ -1246,7 +1095,155 @@ var posts = {
             }
         });
     },
-    
+    rate:function(req,res,user){ // caching for later
+        if(user) {
+            if(req.body && req.body.postId && typeof req.body.postId === "string" && req.body.value && parseInt(req.body.value) <= 7 && parseInt(req.body.value) >= 1) {
+                let postId = req.body.postId;
+                let rateValue = parseInt(req.body.value);
+                rateSchema.findOne({rater:user.userId,postId:postId,changes:3},{rateId:1,changes:1,rater:1,postId:1,value:1},function(err,ratex) {
+                    if (err) throw err;
+                    let rateObject = {};
+                    if (ratex) {
+                        res.send({result:false,message:"You have already changed your rate 3 times , no more changes allowed"});
+                    }
+                    else{
+                        ratex.save();
+                        let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
+                        if(user.blockList.contains(postOwnerId)) {
+                            res.send({result:false,message:"You have already changed your rate 3 times , no more changes allowed"});
+                        }
+                        else{
+                            let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
+                            if(user.followings.contains(postOwnerId)){
+                                posts.doRate(user.userId,postId,rateValue,true,res); // post and account privacy bypass
+                            }
+                            else{
+                                let blocked = user.blockList.contains(postOwnerId);
+                                if(blocked){
+                                    res.send({result:false,message:"you blocked the post owner"});
+                                }
+                                else{  
+                                    blocks.check(postOwnerId,user.userId,function(blocked){
+                                        if(blocked){
+                                            res.send({result:false,message:"youve been blocked by the post owner"});
+                                        }
+                                        else{
+                                            users.getUserInfosFromCache(postOwnerId,function(hostUser){
+                                                if (hostUser.message) {
+                                                    res.send(hostUser);
+                                                }
+                                                else{
+                                                    let isPrivate = null;
+                                                    if(!hostUser.privacy){
+                                                        posts.doRate(user.userId,postId,rateValue,true,res); // post privacy bypass
+                                                    }
+                                                    else{ 
+                                                        posts.doRate(user.userId,postId,rateValue,false,res);
+                                                    }
+                                                }          
+                                            });
+                                        }
+                                    }); 
+                                }
+                            }
+                        }    
+                    }
+                });
+            }
+        }
+    },
+    doRate:function(req,res,user,postId,rateNumber,post,hostUser){
+        
+                    ratex.save();
+                    let now = Date.now();
+                    rateSchema.update({rateId:ratex.rateId},{
+                        $set:{
+                            value:rateNumber,
+                            changes : ratex.changes+1,
+                            updatedAt : now
+                        },
+                    },function(err,result){
+                        if(err) res.send({result:false,message:"Update rate object failed + err"});
+                        if(result.n > 0){
+
+                            let smallImageUrl = "../pictures/"+postId + "-Small===.";
+                            if(info.gender)
+
+                            users.pushNotification("environment","Changed rate post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,now);
+
+                            let diff = 0.0;
+                            let points = 0.0;
+                            if(parseFloat(rateNumber) > parseFloat(ratex.value)) {
+                                diff = parseFloat(parseFloat(rateNumber) - parseFloat(ratex.value));
+                                points = parseFloat(parseFloat(post.rate.points) + parseFloat(diff));
+                            }
+                            else {
+                                diff = parseFloat(parseFloat(ratex.value) - parseFloat(rateNumber));
+                                points = parseFloat(parseFloat(post.rate.points) - parseFloat(diff));
+                            }
+                            console.log(diff);
+                            console.log(points);
+                            let value = parseFloat(parseFloat(points)/ parseFloat(post.rate.counts));
+                            console.log(value);
+                            post.save();
+                            posts.updatePostRates(req,res,{postId:ratex.postId},{
+                                $set:{
+                                    rate:{
+                                        points : points,
+                                        value : value,
+                                        count : post.rate.counts,
+                                    }
+                                }
+                            },value.toString()+"/update");
+                        }
+                        else{
+                            res.send({result:false,message:"Update rate object failed"});
+                        }
+                    });
+                }
+                else{
+                    res.send({result:false,message:"Maximum changes for a Rate reached! please try no more"});
+                }
+            }
+            else {
+                rateObject.rater = user.userId;
+                rateObject.value = rateNumber;
+                rateObject.changes = 0;
+                rateObject.postId = postId;
+                post.save();
+                Rate.Create(rateObject,function(callback){
+                   if(callback){
+                       let counts = parseInt(post.rate.counts) + 1 ;
+                       let points = (parseFloat(post.rate.points) + parseFloat(rateNumber));
+                       let value = points / counts;
+                       let smallImageUrl = "../pictures/"+postId + "-Small===.";
+                       users.pushNotification("environment"," Rated your post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,function(resultx){
+                           console.log(" xxxxxxxxxx unread notifications after create " + resultx);
+                       });
+                       posts.updatePostRates(req,res,{postId:rateObject.postId},{
+                           $set:{
+                               rate:{
+                                   points : points,
+                                   value : value,
+                                   counts:counts
+                               }
+                           }
+                       },value.toString()+"/new");
+                   }
+                   else{
+                       res.send({result:false,message:"Rate Object Did not Created"});
+                   }
+                });
+
+            }
+        });
+    },
+    getPostOwnerIdByDecrypt:function(postId){
+        let changedPostId = postId.split("|").join("/").slice(0,-2); // rooted
+        let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
+        let decrypted = bytes.toString(CryptoJS.enc.Utf8);
+        return decrypted.split("|-p")[0].toString();
+    },
     report:function(req,res,user){
         if(user) {
             if(req.body && req.body.postId && typeof req.body.postId === "string" && req.body.reportId){
