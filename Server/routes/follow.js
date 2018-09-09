@@ -109,57 +109,50 @@ var follows = {
     },
     follow:function(req,res,user){
         let hostId = req.body.followingId;
-        console.log(hostId);
-        console.log(user.userId);
-        if(req.body && user.blockList.indexOf(req.body.followingId.toString()) === -1) {
-            redisClient.hgetall(hostId + ":info", function (err, info) {
-                if (err) res.send({result: false, message: "500 error in follow"});
-                if (!err && info) {
-                    if (req.body && req.body.followingId) {
-                        let followObject = {
-                            follower: user.userId,
-                            following: req.body.followingId,
-                        };
-                        if (user.followings.indexOf(req.body.followingId) === -1) {
-                            if (!JSON.parse(info.privacy)) {
-                                console.log(JSON.parse(info.privacy));
-                                user.save();
-                                userSchema.update({userId: followObject.follower}, {
-                                    $inc: {followingsCount: +1},
-                                    $addToSet: {followings: followObject.following}
-                                }, function (err, result) {
-                                    if (err) throw err;
-                                    if (result)
-                                        console.log(result);
-                                });
-                                userSchema.update({userId: followObject.following}, {
-                                    $inc: {followersCount: +1},
-                                }, function (err, result) {
-                                    if (err) throw err;
-                                    if (result)
-                                        console.log(result);
-                                });
-                            }
-                            Follow.create(req, res, followObject, info);
+        
+        users.getUserInfosFromCache(hostId,function(info){
+            if(!info.message){
+                if (req.body && req.body.followingId) {
+                    let followObject = {
+                        follower: user.userId,
+                        following: req.body.followingId,
+                    };
+                    if (user.followings.indexOf(req.body.followingId) === -1) {
+                        if (!JSON.parse(info.privacy)) {
+                            console.log(JSON.parse(info.privacy));
+                            user.save();
+                            userSchema.update({userId: followObject.follower}, {
+                                $inc: {followingsCount: +1},
+                                $addToSet: {followings: followObject.following}
+                            }, function (err, result) {
+                                if (err) throw err;
+                                if (result)
+                                    console.log(result);
+                            });
+                            userSchema.update({userId: followObject.following}, {
+                                $inc: {followersCount: +1},
+                            }, function (err, result) {
+                                if (err) throw err;
+                                if (result)
+                                    console.log(result);
+                            });
                         }
-                        else {
-                            res.send({result: true, message: "already followed"});
-                        }
+                        Follow.create(req, res, followObject, info);
                     }
                     else {
-                        if (!err)
-                            res.send({result: false, message: "Bad input"});
+                        res.send({result: true, message: "already followed"});
                     }
                 }
                 else {
                     if (!err)
-                        res.send({result: false, message: "404 - user info not found in cache"});
+                        res.send({result: false, message: "Bad input"});
                 }
-            });
-        }
-        else{
-            res.send({result:false,message:"This action fails on Blocked user"})
-        }
+            }
+            else {
+                if (!err)
+                    res.send({result: false, message: "404 - user info not found in cache"});
+            }
+        });
     },
     unfollow:function(req,res,user){
         if(user.followings.indexOf(req.body.followingId) > -1) {

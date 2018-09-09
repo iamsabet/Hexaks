@@ -13,9 +13,8 @@ var userSchema = new Schema({
     password : String,
     gender:String,
     birthDate:Date,
-    followingsCount:Number,
-    followings:[],
-    blockList:[], // redis cache --> up to 12 block each person
+    followingsCount:Number, 
+    blockList:[],// <= 100 
     followersCount:Number,
     location:String,
     city:String,

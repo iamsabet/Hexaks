@@ -46,14 +46,14 @@ var auth = {
                         auth.validate(username, password, function (callback) {
                             let userDbObject = callback;
                             if (callback && !callback.message) {
-                                redisClient.hgetall(userDbObject.userId + ":info", function (err, info) {
+                                redisClient.hgetall("info:"+userDbObject.userId, function (err, info) {
                                     if (!err && !info) {
-                                        redisClient.hmset([userDbObject.userId + ":info", "username", userDbObject.username, "privacy", userDbObject.privacy, "verified", userDbObject.verified, "gender", userDbObject.gender,
-                                            "profilePictureSet", userDbObject.profilePictureSet, "blockList", userDbObject.blockList, "rate", userDbObject.rate,]); // must add to a zset --> points
-                                        redisClient.expire(userDbObject.userId + ":info", 300000);
+                                        usrs.updateAllUserInfosInCache(userDbObject.userId,function(resultx){
+                                            res.send(resultx);
+                                        });
                                     }
                                 });
-                                redisClient.set(userDbObject.username + ":userId", userDbObject.userId);
+                                redisClient.set("userId:"+userDbObject.username, userDbObject.userId);
                                 usrs.extendExpiration(userDbObject);
                                 if (!userDbObject) { // If authentication fails, we send a 401 back
                                     res.send({

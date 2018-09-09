@@ -6,6 +6,8 @@ var Follow = new followSchema();
 var notificationSchema = require('../models/notification.model');
 var Notification = new notificationSchema();
 var flw = require("./follow");
+var blockSchema = require("../models/block.model");
+var Block = new blockSchema();
 var redis = require('redis');
 var random = require('randomstring');
 var requestIp = require("request-ip");
@@ -119,8 +121,6 @@ var users = {
                                 birthDate: null,
                                 followingsCount: 0,
                                 followersCount: 0,
-                                followings: [],
-                                blockList: [], // redis cache --> upto 12 block each person
                                 location: "",
                                 city: "",
                                 country: "",
@@ -238,37 +238,16 @@ var users = {
         }
     },
 
-    block: function (req, res, user) {
-        if(req.body && req.body.blockId && user.blockList.indexOf(req.body.blockId.toString()) === -1) {
-            userSchema.update({userId: user.userId}, {
-                $addToSet: {blockList: req.body.blockId.toString()}
-            }, function (err, result) {
-                if (err) res.send({result: false, message: "Block failed"});
-                if (result) {
-                    redisClient.hget(user.userId + ":info","blockList",function(err,blockList) {
-                        if (err) throw err;
-                        if(blockList !== ""){
-                            let newBlockList = JSON.parse(blockList);
-                            if(newBlockList.indexOf(req.body.blockId) === -1){
-                                newBlockList.append(req.body.blockId);
-                                redisClient.hset(user.userId + ":info", "blockList", newBlockList);
-                                res.send(true);
-                            }
-                        }
-                        else{
-                            let newBlockList = [] ;
-                            if(newBlockList.indexOf(req.body.blockId) === -1){
-                                newBlockList.append(req.body.blockId);
-                                redisClient.hset(user.userId + ":info", "blockList", newBlockList);
-                                res.send(true);
-                            }
-                        }
-                    });
-                }
-            });
-            user.disconnect(req, res, user);
-        }
-        // disconnect + add in a block relation between them ( redis or mongo ? )first privlidges
+    block: function (req, res, user) { // no cache for now
+        
+        Block.create({blocker:user.userId,blocked:req.body.blocked},function(callback){
+            if(callback===true){
+                users.disconnect(user.userId,req.body.blockId);
+            }
+            else{
+                res.send(callback);
+            }
+        });
     },
 
     unblock: function (req, res, user) {
@@ -457,39 +436,14 @@ var users = {
     },
     getUserInfosFromCache:function(userId,callback){
 
-        redisClient.hgetall(userId + ":info", function (err, info) {
+        redisClient.hgetall( "info:"+userId, function (err, info) {
             if (err) callback(err);
             if (info) {
                 return callback(info);
             }
             else {
-                console.log(" user info not found in cache");
-                userSchema.findOne({userId: userId}, {
-                    _id: 0,
-                    userId: 1,
-                    username: 1,
-                    blockList: 1,
-                    interestCategories: 1,
-                    favouriteProfiles: 1,
-                    profilePictureSet: 1,
-                    gender: 1,
-                    privacy: 1,
-                    views:1,
-                    verified: 1,
-                    rate: 1,
-                }, function (err, user) {
-                    if (err) throw err;
-                    if (user) {
-                        redisClient.hmset([user.userId + ":info", "username", user.username, "privacy", user.privacy, "verified", user.verified, "gender", user.gender,
-                            "profilePictureSet", user.profilePictureSet, "blockList", user.blockList, "rate", user.rate , user.views ]); // must add to a zset --> points
-                        redisClient.expire(user.userId + ":info" , 300000);
-                        console.log("user infos updated in cache expire 5minutes:");
-                        return callback({"userId": user.userId,"username": user.username, "privacy": user.privacy, "emailVerified": user.emailVerified,"gender": user.gender,
-                            "profilePictureSet": user.profilePictureSet, "phoneVerified": user.verified , "blockList": user.blockList, "rate": user.rate , "views":user.views});
-                    }
-                    else {
-                        return callback({result:false,message:"User information not found"});
-                    }
+                users.updateAllUserInfosInCache(userId,function(resulx){
+                    return callback(resulx);
                 });
             }
         });
@@ -511,13 +465,14 @@ var users = {
         }, function (err, user) {
             if (err) throw err;
             if (user) {
-                redisClient.hmset([user.userId + ":info", "username", user.username, "privacy", user.privacy, "verified", user.verified, "gender", user.gender,
-                    "profilePictureSet", user.profilePictureSet,"interestCategories",user.interestCategories, "blockList", user.blockList, "rate", user.rate , user.views ]); // must add to a zset --> points
-                redisClient.expire(user.userId + ":info" , 300000);
-                redisClient.set(user.username + ":userId", user.userId);
-                users.extendExpiration(user);
-                console.log("user infos updated in cache expire 5minutes:");
-                return callback(true); // updated
+                redisClient.hmset(["info:"+user.userId,"userId",user.userId, "username", user.username,"fullName",user.fullName,"flwers",user.followersCount,"flwings" ,user.followingsCount,"location",user.city+":"+user.country+"/"+user.location,
+                "postsCount",user.postsCount,"reportsCount",user.reportsCount,"privacy", user.privacy, "gender", user.gender,
+                    "profilePictureSet", user.profilePictureSet, "rate", user.rate ,"views", user.views ]); // must add to a zset --> points
+                redisClient.expire("info:"+user.userId, 300000);
+                console.log("user infos updated in cache ,expire : 5minutes ");
+                return callback({"userId":user.userId,"username": user.username,"fullName":user.fullName,"flwers" : user.followersCount,"flwings" : user.followingsCount,"location":user.city+":"+user.country+"/"+user.location,
+                                "postsCount":user.postsCount,"reportsCount":user.reportsCount,"privacy": user.privacy,"gender": user.gender,
+                                "profilePictureSet": user.profilePictureSet, "rate": user.rate , "views": user.views});
             }
             else {
                 return callback({result:false,message:"User information not found"});
@@ -525,9 +480,9 @@ var users = {
         });
     },
     updateSingleUserInfoInCache:function(userId,attr,value,callback){ // mongodb must change before or after this function updates cache without considering master db
-        redisClient.hset(userId + ":info",attr,value); // must add to a zset --> points
-        redisClient.expire(userId + ":info" , 300000);
-        console.log("user infos updated in cache expire 5minutes:");
+        redisClient.hset("info:"+userId,attr,value); // must add to a zset --> points
+        redisClient.expire("info:"+userId, 300000);
+        console.log("user single info -" + value + "- updated in cache expire 5minutes:");
         return callback(true);
     },
     pushNotification:function(type,text,ownerId,creatorId,referenceId,link,icon,imageUrl,now,fn){
