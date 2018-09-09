@@ -288,95 +288,96 @@ var users = {
         let hostUsername = req.body.host;
         if(typeof hostUsername === "string"){
             users.getUserIdFromCache(hostUsername,function(userId) {
-                if(userId && !userId.message && typeof (userId === "string")) {
-                    userSchema.findOne({userId: userId}, {
-                        username: 1,
-                        fullName: 1,
-                        privacy: 1,
-                        userId: 1,
-                        profilePictureSet: 1,
-                        followings: 1,
-                        favouriteProfiles: 1, // user ids  //  up to 6   // -->   get most popular profile
-                        interestCategories: 1, // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
-                        gender: 1,
-                        followingsCount: 1,
-                        followersCount: 1,
-                        phoneNumber: 1,
-                        country: 1,
-                        rate: 1,
-                        verified: 1,
-                        views:1,
-                        city: 1,
-                        location: 1,
-                        blockList:1,
-                        birthDate: 1,
-                        roles: 1,
-                        badges: 1
-                    }, function (err, userx) {
-                        if (err) res.send(err);
-                        if (userx) {
-                            let response = {user: userx, following: false, followed: false};
-                            if (user === null) {
-                                if (userx.privacy) {
-                                    delete userx.phoneNumber;
-                                    delete userx.birthDate;
-                                    delete userx.interestCategories;
-                                    delete userx.favouriteProfiles;
-                                    delete userx.fullName;
-                                    delete userx.email;
-                                    delete userx.location;
-                                }
-                                res.send({user: userx, following: null, followed: null});
-                            }
-                            else {
-                                if (user.userId === userId) {
+                users.getUserInfosFromCache(userId,function(hostUser){
+                    if(host)
+                    if(userId && !userId.message && typeof (userId === "string")) {
+                        userSchema.findOne({userId: userId}, {
+                            username: 1,
+                            fullName: 1,
+                            privacy: 1,
+                            userId: 1,
+                            profilePictureSet: 1,
+                            followings: 1,
+                            favouriteProfiles: 1, // user ids  //  up to 6   // -->   get most popular profile
+                            interestCategories: 1, // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
+                            gender: 1,
+                            followingsCount: 1,
+                            followersCount: 1,
+                            phoneNumber: 1,
+                            country: 1,
+                            rate: 1,
+                            verified: 1,
+                            views:1,
+                            city: 1,
+                            location: 1,
+                            blockList:1,
+                            birthDate: 1,
+                            roles: 1,
+                            badges: 1
+                        }, function (err, userx) {
+                            if (err) res.send(err);
+                            if (userx) {
+                                let response = {user: userx, following: false, followed: false};
+                                if (user === null) {
+                                    if (userx.privacy) {
+                                        delete userx.phoneNumber;
+                                        delete userx.birthDate;
+                                        delete userx.interestCategories;
+                                        delete userx.favouriteProfiles;
+                                        delete userx.fullName;
+                                        delete userx.email;
+                                        delete userx.location;
+                                    }
                                     res.send({user: userx, following: null, followed: null});
                                 }
                                 else {
-                                    if(userx.blockList.indexOf(user.userId) > -1){
-                                        res.send({result:false,message:"not found"});
+                                    if (user.userId === userId) {
+                                        res.send({user: userx, following: null, followed: null});
                                     }
                                     else {
-                                        if (userx.privacy) {
-                                            if (user.followings.indexOf(userId) === -1) {
-                                                delete userx.phoneNumber;
-                                                delete userx.birthDate;
-                                                delete userx.interestCategories;
-                                                delete userx.favouriteProfiles;
-                                                delete userx.fullName;
-                                                delete userx.email;
-                                                delete userx.location;
+                                        if(userx.blockList.indexOf(user.userId) > -1){
+                                            res.send({result:false,message:"not found"});
+                                        }
+                                        else {
+                                            if (userx.privacy) {
+                                                if (user.followings.indexOf(userId) === -1) {
+                                                    delete userx.phoneNumber;
+                                                    delete userx.birthDate;
+                                                    delete userx.interestCategories;
+                                                    delete userx.favouriteProfiles;
+                                                    delete userx.fullName;
+                                                    delete userx.email;
+                                                    delete userx.location;
+                                                }
                                             }
+                                            if (userx.followings.indexOf(user.userId) > -1) {
+                                                response.followed = true;
+                                            }
+                                            if (user.followings.indexOf(userId) > -1) {
+                                                response.following = true;
+                                            }
+                                            if(user.blockList.indexOf(userx.userId) > -1){
+                                                response.blocked = true; // you blocked him
+                                            }
+                                            res.send(response);
                                         }
-                                        if (userx.followings.indexOf(user.userId) > -1) {
-                                            response.followed = true;
-                                        }
-                                        if (user.followings.indexOf(userId) > -1) {
-                                            response.following = true;
-                                        }
-                                        if(user.blockList.indexOf(userx.userId) > -1){
-                                            response.blocked = true; // you blocked him
-                                        }
-                                        res.send(response);
                                     }
                                 }
                             }
-                        }
-                        else {
-                            res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
-                        }
-                    });
-                }
-                else{
-                    res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
-                }
+                            else {
+                                res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
+                            }
+                        });
+                    }
+                    else{
+                        res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
+                    }
+                });
             });
         }
     },
 
-    getProfileInfo:function(req,res,user){ // no privacy considered !.
-        res.send({username:user.username,fullName:user.fullName,email:user.email,bio:user.bio,city:user.city});
-    },
+   
     updateProfileInfo:function(req,res,user){
         if(!user.ban.is){
             if(user.username === req.body["username"].toLowerCase()){
@@ -492,12 +493,12 @@ var users = {
             if (user) {
                 redisClient.hmset(["info:"+user.userId,"userId",user.userId, "username", user.username,"fullName",user.fullName,"flwers",user.followersCount,"flwings" ,user.followingsCount,"location",user.city+":"+user.country+"/"+user.location,
                 "postsCount",user.postsCount,"reportsCount",user.reportsCount,"roles",JSON.stringify(user.roles),"privacy", user.privacy, "gender", user.gender,
-                    "profilePictureSet", user.profilePictureSet, "rate",user.rate.value ,"views", user.views ]); // must add to a zset --> points
+                    "profilePictureSet", user.profilePictureSet, "rate",JSON.stringify(user.rate.value) ,"views", user.views ]); // must add to a zset --> points
                 redisClient.expire("info:"+user.userId, 300000);
                 console.log("user infos updated in cache ,expire : 5minutes ");
                 return callback({"userId":user.userId,"username": user.username,"fullName":user.fullName,"flwers" : user.followersCount,"flwings" : user.followingsCount,"location":user.city+":"+user.country+"/"+user.location,
-                                "postsCount":user.postsCount,"reportsCount":user.reportsCount,"roles":JSON.stringify(user.roles),"privacy": user.privacy,"gender": user.gender,
-                                "profilePictureSet": user.profilePictureSet, "rate": JSON.stringify(user.rate.value),"views": user.views});
+                                "postsCount":user.postsCount,"reportsCount":user.reportsCount,"roles":user.roles,"privacy": user.privacy,"gender": user.gender,
+                                "profilePictureSet": user.profilePictureSet, "rate": user.rate.value,"views": user.views});
             }
             else {
                 return callback({result:false,message:"User information not found"});

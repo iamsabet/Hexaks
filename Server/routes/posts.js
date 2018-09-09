@@ -22,6 +22,7 @@ var Hashtag = new hashtagSchema();
 var CryptoJS = require("crypto-js");
 var Float = require('mongoose-float').loadType(mongoose);
 var users = require('./users');
+var blocks = require('./blocks');
 var redis = require("redis");
 var requestIp = require("request-ip");
 var redisClient = redis.createClient({
@@ -1148,7 +1149,25 @@ var posts = {
                 let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
                 let decrypted = bytes.toString(CryptoJS.enc.Utf8);
                 let postOwnerId = decrypted.split("|-p")[0].toString();
-                if(user.blockList.indexOf(postOwnerId) === -1) {
+                let blocked = user.blockList.contains(postOwnerId);
+                if(blocked){
+                    res.send({result:false,message:"you blocked the post owner"});
+                }
+                else{
+                    let canQuery = false;
+                    if(user.followings.contains(postOwnerId)){
+                        canQuery = true;
+                    }
+                    else{
+                        blocks.check(postOwnerId,user.userId,function(blocked2){
+                            if(blocked2){
+                                res.send({result:false,message:"youve been blocked by the post owner"});
+                            }
+                            else{
+                                canQuery = true;
+                            }
+                        });
+                    }
                     users.getUserInfosFromCache(postOwnerId,function(info) {
                         if (info.message) {
                             res.send(info);
@@ -1222,6 +1241,7 @@ var posts = {
                         }
                     });
                 }
+                }
                 else{
                     res.send({result: false, message: "you have blocked the post owner"});
                 }
@@ -1229,11 +1249,6 @@ var posts = {
             else{
                 res.send({result:false,message:"504 Bad Request"});
             }
-        }
-        else{
-            // lets do it some other time later for not authenticated persons
-            res.send({result:false,message:"Not Authenticated user views does not count right now"});
-        }
     },
     increasePostViews(req,res,postId){
         postSchema.update({postId:postId,activated:true,"rejected":null,deleted:false},{
