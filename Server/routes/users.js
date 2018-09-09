@@ -473,26 +473,31 @@ var users = {
             _id: 0,
             userId: 1,
             username: 1,
-            blockList: 1,
-            interestCategories: 1,
-            favouriteProfiles: 1,
+            fullName:1,
+            country:1,
+            location:1,
+            city:1,
             profilePictureSet: 1,
+            followersCount:1,
+            followingsCount:1,
             gender: 1,
             views:1,
+            postsCount:1,
+            reportsCount:1,
+            roles:1,
             privacy: 1,
-            verified: 1,
             rate: 1,
         }, function (err, user) {
             if (err) throw err;
             if (user) {
                 redisClient.hmset(["info:"+user.userId,"userId",user.userId, "username", user.username,"fullName",user.fullName,"flwers",user.followersCount,"flwings" ,user.followingsCount,"location",user.city+":"+user.country+"/"+user.location,
-                "postsCount",user.postsCount,"reportsCount",user.reportsCount,"privacy", user.privacy, "gender", user.gender,
-                    "profilePictureSet", user.profilePictureSet, "rate", user.rate ,"views", user.views ]); // must add to a zset --> points
+                "postsCount",user.postsCount,"reportsCount",user.reportsCount,"roles",JSON.stringify(user.roles),"privacy", user.privacy, "gender", user.gender,
+                    "profilePictureSet", user.profilePictureSet, "rate",user.rate.value ,"views", user.views ]); // must add to a zset --> points
                 redisClient.expire("info:"+user.userId, 300000);
                 console.log("user infos updated in cache ,expire : 5minutes ");
                 return callback({"userId":user.userId,"username": user.username,"fullName":user.fullName,"flwers" : user.followersCount,"flwings" : user.followingsCount,"location":user.city+":"+user.country+"/"+user.location,
-                                "postsCount":user.postsCount,"reportsCount":user.reportsCount,"privacy": user.privacy,"gender": user.gender,
-                                "profilePictureSet": user.profilePictureSet, "rate": user.rate , "views": user.views});
+                                "postsCount":user.postsCount,"reportsCount":user.reportsCount,"roles":JSON.stringify(user.roles),"privacy": user.privacy,"gender": user.gender,
+                                "profilePictureSet": user.profilePictureSet, "rate": JSON.stringify(user.rate.value),"views": user.views});
             }
             else {
                 return callback({result:false,message:"User information not found"});
@@ -506,9 +511,7 @@ var users = {
         return callback(true);
     },
     pushNotification:function(type,text,ownerId,creatorId,referenceId,link,icon,imageUrl,now,fn){
-        Notification.Create({type:type,text:text,ownerId:ownerId,creatorId:creatorId,referenceId:referenceId,link:link,icon:icon,imageUrl:imageUrl},now,function(callback){
-            console.log(callback);
-        });
+        
     },
     update: function(req, res,next,data) {
 
