@@ -14,7 +14,6 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
-
 var blockSchema = new Schema({
     blocker : String,
     blocked : String, // userId

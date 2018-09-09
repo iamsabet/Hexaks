@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 const random = require('randomstring');
 var Float = require('mongoose-float').loadType(mongoose);
 require('mongoose-long')(mongoose);
+var CryptoJS = require("crypto-js");
+
 var mongoosePaginate = require('mongoose-paginate');
 
 var rateSchema = new Schema({
@@ -21,8 +23,13 @@ rateSchema.methods.Create = function(rateObject,callback){
 
     let newRate = new Rate(rateObject);
     newRate.createdAt = Date.now();
+    newRate.rater = rateObject.rater;
+    newRate.postId = rateObject.postId;
+    newRate.value = rateObject.value;
+    newRate.updatedAt = Date.now();
     newRate.activated = true;
-    newRate.rateId = random.generate();
+    let hashed = CryptoJS.SHA1(blocker, blocked); //("content","key")
+    newRate.rateId = hashed;
     newRate.deleted = false;
     newRate.save(function(err,result){
         if(result){

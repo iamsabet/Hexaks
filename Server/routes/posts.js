@@ -1024,7 +1024,6 @@ var posts = {
                                                 res.send(hostUser);
                                             }
                                             else{
-                                                let isPrivate = null;
                                                 if(!hostUser.privacy){
                                                     posts.doView(user.userId,postId,true,res); // post privacy bypass
                                                 }
@@ -1100,110 +1099,100 @@ var posts = {
             if(req.body && req.body.postId && typeof req.body.postId === "string" && req.body.value && parseInt(req.body.value) <= 7 && parseInt(req.body.value) >= 1) {
                 let postId = req.body.postId;
                 let rateValue = parseInt(req.body.value);
-                rateSchema.findOne({rater:user.userId,postId:postId,changes:3},{rateId:1,changes:1,rater:1,postId:1,value:1},function(err,ratex) {
+                rateSchema.findOne({rater:user.userId,postId:postId},{rateId:1,changes:1,rater:1,postId:1,value:1},function(err,ratex) {
                     if (err) throw err;
-                    let rateObject = {};
-                    if (ratex) {
-                        res.send({result:false,message:"You have already changed your rate 3 times , no more changes allowed"});
-                    }
-                    else{
-                        ratex.save();
+                    let rateObject = ratex;
+                    if(ratex.changes < 3){
                         let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
                         if(user.blockList.contains(postOwnerId)) {
-                            res.send({result:false,message:"You have already changed your rate 3 times , no more changes allowed"});
+                            res.send({result:false,message:"You Blocked the post owner"});
                         }
                         else{
                             let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
                             if(user.followings.contains(postOwnerId)){
-                                posts.doRate(user.userId,postId,rateValue,true,res); // post and account privacy bypass
+                                posts.doRate(user.userId,postId,rateValue,rateObject,true,res); // post and account privacy bypass
                             }
                             else{
-                                let blocked = user.blockList.contains(postOwnerId);
-                                if(blocked){
-                                    res.send({result:false,message:"you blocked the post owner"});
-                                }
-                                else{  
-                                    blocks.check(postOwnerId,user.userId,function(blocked){
-                                        if(blocked){
-                                            res.send({result:false,message:"youve been blocked by the post owner"});
-                                        }
-                                        else{
-                                            users.getUserInfosFromCache(postOwnerId,function(hostUser){
-                                                if (hostUser.message) {
-                                                    res.send(hostUser);
+                                blocks.check(postOwnerId,user.userId,function(blocked){
+                                    if(blocked){
+                                        res.send({result:false,message:"youve been blocked by the post owner"});
+                                    }
+                                    else{
+                                        users.getUserInfosFromCache(postOwnerId,function(hostUser){
+                                            if (hostUser.message) {
+                                                res.send(hostUser);
+                                            }
+                                            else{
+                                                if(!hostUser.privacy){
+                                                    posts.doRate(user.userId,postId,rateValue,rateObject,true,res); // post privacy bypass
                                                 }
-                                                else{
-                                                    let isPrivate = null;
-                                                    if(!hostUser.privacy){
-                                                        posts.doRate(user.userId,postId,rateValue,true,res); // post privacy bypass
-                                                    }
-                                                    else{ 
-                                                        posts.doRate(user.userId,postId,rateValue,false,res);
-                                                    }
-                                                }          
-                                            });
-                                        }
-                                    }); 
-                                }
+                                                else{ 
+                                                    posts.doRate(user.userId,postId,rateValue,rateObject,false,res);
+                                                }
+                                            }          
+                                        });
+                                    }
+                                }); 
+                                
                             }
                         }    
+                    }
+                    else{
+                        res.send({result:false,})
                     }
                 });
             }
         }
     },
-    doRate:function(req,res,user,postId,rateNumber,post,hostUser){
-        
-                    ratex.save();
-                    let now = Date.now();
-                    rateSchema.update({rateId:ratex.rateId},{
+    doRate:function(userId,postId,rateNumber,rateObject,privacyStat,res){
+        if(rateObject){
+            let now = Date.now();
+            let lastRate = rateObject.value;
+            rateSchema.update({rateId:rateObject.rateId,value:{"$ne":lastRate}},{
+                $set:{
+                    value:rateNumber,
+                    changes : ratex.changes+1,
+                    updatedAt : now
+                },
+            },function(err,result){
+                if(err) 
+                    res.send({result:false,message:"Update rate object failed + err"});
+                if(result.n > 0){
+                    let smallImageUrl = "../pictures/"+postId + "--Small===.";
+                    if(info.gender)
+
+                    users.pushNotification("environment","Changed rate post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,now);
+
+                    let diff = 0.0;
+                    let points = 0.0;
+                    if(parseFloat(rateNumber) > parseFloat(ratex.value)) {
+                        diff = parseFloat(parseFloat(rateNumber) - parseFloat(ratex.value));
+                        points = parseFloat(parseFloat(post.rate.points) + parseFloat(diff));
+                    }
+                    else {
+                        diff = parseFloat(parseFloat(ratex.value) - parseFloat(rateNumber));
+                        points = parseFloat(parseFloat(post.rate.points) - parseFloat(diff));
+                    }
+                    console.log(diff);
+                    console.log(points);
+                    let value = parseFloat(parseFloat(points)/ parseFloat(post.rate.counts));
+                    console.log(value);
+                    post.save();
+                    posts.updatePostRates(req,res,{postId:ratex.postId},{
                         $set:{
-                            value:rateNumber,
-                            changes : ratex.changes+1,
-                            updatedAt : now
-                        },
-                    },function(err,result){
-                        if(err) res.send({result:false,message:"Update rate object failed + err"});
-                        if(result.n > 0){
-
-                            let smallImageUrl = "../pictures/"+postId + "-Small===.";
-                            if(info.gender)
-
-                            users.pushNotification("environment","Changed rate post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,now);
-
-                            let diff = 0.0;
-                            let points = 0.0;
-                            if(parseFloat(rateNumber) > parseFloat(ratex.value)) {
-                                diff = parseFloat(parseFloat(rateNumber) - parseFloat(ratex.value));
-                                points = parseFloat(parseFloat(post.rate.points) + parseFloat(diff));
+                            rate:{
+                                points : points,
+                                value : value,
+                                count : post.rate.counts,
                             }
-                            else {
-                                diff = parseFloat(parseFloat(ratex.value) - parseFloat(rateNumber));
-                                points = parseFloat(parseFloat(post.rate.points) - parseFloat(diff));
-                            }
-                            console.log(diff);
-                            console.log(points);
-                            let value = parseFloat(parseFloat(points)/ parseFloat(post.rate.counts));
-                            console.log(value);
-                            post.save();
-                            posts.updatePostRates(req,res,{postId:ratex.postId},{
-                                $set:{
-                                    rate:{
-                                        points : points,
-                                        value : value,
-                                        count : post.rate.counts,
-                                    }
-                                }
-                            },value.toString()+"/update");
                         }
-                        else{
-                            res.send({result:false,message:"Update rate object failed"});
-                        }
-                    });
+                    },value.toString()+"/update");
                 }
                 else{
-                    res.send({result:false,message:"Maximum changes for a Rate reached! please try no more"});
+                    res.send({result:false,message:"Update rate object failed"});
                 }
+            });
+                
             }
             else {
                 rateObject.rater = user.userId;
