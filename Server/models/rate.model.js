@@ -19,7 +19,7 @@ var rateSchema = new Schema({
     updatedAt:Number
 });
 
-rateSchema.methods.Create = function(rateObject,callback){
+rateSchema.methods.create = function(rateObject,callback){
 
     let newRate = new Rate(rateObject);
     newRate.createdAt = Date.now();
@@ -28,15 +28,17 @@ rateSchema.methods.Create = function(rateObject,callback){
     newRate.value = rateObject.value;
     newRate.updatedAt = Date.now();
     newRate.activated = true;
-    let hashed = CryptoJS.SHA1(blocker, blocked); //("content","key")
+    let hashed = CryptoJS.SHA1(rateObject.rater, rateObject.postId); //("content","key")
     newRate.rateId = hashed;
     newRate.deleted = false;
     newRate.save(function(err,result){
+        if(err) 
+            return callback(err);
         if(result){
-            callback(true)
+            return callback(result);
         }
         else{
-            callback(false);
+            return callback(false);
         }
     });
 };
