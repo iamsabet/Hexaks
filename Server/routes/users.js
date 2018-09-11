@@ -202,30 +202,29 @@ var users = {
         if(!token){
             users.removeUploading(user);
         }
-        redisClient.get(user.userId + ":uploadingPost", function (err, postId) {
+        redisClient.get("uploadingPost:"+user.userId,function (err, postId) {
             if (err) throw err;
             if (postId) {
-                redisClient.get(user.userId + ":uploadCounts", function (err, uploadCounts) {
+                redisClient.get("uploadCounts:"+user.userId, function (err, uploadCounts) {
                     if(err) throw err;
+                    
                     res.send({postId: postId, uploadCounts: uploadCounts});
-                    redisClient.expire(user.userId + ":uploadingPost", 3600000); // 1h
                 });
             }
             else {
-                redisClient.set(user.userId + ":uploading", req.body.type, function (err, callback) {
+                redisClient.set("uploading:"+user.userId, req.body.type, function (err, callback) {
                     if (err) throw err;
-                    redisClient.expire(user.userId + ":uploading", 3600000); // 1h
+                    redisClient.expire("uploading:"+user.userId, 3600000); // 1h
                     res.send(true);
                 });
             }
         });
-        
     },
 
     removeUploading: function (user) {
-        redisClient.del(user.userId + ":uploading");
-        redisClient.del(user.userId + ":uploadingPost");
-        redisClient.del(user.userId + ":uploadCounts");
+        redisClient.del("uploading:"+user.userId);
+        redisClient.del("uploadingPost:"+user.userId);
+        redisClient.del("uploadCounts:"+user.userId);
     },
 
     extendExpiration: function (user) {

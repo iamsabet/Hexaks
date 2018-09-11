@@ -399,9 +399,9 @@ var posts = {
         }
     },
     activate:function(req,res,user){
-        redisClient.get(user.userId+":uploadingPost",function(err,postId){
+        redisClient.get("uploadingPost:"+user.userId),function(err,postId){
             if(err) throw err;
-                redisClient.get(user.userId+":uploadCounts",function(err,uploadCountsx) {
+                redisClient.get("uploadCounts:"+user.userId),function(err,uploadCountsx) {
                     if (err) throw err;
                     let uploadCounts = parseInt(uploadCountsx);
                     let postsList = JSON.parse(req.body["postsList"]);
@@ -414,7 +414,7 @@ var posts = {
                       let postIds = [];
                       let rootPostId = postId.split("===.")[0];
                       if (rootPostId) {
-
+                        let accepteds = 0;
                         for(let postsItterator = 0 ; postsItterator < keys.length ; postsItterator++){
                             if(postsItterator < 20 && postsList[keys[postsItterator]]) {
                                 let now = new Date();
@@ -525,6 +525,7 @@ var posts = {
                                 }, function (err, resultx) {
                                     if (err) throw err;
                                     if (resultx.n===1) {
+                                        accepteds += 1;
                                         console.log(postQuery + "post activated"); // post activated successfully   
                                         for (let c = 0; c < categoryx.length; c++) { // create hourly category
                                             if (categoryx[c] && (categoryx[c] !== undefined)) {
@@ -594,16 +595,16 @@ var posts = {
                                             if (postsItterator === 19 || (postsItterator === keys.length -1)){
 
                                                 userSchema.update({userId:user.userId,activated:true,deleted:false},{
-                                                    $inc:{postsCount:key.length}
+                                                    $inc:{postsCount:accepteds}
                                                 },function(resultu){
                                                     if((resultu.n)>0){
-                                                        users.updateAllUserInfosInCache(user.userId);
+                                                        users.updateSingleUserInfoInCache(user.userId,"postsCount",accepteds);
                                                     }
                                                 });
 
-                                                redisClient.del(user.userId + ":uploadingPost");
-                                                redisClient.del(user.userId + ":uploading");
-                                                redisClient.del(user.userId + ":uploadCounts");
+                                                redisClient.del("uploadingPost:"+user.userId);
+                                                redisClient.del("uploading:"+user.userId);
+                                                redisClient.del("uploadCounts:"+user.userId);
                                                 
                                                 console.log("activation complete");
                                                 res.send(true);
@@ -683,6 +684,7 @@ var posts = {
                     for (let t in mentions) {
                         // push notification to the mentioned user if exists // func()
                     }
+                
                     updates.hashtags = hashtags;
                     updates.mentions = mentions;
                     updates.caption = str;
@@ -765,10 +767,10 @@ var posts = {
                     postSchema.update({
                         postId: postId,
                         ownerId: postOwnerId,
-                        activated:false,
+                        activated:true,
                     }, {
                         $set: {
-                            activated:true,
+                            activated:false,
                         }
                     }, function (err, result) {
                         if (err) throw err;
