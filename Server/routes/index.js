@@ -566,16 +566,18 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
 
 
 router.post('/api/v1/posts/:uuid',function(req,res){
-    let userId = req.params.uuid;
-    users.getUserInfosFromCache(userId,function(hostUser) {
+    let hostUserId = req.params.uuid;
+    let userId = "";
+    users.getUserInfosFromCache(hostUserId,function(hostUser) {
         console.log("hostUser : " + hostUser);
         if (!hostUser.message) {
             validateRequest(req, res, function (user) {
                 if (user) {
+                    userId = user.userId;
                     let self = false;
                     let canQuery = true;
                     let privatePosts = false;
-                    if (JSON.parse(hostUser.privacy) && user.userId !== userId) {
+                    if (JSON.parse(hostUser.privacy) && user.userId !== hostUser.userId) {
                         if (user.followings.indexOf(userId) > -1) {
                             privatePosts = true;
                             canQuery = true;
@@ -584,7 +586,7 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                             canQuery = false;
                         }
                     }
-                    else if (user.userId === userId) {
+                    else if (user.userId === hostUser.userId) {
                         privatePosts = true;
                         self = true;
                     }
@@ -593,14 +595,14 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         canQuery = true;
                         self = false;
                     }
-                    redisClient.get(user.username + "::requestOrigin", function (err, requestOrigin) {
+                    redisClient.get("postRequestOrigin:"+userId, function (err, requestOrigin) {
                         if (err) throw err;
                         let category = undefined;
                         if (req.body.category && req.body.category !== "") {
                             category = [req.body.category];
                         }
                         let timeOrigin;
-                        let pageNumber = req.body.pageNumber || 1;
+                        let pageNumber = parseInt(req.body.pageNumber) || 1;
                         let counts = req.body.counts || 10;
                         let isCurated = req.body.isCurated || undefined;
                         let hashtags = [req.body.hashtags] || undefined;
@@ -608,20 +610,20 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         let curator = req.body.curator || undefined;
                         let timeEdge = 0;
                         let now = Date.now();
-                        if(pageNumber === 1){
+
+                        if((requestOrigin === null) || (pageNumber===1)){ // no other choice
                             requestOrigin = now;
+                            
                             redisClient.set("postRequestOrigin:"+userId,requestOrigin);
-                            redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
-                            timeOrigin = requestOrigin;
-                        }
-                        else if (pageNumber > 1){
-                            redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
-                        }
+                        }  
+                        timeOrigin = requestOrigin;
+                        redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
+                        
                         if (canQuery) {
                             if (self) {
                                 timeEdge = 0;
                             }
-                            posts.getPostsByFiltersAndOrders(req, res, user, [userId], orderBy, isCurated, hashtags, category, curator, false, true, privatePosts, 0, 1000000, timeOrigin, timeEdge, counts, pageNumber);
+                            posts.getPostsByFiltersAndOrders(req, res, user, [hostUser.userId], orderBy, isCurated, hashtags, category, curator, false, true, privatePosts, 0, 1000000, timeOrigin, timeEdge, counts, pageNumber);
                         }
                         else {
                             res.send({result: false, message: "403 - Forbidden Account is Private"});
@@ -629,8 +631,9 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                     });
                 }
                 else {
+                    userId = requestIp.getClientIp(req).toString();
                     if (!JSON.parse(hostUser.privacy)) {
-                        redisClient.get(requestIp.getClientIp(req), function (err, requestOrigin) {
+                        redisClient.get("postRequestOrigin:"+userId, function (err, requestOrigin) {
                             if (err) throw err;
                             let category = undefined;
                             if (req.body.category && req.body.category !== "") {
@@ -649,24 +652,24 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                             if (pageNumber === 1) {
                                 if (requestOrigin !== null) {
                                     requestOrigin = now;
-                                    redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
-                                    redisClient.expire(requestIp.getClientIp(req) + "::requestOrigin", 30000);
+                                    redisClient.set("postRequestOrigin:"+userId, requestOrigin);
+                                    redisClient.expire("postRequestOrigin:"+userId, 30000);
                                 }
                                 timeOrigin = requestOrigin;
                             }
                             else {
                                 requestOrigin = now;
                                 timeOrigin = requestOrigin;
-                                redisClient.set(requestIp.getClientIp(req) + "::requestOrigin", requestOrigin);
-                                redisClient.expire(requestIp.getClientIp(req) + "::requestOrigin", 30000);
+                                redisClient.set("postRequestOrigin:"+userId, requestOrigin);
+                                redisClient.expire("postRequestOrigin:"+userId, 30000);
                             }
-
-                            posts.getPostsByFiltersAndOrders(req, res, user, [req.params.uuid], orderBy, isCurated, hashtags, category, curator, false, true, false, 0, 1000000, timeOrigin, timeEdge, counts, pageNumber);
+                            // all posts 
+                            posts.getPostsByFiltersAndOrders(req, res, user, [req.params.uuid], orderBy, isCurated, hashtags, category, curator, false, true, true, 0, 1000000, timeOrigin, timeEdge, counts, pageNumber);
 
                         });
                     }
-                    else {
-                        res.send({result: false, message: "Account is Private - login and follow "});
+                    else { // public posts only
+                        posts.getPostsByFiltersAndOrders(req, res, user, [req.params.uuid], orderBy, isCurated, hashtags, category, curator, false, true, false, 0, 1000000, timeOrigin, timeEdge, counts, pageNumber);
                     }
                 }
             });

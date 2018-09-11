@@ -300,18 +300,23 @@ var users = {
             users.getUserIdFromCache(hostUsername,function(hostUserId) {
                 if(!hostUserId.message){
                     if(user){
-                        if(user.followings.indexOf(hostUserId) > -1){
+                        if(user.userId === hostUserId){
                             users.accessUserDatas(res,user,hostUserId);
                         }
                         else{
-                            blocks.check(hostUserId,user.userId,function(resultb){
-                                if(resultb){
-                                    res.send({result:false,message:"404 Not Found"}); // youve been blocked by the user 
-                                }
-                                else{
-                                    users.accessUserDatas(res,user,hostUserId);
-                                }
-                            });
+                            if(user.followings.indexOf(hostUserId) > -1){
+                                users.accessUserDatas(res,user,hostUserId);
+                            }
+                            else{
+                                blocks.check(hostUserId,user.userId,function(resultb){
+                                    if(resultb){
+                                        res.send({result:false,message:"404 Not Found"}); // youve been blocked by the user 
+                                    }
+                                    else{
+                                        users.accessUserDatas(res,user,hostUserId);
+                                    }
+                                });
+                            }
                         }
                     }
                     else{

@@ -1815,8 +1815,12 @@
             $(".profileTop .profileTopContainer .userInfo .photos").html(res.user.postsCount +" Posts");
             $(".profileTop .profileTopContainer .userInfo .hostLocation").html(res.user.location);
             $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.profilePictureSet);
-            if(res.user.roles) {
+
+            if(typeof res.user.roles === "string") {
                 host.roles = JSON.parse(res.user.roles) || [];
+            }
+            else if((typeof res.user.roles === "object") && (res.user.roles.length>0)){
+                host.roles = res.user.roles;
             }
             else{
                 host.roles = [];
