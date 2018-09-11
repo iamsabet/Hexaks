@@ -399,9 +399,9 @@ var posts = {
         }
     },
     activate:function(req,res,user){
-        redisClient.get("uploadingPost:"+user.userId),function(err,postId){
+        redisClient.get("uploadingPost:"+user.userId,function(err,postId){
             if(err) throw err;
-                redisClient.get("uploadCounts:"+user.userId),function(err,uploadCountsx) {
+                redisClient.get("uploadCounts:"+user.userId,function(err,uploadCountsx) {
                     if (err) throw err;
                     let uploadCounts = parseInt(uploadCountsx);
                     let postsList = JSON.parse(req.body["postsList"]);
@@ -602,10 +602,7 @@ var posts = {
                                                     }
                                                 });
 
-                                                redisClient.del("uploadingPost:"+user.userId);
-                                                redisClient.del("uploading:"+user.userId);
-                                                redisClient.del("uploadCounts:"+user.userId);
-                                                
+                                                users.removeUploading(user);
                                                 console.log("activation complete");
                                                 res.send(true);
                                             }
