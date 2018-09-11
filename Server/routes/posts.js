@@ -592,6 +592,15 @@ var posts = {
                                                 // push notification to the mentioned user if exists // func()
                                             }
                                             if (postsItterator === 19 || (postsItterator === keys.length -1)){
+
+                                                userSchema.update({userId:user.userId,activated:true,deleted:false},{
+                                                    $inc:{postsCount:key.length}
+                                                },function(resultu){
+                                                    if((resultu.n)>0){
+                                                        users.updateAllUserInfosInCache(user.userId);
+                                                    }
+                                                });
+
                                                 redisClient.del(user.userId + ":uploadingPost");
                                                 redisClient.del(user.userId + ":uploading");
                                                 redisClient.del(user.userId + ":uploadCounts");

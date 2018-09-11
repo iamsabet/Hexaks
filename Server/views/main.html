@@ -150,8 +150,8 @@
             </div>
             <div class="userInfo">
                 <h2 class="hostFullName"></h2>
-                <span class="photos">43 photos</span>
-                <span class="hostLocation">Tehran</span>
+                <span class="photos">Posts</span>
+                <span class="hostLocation">Location</span>
                 <span class="roles"></span>
                 <p class="username" hidden></p>
                 <p class="private" hidden></p>
@@ -1812,7 +1812,8 @@
             $(".profileTop .profileTopContainer .userInfo h2").html(res.user.fullName);
             $(".profileTop .profileTopContainer .userInfo .followingsBtn").html((res.user.followingsCount) + " Followings");
             $(".profileTop .profileTopContainer .userInfo .followersBtn").html((res.user.followersCount) + " Followers");
-            $(".profileTop .profileTopContainer .userInfo .hostLocation").html(res.user.city);
+            $(".profileTop .profileTopContainer .userInfo .photos").html(res.user.postsCount +" Posts");
+            $(".profileTop .profileTopContainer .userInfo .hostLocation").html(res.user.location);
             $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.profilePictureSet);
             if(res.user.roles.length>0) {
                 // $(".profileTop .profileTopContainer .userInfo .roles").html((res.user.roles.toString()));
@@ -1824,17 +1825,19 @@
 
             host.fullName = (res.user.fullName);
             host.username = (res.user.username);
-            host.followingsCount = (res.user.followingsCount);
+            host.followingsCount = (res.user.flwings);
             host.userId = (res.user.userId);
-            host.followersCount = (res.user.followersCount);
+            host.followersCount = (res.user.flwers);
             host.city = (res.user.city) || "";
-            host.roles = (res.user.roles.toString()) || [];
+            host.roles = JSON.parse(res.user.roles) || [];
             host.username = (res.user.username);
             host.privacy = (res.user.privacy);
             host.profilePictureSet = res.user.profilePictureSet;
             host.profilePictureUrls = res.user.profilePictureUrls || [];
             host.following = res.following;
             host.followed = res.followed;
+            host.followingAccept = res.followingAccept || undefined;
+            host.followedAccept = res.followedAccept || undefined;
 
             $(".profileTop .loader").addClass("hide");
 

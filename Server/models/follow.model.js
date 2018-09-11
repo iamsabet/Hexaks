@@ -20,6 +20,7 @@ var followSchema = new Schema({
     following : String , // userId
     activated : Boolean,
     accepted : Boolean,
+    deleted:Boolean,
     createdAt : Number,
     updatedAt : Number
 });
@@ -79,7 +80,7 @@ followSchema.methods.Paginate = function(query,options,req,res){
 
 followSchema.methods.create = function(res,followObject,hostUser){
     let now = Date.now();
-    var updateFields = {activated: true , accepted:true,updatedAt:now};
+    var updateFields = {activated: true , accepted:true , updatedAt:now};
     if(hostUser.privacy){
         updateFields.accepted = false;
     }
@@ -87,11 +88,13 @@ followSchema.methods.create = function(res,followObject,hostUser){
     follow.update({
         follower: followObject.follower,
         following: followObject.following,
+        activated:true
     }, updateFields , function (err, result) {
         if (err) res.send({result: false, message: "Oops something went wrong"});
         if (result.n === 0) {
             followObject.createdAt = Date.now();
             followObject.activated = true;
+            followObject.deleted = false;
             followObject.accepted = !JSON.parse(hostUser.privacy);
             followObject.followId = CryptoJS.SHA1(followObject.follower, followObject.following).toString(); //("content","key")
             newFollow = new Follow(followObject);
@@ -134,9 +137,9 @@ followSchema.pre('save', function(next){
 });
 followSchema.methods.check = function(follower,following,callback){
     // let hashed = CryptoJS.SHA1(blocker, blocked); //("content","key")
-    follow.findOne({follower:follower,following:following,activated:true},function(resultx){
+    follow.findOne({follower:follower,following:following,activated:true},{accepted:1,followId:1,updatedAt:1},function(resultx){
         if(resultx){
-            return callback(true);
+            return callback(resultx);
         }
         else{
             return callback(false);

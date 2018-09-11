@@ -3,10 +3,10 @@ var User = new userSchema();
 var jwt = require('jwt-simple');
 var followSchema = require('../models/follow.model');
 var Follow = new followSchema();
-var follows = require('./follows');
 var notificationSchema = require('../models/notification.model');
 var Notification = new notificationSchema();
 var flw = require("./follows");
+var blocks = require("./follows");
 var blockSchema = require("../models/block.model");
 var Block = new blockSchema();
 var redis = require('redis');
@@ -298,62 +298,30 @@ var users = {
     getHostProfile: function (req, res, user) { // no privacy considered !.
         let hostUsername = req.body.host;
         if((typeof hostUsername === "string") && (hostUsername.length>3)){
-            users.getUserIdFromCache(hostUsername,function(userId) {
-                if(user){
-                    
+            users.getUserIdFromCache(hostUsername,function(hostUserId) {
+                if(!hostUserId.message){
+                    if(user){
+                        if(user.followings.indexOf(hostUserId) > -1){
+                            users.accessUserDatas(res,user,hostUserId);
+                        }
+                        else{
+                            blocks.check(hostUserId,user.userId,function(resultb){
+                                if(resultb){
+                                    res.send({result:false,message:"404 Not Found"}); // youve been blocked by the user 
+                                }
+                                else{
+                                    users.accessUserDatas(res,user,hostUserId);
+                                }
+                            });
+                        }
+                    }
+                    else{
+                        
+                    }
                 }
                 else{
-
+                    res.send(hostUserId); // err message
                 }
-                users.getUserInfosFromCache(userId,function(hostUser){
-                    if(!hostUser.message){
-                        let response = {user: hostUser, following: false, followed: false};
-                        if (user === null) {
-                            response.following=null;
-                            response.followed = null;
-                            res.send(response);
-                        }
-                        else {
-                            if (user.userId === userId) {
-                                response.following=null;
-                                response.followed = null;
-                                res.send(response);
-                            }
-                            else {
-                                
-                                if(userx.blockList.indexOf(user.userId) > -1){
-                                    res.send({result:false,message:"not found"});
-                                }
-                                else {
-                                    if (userx.privacy) {
-                                        if (user.followings.indexOf(userId) === -1) {
-                                            delete userx.phoneNumber;
-                                            delete userx.birthDate;
-                                            delete userx.interestCategories;
-                                            delete userx.favouriteProfiles;
-                                            delete userx.fullName;
-                                            delete userx.email;
-                                            delete userx.location;
-                                        }
-                                    }
-                                    if (userx.followings.indexOf(user.userId) > -1) {
-                                        response.followed = true;
-                                    }
-                                    if (user.followings.indexOf(userId) > -1) {
-                                        response.following = true;
-                                    }
-                                    if(user.blockList.indexOf(userx.userId) > -1){
-                                        response.blocked = true; // you blocked him
-                                    }
-                                    res.send(response);
-                                }
-                            }
-                        }
-                    }   
-                    else{
-                        res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
-                    }
-                });
             });
         }
         else{
@@ -361,7 +329,68 @@ var users = {
         }
     },
 
-   
+   accessUserDatas:function(res,user,hostUserId){
+    users.getUserInfosFromCache(hostUserId,function(hostUser){
+
+        if(!hostUser.message){
+            let response = {user: hostUser, following: false, followed: false};
+            if (user === null) {
+                response.following=null;
+                response.followed = null;
+                res.send(response);
+            }
+            else {
+                if (user.userId === hostUserId) {
+                    response.following=null;
+                    response.followed = null;
+                    res.send(response);
+                }
+                else {
+                    if (user.followings.indexOf(hostUser.userId) > -1) {
+                        response.following = true;
+                    }
+                    else{
+
+                        flw.check(hostUser.userId,user.userId,function(resultf){
+                            if(resultf !== false){
+                                response.followed = false; // you blocked him
+                            }
+                            else{
+                                response.followed = true;
+                                if(resultf.accepted && (typeof resultf.accepted === "boolean")){
+                                    response.followedAccept = result.accepted;
+                                }
+                            }
+                            if(JSON.parse(hostUser.privacy) || (user.followings.indexOf(hostUserId) === -1)){
+                            
+                                flw.check(user.userId,hostUserId,function(resultf){
+                                    if(resultf){
+                                        if(resultf.accepted && (resultf.accepted===false)){
+                                            response.following = true;
+                                            response.followingAccept = false;
+                                            res.send(response);
+                                        }
+                                        else{
+                                            res.send({result:false,message:"inja nabayad miumad ghaedatan :/ flw shit :/"});
+                                        }
+                                    }
+                                });
+                            
+                            }
+                            else{
+                                res.send(response);
+                            }
+                        });
+                        
+                    }
+                }
+            }
+        }   
+        else{
+            res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
+        }
+    });
+   },
     updateProfileInfo:function(req,res,user){
         if(!user.ban.is){
             if(user.username === req.body["username"].toLowerCase()){
@@ -491,12 +520,12 @@ var users = {
         }, function (err, user) {
             if (err) throw err;
             if (user) {
-                redisClient.hmset(["info:"+user.userId,"userId",user.userId, "username", user.username,"fullName",user.fullName,"flwers",user.followersCount,"flwings" ,user.followingsCount,"location",user.city+":"+user.country+"/"+user.location,
+                redisClient.hmset(["info:"+user.userId,"userId",user.userId, "username", user.username,"fullName",user.fullName,"followersCount",user.followersCount,"followingsCount" ,user.followingsCount,"location",user.city+":"+user.country+"/"+user.location,
                 "postsCount",user.postsCount,"reportsCount",user.reportsCount,"roles",JSON.stringify(user.roles),"privacy", user.privacy, "gender", user.gender,
                     "profilePictureSet", user.profilePictureSet, "rate",JSON.stringify(user.rate.value) ,"views", user.views ]); // must add to a zset --> points
                 redisClient.expire("info:"+user.userId, 300000);
                 console.log("user infos updated in cache ,expire : 5minutes ");
-                return callback({"userId":user.userId,"username": user.username,"fullName":user.fullName,"flwers" : user.followersCount,"flwings" : user.followingsCount,"location":user.city+":"+user.country+"/"+user.location,
+                return callback({"userId":user.userId,"username": user.username,"fullName":user.fullName,"followersCount" : user.followersCount,"followingsCount" : user.followingsCount,"location":user.city+":"+user.country+"/"+user.location,
                                 "postsCount":user.postsCount,"reportsCount":user.reportsCount,"roles":user.roles,"privacy": user.privacy,"gender": user.gender,
                                 "profilePictureSet": user.profilePictureSet, "rate": user.rate.value,"views": user.views});
             }
