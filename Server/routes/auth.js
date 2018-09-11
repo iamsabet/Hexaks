@@ -19,7 +19,7 @@ var auth = {
         if(req.body["info"]) {
             let encryptedInfo = req.body["info"];
             let clientIp = requestIp.getClientIp(req);
-            redisClient.get(clientIp + ":loginKey", function (err, key) {
+            redisClient.get("loginKey:"+clientIp, function (err, key) {
                 console.log(key);
                 if (err) res.send({result: false, message: "key did not found in cache"});
                 if (!key) {
@@ -41,36 +41,37 @@ var auth = {
                                 "message": "Invalid credentials"
                             });
                         }
-
-                        // Fire a query to your DB and check if the credentials are valid
-                        auth.validate(username, password, function (callback) {
-                            let userDbObject = callback;
-                            if (callback && !callback.message) {
-                                redisClient.hgetall("info:"+userDbObject.userId, function (err, info) {
-                                    if (!err && !info) {
-                                        usrs.updateAllUserInfosInCache(userDbObject.userId,function(resultx){
-                                            res.send(resultx);
-                                        });
-                                    }
-                                });
-                                redisClient.set("userId:"+userDbObject.username, userDbObject.userId);
-                                usrs.extendExpiration(userDbObject);
-                                if (!userDbObject) { // If authentication fails, we send a 401 back
-                                    res.send({
-                                        result: false,
-                                        "message": "username(or email) / password is incorrect"
+                        else{
+                            // Fire a query to your DB and check if the credentials are valid
+                            auth.validate(username, password, function (callback) {
+                                let userDbObject = callback;
+                                if (callback && !callback.message) {
+                                    redisClient.hgetall("info:"+userDbObject.userId, function (err, info) {
+                                        if (!err && !info) {
+                                            usrs.updateAllUserInfosInCache(userDbObject.userId,function(resultx){
+                                                res.send(resultx);
+                                            });
+                                        }
                                     });
-                                    return;
-                                }
+                                    redisClient.set("userId:"+userDbObject.username, userDbObject.userId);
+                                    usrs.extendExpiration(userDbObject);
+                                    if (!userDbObject) { // If authentication fails, we send a 401 back
+                                        res.send({
+                                            result: false,
+                                            "message": "username(or email) / password is incorrect"
+                                        });
+                                        return;
+                                    }
 
-                                if (userDbObject) {
-                                    res.send(genToken(userDbObject.userId));
+                                    if (userDbObject) {
+                                        res.send(genToken(userDbObject.userId));
+                                    }
                                 }
-                            }
-                            else {
-                                res.send(callback);
-                            }
-                        });
+                                else {
+                                    res.send(callback);
+                                }
+                            });
+                        }
                     }
                     else{
                         res.send({result:false,message:"Invalid Credentials"});

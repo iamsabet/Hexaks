@@ -1,12 +1,11 @@
 {
     "version": "0.2.0",
-    "configurations": [ 
-
+    "configurations": [   
         {
             "type": "node",
             "request": "launch",
             "name": "Hexaks",
-            "program": "../Server/core.node.js",
+            "program": "/Users/sabet/Projects/Hexaks/Hexaks/Server/bin/www",
         }
     ]
 }

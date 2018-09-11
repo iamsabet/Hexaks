@@ -31,9 +31,8 @@ var users = {
     generateAccessKey(type,req,res){
         let clientIp = requestIp.getClientIp(req);
         let encryptionKey = CryptoJS.AES.encrypt(clientIp,"IP Key Encryption").toString();
-        console.log(clientIp+":"+type+"Key" + " / "+ encryptionKey);
-        redisClient.set(clientIp+":"+type+"Key",encryptionKey);
-        redisClient.expire(clientIp+":"+type+"Key",300000); //5 minutes
+        redisClient.set(type+"Key:"+ clientIp,encryptionKey);
+        redisClient.expire(type+"Key:"+ clientIp,300000); //5 minutes
         res.send(encryptionKey);
     },
     checkIsTaken : function(req,res) {
@@ -71,7 +70,7 @@ var users = {
         if(req.body["info"]) {
             let encryptedInfo = req.body["info"];
             let clientIp = requestIp.getClientIp(req);
-            redisClient.get(clientIp + ":registerKey", function (err, key) {
+            redisClient.get("registerKey:"+clientIp, function (err, key) {
                 if (err) res.send({result: false, message: "key did not found in cache"});
                 if (!key) {
                     res.send({result: false, message: "login key expired", status: 400});
@@ -287,9 +286,10 @@ var users = {
     getHostProfile: function (req, res, user) { // no privacy considered !.
         let hostUsername = req.body.host;
         if(typeof hostUsername === "string"){
+   
             users.getUserIdFromCache(hostUsername,function(userId) {
                 users.getUserInfosFromCache(userId,function(hostUser){
-                    if(host)
+                    if(hostUser)
                     if(userId && !userId.message && typeof (userId === "string")) {
                         userSchema.findOne({userId: userId}, {
                             username: 1,
@@ -546,15 +546,15 @@ var users = {
 
 
 
-
+let secret = require('../config/secret');
 module.exports = users;
 function genToken(userId) {
     let expires = expiresIn(1); // 1 day
     let token = jwt.encode({
         exp: expires,
         key: userId
-    }, require('../config/secret')());
-
+    },secret);
+    
     return {
         token: token,
     };

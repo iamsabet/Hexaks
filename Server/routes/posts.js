@@ -72,10 +72,11 @@ var posts = {
             if(userIds.length === 1){
                 userId = userIds[0];
             }
-
+            let notIncludeThese = [];
             if(userIds ==="all"){
-                if(user) {
-                    userId = {$nin: user.blockList}
+                if(user && (user.blockList.length > 0)) {
+                    notIncludeThese = user.blockList;
+                    userId = {$nin: notIncludeThese};
                 }
                 else{
                     userId = {$exists: true}
@@ -131,18 +132,6 @@ var posts = {
                 page: parseInt(pageNumber),
                 limit: parseInt(counts)
             };
-            if(userIds === "all"){
-                query.ownerId= {$exists:true};
-            }
-            else{
-                if(userIds.length === 1) {
-                    timeEdge = (timeOrigin - (120 * 744 * 3600 * 1000)); // 31 days
-                    query.createdAt = {$lt: timeOrigin};  // time edge up to 31 days
-                }
-                else{
-                    query.createdAt = {$gte: timeEdge, $lt: timeOrigin};
-                }
-            }
             if (orderBy === "originalImage.cost") {
                 options.sort = {"originalImage.cost": -1};
             }
@@ -155,52 +144,74 @@ var posts = {
             else if(orderBy === "views"){ // "views"
                 options.sort = {views: -1};
             }
-            post.Paginate(query, options,user,function(postsList){
-                if(postsList){
-                    postsList.owners = {};
-                    postsList.rates = [];
-                    if(postsList.docs.length > 0) {
-                        let postIds = [];
-                        for (let x = 0; x < postsList.docs.length; x++) {
-                            users.getUserInfosFromCache(postsList.docs[x].ownerId,function(info){
-                                if (!info.message){
-                                    if(user && info.blockList.indexOf(user.userId) > -1) { // user is blocked by the post owner
-                                        postsList.docs.splice(x,1);
-                                    }
-                                    else{
-                                        if(!postsList.owners[postsList.docs[x].ownerId]){
-                                            postsList.owners[postsList.docs[x].ownerId] = info;
-                                        }
-                                    }
-                                }
-                                else {
+            let inputx = null;
+            if(user)
+                inputx = user.userId;
+            blocks.getUserBlockers(input,function(blockers){
+                if(blockers===false){
 
-                                    
-                                }
-                                postIds.push(postsList.docs[x].postId);
-                                if (x === postsList.docs.length - 1) {
-                                    if(user){
-                                        rateSchema.find({postId:{$in:postIds},rater:user.userId,deleted:false,activate:true},{value:1,rateId:1,rater:1,postId:1,createdAt:1},function(err,rates){
-                                            if(err) throw err;
-                                            postsList.rates = rates;
-                                            res.send(postsList);
-                                        });
-                                    }
-                                    else{
-                                        res.send(postsList);
-                                    }
-                                }
-                            });
-                            
-                        }
+                }
+                if(userIds === "all"){
+                    if(user){ 
+                        notIncludeThese.push.apply(notIncludeThese,blockers);
+                        userId = {$nin: notIncludeThese};
                     }
                     else{
-                        res.send({docs:[],total:0});
+                        query.ownerId= {$exists:true};
                     }
                 }
                 else{
-                    res.send(postsList);
+                    if(userIds.length === 1) { // profile
+                        timeEdge = (timeOrigin - (120 * 744 * 3600 * 1000)); // 31 days
+                        query.createdAt = {$lt: timeOrigin};  // time edge up to 31 days
+                    }
+                    else{ // followings or followers 
+                        query.createdAt = {$gte: timeEdge, $lt: timeOrigin};
+                    }
                 }
+            
+                post.Paginate(query, options,user,function(postsList){
+                    if(postsList){
+                        postsList.owners = {};
+                        postsList.rates = [];
+                        if(postsList.docs.length > 0) {
+                            let postIds = [];
+                            for (let x = 0; x < postsList.docs.length; x++) {
+                                users.getUserInfosFromCache(postsList.docs[x].ownerId,function(info){
+                                    if (!info.message){ 
+                                        if(!postsList.owners[postsList.docs[x].ownerId]){
+                                            // delete secure and unneccesary datas
+                                            postsList.owners[postsList.docs[x].ownerId] = info;
+                                        }
+                                    }
+                                    else {
+                                        console.log("User not found in cache in paginate posts");
+                                    }
+                                    postIds.push(postsList.docs[x].postId);
+                                    if (x === postsList.docs.length - 1) {
+                                        if(user){
+                                            rateSchema.find({postId:{$in:postIds},rater:user.userId,deleted:false,activate:true},{value:1,rateId:1,rater:1,postId:1,createdAt:1},function(err,rates){
+                                                if(err) throw err;
+                                                postsList.rates = rates;
+                                                res.send(postsList);
+                                            });
+                                        }
+                                        else{
+                                            res.send(postsList);
+                                        }
+                                    }
+                                });
+                                
+                            }
+                        }
+                        else{
+                            res.send({docs:[],total:0});
+                        }
+                    }
+                    else{
+                        res.send(postsList);
+                    }
+                });
             });
         }
     },
@@ -266,263 +277,119 @@ var posts = {
 
         }
     },
-    getPostInfo: function(req,res,user,postId){
-        if(postId && (typeof postId === "string")) {
 
-            let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
-            
-            console.log(postOwnerId);
-            let options = {
-                album: 1, // null if not
-                postId: 1,
-                number:1,
-                ownerId: 1,
-                originalImage: 1,
-                ext: 1,
-                exifData: 1,
-                // largeImage:1,
-                hashtags: 1,
-                device:1,
-                location:1,
-                mentions: 1,
-                generatedHashtags: 1,
-                categories: 1,
-                caption: 1,
-                rate: 1,
-                views: 1,    // viewers.length length
-                curatorId: 1,
-                isPrivate: 1,
-                rejected: 1,
-                advertise: 1,
-                activated: 1,
-                createdAt: 1,
-                deleted: 1,
-                updatedAt: 1
-            };
-            if (user.userId === postOwnerId) {
-                let query = {
-                    postId: postId,
-                    deleted: false,
-                    activated: true
-                };
-                postSchema.findOne(query, options, function (err, post) {
-                    if (err) throw err;
-                    if (post) {
-                        post.save();
-                        rateSchema.find({
-                            rater: user.userId,
-                            postId: postId,
-                            deleted: false,
-                            activated: true
-                        }, {
-                            rateId: 1,
-                            changes: 1,
-                            rater: 1,
-                            postId: 1,
-                            value: 1,
-                            created: 1
-                        }, function (err, ratesx) {
-                            if (err) throw err;
-                            console.log(ratesx);
-                            console.log({
-                                rater: user.userId,
-                                postId: postId,
-                                deleted: false,
-                                activated: true
-                            });
-                            res.send({post: post, rates: ratesx, owner: user});
-                        });
-                    }
-                    else {
-                        res.send({result: false, message: "404 - Post not found"});
-                    }
-                });
+    getPostInfoById:function(postId,privacy,callback){
+        let options = {
+            album: 1, // null if not
+            postId: 1,
+            number:1,
+            ownerId: 1,
+            originalImage: 1,
+            ext: 1,
+            exifData: 1,
+            // largeImage:1,
+            hashtags: 1,
+            device:1,
+            location:1,
+            mentions: 1,
+            generatedHashtags: 1,
+            categories: 1,
+            caption: 1,
+            rate: 1,
+            views: 1,    // viewers.length length
+            curatorId: 1,
+            isPrivate: 1,
+            rejected: 1,
+            advertise: 1,
+            activated: 1,
+            createdAt: 1,
+            deleted: 1,
+            updatedAt: 1
+        };
+
+        let query = {
+            postId: postId,
+            deleted: false,
+            activated: true,
+            isPrivate:{"$exists":true}
+        };
+        if(privacy === false){
+            query.isPrivate = false;
+        }
+        postSchema.findOne(query, options, function (err, post) {
+            if (err)
+                throw err;
+            else 
+                return callback(post);
+        });
+    },
+    accessPostDatas : function(user,postId,owner,privacy,res,query){
+
+        posts.getPostInfoById(postId,privacy,function(post){
+            if(post){
+                if(user){
+                    rateSchema.findOne({
+                        rater: user.userId,
+                        postId: postId,
+                        deleted: false,
+                        activated: true
+                    }, {
+                        rateId: 1,
+                        changes: 1,
+                        rater: 1,
+                        postId: 1,
+                        value: 1,
+                        createdAt: 1
+                    }, function (err, ratex) {
+                        if (err) throw err;
+                        else{
+                            res.send({post: post, rate: ratex, owner: owner}); // extra detail must delete from cache unnecessaries i mean :/
+                        }
+                    });
+                }
+                else{
+                    res.send({post: post, owner: owner});
+                }
             }
             else {
-                users.getUserInfosFromCache(postOwnerId,function(info) {
-                    if (info.message) {
-                        res.send(info);
-                    }
-                    else{
-                        if (user === null) {
-                            if (!JSON.parse(info.privacy)) {
-                                let query = {
-                                    postId: postId,
-                                    deleted: false,
-                                    rejected: null,
-                                    activated: true
-                                };
-                                postSchema.findOne(query, options, function (err, post) {
-                                    if (err) throw err;
-                                    if (post) {
-                                        res.send({post: post, owner: info});
-                                    }
-                                    else {
-                                        res.send({result: false, message: "404 - Post not found"});
-                                    }
-                                });
-                            }
-                            else {
-                                postSchema.findOne({
-                                    postId: postId,
-                                    deleted: false,
-                                    rejected: null,
-                                    isPrivate: false,
-                                    activated: true
-                                }, options, function (err, post) {
-                                    if (err) throw err;
-                                    if (post) {
-                                        res.send({post: post, owner: info});
-                                    }
-                                    else {
-                                        res.send({result: false, message: "404 - Post not found"}); // or private content access denied
-                                    }
-                                });
-                            }
+                res.send({result: false, message: "404 - Post not found"});
+            }
+        });
+    },
+    getPostInfo: function(req,res,user,postId){
+        if(postId && (typeof postId === "string")) {
+            let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
+            users.getUserIdFromCache(postOwnerId,function(hostUser){
+                if(hostUser.message){
+                    res.send(hostUser);// message + result 
+                }
+                else{
+                    if(user){
+                        if(user.followings.contains(postOwnerId)){
+                            posts.accessPostDatas(user,postId,hostUser,true,res); // ( postId,owner,privacy,res)
                         }
                         else {
-                            if (user.blockList.indexOf(postOwnerId) === -1) {
-                                let blockList = {};
-                                if (info.blockList !== "") {
-                                    blockList = JSON.parse(info.blockList);
-                                }
-                                else {
-                                    blockList = "";
-                                }
-                                if (blockList === "" || (blockList !== "" && blockList.indexOf(user.userId) === -1)) {
-                                    if (JSON.parse(info.privacy)) {
-                                        if ((user.followings.indexOf(postOwnerId) > -1) || (user.userId === postOwnerId) || (user.roles.indexOf("superuser") > -1) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)) {
-                                            let query = {
-                                                postId: postId,
-                                                deleted: false,
-                                                rejected: {value: false, reason: ""},
-                                                activated: true
-                                            };
-                                            postSchema.findOne(query, options, function (err, post) {
-                                                if (err) throw err;
-                                                if (post) {
-                                                    post.save();
-                                                    rateSchema.find({
-                                                        rater: user.userId,
-                                                        postId: postId,
-                                                        deleted: false,
-                                                        activated: true
-                                                    }, {
-                                                        rateId: 1,
-                                                        changes: 1,
-                                                        rater: 1,
-                                                        postId: 1,
-                                                        value: 1,
-                                                        created: 1
-                                                    }, function (err, ratesx) {
-                                                        if (err) throw err;
-                                                        console.log(ratesx);
-                                                        console.log({
-                                                            rater: user.userId,
-                                                            postId: postId,
-                                                            deleted: false,
-                                                            activated: true
-                                                        });
-                                                        res.send({post: post, rates: ratesx, owner: info});
-                                                    });
-                                                }
-                                                else {
-                                                    res.send({result: false, message: "404 - Post not found"});
-                                                }
-                                            });
-                                        }
-                                        else {
-                                            postSchema.findOne({
-                                                postId: postId,
-                                                deleted: false,
-                                                rejected: {value: false, reason: ""},
-                                                isPrivate: false,
-                                                activated: true
-                                            }, options, function (err, post) {
-                                                if (err) throw err;
-                                                if (post) {
-                                                    post.save();
-                                                    console.log({
-                                                        rater: user.userId,
-                                                        postId: postId,
-                                                        deleted: false,
-                                                        activated: true
-                                                    });
-                                                    rateSchema.find({
-                                                        rater: user.userId,
-                                                        postId: postId,
-                                                        deleted: false,
-                                                        activated: true
-                                                    }, {
-                                                        rateId: 1,
-                                                        changes: 1,
-                                                        rater: 1,
-                                                        postId: 1,
-                                                        value: 1,
-                                                        created: 1
-                                                    }, function (err, ratesx) {
-                                                        if (err) throw err;
-                                                        console.log(ratesx);
-                                                        res.send({post: post, rates: ratesx, owner: info});
-                                                    });
-                                                }
-                                                else {
-                                                    res.send({result: false, message: "404 - Post not found"}); // or private content access denied
-                                                }
-                                            });
-                                        }
-                                    }
-                                    else {
-                                        postSchema.findOne({
-                                            postId: postId,
-                                            deleted: false,
-                                            rejected: {value: false, reason: ""},
-                                            activated: true
-                                        }, options, function (err, post) {
-                                            if (err) throw err;
-                                            if (post) {
-                                                post.save();
-                                                rateSchema.find({
-                                                    rater: user.userId,
-                                                    postId: postId,
-                                                    deleted: false,
-                                                    activated: true
-                                                }, {
-                                                    rateId: 1,
-                                                    changes: 1,
-                                                    rater: 1,
-                                                    postId: 1,
-                                                    value: 1,
-                                                    created: 1
-                                                }, function (err, ratesx) {
-                                                    if (err) throw err;
-                                                    console.log(ratesx);
-                                                    console.log({
-                                                        rater: user.userId,
-                                                        postId: postId,
-                                                        deleted: false,
-                                                        activated: true
-                                                    });
-                                                    res.send({post: post, rates: ratesx, owner: info});
-                                                });
-                                            }
-                                            else {
-                                                res.send({result: false, message: "404 - Post not found"});
-                                            }
-                                        });
-                                    }
-                                }
-                                else {
-                                    res.send({result: false, message: "the post owner has blocked you"});
-                                }
+                            if(user.blockList.contains(postOwnerId)){
+                                res.send({result:false,message:"You Have Blocked Post Owner"});
                             }
-                            else {
-                                res.send({result: false, message: "you blocked the post owner"});
+                            else{
+                                blocks.check(postOwnerId,user.userId,function(resultb){
+                                    if(resultb){
+                                        res.send({result:false,message:"You Have Been Blocked By The Post Owner"});
+                                    }
+                                    else{
+                                        posts.accessPostDatas(user,postId,hostUser,!hostUser.privacy,res); // not following and not block situation // 
+                                    }
+                                });
                             }
+
                         }
                     }
-                });
-            }
+                    else{
+                        posts.accessPostDatas({},postId,hostUser,!hostUser.privacy,res); // bypass post Privlidge in 2 ways
+                    }
+                }
+            });
         }
         else
         {
@@ -978,19 +845,6 @@ var posts = {
         //
         //     });
     },
-
-    
-    updatePostRates:function(res,query,updates,value){
-        postSchema.update(query,updates,function(err,result){
-            if(err) throw err;
-            if(result.n > 0){
-                res.send(value);
-            }
-            else{
-                res.send({result:false,message:"post rate values failed to update"});
-            }
-        });
-    },
     view:function(req,res,user) { // caching for later
         if(user) {
             if(req.body && req.body.postId && typeof req.body.postId === "string") {
@@ -1143,7 +997,7 @@ var posts = {
                         }    
                     }
                     else{
-                        res.send({result:false,})
+                        res.send({result:false,message:"Youve changed your rate 3times , no more allowed , sorry ;)"});
                     }
                 });
             }
@@ -1157,7 +1011,7 @@ var posts = {
                     rateSchema.update({rateId:rateObject.rateId,value:{"$ne":lastRate}},{
                         $set:{
                             value:rateNumber,
-                            changes : ratex.changes+1,
+                            changes : rateObject.changes+1,
                             updatedAt : now
                         },
                     },function(err,resultr){
@@ -1195,10 +1049,10 @@ var posts = {
                     }
                     else {
                         let rateObj = {};
-                        rateObj.rater = user.userId;
+                        rateObj.rater = userId;
                         rateObj.value = rateNumber;
                         rateObj.postId = postId;
-                        Rate.Create(rateObj,function(callback){
+                        Rate.create(rateObj,function(callback){
                             if(callback){
                                 // let smallImageUrl = "../pictures/"+postId + "-Small===.";
                                 // users.pushNotification("environment"," Rated your post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,function(resultx){
@@ -1206,11 +1060,11 @@ var posts = {
                                 // });
                                 let counts = parseInt(post.rate.counts) + 1 ;
                                 let avg = parseFloat(post.rate.value);
-                                let differance = parseFloat(avg - parseFloat(rateNumber)); // + , - 0.change
-                                let value = (differance/(counts));
+                                let differance = parseFloat(avg - rateNumber); // + , - 0.change
+                                let changeValue = parseFloat(differance/(counts));
                                 posts.updatePostRates(res,{postId:rateObject.postId},{
                                     $inc:{
-                                        value : value,
+                                        value : changeValue,
                                         points : rateNumber, // + 1 to 6
                                         counts:1
                                     }
@@ -1227,56 +1081,22 @@ var posts = {
                 }
         });
     },
+    updatePostRates:function(res,query,updates,value){
+        postSchema.update(query,updates,function(err,result){
+            if(err) throw err;
+            if(result.n > 0){
+                res.send(value);
+            }
+            else{
+                res.send({result:false,message:"post rate values failed to update"});
+            }
+        });
+    },
     getPostOwnerIdByDecrypt:function(postId){
         let changedPostId = postId.split("|").join("/").slice(0,-2); // rooted
         let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
         let decrypted = bytes.toString(CryptoJS.enc.Utf8);
         return decrypted.split("|-p")[0].toString();
-    },
-    getPostInfoById:function(postId,privacy,callback){
-        let options = {
-            album: 1, // null if not
-            postId: 1,
-            number:1,
-            ownerId: 1,
-            originalImage: 1,
-            ext: 1,
-            exifData: 1,
-            // largeImage:1,
-            hashtags: 1,
-            device:1,
-            location:1,
-            mentions: 1,
-            generatedHashtags: 1,
-            categories: 1,
-            caption: 1,
-            rate: 1,
-            views: 1,    // viewers.length length
-            curatorId: 1,
-            isPrivate: 1,
-            rejected: 1,
-            advertise: 1,
-            activated: 1,
-            createdAt: 1,
-            deleted: 1,
-            updatedAt: 1
-        };
-
-        let query = {
-            postId: postId,
-            deleted: false,
-            activated: true,
-            isPrivate:{"$exists":true}
-        };
-        if(privacy === false){
-            query.isPrivate = false;
-        }
-        postSchema.findOne(query, options, function (err, post) {
-            if (err)
-                return callback(err);
-            else 
-                return callback(post);
-        });
     },
     report:function(req,res,user){
         if(user) {
@@ -1297,7 +1117,7 @@ var posts = {
                 });
             }
         }
-    },
+    }
 };
 
 

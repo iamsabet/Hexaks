@@ -23,6 +23,17 @@ var blocks = {
         Block.Paginate(query, options, req, res); // Authorized
                         
     },
+    getUserBlockers:function(userId,callback){
+        if(userId === null){
+            return false;
+        }
+        else{
+            blockSchema.find({blocked:userId,deleted:false,activated:true},{blocker:1,updatedAt:1},function(err,blockList){
+                if(err) throw err;
+                return callback(blockList);
+            });
+        }
+    },
     block:function(blocker,blocked,callback){
         Block.create(blocker,blocked,function(resultx){
             return callback(resultx);

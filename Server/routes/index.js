@@ -466,14 +466,14 @@ router.post('/api/v1/posts/home/',function(req,res){
 router.post('/api/v1/posts/explore/',function(req,res){
 
     validateRequest(req,res,function(user) {
-        let username;
+        let userId = null;
         if(user !==null) {
-            username = user.username;
+            userId = user.userId;
         }
         else{
-            username = requestIp.getClientIp(req).toString();
+            userId = requestIp.getClientIp(req).toString();
         }
-        redisClient.get(username+"::requestOrigin", function (err, requestOrigin) {
+        redisClient.get("postRequestOrigin:"+userId, function (err, requestOrigin) {
             if(err) throw err;
             let category = undefined;
             if(req.body.category && req.body.category !==""){
@@ -484,46 +484,42 @@ router.post('/api/v1/posts/explore/',function(req,res){
                 hashtags = [req.body.hashtag];
             }
             let timeOrigin;
-            let pageNumber = req.body.pageNumber || 1;
+            let pageNumber = parseInt(req.body.pageNumber) || 1;
             let counts = req.body.counts || 10;
             let isCurated = req.body.isCurated || undefined;
             let timeEdge = req.body.timeEdge || 1;
-            let orderBy = undefined;
-            if(req.body.order==="latest")
-                orderBy = "createdAt";
-            else if(req.body.order==="top") { // curated only
-                orderBy = req.body.orderBy || "rate.value";
-            }
-            let now = Date.now();
-            let curator = req.body.curator || undefined;
-            if(pageNumber === 1){
-                console.log("request origin" + requestOrigin);
-                if(requestOrigin !== null){
-                    requestOrigin = now;
-                    redisClient.set(username+"::requestOrigin",requestOrigin);
-                    redisClient.expire(username+"::requestOrigin",30000);
-                }
-                timeOrigin = requestOrigin;
+            if(isNaN(pageNumber)){
+                res.send({result:false,message:"Bad Input"});
             }
             else{
-                requestOrigin = now;
-                timeOrigin = requestOrigin;
-                redisClient.set(username+"::requestOrigin",requestOrigin);
-                redisClient.expire(username+"::requestOrigin",30000);
-            }
-            posts.getPostsByFiltersAndOrders(req, res, user, "all", orderBy, isCurated, hashtags, category, curator ,false, true, false, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
+                let orderBy = undefined;
+                if(req.body.order==="latest")
+                    orderBy = "createdAt";
+                else if(req.body.order==="top") { // curated only
+                    orderBy = req.body.orderBy || "rate.value";
+                }
+                let now = Date.now();
+                let curator = req.body.curator || undefined;
+                
 
+                if((requestOrigin === null) || (pageNumber===1)){ // no other choice
+                    requestOrigin = now;
+                    
+                    redisClient.set("postRequestOrigin:"+userId,requestOrigin);
+                }  
+                timeOrigin = requestOrigin;
+                redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
+                
+                posts.getPostsByFiltersAndOrders(req, res, user, "all", orderBy, isCurated, hashtags, category, curator ,false, true, false, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
+                }
         });
     });
 });
 
-
-
 router.post('/api/v1/posts/subscriptions/',function(req,res){
-
     validateRequest(req,res,function(user) {
         if(user) {
-            redisClient.get(user.username+"::requestOrigin", function (err, requestOrigin) {
+            redisClient.get("postRequestOrigin:"+userId, function (err, requestOrigin) {
                 if(err) throw err;
                 let category = undefined;
                 if(req.body.category && req.body.category !==""){
@@ -547,19 +543,15 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
                 let now = Date.now();
                 let curator = req.body.curator || undefined;
                 if(pageNumber === 1){
-                    console.log("request origin" + requestOrigin);
                     if(requestOrigin !== null){
-                        requestOrigin = now.toString();
-                        redisClient.set(user.username+"::requestOrigin",requestOrigin);
-                        redisClient.expire(user.username+"::requestOrigin",30000);
+                        requestOrigin = now;
+                        redisClient.set("postRequestOrigin:"+userId,requestOrigin);
+                        redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
                     }
                     timeOrigin = requestOrigin;
                 }
-                else{
-                    requestOrigin = now.toString();
-                    timeOrigin = requestOrigin;
-                    redisClient.set(user.username+"::requestOrigin",requestOrigin);
-                    redisClient.expire(user.username+"::requestOrigin",30000);
+                else if (pageNumber > 1){
+                    redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
                 }
                 user.followings.push(user.userId);
                 posts.getPostsByFiltersAndOrders(req, res, user, user.followings, orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
@@ -567,7 +559,7 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
             });
         }
         else{
-            res.send({result:false,message:"Login Or Register to Continue"});
+            // res.send({result:false,message:"Login Or Register to Continue"});
         }
     });
 });
@@ -618,19 +610,15 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         let now = Date.now();
                         console.log(requestOrigin);
                         if(pageNumber === 1){
-                            console.log("request origin" + requestOrigin);
                             if(requestOrigin !== null){
                                 requestOrigin = now;
-                                redisClient.set(user.username+"::requestOrigin",requestOrigin);
-                                redisClient.expire(user.username+"::requestOrigin",30000);
+                                redisClient.set("postRequestOrigin:"+userId,requestOrigin);
+                                redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
                             }
                             timeOrigin = requestOrigin;
                         }
-                        else{
-                            requestOrigin = now;
-                            timeOrigin = requestOrigin;
-                            redisClient.set(user.username+"::requestOrigin",requestOrigin);
-                            redisClient.expire(user.username+"::requestOrigin",30000);
+                        else if (pageNumber > 1){
+                            redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
                         }
                         if (canQuery) {
                             if (self) {
