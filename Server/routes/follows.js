@@ -1,30 +1,7 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-var postSchema = require('../models/post.model');
-var post = new postSchema();
-var userSchema = require('../models/user.model');
-var User = new userSchema();
-var rateSchema = require('../models/rate.model');
-var rate = new rateSchema();
-var bcrypt = require("bcrypt-nodejs");
-var ExifImage = require('exif').ExifImage;
-
-var Float = require('mongoose-float').loadType(mongoose);
-var usr = require('./users');
-var redis = require("redis");
-var requestIp = require("request-ip");
-var findHashtags = require('find-hashtags');
 var CryptoJS = require("crypto-js");
 var followSchema = require('../models/follow.model');
 var Follow = new followSchema();
-
-var redisClient = redis.createClient({
-    password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
-
-});    // Create the client
-redisClient.select(2,function(){
-    console.log("Connected to redis Database");
-});
+var userSchema = require('../models/user.model');
 
 var follows = {
 
@@ -108,91 +85,51 @@ var follows = {
             }
         });
     },
-    follow:function(req,res,user){
-        let hostId = req.body.followingId || null;
-        
-        usr.getUserInfosFromCache(hostId,function(info){
-            if(!info.message){
-                if (hostId) {
-                    let followObject = {
-                        follower: user.userId,
-                        following: req.body.followingId,
-                    };
-                    if (user.followings.indexOf(req.body.followingId) === -1) {
-                        if (!JSON.parse(info.privacy)) {
-                            console.log(JSON.parse(info.privacy));
-                            user.save();
-                            userSchema.update({userId: followObject.follower}, {
-                                $inc: {followingsCount: +1},
-                                $addToSet: {followings: followObject.following}
-                            }, function (err, result) {
-                                if (err) throw err;
-                                if (result)
-                                    console.log(result);
-                            });
-                            userSchema.update({userId: followObject.following}, {
-                                $inc: {followersCount: +1},
-                            }, function (err, result) {
-                                if (err) throw err;
-                                if (result)
-                                    console.log(result);
-                            });
-                        }
-                        Follow.create(res, followObject, info);
-                    }
-                    else {
-                        res.send({result: true, message: "already followed"});
-                    }
-                }
-                else {
-                    if (!err)
-                        res.send({result: false, message: "Bad input"});
-                }
+    follow:function(followObject,hostPrivacy,callback){
+        Follow.create(followObject,hostPrivacy,function(resultx){
+            return callback(resultx);
+        });
+    },
+    unfollow:function(unfollowObject,callback){
+        Follow.remove(unfollowObject,function(resultx){
+            return callback(resultx);
+        });
+    },
+    accept:function(followObject,ownerId,callback){
+        let now = Date.now();
+        followObject.following = ownerId; 
+        followObject.activated = true;
+        followObject.accepted = false;
+        followSchema.findOneAndUpdate(followObject,{
+            $set:{
+                accepted:true,
+                updatedAt:now
             }
-            else {
-                if (!err)
-                    res.send({result: false, message: "404 - user info not found in cache"});
+        },{
+            "fields":{
+                "follower":1,
+                "accepted":1
+            }
+        },function(err,resultf){
+            if(err) throw err;
+            if(resultf){
+                return callback(resultf);
+            }
+            else{
+                return callback({result:false,message:"update follow object to accept true failed / or follow object not found"});
             }
         });
     },
-    unfollow:function(req,res,user){
-        if(user.followings.indexOf(req.body.followingId) > -1) {
-            if (req.body && req.body.followingId) {
-                let unfollowObject = {
-                    follower: user.userId,
-                    following: req.body.followingId,
-                };
-                user.save();
-                userSchema.update({userId: unfollowObject.follower},{
-                    $inc: {followingsCount: -1},
-                    $pull: {followings: unfollowObject.following}
-                },function(err,result){
-                    if(err) throw err;
-                    if(result)
-                        console.log(result);
-                });
-                userSchema.update({userId: unfollowObject.following}, {
-                    $inc: {followersCount: -1}
-                },function(err,result){
-                    if(err) throw err;
-                    if(result)
-                        console.log(result);
-                });
-                Follow.Remove(req,unfollowObject,res);
-            }
-            else {
-                res.send({result: false, message: "Bad input"});
-            }
-        }
-        else{
-            res.send({result:true,message:"not followed yet"});
-        }
+    reject:function(followId,ownerId,callback){
+        Follow.remove(followId,ownerId,function(resultx){
+            return callback(resultx);
+        });
     },
     check:function(follower,following,callback){
         Follow.check(follower,following,function(resultx){
             return callback(resultx);
         });
-    }
+    },
 };
 
 

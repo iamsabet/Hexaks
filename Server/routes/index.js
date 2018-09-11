@@ -407,7 +407,7 @@ router.post('/api/v1/users/follow',function(req,res){
 
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            follows.follow(req, res, callback)
+            users.follow(req, res, callback)
         }
         else{
             res.send(callback);
@@ -418,7 +418,7 @@ router.post('/api/v1/users/unfollow',function(req,res){
 
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            follows.unfollow(req, res, callback)
+            users.unfollow(req, res, callback)
         }
         else{
             res.send(callback);

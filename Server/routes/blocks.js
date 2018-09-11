@@ -1,4 +1,3 @@
-var users = require('./users');
 var requestIp = require("request-ip");
 var findHashtags = require('find-hashtags');
 var CryptoJS = require("crypto-js");

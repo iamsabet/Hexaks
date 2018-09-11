@@ -56,7 +56,6 @@ var posts = {
             if(category[0] !== "" && category[0] !== "All")
                 categoryQuery = {$in:category};
         }
-        console.log(timeEdgeIn);
         let timeEdge = timeEdgeIn;
         if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.points" || orderedBy === "rate.value" || orderedBy === "views") {
             // timeWindow
@@ -599,7 +598,7 @@ var posts = {
                                                     $inc:{postsCount:accepteds}
                                                 },function(err,resultx){
                                                     if(resultx.n>0){
-                                                        users.updateSingleUserInfoInCache(user.userId,"postsCount",accepteds,function(result){
+                                                        users.updateSingleUserInfoInCache(user.userId,"postsCount",accepteds,"incr",function(result){
                                                             users.removeUploading(user);
                                                             console.log("activation complete");
                                                             res.send(result);

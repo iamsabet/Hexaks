@@ -1815,8 +1815,11 @@
             $(".profileTop .profileTopContainer .userInfo .photos").html(res.user.postsCount +" Posts");
             $(".profileTop .profileTopContainer .userInfo .hostLocation").html(res.user.location);
             $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.profilePictureSet);
-            if(res.user.roles.length>0) {
-                // $(".profileTop .profileTopContainer .userInfo .roles").html((res.user.roles.toString()));
+            if(res.user.roles) {
+                host.roles = JSON.parse(res.user.roles) || [];
+            }
+            else{
+                host.roles = [];
             }
             $(".timeNav .username").html(res.user.username);
             $(".timeNav .username").addClass("show");
@@ -1829,7 +1832,6 @@
             host.userId = (res.user.userId);
             host.followersCount = (res.user.followersCount);
             host.city = (res.user.city) || "";
-            host.roles = JSON.parse(res.user.roles) || [];
             host.username = (res.user.username);
             host.privacy = (res.user.privacy);
             host.profilePictureSet = res.user.profilePictureSet;
@@ -1840,7 +1842,6 @@
             host.followedAccept = res.followedAccept || undefined;
 
             $(".profileTop .loader").addClass("hide");
-            debugger;
             if (res.followed !== null && res.following !== null) {
                 if (res.followed === true && res.following === false) { // following but not followed --> Follow Back
                     $("#follow").addClass("show");

@@ -78,7 +78,7 @@ followSchema.methods.Paginate = function(query,options,req,res){
 };
 
 
-followSchema.methods.create = function(res,followObject,hostUser){
+followSchema.methods.create = function(followObject,hostUser,callback){
     let now = Date.now();
     var updateFields = {activated: true , accepted:true , updatedAt:now};
     if(hostUser.privacy){
@@ -88,38 +88,36 @@ followSchema.methods.create = function(res,followObject,hostUser){
     follow.update({
         follower: followObject.follower,
         following: followObject.following,
-        activated:true
+        activated:false
     }, updateFields , function (err, result) {
         if (err) res.send({result: false, message: "Oops something went wrong"});
         if (result.n === 0) {
             followObject.createdAt = Date.now();
             followObject.activated = true;
             followObject.deleted = false;
-            followObject.accepted = !JSON.parse(hostUser.privacy);
+            followObject.accepted = hostUser.privacy;
             followObject.followId = CryptoJS.SHA1(followObject.follower, followObject.following).toString(); //("content","key")
             newFollow = new Follow(followObject);
             newFollow.save(function (err) {
                 if (err) res.send({result:false,message:"err in follow object"});
-                res.send(true);
+                return callback(true);
             });
         }
         else{
-            res.send(true);
+            return callback(true);
         }
 
     });
 };
 
-followSchema.methods.Remove = function(req,unfollowOject,res){
-    follow.findOneAndUpdate({follower:unfollowOject.follower,following:unfollowOject.following,activated:true},{activated:false,accepted:false},function(err,result){
-       if(err) res.send({result:false,message:"Oops Something went wrong"});
-       if(result && result.n === 1) {
-           if(res)
-                res.send(true);
+followSchema.methods.remove = function(followId,ownerId,callback){
+    follow.findOneAndUpdate({followId:followId,ownerId:ownerId,activated:true},{activated:false,accepted:false},function(err,result){
+       if(err) return callback({result:false,message:"Oops Something went wrong"});
+       if(result) {
+            return callback(true);
        }
        else{
-           if(res)
-                res.send({result:false,message:"Unfollow failed"});
+            return callback({result:false,message:"Unfollow failed"});
        }
     });
 };

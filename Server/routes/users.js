@@ -448,7 +448,7 @@ var users = {
         },function(err,result){
             if(err) throw err;
             if(result.n > 0) {
-                users.updateSingleUserInfoInCache(userId, "privacy", true, function (callback2) {
+                users.updateSingleUserInfoInCache(userId, "privacy", true,"set",function (callback2) {
                     callback(callback2);
                 });
             }
@@ -458,7 +458,6 @@ var users = {
         });
     },
     getUserInfosFromCache:function(userId,callback){
-
         redisClient.hgetall( "info:"+userId, function (err, info) {
             if (err) callback(err);
             if (info) {
@@ -547,11 +546,151 @@ var users = {
             }
         });
     },
-    updateSingleUserInfoInCache:function(userId,attr,value,callback){ // mongodb must change before or after this function updates cache without considering master db
-        redisClient.hincrby("info:"+userId,attr,value); // must add to a zset --> points
+    updateSingleUserInfoInCache:function(userId,attr,value,mode,callback){ // mongodb must change before or after this function updates cache without considering master db
+        if(mode==="set"){
+            redisClient.hset("info:"+userId,attr,value); // must add to a zset --> points
+        }
+        else if(mode==="incr"){
+            redisClient.hincrby("info:"+userId,attr,value); // must add to a zset --> points
+        }   
         redisClient.expire("info:"+userId, 300000);
         console.log("user single info -" + value + "- updated in cache expire 5minutes:");
         return callback(true);
+    },
+    addToUserFollowingsList:function(user1,user2){
+        users.updateSingleUserInfoInCache(user1,"followingsCount",1,"incr",function(result){
+            if(result){
+                users.updateSingleUserInfoInCache(user2,"followersCount",1,"incr",function(result2){
+                    if(result2){
+                        userSchema.update({userId: user1}, {
+                            $inc: {followingsCount: +1},
+                            $addToSet: {followings: user2}
+                        }, function (err, result) {
+                            if (err) throw err;
+                            if (result)
+                                console.log(result);
+                        });
+                        userSchema.update({userId: user2}, {
+                            $inc: {followersCount: +1},
+                        }, function (err, result) {
+                            if (err) throw err;
+                            if (result)
+                                console.log(result);
+                        });
+                    }
+                    else{
+                        console.log("update single cache failed 2");
+                    }
+                });
+            }
+            else{
+                console.log("update single cache failed 1");
+            }
+        });
+    },
+    acceptFollowRequest:function(req,res,user){
+        let followObject = {};
+        followObject.followId = req.body.followId || null;
+        flw.accept(followObject,user.userId,function(callback){
+            if(!callback.message){
+                addToUserFollowingsList(callback.follower,user.userId);
+            }
+            else{
+                res.send(callback);
+            }
+        });
+    },
+    removeFromUserFollowingsList:function(user1,user2){
+        users.updateSingleUserInfoInCache(user1,"followingsCount",-1,"incr",function(result){
+            if(result){
+                users.updateSingleUserInfoInCache(user2,"followersCount",-1,"incr",function(result2){
+                    if(result2){
+                        userSchema.update({userId: user1},{
+                            $inc: {followingsCount: -1},
+                            $pull: {followings: user2}
+                        },function(err,result){
+                            if(err) throw err;
+                            if(result)
+                                console.log(result);
+                        });
+                        userSchema.update({userId: user2}, {
+                            $inc: {followersCount: -1}
+                        },function(err,result){
+                            if(err) throw err;
+                            if(result)
+                                console.log(result);
+                        });
+                    }
+                    else{
+                        console.log("update single cache failed 2");
+                    }
+                });
+            }
+            else{
+                console.log("update single cache failed 1");
+            }
+        });
+    },
+    rejectFollowRequest:function(req,res,user){
+        let followId = req.body.followId || null;
+        flw.reject(followId,user.userId,function(resultr){
+            res.send(resultr);
+        });
+    },
+    follow:function(req,res,user){
+        let hostId = req.body.followingId || null;
+        users.getUserInfosFromCache(hostId,function(hostUser){
+            if(!hostUser.message){
+                if (hostId) {
+                    let followObject = {
+                        follower: user.userId,
+                        following: hostId,
+                    };
+                    if (user.followings.indexOf(hostId) === -1) {
+                        flw.follow(followObject,hostUser.privacy,function(callback){
+                            if(!callback.message){
+                                if (!JSON.parse(hostUser.privacy)) {
+                                    users.addToUserFollowingsList(user.userId,hostId);
+                                }
+                            }
+                            res.send(callback);
+                        });
+                    }
+                    else {
+                        res.send({result: true, message: "already followed"});
+                    }
+                }
+                else {
+                    if (!err)
+                        res.send({result: false, message: "Bad input"});
+                }
+            }
+            else {
+                if (!err)
+                    res.send({result: false, message: "404 - user info not found in cache"});
+            }
+        });
+    },
+    unfollow:function(req,res,user){
+        let hostId = req.body.followingId || null;
+        if(hostId && user.followings.indexOf(hostId) > -1) {
+            if ((typeof hostId ==="string") && user) {
+                let unfollowObject = {
+                    follower: user.userId,
+                    following: hostId,
+                };
+                flw.unfollow(unfollowObject,function(callback){
+                    users.removeFromUserFollowingsList(user.userId,hostId);
+                    res.send(callback);
+                });
+            }
+            else {
+                res.send({result: false, message: "Bad input"});
+            }
+        }
+        else{
+            res.send({result:true,message:"not followed yet"});
+        }
     },
     pushNotification:function(type,text,ownerId,creatorId,referenceId,link,icon,imageUrl,now,fn){
         

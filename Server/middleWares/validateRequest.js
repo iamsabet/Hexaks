@@ -31,7 +31,6 @@ module.exports = function(req, res,fn) {
                     // The key would be the logged in user's username
                     if (userObject) {
                         usr.extendExpiration(userObject);
-                        console.log(userObject.roles.toString());
                         let rolesList = [];
                         if(userObject.roles.length>0){
                             rolesList = userObject.roles;
