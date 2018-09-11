@@ -110,8 +110,8 @@ followSchema.methods.create = function(followObject,hostUser,callback){
     });
 };
 
-followSchema.methods.remove = function(followId,ownerId,callback){
-    follow.findOneAndUpdate({followId:followId,ownerId:ownerId,activated:true},{activated:false,accepted:false},function(err,result){
+followSchema.methods.remove = function(unfollowObject,callback){
+    follow.findOneAndUpdate({follower:unfollowObject.follower,following:unfollowObject.following,activated:true},{activated:false,accepted:false},function(err,result){
        if(err) return callback({result:false,message:"Oops Something went wrong"});
        if(result) {
             return callback(true);
