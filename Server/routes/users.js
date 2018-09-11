@@ -3,9 +3,10 @@ var User = new userSchema();
 var jwt = require('jwt-simple');
 var followSchema = require('../models/follow.model');
 var Follow = new followSchema();
+var follows = require('./follows');
 var notificationSchema = require('../models/notification.model');
 var Notification = new notificationSchema();
-var flw = require("./follow");
+var flw = require("./follows");
 var blockSchema = require("../models/block.model");
 var Block = new blockSchema();
 var redis = require('redis');
@@ -298,87 +299,57 @@ var users = {
         let hostUsername = req.body.host;
         if((typeof hostUsername === "string") && (hostUsername.length>3)){
             users.getUserIdFromCache(hostUsername,function(userId) {
+                if(user){
+                    
+                }
+                else{
+
+                }
                 users.getUserInfosFromCache(userId,function(hostUser){
-                    if(hostUser)
-                    if(userId && !userId.message && typeof (userId === "string")) {
-                        userSchema.findOne({userId: userId}, {
-                            username: 1,
-                            fullName: 1,
-                            privacy: 1,
-                            userId: 1,
-                            profilePictureSet: 1,
-                            followings: 1,
-                            favouriteProfiles: 1, // user ids  //  up to 6   // -->   get most popular profile
-                            interestCategories: 1, // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
-                            gender: 1,
-                            followingsCount: 1,
-                            followersCount: 1,
-                            phoneNumber: 1,
-                            country: 1,
-                            rate: 1,
-                            verified: 1,
-                            views:1,
-                            city: 1,
-                            location: 1,
-                            blockList:1,
-                            birthDate: 1,
-                            roles: 1,
-                            badges: 1
-                        }, function (err, userx) {
-                            if (err) res.send(err);
-                            if (userx) {
-                                let response = {user: userx, following: false, followed: false};
-                                if (user === null) {
-                                    if (userx.privacy) {
-                                        delete userx.phoneNumber;
-                                        delete userx.birthDate;
-                                        delete userx.interestCategories;
-                                        delete userx.favouriteProfiles;
-                                        delete userx.fullName;
-                                        delete userx.email;
-                                        delete userx.location;
-                                    }
-                                    res.send({user: userx, following: null, followed: null});
-                                }
-                                else {
-                                    if (user.userId === userId) {
-                                        res.send({user: userx, following: null, followed: null});
-                                    }
-                                    else {
-                                        if(userx.blockList.indexOf(user.userId) > -1){
-                                            res.send({result:false,message:"not found"});
-                                        }
-                                        else {
-                                            if (userx.privacy) {
-                                                if (user.followings.indexOf(userId) === -1) {
-                                                    delete userx.phoneNumber;
-                                                    delete userx.birthDate;
-                                                    delete userx.interestCategories;
-                                                    delete userx.favouriteProfiles;
-                                                    delete userx.fullName;
-                                                    delete userx.email;
-                                                    delete userx.location;
-                                                }
-                                            }
-                                            if (userx.followings.indexOf(user.userId) > -1) {
-                                                response.followed = true;
-                                            }
-                                            if (user.followings.indexOf(userId) > -1) {
-                                                response.following = true;
-                                            }
-                                            if(user.blockList.indexOf(userx.userId) > -1){
-                                                response.blocked = true; // you blocked him
-                                            }
-                                            res.send(response);
-                                        }
-                                    }
-                                }
+                    if(!hostUser.message){
+                        let response = {user: hostUser, following: false, followed: false};
+                        if (user === null) {
+                            response.following=null;
+                            response.followed = null;
+                            res.send(response);
+                        }
+                        else {
+                            if (user.userId === userId) {
+                                response.following=null;
+                                response.followed = null;
+                                res.send(response);
                             }
                             else {
-                                res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
+                                
+                                if(userx.blockList.indexOf(user.userId) > -1){
+                                    res.send({result:false,message:"not found"});
+                                }
+                                else {
+                                    if (userx.privacy) {
+                                        if (user.followings.indexOf(userId) === -1) {
+                                            delete userx.phoneNumber;
+                                            delete userx.birthDate;
+                                            delete userx.interestCategories;
+                                            delete userx.favouriteProfiles;
+                                            delete userx.fullName;
+                                            delete userx.email;
+                                            delete userx.location;
+                                        }
+                                    }
+                                    if (userx.followings.indexOf(user.userId) > -1) {
+                                        response.followed = true;
+                                    }
+                                    if (user.followings.indexOf(userId) > -1) {
+                                        response.following = true;
+                                    }
+                                    if(user.blockList.indexOf(userx.userId) > -1){
+                                        response.blocked = true; // you blocked him
+                                    }
+                                    res.send(response);
+                                }
                             }
-                        });
-                    }
+                        }
+                    }   
                     else{
                         res.send({result: false, message: "User with username " + hostUsername + " Not Found"});
                     }

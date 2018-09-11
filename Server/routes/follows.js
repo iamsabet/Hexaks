@@ -8,6 +8,7 @@ var rateSchema = require('../models/rate.model');
 var rate = new rateSchema();
 var bcrypt = require("bcrypt-nodejs");
 var ExifImage = require('exif').ExifImage;
+
 var Float = require('mongoose-float').loadType(mongoose);
 var users = require('./users');
 var redis = require("redis");
@@ -108,11 +109,11 @@ var follows = {
         });
     },
     follow:function(req,res,user){
-        let hostId = req.body.followingId;
+        let hostId = req.body.followingId || null;
         
         users.getUserInfosFromCache(hostId,function(info){
             if(!info.message){
-                if (req.body && req.body.followingId) {
+                if (hostId) {
                     let followObject = {
                         follower: user.userId,
                         following: req.body.followingId,
@@ -137,7 +138,7 @@ var follows = {
                                     console.log(result);
                             });
                         }
-                        Follow.create(req, res, followObject, info);
+                        Follow.create(res, followObject, info);
                     }
                     else {
                         res.send({result: true, message: "already followed"});
@@ -187,7 +188,11 @@ var follows = {
             res.send({result:true,message:"not followed yet"});
         }
     },
-
+    check:function(follower,following,callback){
+        Follow.check(follower,following,function(resultx){
+            return callback(resultx);
+        });
+    }
 };
 
 
