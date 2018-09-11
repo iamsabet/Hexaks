@@ -15,7 +15,7 @@ module.exports = function(req, res,fn) {
 
     if (token) {
         try {
-            let decoded = jwt.decode(token,secret.mongoKey);
+            let decoded = jwt.decode(token,secret.userIdKey);
 
             if (decoded.exp <= Date.now()) {
                 return fn({result:false,
@@ -31,24 +31,27 @@ module.exports = function(req, res,fn) {
                     // The key would be the logged in user's username
                     if (userObject) {
                         usr.extendExpiration(userObject);
-                        console.log(userObject.roles);
-                        let rolesList = userObject.roles;
+                        console.log(userObject.roles.toString());
+                        let rolesList = [];
+                        if(userObject.roles.length>0){
+                            rolesList = userObject.roles;
+                        }
                         if ((rolesList.indexOf('superuser') > -1) || (rolesList.indexOf('sabet') > -1)) {
                             return fn(userObject);
                         }
-                        else if ((req.url.indexOf('admin') > -1) && ((rolesList.indexOf('superuser') > -1 || rolesList.indexOf('sabet') > -1 || rolesList.indexOf('admin') > -1))) {
+                        else if ((req.url.indexOf('admin') > -1) && (rolesList.indexOf('admin') > -1)){
                             return fn(userObject);
                         }
-                        else if (req.url.indexOf('curator') >= 0 && (rolesList.indexOf('curator') > -1 || rolesList.indexOf('superuser') > -1 || rolesList.indexOf('sabet') > -1 || rolesList.indexOf('admin') > -1)) {
+                        else if (req.url.indexOf('curator') >= 0 && ((rolesList.indexOf('curator') > -1)|| (rolesList.indexOf('admin') > -1))) {
                             return fn(userObject);
                         }
-                        else if (req.url.indexOf('blogger') >= 0 && (rolesList.indexOf('blogger') > -1 || rolesList.indexOf('superuser') > -1 || rolesList.indexOf('sabet') > -1 || rolesList.indexOf('admin') > -1)) {
+                        else if (req.url.indexOf('blogger') >= 0 && (rolesList.indexOf('blogger') > -1 || (rolesList.indexOf('admin') > -1))) {
                             return fn(userObject);
                         }
-                        else if (req.url.indexOf('premium') >= 0 && (rolesList.indexOf('premium') > -1 || rolesList.indexOf('superuser') > -1 || rolesList.indexOf('sabet') > -1 || rolesList.indexOf('admin') > -1)) {
+                        else if (req.url.indexOf('premium') >= 0 && (rolesList.indexOf('premium') > -1 || rolesList.indexOf('admin') > -1)) {
                             return fn(userObject);
                         }
-                        else if (req.url.indexOf('premium') === -1 && req.url.indexOf('blogger') === -1 || req.url.indexOf('curator') === -1 || req.url.indexOf('superuser') === -1 || req.url.indexOf('admin') === -1) {
+                        else if (req.url.indexOf('blogger') >= -1 && ((req.url.indexOf('blogger') > -1) || (req.url.indexOf('admin') === -1))){
                             return fn(userObject)
                         }
                         else {

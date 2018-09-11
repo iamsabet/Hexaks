@@ -45,6 +45,7 @@ var userSchema = new Schema({
     badges:[], // badgeIds -->
     roles : [], // String - Sabet / Admin / Curator / Blogger / Premium / --> founder <-- under 1000 --> future advantages --> + premium ...
     activated:Boolean,
+    deleted:Boolean,
     privacy:Boolean,
     viewedPosts:[], // last 100s
     ban:{
@@ -57,9 +58,11 @@ var userSchema = new Schema({
 
 
 userSchema.methods.create = function (userObject,callback) {
-
+    let now = Date.now();
     let newUser = new User(userObject);
-    newUser.createdAt = Date.now();
+    newUser.createdAt = now;
+    newUser.updatedAt = now;
+    newUser.deleted = false;
     newUser.save(function(err){
         if(err) return callback(false);
         callback(true);

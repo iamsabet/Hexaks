@@ -28,6 +28,12 @@ var users = {
     getMe: function (req, res, data) {
         res.send(data);
     },
+    getUserByUsername: function (username,deleted,activated,callback) {
+        userSchema.findOne({username:username,deleted:deleted,activated:activated},{userId:1},function(err,userx){
+            if(err) throw err;
+            return callback(userx);
+        })
+    },
     generateAccessKey(type,req,res){
         let clientIp = requestIp.getClientIp(req);
         let encryptionKey = CryptoJS.AES.encrypt(clientIp,"IP Key Encryption").toString();
@@ -70,23 +76,27 @@ var users = {
         if(req.body["info"]) {
             let encryptedInfo = req.body["info"];
             let clientIp = requestIp.getClientIp(req);
-            redisClient.get("registerKey:"+clientIp, function (err, key) {
+            redisClient.get("registerKey:"+clientIp, function (err, regKey) {
                 if (err) res.send({result: false, message: "key did not found in cache"});
-                if (!key) {
-                    res.send({result: false, message: "login key expired", status: 400});
+                if (!regKey) {
+                    res.send({result: false, message: "register key expired", status: 400});
                 }
                 else {
-                    console.log(key);
-                    let bytes = CryptoJS.AES.decrypt(encryptedInfo, key);
+                    console.log(regKey);
+                    let bytes = CryptoJS.AES.decrypt(encryptedInfo, regKey);
                     let decrypted = bytes.toString(CryptoJS.enc.Utf8);
                     console.log("encryptedInfo : " + encryptedInfo + "\n" + "decrypted " + decrypted);
                     let username = decrypted.split("/")[0].toLowerCase();
                     let email = decrypted.split("/")[1].toLowerCase();
                     let userId = random.generate(12);
-                    let password = CryptoJS.HmacSHA512(decrypted.split("/")[2], userId);
+                    let pst = decrypted.split("/")[2].toString();
+                    let password = CryptoJS.HmacSHA512(userId,pst);
                     let emailVerificationKey = random.generate(6);
                     let smsVerificationKey = random.generate(6);
+
+
                     userSchema.findOne({$or: [{username: username}, {email: username}]}, function (err, user) {
+     
                         if (err)
                             res.send({result: false, message: "Oops Something went wrong - please try again"});
                         if (user) {
@@ -157,6 +167,7 @@ var users = {
                             };
                             User.create(userObject, function (callback) {
                                 if (!callback) {
+                                    
                                     res.send({
                                         result: false,
                                         message: "Oops Something Went Wrong , please try again later"
@@ -285,8 +296,7 @@ var users = {
 
     getHostProfile: function (req, res, user) { // no privacy considered !.
         let hostUsername = req.body.host;
-        if(typeof hostUsername === "string"){
-   
+        if((typeof hostUsername === "string") && (hostUsername.length>3)){
             users.getUserIdFromCache(hostUsername,function(userId) {
                 users.getUserInfosFromCache(userId,function(hostUser){
                     if(hostUser)
@@ -374,6 +384,9 @@ var users = {
                     }
                 });
             });
+        }
+        else{
+            res.send({result:false,message:"not found"});
         }
     },
 
@@ -465,8 +478,24 @@ var users = {
         redisClient.get("userId:"+username,function(err,userId) {
             if(err) 
                 return callback({result:false,message:" user name not found"});
-            else
-                return callback(userId);
+            else{
+                if(userId){
+                    return callback(userId);
+                }
+                else{
+                    users.getUserByUsername(username,false,true,function(hostUser){
+                        if(hostUser){
+                            redisClient.set("userId:"+username,hostUser.userId,function(err,resx) {
+                                if(err) throw err;
+                                return callback(hostUser.userId);
+                            });
+                        }
+                        else{
+                            return callback({result:false,message:"404 Not Found"});
+                        }
+                    });
+                }
+            }
         });
     },
     updateAllUserInfosInCache:function(userId,callback){
@@ -553,7 +582,7 @@ function genToken(userId) {
     let token = jwt.encode({
         exp: expires,
         key: userId
-    },secret);
+    },secret.userIdKey);
     
     return {
         token: token,
