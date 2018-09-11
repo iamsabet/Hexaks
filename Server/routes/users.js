@@ -330,7 +330,6 @@ var users = {
 
    accessUserDatas:function(res,user,hostUserId){
     users.getUserInfosFromCache(hostUserId,function(hostUser){
-
         if(!hostUser.message){
             let response = {user: hostUser, following: false, followed: false};
             if (user === null) {
@@ -347,11 +346,11 @@ var users = {
                 else {
                     if (user.followings.indexOf(hostUser.userId) > -1) {
                         response.following = true;
+                        res.send(response);
                     }
                     else{
-
                         flw.check(hostUser.userId,user.userId,function(resultf){
-                            if(resultf !== false){
+                            if(!resultf){
                                 response.followed = false; // you blocked him
                             }
                             else{
@@ -361,18 +360,17 @@ var users = {
                                 }
                             }
                             if(JSON.parse(hostUser.privacy) || (user.followings.indexOf(hostUserId) === -1)){
-                            
                                 flw.check(user.userId,hostUserId,function(resultf){
                                     if(resultf){
                                         if(resultf.accepted && (resultf.accepted===false)){
                                             response.following = true;
                                             response.followingAccept = false;
-                                            res.send(response);
                                         }
                                         else{
                                             res.send({result:false,message:"inja nabayad miumad ghaedatan :/ flw shit :/"});
                                         }
                                     }
+                                    res.send(response);
                                 });
                             
                             }

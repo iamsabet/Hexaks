@@ -10,7 +10,7 @@ var bcrypt = require("bcrypt-nodejs");
 var ExifImage = require('exif').ExifImage;
 
 var Float = require('mongoose-float').loadType(mongoose);
-var users = require('./users');
+var usr = require('./users');
 var redis = require("redis");
 var requestIp = require("request-ip");
 var findHashtags = require('find-hashtags');
@@ -111,7 +111,7 @@ var follows = {
     follow:function(req,res,user){
         let hostId = req.body.followingId || null;
         
-        users.getUserInfosFromCache(hostId,function(info){
+        usr.getUserInfosFromCache(hostId,function(info){
             if(!info.message){
                 if (hostId) {
                     let followObject = {
