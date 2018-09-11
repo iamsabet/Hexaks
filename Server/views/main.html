@@ -1883,10 +1883,12 @@
             $("#postsHeader h3").html("Oops");
         }
         else {
-            console.log(postsList);
+            let ratesList = [];
+            ratesList = JSON.parse(res.rates);
             if (Filters.pageNumber === 1) {
                 postsList = res.docs;
                 usersInfo = res.owners;
+                rates = {};
                 lastLength = -1;
                 total = res.total;
                 $(".profileTop .profileTopContainer .userInfo .photos").html(total + " photos");
@@ -1895,28 +1897,24 @@
                 $("#postsContainer").html("");
             }
             else{
-
                 for(var post = 0;post < res.docs.length ; post++){
                     postsList.push(res.docs[post]);
-                    host = res.owner;
-                    rates = {};
-                    for(let r = 0;r < res.rates.length ; r++){
-                        if(!rates[res.rates[r].postId]){
-                            rates[res.rates[r].postId] = {
-                                "value":res.rates[r].value,
-                                "rateId":res.rates[r].rateId,
-                                "rater":res.rates[r].rater,
-                                "changes":res.rates[r].changes,
-                                "createdAt":res.rates[r].createdAt
-                            }
-                        }
-                    }
                 }
                 let tempUsersInfo = res.owners;
                 let keys = Object.keys(tempUsersInfo);
                 for(let x in keys){
                     if(!usersInfo[keys[x]]){
                         usersInfo[keys[x]] = tempUsersInfo[keys[x]];
+                    }
+                }
+            }
+            // parse rates
+            for(let l = 0 ; l < ratesList.length ; l++){
+                if(!rates[ratesList[l].postId]){
+                    rates[ratesList[l].postId] = {
+                        "value":ratesList[l].value,
+                        "rateId":ratesList[l].rateId,
+                        "changes":ratesList[l].changes,
                     }
                 }
             }
@@ -2571,13 +2569,14 @@
 
     function rateResponseHandler(res) {
         if(!res.message){
-            if(rates[postsList[currentPostItterator].postId] !== undefined) {
+            if(rates[postsList[currentPostItterator].postId]) {
                 rates[postsList[currentPostItterator].postId].value = parseFloat(res.split("/")[0]);
             }
             else{
                 rates[postsList[currentPostItterator].postId] = {
                     "value" : parseFloat(res.split("/")[0]),
-                    "rater" : Me.userId,
+                    "rateId" : res.split("/")[2],
+                    "changes" : 0
                 }
             }
 

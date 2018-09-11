@@ -608,13 +608,10 @@ router.post('/api/v1/posts/:uuid',function(req,res){
                         let curator = req.body.curator || undefined;
                         let timeEdge = 0;
                         let now = Date.now();
-                        console.log(requestOrigin);
                         if(pageNumber === 1){
-                            if(requestOrigin !== null){
-                                requestOrigin = now;
-                                redisClient.set("postRequestOrigin:"+userId,requestOrigin);
-                                redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
-                            }
+                            requestOrigin = now;
+                            redisClient.set("postRequestOrigin:"+userId,requestOrigin);
+                            redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
                             timeOrigin = requestOrigin;
                         }
                         else if (pageNumber > 1){

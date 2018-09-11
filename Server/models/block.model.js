@@ -104,8 +104,8 @@ blockSchema.methods.create = function(blocker,blocked,callback){
 
 
 blockSchema.methods.check = function(blocker,blocked,callback){
-    let hashed = CryptoJS.SHA1(blocker, blocked); //("content","key")
-    block.findOne({blockId:hashed,activated:true},function(resultx){
+    // let hashed = CryptoJS.SHA1(blocker, blocked); //("content","key")
+    block.findOne({blocker:blocker,blocked:blocked,activated:true},function(resultx){
         if(resultx){
             return callback(true);
         }

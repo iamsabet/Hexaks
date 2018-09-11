@@ -147,14 +147,16 @@ var posts = {
             let inputx = null;
             if(user)
                 inputx = user.userId;
-            blocks.getUserBlockers(input,function(blockers){
-                if(blockers===false){
-
-                }
+            blocks.getUserBlockers(inputx,function(blockers){
                 if(userIds === "all"){
-                    if(user){ 
+                    if(user){
                         notIncludeThese.push.apply(notIncludeThese,blockers);
-                        userId = {$nin: notIncludeThese};
+                        if(notIncludeThese.length>0){
+                            userId = {$nin: notIncludeThese};
+                        }
+                        else{
+                            query.ownerId= {$exists:true};
+                        }
                     }
                     else{
                         query.ownerId= {$exists:true};
@@ -190,9 +192,9 @@ var posts = {
                                     postIds.push(postsList.docs[x].postId);
                                     if (x === postsList.docs.length - 1) {
                                         if(user){
-                                            rateSchema.find({postId:{$in:postIds},rater:user.userId,deleted:false,activate:true},{value:1,rateId:1,rater:1,postId:1,createdAt:1},function(err,rates){
+                                            rateSchema.find({postId:{$in:postIds},rater:user.userId,deleted:false,activated:true},{value:1,changes:1,rateId:1,postId:1},function(err,rates){
                                                 if(err) throw err;
-                                                postsList.rates = rates;
+                                                postsList.rates = JSON.stringify(rates);
                                                 res.send(postsList);
                                             });
                                         }
@@ -365,11 +367,11 @@ var posts = {
                 }
                 else{
                     if(user){
-                        if(user.followings.contains(postOwnerId)){
+                        if(user.followings.indexOf(postOwnerId) > -1){
                             posts.accessPostDatas(user,postId,hostUser,true,res); // ( postId,owner,privacy,res)
                         }
                         else {
-                            if(user.blockList.contains(postOwnerId)){
+                            if(user.blockList.indexOf(postOwnerId)>-1){
                                 res.send({result:false,message:"You Have Blocked Post Owner"});
                             }
                             else{
@@ -855,13 +857,13 @@ var posts = {
                         res.send({result:true,message:"already viewd"});
                     }
                     else{
-                        viewx.save();
                         let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
-                        if(user.followings.contains(postOwnerId)){
+
+                        if(user.followings.indexOf(postOwnerId) > -1){
                             posts.doView(user.userId,postId,true,res); // post and account privacy bypass
                         }
                         else{
-                            let blocked = user.blockList.contains(postOwnerId);
+                            let blocked = (user.blockList.indexOf(postOwnerId) > -1);
                             if(blocked){
                                 res.send({result:false,message:"you blocked the post owner"});
                             }
@@ -941,7 +943,7 @@ var posts = {
                         });
                     }
                     else{
-                        res.send({result:result,message:"Create View Record Failed"});
+                        res.send({result:resultv,message:"Create View Record Failed"});
                     }
                 });
             }
@@ -961,14 +963,14 @@ var posts = {
                 rateSchema.findOne({rater:user.userId,postId:postId},{rateId:1,changes:1,rater:1,postId:1,value:1},function(err,ratex) {
                     if (err) throw err;
                     let rateObject = ratex;
-                    if(ratex.changes < 3){
+                    if(!ratex || ratex.changes < 3){
                         let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
-                        if(user.blockList.contains(postOwnerId)) {
+                        if(user.blockList.indexOf(postOwnerId) > -1) {
                             res.send({result:false,message:"You Blocked the post owner"});
                         }
                         else{
                             let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
-                            if(user.followings.contains(postOwnerId)){
+                            if(user.followings.indexOf(postOwnerId) > -1){
                                 posts.doRate(user.userId,postId,rateValue,rateObject,true,res); // post and account privacy bypass
                             }
                             else{
@@ -1008,10 +1010,10 @@ var posts = {
             if(post){
                 if(rateObject){
                     let now = Date.now();
-                    rateSchema.update({rateId:rateObject.rateId,value:{"$ne":lastRate}},{
+                    rateSchema.update({postId:rateObject.postId,rater:userId,value:{$ne:rateNumber}},{ // last rate value
                         $set:{
                             value:rateNumber,
-                            changes : rateObject.changes+1,
+                            changes : (rateObject.changes+1),
                             updatedAt : now
                         },
                     },function(err,resultr){
@@ -1022,24 +1024,15 @@ var posts = {
                             // users.pushNotification("environment","Changed rate post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,now);
                             let lastRate = rateObject.value;
                             let counts = parseInt(post.rate.counts);
-                            let avg = parseFloat(post.rate.value);
+                            let diff = parseFloat(rateNumber - lastRate); // + , - 0.change
+                            let change = parseFloat(diff/(counts));
 
-                            let diff1 = parseFloat(avg - lastRate); // + , - 0.change
-                            let lastChange = parseFloat(diff1/(counts));
-
-                            let diff2 = parseFloat(avg - rateNumber); // + , - 0.change
-                            let newChange = (diff2/(counts)); // + or -
-
-                            let finalIncreaseValue = newChange - lastChange; // + or -
-                            let increasePointsValue = rateNumber - lastRate; // + or -
-                            posts.updatePostRates(req,res,{postId:post.postId},{
+                            posts.updatePostRates(res,{postId:post.postId},{
                                 $inc:{
-                                    rate:{
-                                        points : increasePointsValue,
-                                        value : finalIncreaseValue,
+                                    "rate.points" : diff,
+                                    "rate.value" : change
                                     }
-                                }
-                            },parseFloat(value+finalIncreaseValue).toString()+"/update");
+                            },parseFloat(rateObject.value+diff).toString()+"/update");
                         }
                         else{
                             res.send({result:false,message:"Update rate object failed"});
@@ -1052,23 +1045,24 @@ var posts = {
                         rateObj.rater = userId;
                         rateObj.value = rateNumber;
                         rateObj.postId = postId;
-                        Rate.create(rateObj,function(callback){
-                            if(callback){
+                        Rate.create(rateObj,function(rateId){
+
+                            if(rateId !== false){
                                 // let smallImageUrl = "../pictures/"+postId + "-Small===.";
                                 // users.pushNotification("environment"," Rated your post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,function(resultx){
                                 //     console.log(" xxxxxxxxxx unread notifications after create " + resultx);
                                 // });
-                                let counts = parseInt(post.rate.counts) + 1 ;
+                                let counts = parseInt(post.rate.counts) + 1;
                                 let avg = parseFloat(post.rate.value);
-                                let differance = parseFloat(avg - rateNumber); // + , - 0.change
+                                let differance = parseFloat(rateNumber - avg); // + , - 0.change
                                 let changeValue = parseFloat(differance/(counts));
-                                posts.updatePostRates(res,{postId:rateObject.postId},{
+                                posts.updatePostRates(res,{postId:rateObj.postId},{
                                     $inc:{
-                                        value : changeValue,
-                                        points : rateNumber, // + 1 to 6
-                                        counts:1
+                                        "rate.value" : changeValue,
+                                        "rate.points" : rateNumber, // + 1 to 6
+                                        "rate.counts": 1
                                     }
-                                },value.toString()+"/new");
+                                },parseFloat(avg+changeValue).toString()+"/new/"+rateId.toString());
                             }
                             else{
                                 res.send({result:false,message:"Rate Object Did not Created"});

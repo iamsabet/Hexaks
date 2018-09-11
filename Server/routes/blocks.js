@@ -25,12 +25,23 @@ var blocks = {
     },
     getUserBlockers:function(userId,callback){
         if(userId === null){
-            return false;
+            return [];
         }
         else{
             blockSchema.find({blocked:userId,deleted:false,activated:true},{blocker:1,updatedAt:1},function(err,blockList){
                 if(err) throw err;
-                return callback(blockList);
+                if(blockList.length===0){
+                    return callback([]);
+                }
+                else{
+                    let blockers = [];
+                    for(let z  = 0 ;z < blockList.length;z++){
+                        blockers.push(blockList[z].blocker);
+                        if(z === blockList.length -1){
+                            return callback(blockers);
+                        }
+                    }
+                }
             });
         }
     },
