@@ -43,14 +43,13 @@ var uploader = {
             // text/plain is required to ensure support for IE9 and older
             if (files) {
                 console.log(user);
-                redisClient.get(user.userId + ":uploading", function (err, value) {
+                redisClient.get("uploading:"+user.userId, function (err, value) {
                     if(err) throw err;
                     if(value) {
                         let format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
                         if(value==="post") {
-                            redisClient.get(user.userId + ":uploadCounts", function (err, countsx) {
+                            redisClient.get("uploadCounts:"+user.userId, function (err, countsx) {
                                 let counts = parseInt(countsx);
-                                console.log("counts0 :" + counts);
                                 if (counts && counts > 0) {
                                     counts++;
                                 }
@@ -59,10 +58,10 @@ var uploader = {
                                 }
 
                                 if(counts < 20) {
-                                    console.log("counts1 :" + counts);
+
                                     let pathis = "";
                                     let size = "";
-                                    redisClient.get(user.userId + ":uploadingPost", function (err, postIdx) {
+                                    redisClient.get("uploadingPost:"+user.userId, function (err, postIdx) {
                                         if (err) throw err;
                                         let uploadingPost = "";
                                         if((postIdx===null || !postIdx)){
@@ -93,17 +92,17 @@ var uploader = {
                                                 uploadingPost = CryptoJS.AES.encrypt((user.userId + "|-p-|" + counts + ":" + random.generate(10)).toString(), secret.postIdKey).toString();
                                                 uploadingPost = uploadingPost.split("/").join("|");
                                                 console.log("postId : " + uploadingPost);
-                                                redisClient.set(user.userId + ":uploadingPost", uploadingPost + "===." + format);
-                                                redisClient.expire(user.userId + ":uploadCounts", (5 * 60000));
-                                                redisClient.expire(user.userId + ":uploadingPost", (5 * 60000));
-                                                redisClient.expire(user.userId + ":uploading", (5 * 60000));
+                                                redisClient.set("uploadingPost:"+user.userId, uploadingPost + "===." + format);
+                                                redisClient.expire("uploadCounts:"+user.userId, (5 * 60000));
+                                                redisClient.expire("uploadingPost:"+user.userId, (5 * 60000));
+                                                redisClient.expire("uploading:"+user.userId, (5 * 60000));
 
                                             }
 
                                             if (size === "") {
                                                 pathis = originalPath;
                                                 console.log("counts" + counts);
-                                                redisClient.set(user.userId + ":uploadCounts", counts.toString());
+                                                redisClient.set("uploadCounts:"+user.userId, counts.toString());
                                                 // image data extraction
                                                 console.log("post object creation");
                                                 posts.Create(user, format, uploadingPost.split("===.")[0], fields.qqfilename[0], counts, function (callback) {

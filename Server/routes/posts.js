@@ -399,7 +399,7 @@ var posts = {
         }
     },
     activate:function(req,res,user){
-        
+
         redisClient.get("uploadingPost:"+user.userId,function(err,postId){
             if(err) throw err;
                 redisClient.get("uploadCounts:"+user.userId,function(err,uploadCountsx) {
@@ -597,18 +597,18 @@ var posts = {
 
                                                 userSchema.update({userId:user.userId,activated:true,deleted:false},{
                                                     $inc:{postsCount:accepteds}
-                                                },function(resultu){
-                                                    if((resultu.n)>0){
-                                                        users.updateSingleUserInfoInCache(user.userId,"postsCount",accepteds);
+                                                },function(err,resultx){
+                                                    if(resultx.n>0){
+                                                        users.updateSingleUserInfoInCache(user.userId,"postsCount",accepteds,function(result){
+                                                            users.removeUploading(user);
+                                                            console.log("activation complete");
+                                                            res.send(result);
+                                                        });
                                                     }
                                                 });
 
-                                                users.removeUploading(user);
-                                                console.log("activation complete");
-                                                res.send(true);
+                                                
                                             }
-
-
                                         });
                                     }
                                     else {

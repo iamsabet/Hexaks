@@ -550,7 +550,7 @@ var users = {
         });
     },
     updateSingleUserInfoInCache:function(userId,attr,value,callback){ // mongodb must change before or after this function updates cache without considering master db
-        redisClient.hset("info:"+userId,attr,value); // must add to a zset --> points
+        redisClient.hincrby("info:"+userId,attr,value); // must add to a zset --> points
         redisClient.expire("info:"+userId, 300000);
         console.log("user single info -" + value + "- updated in cache expire 5minutes:");
         return callback(true);
