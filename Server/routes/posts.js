@@ -399,6 +399,7 @@ var posts = {
         }
     },
     activate:function(req,res,user){
+        
         redisClient.get("uploadingPost:"+user.userId,function(err,postId){
             if(err) throw err;
                 redisClient.get("uploadCounts:"+user.userId,function(err,uploadCountsx) {
