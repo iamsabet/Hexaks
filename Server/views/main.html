@@ -209,7 +209,43 @@
     <div class="pictureBox">
 
     </div>
-
+    <div class="postFooter">
+        <button class="leftButton show"></button>
+        <div class="ownerProfile">
+            <svg class="clip-svg">
+                <defs>
+                    <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                        <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                    </clipPath>
+                </defs>
+            </svg>
+            <div class="polygon-each-img-wrap">
+                <img class="ownerProfilePicture polygon-clip-hexagon" src=""/>
+            </div>
+            <a href="/" class="ownerUsername usernameLink"></a>
+        </div>
+        <button class="rightButton show"></button>
+        <div class="caption">
+            <button class="editSurface"></button>
+            <textarea readonly class="notEditable show"></textarea>
+            <textarea class="editable" maxlength="250"></textarea>
+            <button class="cancelCaption"></button>
+            <button class="saveCaption"></button>
+        </div>
+        <div class="rateButton">
+            <span class="rateValue"></span>
+            <button class="openRateBtn"></button>
+            <span class="rateCounts"><img class="peopleIcon" src="../Statics/images/icons/users-group.png"/></span>
+            <span class="views"></span>
+            <img src="../Statics/images/icons/glasses.png" class="viewIcon">
+        </div>
+        <div class="buttonGroup">
+            <button class="info"></button>
+            <button class="comments"></button>
+            <button class="download"></button>
+        </div>
+    
+    </div>    
     <div class="commentsContainer">
         <button class="closeInfo show"></button>
         <h3 class="header">Comments</h3>
@@ -251,44 +287,6 @@
         <button class="doRate" disabled>Rate</button>
     </div>
 </div>
-<div class="postFooter">
-    <button class="leftButton show"></button>
-    <div class="ownerProfile">
-        <svg class="clip-svg">
-            <defs>
-                <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
-                    <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
-                </clipPath>
-            </defs>
-        </svg>
-        <div class="polygon-each-img-wrap">
-            <img class="ownerProfilePicture polygon-clip-hexagon" src=""/>
-        </div>
-        <a href="/" class="ownerUsername usernameLink"></a>
-    </div>
-    <button class="rightButton show"></button>
-    <div class="caption">
-        <button class="editSurface"></button>
-        <textarea readonly class="notEditable show"></textarea>
-        <textarea class="editable" maxlength="250"></textarea>
-        <button class="cancelCaption"></button>
-        <button class="saveCaption"></button>
-    </div>
-    <div class="rateButton">
-        <span class="rateValue"></span>
-        <button class="openRateBtn"></button>
-        <span class="rateCounts"><img class="peopleIcon" src="../Statics/images/icons/users-group.png"/></span>
-        <span class="views"></span>
-        <img src="../Statics/images/icons/glasses.png" class="viewIcon">
-    </div>
-    <div class="buttonGroup">
-        <button class="info"></button>
-        <button class="comments"></button>
-        <button class="download"></button>
-    </div>
-
-</div>
-
 
 
 
@@ -511,50 +509,46 @@
     let currentUploadingRoot = null;
     let uploadRequestDatas = {};
     $(document).ready(function(){
+        getMe();
+        resize();
+        urlParser(true);
+        initialCategories();
         if( readCookie("X-ACCESS-TOKEN") !== null) {
             getMe();
             setUploaders();
             ratePadInitial();
-            urlParser(true,"first");
+            urlParser(true);
             resize();
             initialCategories();
             // initialAlbums();
         }
-        else {
-            getMe();
-            urlParser(true);
-        }
+        
     });
     $(window).resize(function() {
         resize();
     });
     $("body").on("click","#newPostBtn",function(event){
         event.preventDefault();
-        window.history.replaceState("","","/");
-        window.history.replaceState("","","/newpost");
-        urlParser(true);
+        changePage("newPost","newPost",true);
     });
     $("body").on("click","#notifBtn",function(event){
         event.preventDefault();
-        showTopBox("notif");
-        urlParser(true);
+        
     });
     $("body").on("click","#searchButton",function(event){
         event.preventDefault();
-        showTopBox("search");
-        urlParser(true);
+        
     });
     $("body").on("click","#profileButton",function(event){
         event.preventDefault();
-        showTopBox("profile");
-        urlParser(true);
+        
     });
 
     $("body").on("click",".usernameLink",function(event){
         event.preventDefault();
         let changeusername = $(this).attr("href").toString();
-        window.history.replaceState("","",changeusername);
-        urlParser(true);
+        changePage("profile",changeusername,true);
+
     });
 
     $("body").on("submit",".loginSmall form",function(event){
@@ -697,7 +691,8 @@
         currentPostItterator = parseInt($(this).parents(".eachPost").children("p")[0].innerHTML);
         currentPostId = postsList[currentPostItterator].postId;
         lastPostItterator = -1;
-        makeUrl("post",currentPostId);
+        changePage("post","post/"+currentPostId,true,currentPostId);
+        
     });
 
 
@@ -1063,6 +1058,8 @@
         $(".commentsContainer.show").removeClass("show");
         $(".infoContainer.show").removeClass("show");
         $(".rateDiv.show").removeClass("show");
+        $(".ratePad div div").removeClass("selected");
+        $(".rateDiv .header").html(" Rate this post ( 1 - 6 ) ");
         $(".commentsContainer.show .cancelComment").click();
     });
     $("body").on("click",".commentsContainer .closeInfo",function(){
@@ -1087,12 +1084,14 @@
         if($(".postFooter .buttonGroup.show")) {
             $(".postFooter .buttonGroup.show").removeClass("show");
         }
+
         $(".commentsContainer.show .cancelComment").click();
+        
         for (let m = historyPointer ; m >= 0 ; m--){
             if(historyList[m] && !historyList[m].pageName.startsWith("post")){
                 historyPointer = m;
-                window.history.replaceState("/","","/"+historyList[m].urlData);
-                urlParser(true);
+                changePage(historyList[m].pageName,historyList[m].url,true,null,false);
+                break;
             }
         }
     });
@@ -1230,7 +1229,6 @@
 
     // Post(Picture) Handlers
     function getPostsByFilter(input,pageType){
-        // debugger;
         switch (pageType) {
             case "following":{
                     requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
@@ -1335,6 +1333,7 @@
             }break;
             case "getPostsByFilter":{
                 console.log("total :" + res.total + " - "+ res.page + " / " + res.pages);
+                // debugger;
                 parsePosts(res);
             }break;
             case "submitPost":{
@@ -1362,11 +1361,11 @@
 
         if (pageName) {
             if(pageName.startsWith("post")){
-                window.history.replaceState("", "", "/post/" + postId);
+                changePage("post","post/"+postId,true,postId);
             }
             else {
                 if((pageName === "explore") || (pageName === "curated") || (pageName === "latest") || (pageName === "top")) {
-                    window.history.replaceState("", "", "/"+window.location.pathname.split("/")[1]+ "/" + pageName);
+                    changePage(window.location.pathname.split("/")[1],window.location.pathname.split("/")[1]+ "/" + pageName,true);
                 }
                 else{
                     window.history.replaceState("", "", "/" + pageName + "/" + window.location.pathname.split("/")[2]);
@@ -1475,8 +1474,8 @@
             }
 
             else if (pageType === "settings" || pageType === "post" || pageType === "contact" || pageType === "people" || pageType === "newpost" || pageType === "policy") {
-                if (postId) {
-                    changePage(pageType + "/" + postId, pageType + "/" + postId, writeState, true);
+                if (postId && (pageType === "post")) {
+                    changePage(pageType + "/" + postId, pageType + "/" + postId, writeState, postId);
                 }
                 else {
                     changePage(pageType, pageType, writeState);
@@ -1567,13 +1566,10 @@
 
     }
 
-    function changePage(pageName,pageType,newHistory,postid) {
-
+    function changePage(pageName,pageType,newHistory,postid,requestOrNot) {
+        let canRequest = requestOrNot || true;
         setTimeout(function () {
-            if (postid) {
-                pageName = pageName.split("/")[0];
-                pageType = pageName.split("/")[1];
-            }
+
             if (pageName === "feed" || pageName === "home" || pageName === "" || pageName === "explore" || pageName === "following") {
                 $(".postFooter").removeClass("show");
                 // show feed items --> hide Others
@@ -1600,11 +1596,9 @@
                     }
                 }
                 // --> Function Calls
-                getPostsByFilter(Filters, pageType.split("/")[0]);
-
                 if (newHistory || false) {
+                    getPostsByFilter(Filters, pageType.split("/")[0]);
                     pushHistory(pageName, pageType, window.location.pathname, true);
-
                 }
             }
             else if (pageName === "profile") {
@@ -1634,7 +1628,7 @@
                     pushHistory(pageName, pageType, pageType, true);
                 }
             }
-            else if (pageName === "settings" || pageName === "newpost" || pageName === "post" || pageName === "people" || pageName === "contact") {
+            else if (pageName === "settings" || pageName.toLowerCase() === "newpost" || pageName === "post" || pageName === "people" || pageName === "contact") {
                 if (pageName !== currentPage) {
                     if (pageName === "post") {
                         $(".postFooter").addClass("show");
@@ -1645,10 +1639,10 @@
                     var pageNames = ["settings", "newPost", "post", "contact", "people", "policy"];
                     for (var x = 0; x < pageNames.length; x++) {
 
-                        if (pageName === pageNames[x].toLowerCase()) {
+                        if (pageName === pageNames[x]) {
                             $(`#${pageNames[x]}`).addClass("show");
-
-                            sendPagesInitialRequest(pageNames[x].toLowerCase(), "post", pageName.split("-")[1]);
+                            sendPagesInitialRequest(pageNames[x].toLowerCase(), "post",postid);
+                            break;
                         }
                         else {
                             if ($(`#${pageNames[x]}.show`)) {
@@ -1656,6 +1650,10 @@
                             }
                         }
                     }
+                }
+
+                if (newHistory || false) {
+                    pushHistory(pageName, pageType, pageType, true);
                 }
                 // => function calls :
             }
@@ -1942,6 +1940,7 @@
                     }
                 }
             }
+            // debugger;
             if(Filters.pageNumber === 1)
                 parsePostsList(true);
             else
@@ -2609,7 +2608,8 @@
                 postsList[currentPostItterator].rate.counts++;
             }
             loadPostDatas(postsList[currentPostItterator],-2);
-            $(".rateDiv .closeInfo").click();
+            $(".rateDiv .closeInfo")[0].click();
+           
         }
         else{
             alert(res.message);
@@ -2732,6 +2732,7 @@
     }
 
     function parsePostsList(clear){
+        // debugger;
         postsColumns = lastPostsColumns;
         if(clear){
             $(".postsContainer").html("");

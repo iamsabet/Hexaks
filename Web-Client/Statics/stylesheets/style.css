@@ -2152,7 +2152,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	z-index: 1000000;
 
 }
-.postFooter .caption .notEditable.show{
+.post.show .postFooter .caption .notEditable.show{
 	height: 100%;
 	z-index: 100;
 	opacity: 1;
@@ -2171,8 +2171,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	opacity: 1;
 
 }
-
 .postFooter .caption .editSurface{
+	opacity: 0;
+}
+.post.show .postFooter .caption .editSurface{
 	position: absolute;
 	z-index: 105;
 	width: 100%;
@@ -2192,12 +2194,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 }
 
-
-.postFooter .caption .editSurface.show{
+.post.show .postFooter .caption .editSurface.show{
 	opacity: 0.5;
 	height: 100%;
 }
-.postFooter .caption .editSurface.show:hover{
+.post.show .postFooter .caption .editSurface.show:hover{
 	opacity: 1;
 }
 

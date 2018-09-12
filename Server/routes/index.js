@@ -467,7 +467,7 @@ router.post('/api/v1/posts/explore/',function(req,res){
 
     validateRequest(req,res,function(user) {
         let userId = null;
-        if(user !==null) {
+        if(!user.message) {
             userId = user.userId;
         }
         else{
@@ -524,7 +524,7 @@ router.post('/api/v1/posts/explore/',function(req,res){
 
 router.post('/api/v1/posts/subscriptions/',function(req,res){
     validateRequest(req,res,function(user) {
-        if(user) {
+        if(!user.message) {
             redisClient.get("postRequestOrigin:"+userId, function (err, requestOrigin) {
                 if(err) throw err;
                 let category = undefined;
@@ -565,7 +565,7 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
             });
         }
         else{
-            // res.send({result:false,message:"Login Or Register to Continue"});
+            res.send(user);
         }
     });
 });

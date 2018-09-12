@@ -24,7 +24,7 @@ var blocks = {
     },
     getUserBlockers:function(userId,callback){
         if(userId === null){
-            return [];
+            return callback([]);
         }
         else{
             blockSchema.find({blocked:userId,deleted:false,activated:true},{blocker:1,updatedAt:1},function(err,blockList){

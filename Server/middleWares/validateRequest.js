@@ -55,7 +55,7 @@ module.exports = function(req, res,fn) {
                         }
                         else {
                             return fn({
-                                result: false,
+                                result: true,
                                 "status": 401,
                                 message: "Not Authorized"
                             });
@@ -63,8 +63,8 @@ module.exports = function(req, res,fn) {
                     } else {
                         // No user with this name exists, respond back with a 401
                         return fn({
-                            result: false,
-                            "status": 403,
+                            result: true,
+                            "status": 401,
                             message: "Not Authenticated"
                         });
                     }
@@ -74,16 +74,16 @@ module.exports = function(req, res,fn) {
                 }
             });
         } catch (err) {
-            return fn({result:false,
-                "status": 403,
+            return fn({result:true,
+                "status": 401,
                 message:"Not Authenticated"
             });
         }
     } else {
 
-        return fn({result:false,
-            "status": 403,
-            message:"No Authenticated"
+        return fn({result:true,
+            "status": 401,
+            message:"Not Authenticated"
         });
     }
     function parseCookies (request) {

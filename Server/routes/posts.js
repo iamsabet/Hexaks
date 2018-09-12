@@ -73,7 +73,7 @@ var posts = {
             }
             let notIncludeThese = [];
             if(userIds ==="all"){
-                if(user && (user.blockList.length > 0)) {
+                if((user) && (!user.message) && (user.blockList.length > 0)) {
                     notIncludeThese = user.blockList;
                     userId = {$nin: notIncludeThese};
                 }
@@ -150,11 +150,11 @@ var posts = {
                 options.sort = {createdAt: -1};
             }
             let inputx = null;
-            if(user)
+            if(!user.message)
                 inputx = user.userId;
             blocks.getUserBlockers(inputx,function(blockers){
                 if(userIds === "all"){
-                    if(user){
+                    if(!user.message){
                         notIncludeThese.push.apply(notIncludeThese,blockers);
                         if(notIncludeThese.length>0){
                             userId = {$nin: notIncludeThese};

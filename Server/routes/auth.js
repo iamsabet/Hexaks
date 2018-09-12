@@ -118,7 +118,7 @@ var auth = {
                     return callback(user);
                 }
                 else {
-                    return callback({result: true, message: "No Authenticated", status: 401});
+                    return callback({result: true, message: "Not Authenticated", status: 401});
                 }
             });
         }
