@@ -495,8 +495,14 @@ router.post('/api/v1/posts/explore/',function(req,res){
                 let orderBy = undefined;
                 if(req.body.order==="latest")
                     orderBy = "createdAt";
-                else if(req.body.order==="top") { // curated only
-                    orderBy = req.body.orderBy || "rate.value";
+                else if(req.body.order==="top") { 
+                    orderBy = req.body.orderBy || "rate.value"; 
+                }
+                else if(req.body.order==="curated") {
+                    orderBy = "updatedAt"; // ignore order by by now
+                }
+                else{
+                    orderBy = "createdAt"
                 }
                 let now = Date.now();
                 let curator = req.body.curator || undefined;

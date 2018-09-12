@@ -57,7 +57,7 @@ var posts = {
                 categoryQuery = {$in:category};
         }
         let timeEdge = timeEdgeIn;
-        if (orderedBy === "createdAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.points" || orderedBy === "rate.value" || orderedBy === "views") {
+        if (orderedBy === "createdAt"|| orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.points" || orderedBy === "rate.value" ||  orderedBy === "rate"  || orderedBy === "views") {
             // timeWindow
 
             let costQuery = {cost: {$gte: left, $lte: right}};
@@ -114,7 +114,7 @@ var posts = {
                 query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
             }
 
-            if (isCurated === true) {
+            if (JSON.parse(isCurated) === true) {
                 if(curator !== undefined && curator !== "") {
                     query.curatorId = curator;
                 }
@@ -131,17 +131,23 @@ var posts = {
                 page: parseInt(pageNumber),
                 limit: parseInt(counts)
             };
-            if (orderBy === "originalImage.cost") {
+            if (orderedBy === "originalImage.cost") {
                 options.sort = {"originalImage.cost": -1};
             }
-            else if (orderBy === "rate.value") {
+            else if (orderedBy === "rate.value" || orderedBy === "rate") {
                 options.sort = {"rate.value" : -1};
             }
-            else if (orderBy === "rate") {
+            else if (orderedBy === "rate.points") {
                 options.sort = {"rate.points": -1};
             }
-            else if(orderBy === "views"){ // "views"
+            else if(orderedBy === "views"){ // "views"
                 options.sort = {views: -1};
+            }
+            else if(orderedBy === "updatedAt"){ // "views"
+                options.sort = {updatedAt: -1};
+            }
+            else{
+                options.sort = {createdAt: -1};
             }
             let inputx = null;
             if(user)

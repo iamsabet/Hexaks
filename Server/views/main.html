@@ -571,20 +571,18 @@
             }
             if (order === "curated") {
                 Filters.isCurated = true;
-                Filters.orderBy = "views";
+                Filters.orderBy = "updatedAt";
             }
             else {
                 Filters.orderBy = "rate";
                 Filters.isCurated = false;
             }
-            Filters.order = "top";
         }
         else if (order === "latest") {
             Filters.timeEdge = 31*24; //744h  1month
             Filters.isCurated = false;
             Filters.order = "latest";
             Filters.orderBy = "createdAt";
-
         }
         else if (order === "following") {
             Filters.timeEdge = 31*24; //744h  1month
@@ -1232,7 +1230,7 @@
 
     // Post(Picture) Handlers
     function getPostsByFilter(input,pageType){
-
+        // debugger;
         switch (pageType) {
             case "following":{
                     requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
@@ -1361,14 +1359,13 @@
         var hashtag = "";
         var category = "";
         var order = "";
-        console.log(urlArray.join("/"));
 
         if (pageName) {
             if(pageName.startsWith("post")){
                 window.history.replaceState("", "", "/post/" + postId);
             }
             else {
-                if(pageName === "explore" || pageName === "curated" || pageName === "latest" || pageName === "top") {
+                if((pageName === "explore") || (pageName === "curated") || (pageName === "latest") || (pageName === "top")) {
                     window.history.replaceState("", "", "/"+window.location.pathname.split("/")[1]+ "/" + pageName);
                 }
                 else{
@@ -1384,7 +1381,7 @@
             if (Filters.isCurated === true) {
                 order = "curated";
             }
-            if(urlArray[1]!=="" && urlArray[1] !== "latest" & urlArray[1] !== "top" && urlArray[1] !== "curated"){
+            if((urlArray[1]!=="") && (urlArray[1] !== "latest") && (urlArray[1] !== "top") && (urlArray[1] !== "curated")){
                 newUrl += "/" + urlArray[1];
             }
             if(order !== "" && (order === "latest" || order === "top" || order === "curated")){
@@ -1411,26 +1408,42 @@
 
 
     function urlParser(writeState,postId){
+        // debugger;
         if(window.location.pathname.split("/")[1]){
             pageType = window.location.pathname.split("/")[1].toLowerCase();
         }
         if(window.location.pathname.split("/")[2]){
             let order = window.location.pathname.split("/")[2];
-            if( order === "curated" || order === "latest" || order === "top") {
-                Filters.order = order;
+            if (order === "curated" || order === "top") {
+                if(host.username !== window.location.pathname.split("/")[1]) {
+                    Filters.order = order;
+                }
+                if (order === "curated") {
+                    Filters.isCurated = true;
+                    Filters.orderBy = "updatedAt";
+                }
+                else {
+                    Filters.orderBy = "rate.value"; // views
+                    Filters.isCurated = false;
+                }
             }
-            else {
+            else if (order === "latest") {
+                Filters.timeEdge = 31*24; //744h  1month
+                Filters.isCurated = false;
                 Filters.order = "latest";
+                Filters.orderBy = "createdAt";
             }
-            Filters.order = order;
-            Filters.category = window.location.pathname.split("/")[3] || "";
-            Filters.hashtag = window.location.hash || "";
-            if(order === "curated"){
-                Filters.order = "top";
-                Filters.isCurated = true;
+            else if (order === "following") {
+                Filters.timeEdge = 31*24; //744h  1month
+                Filters.isCurated = false;
+                Filters.order = "latest";
+                Filters.orderBy = "createdAt";
             }
             else{
+                Filters.timeEdge = 31*24; //744h  1month
                 Filters.isCurated = false;
+                Filters.order = "latest";
+                Filters.orderBy = "createdAt";
             }
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "following" || pageType === "followings" || pageType === "followers" ||
@@ -1452,7 +1465,6 @@
                 Filters.category = window.location.pathname.split("/")[2] || "";
                 Filters.hashtag = window.location.hash || "";
                 if (pageType === "curated") {
-                    Filters.order = "top";
                     Filters.isCurated = true;
                     changePage("feed", "explore/curated", writeState);
                 }
@@ -1477,7 +1489,8 @@
         }
         else {
             if (window.location.pathname.split("/")[2] === "curated") {
-                Filters.order = "top";
+                Filters.order = "curated";
+                Filters.orderBy = "updatedAt";
                 Filters.isCurated = true;
                 changePage("profile", pageType + "/curated",writeState);// Profile -->
             }
@@ -1587,7 +1600,7 @@
                     }
                 }
                 // --> Function Calls
-                getPostsByFilter({}, pageType.split("/")[0]);
+                getPostsByFilter(Filters, pageType.split("/")[0]);
 
                 if (newHistory || false) {
                     pushHistory(pageName, pageType, window.location.pathname, true);
@@ -1880,15 +1893,18 @@
 
 
     function parsePosts(res) {
-
+        // debugger;
         if(res.docs.length === 0){
             $("#postsHeader h3").html("No posts found");
+            $(".postsContainer").html("");
         }
         else if(res.docs === []){
             $("#postsHeader h3").html("No posts found");
+            $(".postsContainer").html("");
         }
         else if(res === []){
             $("#postsHeader h3").html("Oops");
+            $(".postsContainer").html("");
         }
         else {
             let ratesList = [];
@@ -1902,7 +1918,7 @@
                 $(".profileTop .profileTopContainer .userInfo .photos").html(total + " photos");
                 $(".profileTop .profileTopContainer .userInfo .photos").removeClass("hide");
                 $("#postsHeader h3").html(total + " ");
-                $("#postsContainer").html("");
+                $(".postsContainer").html("");
             }
             else{
                 for(var post = 0;post < res.docs.length ; post++){
