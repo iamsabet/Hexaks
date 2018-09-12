@@ -1090,7 +1090,7 @@
         for (let m = historyPointer ; m >= 0 ; m--){
             if(historyList[m] && !historyList[m].pageName.startsWith("post")){
                 historyPointer = m;
-                changePage(historyList[m].pageName,historyList[m].url,true,null,false);
+                changePage(historyList[m].pageName,historyList[m].urlData);
                 break;
             }
         }
@@ -1259,19 +1259,13 @@
 
 
 
-    function sendPagesInitialRequest(pageName,albumOrPost,postid){
+    function sendPagesInitialRequest(pageName,postid){
         if(pageName.toLowerCase() === "newpost"){
-            if(albumOrPost === "post"){
-                requestHandler("/api/v1/post/initial","POST",{type:"post"},pageName);
-            }
-            else{
-                alert("invalid post type");
-            }
+            requestHandler("/api/v1/post/initial","POST",{type:"post"},pageName); 
         }
         else if("post"){
-
+            // can lookup if we already have it
             slideAction(currentPostItterator,"initial");
-
         }
     }
     // Actions.js
@@ -1365,10 +1359,10 @@
             }
             else {
                 if((pageName === "explore") || (pageName === "curated") || (pageName === "latest") || (pageName === "top")) {
-                    changePage(window.location.pathname.split("/")[1],window.location.pathname.split("/")[1]+ "/" + pageName,true);
+                    changePage("feed",window.location.pathname.split("/")[1]+ "/" + pageName,true);
                 }
                 else{
-                    window.history.replaceState("", "", "/" + pageName + "/" + window.location.pathname.split("/")[2]);
+                    changePage("profile","profile" + "/" + window.location.pathname.split("/")[2],true);
                 }
             }
         }
@@ -1396,12 +1390,6 @@
             }
             window.history.replaceState("", "", "/");
             window.history.replaceState("", "", newUrl);
-        }
-        if(postId) {
-            urlParser(true,postId);
-        }
-        else{
-            urlParser(true);
         }
     }
 
@@ -1566,8 +1554,8 @@
 
     }
 
-    function changePage(pageName,pageType,newHistory,postid,requestOrNot) {
-        let canRequest = requestOrNot || true;
+    function changePage(pageName,pageType,newHistory,postid) {
+
         setTimeout(function () {
 
             if (pageName === "feed" || pageName === "home" || pageName === "" || pageName === "explore" || pageName === "following") {
@@ -1641,7 +1629,7 @@
 
                         if (pageName === pageNames[x]) {
                             $(`#${pageNames[x]}`).addClass("show");
-                            sendPagesInitialRequest(pageNames[x].toLowerCase(), "post",postid);
+                            sendPagesInitialRequest(pageNames[x].toLowerCase(),postid);
                             break;
                         }
                         else {
