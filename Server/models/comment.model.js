@@ -19,7 +19,7 @@ var commentSchema = new Schema({
     mentions:[], // usernames @
     hashtags : [], // #
     fullText:String,
-    deactive:Boolean,
+    activated:Boolean,
     deleted:Boolean,
     createdAt:Number,
     edited:Boolean,
@@ -32,6 +32,7 @@ commentSchema.methods.create = function(commentObject,callback){
     newComment.updatedAt = Date.now();
     newComment.edited = false;
     newComment.deleted = false;
+    newComment.activated = true;
     newComment.save();
     return callback(newComment);
 };

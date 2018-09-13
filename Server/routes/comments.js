@@ -11,6 +11,8 @@ var commentSchema = require('../models/comment.model');
 var Comment = new commentSchema();
 var bcrypt = require("bcrypt-nodejs");
 var users = require('./users');
+var posts = require('./posts');
+var blocks = require('./blocks');
 var redis = require("redis");
 var random = require('randomstring');
 var redisClient = redis.createClient({
@@ -23,104 +25,103 @@ redisClient.select(2,function(){
 
 var comments = {
 
-    getPostComments: function (req, res, user, timeOrigin, postId, counts, pageNumber) {
-        postSchema.findOne({postId: postId}, {privacy: 1, postId: 1}, function (err, post) {
-            if (err) res.send({result: false, message: "500 post found for comments"});
-            if (post) {
-                // Decrypt post id to get owner id from it
-                let postOwnerId = postId.split("|-p-|")[0];
-                let query = {
-                    postId: postId,
-                    deactive: false,
-                    deleted:false,
-                    ownerId:{$exists:true}
-                };
-                if (req.body.self) {
-                    query.ownerId = user.userId
-                }
+    getPostComments: function (req, res, user, postId, counts, pageNumber) {
 
+        let userId = null;
+        if(!user.message) {
+            userId = user.userId;
+        }
+        else{
+            userId = requestIp.getClientIp(req).toString();
+        }
+        redisClient.get("commentRequestOrigin:"+userId, function (err, requestOrigin) {
+            if(err) throw err;
+            if(requestOrigin)
+            let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
+            let query = {
+                postId: postId,
+                deactive: false,
+                deleted:false,
+                ownerId:{$exists:true}
+            };
+            if (req.body.self) {
+                query.ownerId = user.userId;
+            }
+            if(isNaN(parseInt(pageNumber))){
+                res.send({result:false,message:"Bad Input"});
+            }
+            else{
                 let options = {
-                    select: 'commentId postId postOwnerId ownerId mentions hashtags fullText deactive deleted createdAt edited updatedAt',
+                    select: 'commentId postId postOwnerId ownerId mentions hashtags fullText activated deleted createdAt edited updatedAt',
                     sort: {createdAt: -1},
-                    page: pageNumber,
+                    page: parseInt(pageNumber),
                     limit: parseInt(counts)
                 };
-                if (post.privacy && user.notAuth) {
-                    redisClient.hgetall(postOwnerId + ":info", function (err, info) {
-                        if (!err && info) {
-                            if (info.privacy) {
-                                res.send({
-                                    result: false,
-                                    message: "401 Unauthorized - Private contents not accessible for not authenticated users -> login or reg first"
-                                });
-                            }
-                            else {
-                                Comment.Paginate(query, options, req, res);
-                            }
-                        }
-                        else {
-                            res.send({result: false, message: "owner info not found"});
-                        }
-                    });
-                }
-                else if (post.privacy && !user.notAuth) {
-                    if (postOwnerId === user.userId) {
-                        Comment.Paginate(query, options, req, res);
+                let now = Date.now();
+                let curator = req.body.curator || undefined;
+                
+
+                if((requestOrigin === null) || (parseInt(pageNumber)===1)){ // no other choice
+                    requestOrigin = now;
+                    redisClient.set("commentRequestOrigin:"+userId,requestOrigin);
+                }  
+                timeOrigin = requestOrigin;
+                redisClient.expire("commentRequestOrigin:"+userId,60000); // 10mins
+
+                let timeEdge = 0;
+                if (timeEdge <= (31 * 24) && timeEdge > -1) {
+                    if (timeEdge !== 0) {
+                        timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
+                        query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
                     }
-                    else {
-                        redisClient.hgetall(postOwnerId + ":info", function (err, info) {
-                            if (!err && info) {
-                                if (!info.privacy) {
+                }
+                else {
+                    timeEdge = (timeOrigin - (744 * 3600 * 1000)); // 1day
+                    query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
+                }
+                users.getUserInfosFromCache(postOwnerId,function(hostUser){
+                    if(hostUser && !hostUser.message){
+                        if(JSON.parse(hostUser.privacy)){
+                            if(user && !user.message){
+                                if(user.followings.indexOf(hostUser.userId) > -1){
                                     Comment.Paginate(query, options, req, res);
                                 }
-                                else {
-                                    followSchema.findOne({
-                                        follower: user.userId,
-                                        following: postOwnerId,
-                                        accepted: true,
-                                        deactive: false
-                                    }, function (err, flw) {
-                                        if (err) res.send({
-                                            result: false,
-                                            message: "500 follow not found error for comments"
-                                        });
-                                        if (flw) { // access authorized user to private data
-
-                                            Comment.Paginate(query, options, req, res);
-
+                                else{
+                                    blocks.check(postOwnerId,user.userId,function(resultb){
+                                        if(!resultb){
+                                            posts.getPostInfoById(postId,false,function(post){
+                                                if (post) {
+                                                    Comment.Paginate(query, options, req, res);
+                                                }     
+                                                else{
+                                                    res.send({result:false,message:"Content is private - Follow to continue"});
+                                                }         
+                                            });
                                         }
-                                        else {
-
-                                            res.send({result: false, message: "401 Unauthorized"});
+                                        else{
+                                            res.send({result:false,message:"You have been blocked by the post owner"});
                                         }
                                     });
                                 }
                             }
-                            else {
-                                res.send({result: false, message: "user info not found in cache"}); // redis
+                            else{ // not authenticated && private
+                                    res.send({result:false,message:"Account is private login and follow to continue"});
                             }
-                        });
+                        }
+                        else{ //public account
+                                Comment.Paginate(query, options, req, res);
+                        }
                     }
-                }
-                else {
-                    Comment.Paginate(query, options,user, req, res);
-                }
-            }
-            else {
-                if (err) res.send({result: false, message: "404 post not found"});
+                });
             }
         });
-
     },
 
     Create: function (req, res, user) {
 
         let postId = req.body.postId;
         if (postId && typeof postId === "string" && req.body && typeof req.body.text === "string") {
-            let postId = req.body.postId.split("%7C").join("|");
-            let postOwnerId = postId.split("|-p-|")[0];
-            console.log(postOwnerId,postId);
-            let ownerId = user.userId;
+            let ownerId  = posts.getPostOwnerIdByDecrypt(postId);
             let text = req.body.text;
             if (user) {
                 postSchema.findOne({postId: postId, ownerId: postOwnerId}, {
@@ -168,8 +169,8 @@ var comments = {
                                             postId: postId,
                                             postOwnerId: postOwnerId,
                                             ownerId: ownerId,
-                                            deactive: false,
-                                            delete: false,
+                                            activated: false,
+                                            deleted: false,
                                             mentions: mentions, // usernames @
                                             hashtags: hashtags, // #
                                             fullText: text,
@@ -389,10 +390,10 @@ var comments = {
                             postId: req.body.postId,
                             commentId: req.body.commentId,
                             postOwnerId: postOwnerId,
-                            delete: false,
+                            deleted: false,
                         }, {
                             $set: {
-                                delete: true,
+                                deleted: true,
                             }
                         }, function (err, result) {
                             if (err) throw err;
@@ -411,10 +412,10 @@ var comments = {
                             commentId: req.body.commentId,
                             postOwnerId: postOwnerId,
                             ownerId : user.userId,
-                            delete: false,
+                            deleted: false,
                         }, {
                             $set: {
-                                delete: true,
+                                deleted: true,
                             }
                         }, function (err, result) {
                             if (err) throw err;
