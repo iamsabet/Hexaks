@@ -1191,7 +1191,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height: 60px ;
 	opacity: 1;
 }
-.newPostForm #formArea div button{ /* add category button */
+.newPostForm #formArea div button,#addCategory{ /* add category button */
 	position: relative;
 	width:100%;
 	height: 45px;
@@ -1293,32 +1293,35 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .newPostForm #formArea div ul li{
 	display: inline-block;
 	position: relative;
-	margin-top:2px;
+	margin-top: 2px;
 	float: left;
-	width:92%;
-	left:1.5%;
-	padding:0 10px;
-	height: 90px;
-	line-height: 95px;
+	width: 28%;
+	left: 1.5%;
+	padding: 5px;
+	height: 85px;
+	line-height: 60px;
 	background-color: rgba(20,20,20,0.9);
 	opacity: 0.9;
-	color:white;
+	color: white;
 	-webkit-transition: all 0.2s ease-in;
 	-moz-transition: all 0.2s ease-in;
 	-ms-transition: all 0.2s ease-in;
 	-o-transition: all 0.2s ease-in;
 	transition: all 0.2s ease-in;
-	font-size: 24px;
+	font-size: 20px;
 	text-align: left;
+	margin: 5px;
 
 }
 .newPostForm #formArea div ul li img{
 	position: relative;
-	float: right;
-	height: 98%;
+	height: 100%;
 	width: auto;
-	top:1%;
-	display: inline-block;
+	top: 0;
+	display: block;
+	left: 0;
+	width: auto;
+	margin: 0 auto;
 }
 .newPostForm #formArea div ul li:hover{
 	opacity: 1;
@@ -1350,12 +1353,21 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 .newPostForm #formArea div ul li > span{
 	display: inline-block;
-	position: relative;
+	position: absolute;
 	height: auto;
 	float: left;
-	line-height: 30px;
-	font-size:21px;
-	color:white;
+	line-height: 20px;
+	font-size: 19px;
+	color: white;
+	z-index: 10;
+	bottom: 0;
+	left: 50%;
+	transform: translate(-50%,0);
+	color: #ff0055;
+}
+.newPostForm #formArea div ul li > span.cat-counts{
+	top:0;
+	left: 0;
 }
 .newPostForm #formArea div ul li span.albumTitle{
 	float: left;
@@ -1925,24 +1937,22 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 
 .postFooter{
-	width: 96%;
+	width: calc(100% - 20px);
 	position: fixed;
 	left: 0;
-	background-color: #151515;
+	background-color: black;
 	display: inline-block;
 	text-align: center;
 	height: 85px;
 	top: 100vh;
 	z-index: 1000016;
-	margin-top:0;
-	padding : 2px 48px;
+	margin-top: 0;
+	padding: 2px 12px;
 	-webkit-transition: all 0.3s ease-in;
 	-moz-transition: all 0.3s ease-in;
 	-ms-transition: all 0.3s ease-in;
 	-o-transition: all 0.3s ease-in;
 	transition: all 0.3s ease-in;
-
-
 }
 .postFooter div{
 	position: relative;
@@ -1982,17 +1992,21 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	border:2px solid black;
 }
 .postFooter button.leftButton{
-	position: absolute;
+	position: relative;
 	top:10px;
 	left:0;
 	opacity:0;
+	display: block;
+	float: left;
+	clear: left;
 	-webkit-transition: all 0.2s;
 	-moz-transition: all 0.2s;
 	-ms-transition: all 0.2s;
 	-o-transition: all 0.2s;
 	transition: all 0.2s;
-	background: #f7f7f7 url("../images/newIcons/rightArrow.svg") no-repeat center;
+	background: #f7f7f7 url("../images/newIcons/leftArrow.svg") no-repeat center;
 	background-size: 100% 100%;
+	height: auto;
 
 }
 .postFooter button.leftButton:hover{
@@ -2002,8 +2016,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	float: right;
 	clear: right;
 	position: relative;
-	display: inline-block;
-	right: 10px;
+	display: block;
 	bottom:10px;
 	opacity:0;
 	-webkit-transition: all 0.2s;
@@ -2019,14 +2032,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 .postFooter button.rightButton,.postFooter button.leftButton{
     width: 60px;
-    top: 0;
-    height: 100%;
-    opacity:0;
-    -webkit-transition: all 0.3s ease-in;
-    -moz-transition: all 0.3s ease-in;
-    -ms-transition: all 0.3s ease-in;
-    -o-transition: all 0.3s ease-in;
-    transition: all 0.3s ease-in;
+	top: 15px;
+	height: 60px;
+	opacity: 0;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-ms-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
 }
 .postFooter button.rightButton.show,.postFooter button.leftButton.show{
     opacity: 1;
@@ -2053,12 +2066,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .postFooter .ownerProfile{
     display: inline-block;
-    height: 100%;
-    width: auto;
-    max-width: 400px;
-    min-width: 230px;
-    vertical-align: top;
-    padding: 8px 5px 5px;
+	height: 100%;
+	width: auto;
+	max-width: 400px;
+	min-width: 230px;
+	vertical-align: top;
+	padding: 8px 5px 5px;
+	left: 15px;
 }
 .postFooter .ownerProfile:hover{
 	color:#ff0055;

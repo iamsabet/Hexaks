@@ -309,7 +309,7 @@
         <div id="formArea">
             <textarea name="caption" id="caption" contenteditable="true"></textarea>
             <div class="newPostCategories">
-                <button id="addCategory" class="addCategory">Categories</button>
+                <input type="text" id="addCategory" class="addCategory" placeHolder="Categories" value="">
                 <div class="slideList" id="catList">
                     <ul class="allCategories">
                     
@@ -687,7 +687,7 @@
         currentPostItterator = parseInt($(this).parents(".eachPost").children("p")[0].innerHTML);
         currentPostId = postsList[currentPostItterator].postId;
         lastPostItterator = -1;
-        changePage("post","post/"+currentPostId,true,currentPostId);
+        changePage("post","post/"+currentPostId,true,currentPostId,true,false);
         
     });
 
@@ -695,7 +695,10 @@
 
 
     // New Post Events
-
+    $("body").on("keypress","#formArea .newPostCategories #addCategory",function(event){
+        initialCategoriesElements("newPost",filterCategoriesByText(this.value+event.originalEvent.key));
+        
+    });
     $("body").on("click","#formArea .newPostCategories #addCategory",function(){
 
         if($("#catList.show")[0]) {
@@ -1068,8 +1071,17 @@
     });
 
 
+    $("body").on("click",".postFooter .info",function(){
+        if(!$(".infoContainer.show")[0]){
+            $(".infoContainer").addClass("show");
+        }
+    });
+
+            
+        
+
     $("body").on("click",".post .closePost",function(){
-        closePostAnimations();
+        closePostWindows(showOne);
         for (let m = historyPointer ; m >= 0 ; m--){
             if(historyList[m] && !historyList[m].pageName.startsWith("post")){
                 changePage(historyList[m].pageName,historyList[m].urlData,true,"",true,false);
@@ -1239,7 +1251,7 @@
         }
     }
 
-    function closePostAnimations(){
+    function closePostWindows(showOne){
         $(".downloadContainer .closeInfo").click();
         if($(".postFooter .rateButton.show")) {
             $(".postFooter .rateButton.show").removeClass("show");
@@ -1265,7 +1277,7 @@
                 act = "initial";
             }
             if(["left","right","initial"].indexOf(act) > -1){
-                slideAction(0,act);
+                slideAction(currentPostItterator,act);
             }
             else{
                 closePostAnimations();
@@ -3010,8 +3022,20 @@
             alert(albumsList.message);
         }
     }
+    let definedCategories = [];
+    function filterCategoriesByText(text){
+        if(text.length > 0){
+            debugger;
+            var filteredList = definedCategories.filter(el=>el.name.startsWith(text));
+            return filteredList;
+        }
+        else{
+            return false;
+        }
+    }
     function initialCategoriesResponseAction(categoriesList){
         if(!categoriesList.message) {
+            definedCategories = categoriesList;
             if (Me !== null && Me !== {}) {
                 initialCategoriesElements("newPost",categoriesList);
             }
