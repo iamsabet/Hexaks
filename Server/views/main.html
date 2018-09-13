@@ -1058,7 +1058,7 @@
         $(".rateDiv.show").removeClass("show");
         $(".ratePad div div").removeClass("selected");
         $(".rateDiv .header").html(" Rate this post ( 1 - 6 ) ");
-        $(".commentsContainer.show .cancelComment").click();
+        $(".commentsContainer.show .cancelComment")[0].click();
     });
     $("body").on("click",".commentsContainer .closeInfo",function(){
 
@@ -1072,16 +1072,21 @@
 
 
     $("body").on("click",".postFooter .info",function(){
-        if(!$(".infoContainer.show")[0]){
-            $(".infoContainer").addClass("show");
-        }
+        closePostWindows();
+        showPostWindow(".infoContainer");
     });
-
-            
+    $("body").on("click",".postFooter .comments",function(){
+        closePostWindows();
+        showPostWindow(".commentsContainer");
+    });
+    $("body").on("click",".postFooter .download",function(){
+        closePostWindows();
+        showPostWindow(".downloadContainer");
+    });       
         
 
     $("body").on("click",".post .closePost",function(){
-        closePostWindows(showOne);
+        closePostWindows();
         for (let m = historyPointer ; m >= 0 ; m--){
             if(historyList[m] && !historyList[m].pageName.startsWith("post")){
                 changePage(historyList[m].pageName,historyList[m].urlData,true,"",true,false);
@@ -1250,20 +1255,19 @@
             }
         }
     }
-
-    function closePostWindows(showOne){
-        $(".downloadContainer .closeInfo").click();
-        if($(".postFooter .rateButton.show")) {
-            $(".postFooter .rateButton.show").removeClass("show");
+    function showPostWindow(selector){
+        if(!$(`${selector}.show`)[0]){
+            $(`${selector}`).addClass("show");
         }
-        if($(".postFooter .caption.show")) {
-            $(".postFooter .caption.show").removeClass("show");
-        }
-        if($(".postFooter .buttonGroup.show")) {
-            $(".postFooter .buttonGroup.show").removeClass("show");
-        }
-
-        $(".commentsContainer.show .cancelComment").click();
+    }
+    function closePostWindows(){
+        $(".downloadContainer.show").removeClass("show");
+        $(".commentsContainer.show").removeClass("show");
+        $(".infoContainer.show").removeClass("show");
+        $(".rateDiv.show").removeClass("show");
+        $(".ratePad div div").removeClass("selected");
+        $(".rateDiv .header").html(" Rate this post ( 1 - 6 ) ");
+        $(".commentsContainer.show .cancelComment").click();   
     }
 
     function sendPagesInitialRequest(pageName,postid,act){
