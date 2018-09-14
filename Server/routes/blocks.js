@@ -50,7 +50,7 @@ var blocks = {
         });
     },
     unblock:function(blocker,blocked,callback){
-        Block.remove(blocker,blocked,function(resultx){
+        Block.Remove(blocker,blocked,function(resultx){
             return callback(resultx);
         });
     },

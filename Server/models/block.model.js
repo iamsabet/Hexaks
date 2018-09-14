@@ -116,7 +116,7 @@ blockSchema.methods.check = function(blocker,blocked,callback){
 };
 
 
-blockSchema.methods.remove = function(blocker,blocked,callback){
+blockSchema.methods.Remove = function(blocker,blocked,callback){
     block.update({blocker:blocker,blocked:blocked,activated:true},{$set:{activated:false,updatedAt:Date.now()}},function(err,result){
        if(err) res.send({result:false,message:"Oops Something went wrong"});
        if(result && result.n === 1) {

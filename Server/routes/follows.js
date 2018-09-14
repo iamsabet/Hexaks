@@ -91,7 +91,7 @@ var follows = {
         });
     },
     unfollow:function(unfollowObject,callback){
-        Follow.remove(unfollowObject,function(resultx){
+        Follow.unfollow(unfollowObject,function(resultx){
             return callback(resultx);
         });
     },

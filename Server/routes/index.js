@@ -714,48 +714,7 @@ router.post('/api/v1/getPostComments/',function(req,res){
     }
     if( req.body &&  typeof req.body.postId === "string" && !isNaN(parseInt(req.body.counts)) && parseInt(req.body.counts) < 20 ) { // max number
         validateRequest(req, res, function (user) {
-            var username;
-            if (user) {
-                username = user.username;
-
-            }
-            else {
-                username = "requestIp.getClientIp(req).toString()";
-                user = {
-                    notAuth : true,
-                    userIp : requestIp.getClientIp(req).toString()
-                };
-            }
-
-            var now = Date.now();
-            redisClient.get(username + "::cmRequestOrigin", function (err, requestOrigin) {
-                if (err) throw err;
-                let timeOrigin;
-                let pageNumber = req.body.pageNumber || 1;
-                let counts = req.body.counts || 10;
-                let postId = req.body.postId;
-                if (pageNumber === 1) {
-                    if (requestOrigin) {
-
-                        requestOrigin = now;
-                        redisClient.set(username + "::cmRequestOrigin", requestOrigin);
-                        redisClient.expire(username + "::cmRequestOrigin", 30000);
-                    }
-                    timeOrigin = requestOrigin;
-
-                }
-                else {
-
-                    requestOrigin = now;
-                    timeOrigin = requestOrigin;
-                    redisClient.set(username + "::cmRequestOrigin", requestOrigin);
-                    redisClient.expire(username + "::cmRequestOrigin", 30000);
-
-                }
-
-                comments.getPostComments(req, res, user, timeOrigin, postId, counts, pageNumber);
-            });
-
+            comments.getPostComments(req, res, user, req.body.postId, req.body.counts, req.body.pageNumber);
         });
     }
     else{

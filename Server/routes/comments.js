@@ -15,6 +15,7 @@ var posts = require('./posts');
 var blocks = require('./blocks');
 var redis = require("redis");
 var random = require('randomstring');
+var requestIp = require("request-ip");
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -37,7 +38,7 @@ var comments = {
         redisClient.get("commentRequestOrigin:"+userId, function (err, requestOrigin) {
             if(err) throw err;
             if(requestOrigin)
-            let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
+            var postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
             let query = {
                 postId: postId,
                 deactive: false,
@@ -84,14 +85,14 @@ var comments = {
                         if(JSON.parse(hostUser.privacy)){
                             if(user && !user.message){
                                 if(user.followings.indexOf(hostUser.userId) > -1){
-                                    Comment.Paginate(query, options, req, res);
+                                    Comment.Paginate(query, options,user,req, res);
                                 }
                                 else{
                                     blocks.check(postOwnerId,user.userId,function(resultb){
                                         if(!resultb){
                                             posts.getPostInfoById(postId,false,function(post){
                                                 if (post) {
-                                                    Comment.Paginate(query, options, req, res);
+                                                    Comment.Paginate(query, options,user, req, res);
                                                 }     
                                                 else{
                                                     res.send({result:false,message:"Content is private - Follow to continue"});
@@ -109,7 +110,7 @@ var comments = {
                             }
                         }
                         else{ //public account
-                                Comment.Paginate(query, options, req, res);
+                                Comment.Paginate(query, options,user, req, res);
                         }
                     }
                 });

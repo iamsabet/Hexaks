@@ -1101,6 +1101,7 @@ var posts = {
         });
     },
     getPostOwnerIdByDecrypt:function(postId){
+        
         let changedPostId = postId.split("|").join("/").slice(0,-2); // rooted
         let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
         let decrypted = bytes.toString(CryptoJS.enc.Utf8);
