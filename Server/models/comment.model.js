@@ -36,7 +36,18 @@ commentSchema.methods.create = function(commentObject,callback){
     newComment.save();
     return callback(newComment);
 };
+commentSchema.methods.edit = function(query,updates,callback){
+    commentSchema.findOneAndUpdate(query,{$set:updates}, function (err, result) {
+        if (err) throw err;
+        if (result) {
+            return callback(true);
+        }
+        else {
+            return callback({result: false, message: "edit comment failed"});
+        }
+    });
 
+}
 commentSchema.pre('save', function(next){
     if(this.updatedAt) {
         this.updatedAt = Date.now();
@@ -98,6 +109,8 @@ commentSchema.methods.Paginate = function(query,options,user,req,res){
         }
     });
 };
+
+
 commentSchema.plugin(mongoosePaginate);
 var Comment = mongoose.model('comments', commentSchema);
 var comment = mongoose.model('comments');

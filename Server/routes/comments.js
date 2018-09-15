@@ -1,15 +1,6 @@
 const mongoose = require('mongoose');
-var postSchema = require('../models/post.model');
-var post = new postSchema();
-var userSchema = require('../models/user.model');
-var User = new userSchema();
-var followSchema = require('../models/follow.model');
-var follow = new followSchema();
-var rateSchema = require('../models/rate.model');
-var rate = new rateSchema();
 var commentSchema = require('../models/comment.model');
 var Comment = new commentSchema();
-var bcrypt = require("bcrypt-nodejs");
 var users = require('./users');
 var posts = require('./posts');
 var blocks = require('./blocks');
@@ -119,21 +110,14 @@ var comments = {
     },
 
     Create: function (req, res, user) {
-
+        if(user && !user.message){
         let postId = req.body.postId;
         if (postId && typeof postId === "string" && req.body && typeof req.body.text === "string") {
-            let ownerId  = posts.getPostOwnerIdByDecrypt(postId);
+            var postOwnerId  = posts.getPostOwnerIdByDecrypt(postId);
             let text = req.body.text;
             if (user) {
-                postSchema.findOne({postId: postId, ownerId: postOwnerId}, {
-                    privacy: 1,
-                    ownerId: 1,
-                    postId: 1
-                }, function (err, post) {
-                    if (err) res.send({result: false, message: "500 post found for comments"});
+                posts.getPostInfoById(postId,function(post){
                     if (post) {
-
-
                         let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
                         let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
                         let str = text;
@@ -227,7 +211,8 @@ var comments = {
                 });
             }
             else {
-                res.send({result: false, message: "Not Authenticated"});
+                
+            }   
             }
         }
         else {
@@ -236,129 +221,94 @@ var comments = {
     },
     edit: function (req, res, user) {
 
-        if (user) {
-            let ownerId = user.userId;
+        if (user && !user.message) {
             let postId = req.body.postId;
             let commentId = req.body.commentId;
-            if (ownerId && typeof ownerId === "string" && commentId && typeof commentId === "string") {
-
-                let postOwnerId = req.body.postId.split("|-p-|")[0];
+            if (postId && typeof postId === "string" && commentId && typeof commentId === "string") {
+                var postOwnerId  = posts.getPostOwnerIdByDecrypt(postId);
                 let text = req.body.text;
-                if (user) {
-                    postSchema.findOne({postId: postId, ownerId: postOwnerId}, {
-                        privacy: 1,
-                        ownerId: 1,
-                        postId: 1
-                    }, function (err, post) {
-                        if (err) res.send({result: false, message: "500 post found for comments"});
-                        if (post) {
 
 
-                            let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
-                            let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
-                            let str = text;
-                            let m;
-                            let hashtags = [];
-                            let mentions = [];
-                            redisClient.hgetall(postOwnerId + ":info", function (err, info) {
-                                if (err) throw err;
-                                if (info) {
-                                    let blockList ="";
-                                    if(info.blockList !== "") {
-                                        blockList = JSON.parse(info.blockList);
-                                    }
-                                    if (blockList.indexOf(user.userId) === -1 || blockList==="") {
-                                        if (user.blockList.indexOf(postOwnerId) === -1) {
-                                            while ((m = reHashtag.exec(str)) != null) {
-                                                if (m.index === reHashtag.lastIndex) {
-                                                    reHashtag.lastIndex++;
-                                                }
-                                                if (hashtags.indexOf(m[0]) === -1) {
-                                                    hashtags.push(m[0]);
-                                                }
-                                            }
-                                            let n;
-                                            while ((n = reMention.exec(str)) != null) {
-                                                if (m.index === reMention.lastIndex) {
-                                                    reMention.lastIndex++;
-                                                }
-                                                if (hashtags.indexOf(n[0]) === -1) {
-                                                    mentions.push(n[0]);
-                                                }
-                                            }
-                                            let query = {
-                                                postId: postId,
-                                                ownerId: ownerId,
-                                                commentId: commentId,
-                                                postOwnerId : postOwnerId,
-                                                deactive: false,
-                                                deleted: false,
-                                            };
-                                            let updates = {
-                                                mentions: mentions, // usernames @
-                                                hashtags: hashtags, // #
-                                                fullText: text,
-                                                updatedAt: Date.now(),
-                                                edited:true
-                                            };
-                                            if (!JSON.parse(info.privacy)) {
-                                                if (postId && postOwnerId && ownerId) {
-                                                    commentSchema.findOneAndUpdate(query,{$set:updates}, function (err, result) {
-                                                        if (err) throw err;
-                                                        if (result) {
-                                                            res.send(true);
-                                                        }
-                                                        else {
-                                                            res.send({result: false, message: "edit comment failed"});
-                                                        }
-                                                    });
-                                                }
-                                                else {
-                                                    res.send({result: false, message: "No posts uploaded yet"});
-                                                }
-                                            }
-                                            else {
-                                                if (user.followings.indexOf(postOwnerId) > -1) {
-                                                    commentSchema.findOneAndUpdate(query,{$set:updates}, function (err, result) {
-                                                        if (err) throw err;
-                                                        if (result) {
-                                                            res.send(true);
-                                                        }
-                                                        else {
-                                                            res.send({result: false, message: "edit comment failed"});
-                                                        }
-                                                    });
-                                                }
-                                                else {
-                                                    res.send({result: false, message: "Unauthorized"});
-                                                }
-                                            }
-                                        }
-                                        else {
-                                            res.send({result: false, message: "you have blocked the post owner "}); // redis
-                                        }
-                                    }
-                                    else {
-                                        res.send({result: false, message: "you have been blocked by the post owner"}); // redis
-                                    }
-                                }
-                                else {
-                                    res.send({result: false, message: "user info not found in cache"}); // redis
-                                }
+                let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
+                let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
+                let str = text;
+                let m;
+                let hashtags = [];
+                let mentions = [];
+                users.getUserInfosFromCache(postOwnerId,function(hostUser){
+                    if(hostUser.message){
+                        while ((m = reHashtag.exec(str)) != null) {
+                            if (m.index === reHashtag.lastIndex) {
+                                reHashtag.lastIndex++;
+                            }
+                            if (hashtags.indexOf(m[0]) === -1) {
+                                hashtags.push(m[0]);
+                            }
+                        }
+                        let n;
+                        while ((n = reMention.exec(str)) != null) {
+                            if (m.index === reMention.lastIndex) {
+                                reMention.lastIndex++;
+                            }
+                            if (hashtags.indexOf(n[0]) === -1) {
+                                mentions.push(n[0]);
+                            }
+                        }
+                        let query = {
+                            postId: postId,
+                            ownerId: user.userId,
+                            commentId: commentId,
+                            postOwnerId : postOwnerId,
+                            activated: true,
+                            deleted: false,
+                        };
+                        let updates = {
+                            mentions: mentions, // usernames @
+                            hashtags: hashtags, // #
+                            fullText: text,
+                            updatedAt: Date.now(),
+                            edited:true
+                        };
+                        if(user.followings.indexOf(postOwnerId) > -1){
+                            Comment.edit(query,updates,function(resultc){
+                                res.send(resultc);
                             });
                         }
-                        else {
-                            res.send({result: false, message: "post not found"});
+                        else{
+                            if (!JSON.parse(hostUser.privacy)) {
+                                users.blocks.check(postOwnerId,user.userId,function(resultb){
+                                    if(!resultb){
+                                        Comment.edit(query,updates,function(resultc){
+                                            res.send(resultc);
+                                        });
+                                    }
+                                });
+                            }
+                            else{
+                                posts.getPostInfoById(postId,false,function(post){
+                                    if(post){
+                                        Comment.edit(query,updates,function(resultc){
+                                            res.send(resultc);
+                                        });
+                                    }
+                                    else{
+                                        res.send({result:false,message:"Content is private , follow Post Owner to continue"});
+                                    }
+                                });
+                            }    
                         }
-                    });
-                }
-                else {
-                    res.send({result: false, message: "Not Authenticated"});
-                }
+                    }
+                    else {
+                        res.send(hostUser);
+                    }
+                });
             }
             else {
-                res.send({result: false, message: "504 Bad Request"});
+                res.send({result: false, message: "504 Bad Request"});   
             }
+        }
+        else {
+            res.send(user); // redis
         }
     },
     delete: function (req, res, user) {

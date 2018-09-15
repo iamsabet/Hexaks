@@ -523,12 +523,12 @@ var users = {
             if (user) {
                 redisClient.hmset(["info:"+user.userId,"userId",user.userId, "username", user.username,"fullName",user.fullName,"followersCount",user.followersCount,"followingsCount" ,user.followingsCount,"location",user.city+":"+user.country+"/"+user.location,
                 "postsCount",user.postsCount,"reportsCount",user.reportsCount,"roles",JSON.stringify(user.roles),"privacy", user.privacy, "gender", user.gender,
-                    "profilePictureSet", user.profilePictureSet, "rate",JSON.stringify(user.rate.value) ,"views", user.views ]); // must add to a zset --> points
+                    "profilePictureSet", user.profilePictureSet, "rate",JSON.stringify(user.rate.value)]); // must add to a zset --> points
                 redisClient.expire("info:"+user.userId, 300000);
                 console.log("user infos updated in cache ,expire : 5minutes ");
                 return callback({"userId":user.userId,"username": user.username,"fullName":user.fullName,"followersCount" : user.followersCount,"followingsCount" : user.followingsCount,"location":user.city+":"+user.country+"/"+user.location,
                                 "postsCount":user.postsCount,"reportsCount":user.reportsCount,"roles":user.roles,"privacy": user.privacy,"gender": user.gender,
-                                "profilePictureSet": user.profilePictureSet, "rate": user.rate.value,"views": user.views});
+                                "profilePictureSet": user.profilePictureSet, "rate": user.rate.value});
             }
             else {
                 return callback({result:false,message:"User information not found"});
