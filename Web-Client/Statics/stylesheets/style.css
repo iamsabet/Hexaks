@@ -2513,13 +2513,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	transform: translate(-50%,0);
 }
 .postFooter .rateButton .rateCounts{
-	position: absolute;
-	line-height: 35px;
-	left: 0;
+	position: fixed;
+	line-height: 50px;
+	left: 50%;
 	opacity: 0;
-	top: -30px;
+	top: calc(98vh - 125px);
 	padding: 0 10px;
-	height: 30px;
+	height: 55px;
 	text-align: left;
 	min-width: 100px;
 	width: auto;
@@ -2528,6 +2528,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-ms-transition: all 0.3s ease-in-out;
 	-o-transition: all 0.3s ease-in-out;
 	transition: all 0.3s ease-in-out;
+	-webkit-transform: translate(-50%,0);
+	-moz-transform: translate(-50%,0);
+	-ms-transform: translate(-50%,0);
+	-o-transform: translate(-50%,0);
+	transform: translate(-50%,0);
 	background-color: #151515;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -2536,14 +2541,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	z-index: 1000;
 }
 .postFooter .rateButton .rateCounts img{
-	display: inline-block;
+	display: block;
 	position: relative;
 	float: right;
 	top: 0;
 	right: -5px;
-	width: 52px;
+	width: 48px;
 	padding: 2px;
-	height: 40px;
+	height: auto;
 	outline: none;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -2551,7 +2556,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	margin: 0 5px;
 }
 .postFooter .rateButton img{
-	display: inline-block;
+	display: block;
 	position: relative;
 	float: right;
 	top: 0;

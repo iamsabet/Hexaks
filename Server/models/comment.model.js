@@ -4,6 +4,8 @@ let mongoosePaginate = require('mongoose-paginate');
 let redis = require("redis");
 let random = require('randomstring');
 let users = require("../routes/users");
+let secret = require("../config/secret");
+var CryptoJS = require("crypto-js");
 let redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -28,7 +30,7 @@ var commentSchema = new Schema({
 commentSchema.methods.create = function(commentObject,callback){
     let newComment = new Comment(commentObject);
     let commentId = CryptoJS.AES.encrypt((commentObject.ownerId+"-cm-"+random.generate(10)).toString(), secret.postIdKey).toString();
-    commentId = uploadingPost.split("/").join("|");
+    commentId = commentId.split("/").join("|");
     newComment.createdAt = Date.now();
     newComment.commentId = commentId;
     newComment.updatedAt = Date.now();
