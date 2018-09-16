@@ -2383,10 +2383,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 @media (max-width:968px){
 	.postFooter .buttonGroup {
 		position: absolute;
+		padding:0;
 		left: 0;
 		top: -220px;
 		display: inline-block;
-		width: 40px;
+		width: 80px;
 		height: 0;
 		float: right;
 		overflow: hidden;
@@ -2396,7 +2397,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	.postFooter .buttonGroup.show{
 		height: 100%;
 		margin: 10px;
-		padding:5px;
+		padding:2px;
 		height: auto;
 	}
 	.postFooter .buttonGroup button{
@@ -2408,7 +2409,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		top: 0x;
 		width: 54px;
 		padding: 2px;
-		height: 52px;
+		height: 45px;
 		outline: none;
 		-webkit-transition: all 0.3s ease-in-out;
 		-moz-transition: all 0.3s ease-in-out;
