@@ -72,15 +72,8 @@ commentSchema.methods.Paginate = function(query,options,user,req,res){
                     for (let x = 0; x < comments.docs.length; x++) {
                         if (!comments.owners[comments.docs[x].ownerId]) {
                             users.getUserInfosFromCache(comments.docs[x].ownerId,function(info) {
-                                if (!info.message) {
-                                    console.log(info);
-                                    if(user && info.blockList.indexOf(user.userId) > -1) { // he is blocked by him
-                                        delete comments.docs[x];
-                                    }
-                                    else{
-                                        comments.owners[comments.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
-                                        console.log(comments.owners);
-                                    }
+                                if (!info.message) { 
+                                    comments.owners[comments.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
                                 }
                                 else {
                                     console.log("err :" + err + " / values : " + info);

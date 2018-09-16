@@ -28,16 +28,15 @@ var comments = {
         }
         redisClient.get("commentRequestOrigin:"+userId, function (err, requestOrigin) {
             if(err) throw err;
-            if(requestOrigin)
             var postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
             let query = {
                 postId: postId,
-                deactive: false,
+                activated: true,
                 deleted:false,
                 ownerId:{$exists:true}
             };
-            if (req.body.self) {
-                query.ownerId = user.userId;
+            if (!user.message && userId === postOwnerId) {
+                query.ownerId = userId;
             }
             if(isNaN(parseInt(pageNumber))){
                 res.send({result:false,message:"Bad Input"});
@@ -73,9 +72,11 @@ var comments = {
                 }
                 users.getUserInfosFromCache(postOwnerId,function(hostUser){
                     if(hostUser && !hostUser.message){
-                        if(JSON.parse(hostUser.privacy)){
+                        if(typeof hostUser.privacy === "string")
+                            JSON.parse(hostUser.privacy)
+                        if(hostUser.privacy){
                             if(user && !user.message){
-                                if(user.followings.indexOf(hostUser.userId) > -1){
+                                if(user.followings.indexOf(hostUser.userId) > -1 || user.userId === postOwnerId){
                                     Comment.Paginate(query, options,user,req, res);
                                 }
                                 else{
@@ -83,7 +84,7 @@ var comments = {
                                         if(!resultb){
                                             posts.getPostInfoById(postId,false,function(post){
                                                 if (post) {
-                                                    Comment.Paginate(query, options,user, req, res);
+                                                    Comment.Paginate(query, options,user,req,res);
                                                 }     
                                                 else{
                                                     res.send({result:false,message:"Content is private - Follow to continue"});
@@ -109,126 +110,13 @@ var comments = {
         });
     },
 
-    Create: function (req, res, user) {
-        if(user && !user.message){
-        let postId = req.body.postId;
-        if (postId && typeof postId === "string" && req.body && typeof req.body.text === "string") {
-            var postOwnerId  = posts.getPostOwnerIdByDecrypt(postId);
-            let text = req.body.text;
-            if (user) {
-                posts.getPostInfoById(postId,function(post){
-                    if (post) {
-                        let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
-                        let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
-                        let str = text;
-                        let m;
-                        let hashtags = [];
-                        let mentions = [];
-                        redisClient.hgetall(postOwnerId + ":info", function (err, info) {
-                            if (err) throw err;
-                            if (info) {
-                                let blockList=[];
-                                if(info.blockList !== "") {
-                                    blockList = JSON.parse(info.blockList);
-                                }
-                                if (blockList.indexOf(user.userId) === -1) {
-                                    if (user.blockList.indexOf(postOwnerId) === -1) {
-                                        while ((m = reHashtag.exec(str)) != null) {
-                                            if (m.index === reHashtag.lastIndex) {
-                                                reHashtag.lastIndex++;
-                                            }
-                                            if (hashtags.indexOf(m[0]) === -1) {
-                                                hashtags.push(m[0]);
-                                            }
-                                        }
-                                        let n;
-                                        while ((n = reMention.exec(str)) != null) {
-                                            if (n.index === reMention.lastIndex) {
-                                                reMention.lastIndex++;
-                                            }
-                                            if (mentions.indexOf(n[0]) === -1) {
-                                                mentions.push(n[0]);
-                                            }
-                                        }
-                                        let commentObject = {
-                                            postId: postId,
-                                            postOwnerId: postOwnerId,
-                                            ownerId: ownerId,
-                                            activated: false,
-                                            deleted: false,
-                                            mentions: mentions, // usernames @
-                                            hashtags: hashtags, // #
-                                            fullText: text,
-
-                                        };
-                                        if (!JSON.parse(info.privacy)) {
-                                            if (postId && postOwnerId && ownerId) {
-                                                Comment.create(commentObject, function (callback) {
-                                                    if (callback) {
-                                                        res.send(callback);
-                                                    }
-                                                    else {
-                                                        res.send({result: false, message: "create comment failed"});
-                                                    }
-                                                });
-                                            }
-                                            else {
-                                                return callback({result: false, message: "504 Bad request"});
-                                            }
-                                        }
-                                        else {
-                                            if (user.followings.indexOf(postOwnerId) > -1) {
-                                                Comment.create(commentObject, function (callback) {
-                                                    if (callback) {
-                                                        res.send(callback);
-                                                    }
-                                                    else {
-                                                        res.send({result: false, message: "create comment failed"});
-                                                    }
-                                                });
-                                            }
-                                            else {
-                                                res.send({result: false, message: "Unauthorized"});
-                                            }
-                                        }
-                                    }
-                                    else {
-                                        res.send({result: false, message: "you have blocked the post owner "}); // redis
-                                    }
-                                }
-                                else {
-                                    res.send({result: false, message: "you have been blocked by the post owner"}); // redis
-                                }
-                            }
-                            else {
-                                res.send({result: false, message: "user info not found in cache"}); // redis
-                            }
-                        });
-                    }
-                    else {
-                        res.send({result: false, message: "post not found"});
-                    }
-                });
-            }
-            else {
-                
-            }   
-            }
-        }
-        else {
-            res.send({result: false, message: "504 Bad Request"});
-        }
-    },
-    edit: function (req, res, user) {
+    create : function (req, res, user) {
 
         if (user && !user.message) {
             let postId = req.body.postId;
-            let commentId = req.body.commentId;
-            if (postId && typeof postId === "string" && commentId && typeof commentId === "string") {
+            let text = req.body.text;
+            if (postId && typeof postId === "string" && text && typeof text === "string") {
                 var postOwnerId  = posts.getPostOwnerIdByDecrypt(postId);
-                let text = req.body.text;
-
-
                 let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
                 let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
                 let str = text;
@@ -236,7 +124,111 @@ var comments = {
                 let hashtags = [];
                 let mentions = [];
                 users.getUserInfosFromCache(postOwnerId,function(hostUser){
-                    if(hostUser.message){
+                    if(!hostUser.message){
+                        while ((m = reHashtag.exec(str)) != null) {
+                            if (m.index === reHashtag.lastIndex) {
+                                reHashtag.lastIndex++;
+                            }
+                            if (hashtags.indexOf(m[0]) === -1) {
+                                hashtags.push(m[0]);
+                            }
+                        }
+                        let n;
+                        while ((n = reMention.exec(str)) != null) {
+                            if (m.index === reMention.lastIndex) {
+                                reMention.lastIndex++;
+                            }
+                            if (hashtags.indexOf(n[0]) === -1) {
+                                mentions.push(n[0]);
+                            }
+                        }
+                        let commentObject = {
+                            postId: postId,
+                            postOwnerId: postOwnerId,
+                            ownerId: user.userId,
+                            activated: false,
+                            deleted: false,
+                            mentions: mentions, // usernames @
+                            hashtags: hashtags, // #
+                            fullText: text,
+
+                        };
+                        if(typeof hostUser.privacy === "string")
+                            hostUser.privacy = !JSON.parse(hostUser.privacy);
+
+                        if(user.followings.indexOf(postOwnerId) > -1 || user.userId=== postOwnerId){
+                            Comment.create(commentObject, function (callback) {
+                                if (callback) {
+                                    res.send(callback);
+                                }
+                                else {
+                                    res.send({result: false, message: "create comment failed"});
+                                }
+                            });
+                        }
+                        else{
+                            if (!hostUser.privacy) {
+                                users.blocks.check(postOwnerId,user.userId,function(resultb){
+                                    if(!resultb){
+                                        Comment.create(commentObject, function (callback) {
+                                            if (callback) {
+                                                res.send(callback);
+                                            }
+                                            else {
+                                                res.send({result: false, message: "create comment failed"});
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                            else{
+                                posts.getPostInfoById(postId,false,function(postx){
+                                    if(postx){
+                                        Comment.create(commentObject, function (callback) {
+                                            if (callback) {
+                                                res.send(callback);
+                                            }
+                                            else {
+                                                res.send({result: false, message: "create comment failed"});
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        res.send({result:false,message:"Content is private , follow Post Owner to continue"});
+                                    }
+                                });
+                            }    
+                        }
+                    }
+                    else {
+                        res.send(hostUser);
+                    }
+                });
+            }
+            else {
+                res.send({result: false, message: "504 Bad Request"});   
+            }
+        }
+        else {
+            res.send(user); // redis
+        }
+    },
+    edit: function (req, res, user) {
+
+        if (user && !user.message) {
+            let postId = req.body.postId;
+            let commentId = req.body.commentId;
+            let text = req.body.text;
+            if (postId && typeof postId === "string" && commentId && typeof commentId === "string" && text && typeof text === "string") {
+                var postOwnerId  = posts.getPostOwnerIdByDecrypt(postId);
+                let reHashtag = /(?:^|[ ])#([a-zA-Z]+)/gm;
+                let reMention = /(?:^|[ ])@([a-zA-Z]+)/gm;
+                let str = text;
+                let m;
+                let hashtags = [];
+                let mentions = [];
+                users.getUserInfosFromCache(postOwnerId,function(hostUser){
+                    if(!hostUser.message){
                         while ((m = reHashtag.exec(str)) != null) {
                             if (m.index === reHashtag.lastIndex) {
                                 reHashtag.lastIndex++;
@@ -269,13 +261,16 @@ var comments = {
                             updatedAt: Date.now(),
                             edited:true
                         };
-                        if(user.followings.indexOf(postOwnerId) > -1){
+                        if(typeof hostUser.privacy === "string")
+                            hostUser.privacy = !JSON.parse(hostUser.privacy);
+
+                        if(user.followings.indexOf(postOwnerId) > -1 || user.userId === postOwnerId){
                             Comment.edit(query,updates,function(resultc){
                                 res.send(resultc);
                             });
                         }
                         else{
-                            if (!JSON.parse(hostUser.privacy)) {
+                            if (!hostUser.privacy) {
                                 users.blocks.check(postOwnerId,user.userId,function(resultb){
                                     if(!resultb){
                                         Comment.edit(query,updates,function(resultc){
@@ -285,8 +280,8 @@ var comments = {
                                 });
                             }
                             else{
-                                posts.getPostInfoById(postId,false,function(post){
-                                    if(post){
+                                posts.getPostInfoById(postId,false,function(postx){
+                                    if(postx){
                                         Comment.edit(query,updates,function(resultc){
                                             res.send(resultc);
                                         });

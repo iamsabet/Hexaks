@@ -46,25 +46,26 @@ var auth = {
                             auth.validate(username, password, function (callback) {
                                 let userDbObject = callback;
                                 if (callback && !callback.message) {
-                                    redisClient.hgetall("info:"+userDbObject.userId, function (err, info) {
-                                        if (!err && !info) {
-                                            usrs.updateAllUserInfosInCache(userDbObject.userId,function(resultx){
-                                                res.send(resultx);
-                                            });
+                                    usrs.getUserInfosFromCache(userDbObject.userId,function(hostUserInfo){
+                                        if(!hostUserInfo.message){
+                                            if (!userDbObject) { // authentication failed
+                                                res.send({
+                                                    result: false,
+                                                    status:401,
+                                                    message: "username (or email) / password is incorrect"
+                                                });
+                                                return;
+                                            }
+                                            else{
+                                                redisClient.set("userId:"+userDbObject.username, userDbObject.userId);
+                                                usrs.extendExpiration(userDbObject);
+                                                res.send(genToken(userDbObject.userId));
+                                            }
+                                        }
+                                        else{
+                                            res.send(hostUserInfo);
                                         }
                                     });
-                                    redisClient.set("userId:"+userDbObject.username, userDbObject.userId);
-                                    usrs.extendExpiration(userDbObject);
-                                    if (!userDbObject) { // If authentication fails, we send a 401 back
-                                        res.send({
-                                            result: false,
-                                            "message": "username(or email) / password is incorrect"
-                                        });
-                                        return;
-                                    }
-                                    if (userDbObject) {
-                                        res.send(genToken(userDbObject.userId));
-                                    }
                                 }
                                 else {
                                     res.send(callback);

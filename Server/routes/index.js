@@ -548,11 +548,11 @@ router.post('/api/v1/posts/subscriptions/',function(req,res){
                 let curator = req.body.curator || undefined;
                 if((requestOrigin === null) || (pageNumber===1)){ // no other choice
                     requestOrigin = now;
-                    redisClient.set("postRequestOrigin:"+userId,requestOrigin);
+                    redisClient.set("postRequestOrigin:"+user.userId,requestOrigin);
                 }  
                 timeOrigin = parseInt(requestOrigin);
 
-                redisClient.expire("postRequestOrigin:"+userId,60000); // 10mins
+                redisClient.expire("postRequestOrigin:"+user.userId,60000); // 10mins
                 user.followings.push(user.userId);
                 posts.getPostsByFiltersAndOrders(req, res, user, user.followings, orderBy, isCurated, hashtags, category, curator ,false, true, true, 0,1000000,timeOrigin, timeEdge ,counts, pageNumber);
             });
@@ -655,7 +655,6 @@ router.post('/api/v1/posts/:uuid',function(req,res){
 // categories controllers
 
 router.get('/api/v1/category/accessibles',function(req,res) {
-
     categories.getDefinedCategories(req,res);
 
 });
@@ -669,8 +668,6 @@ router.get('/api/v1/category/accessibles',function(req,res) {
 // comment controllers
 
 router.post('/api/v1/getPostComments/',function(req,res){
-
-
 
     if(!isNaN(parseInt(req.body.pageNumber)) && parseInt(req.body.pageNumber) > 0 && parseInt(req.body.pageNumber) < 100){
         //
@@ -692,7 +689,7 @@ router.post('/api/v1/getPostComments/',function(req,res){
 router.post('/api/v1/users/addComment/',function(req,res){
     validateRequest(req,res,function(callback){
         if(callback){
-            comments.Create(req,res,callback);
+            comments.create(req,res,callback);
         }
         else{
             res.send({result:false,message:"403 Unauthorized"})

@@ -289,8 +289,8 @@ var posts = {
 
         }
     },
+    getPostInfoById : function(postId,privacy,callback){
 
-    getPostInfoById:function(postId,privacy,callback){
         let options = {
             album: 1, // null if not
             postId: 1,
@@ -332,7 +332,7 @@ var posts = {
             if (err)
                 throw err;
             else 
-                return callback(post);
+                callback(post);
         });
     },
     accessPostDatas : function(user,postId,owner,privacy,res,query){
@@ -876,9 +876,9 @@ var posts = {
                         res.send({result:true,message:"already viewd"});
                     }
                     else{
-                        let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
+                        var postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
 
-                        if(user.followings.indexOf(postOwnerId) > -1){
+                        if(user.followings.indexOf(postOwnerId) > -1 || postOwnerId === user.userId){
                             posts.doView(user.userId,postId,true,res); // post and account privacy bypass
                         }
                         else{
@@ -934,7 +934,7 @@ var posts = {
         }
         postSchema.findOneAndUpdate(query,{"$inc":{views:1}},{
             "fields":{
-                "albumId":1,
+                "album":1,
                 "isPrivate":1,
             },
             "new":true
@@ -991,6 +991,9 @@ var posts = {
                             let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
                             if(user.followings.indexOf(postOwnerId) > -1){
                                 posts.doRate(user.userId,postId,rateValue,rateObject,true,res); // post and account privacy bypass
+                            }
+                            else if(user.userId === postOwnerId){
+                                res.send({result:true,message:"You cant rate your own post"});
                             }
                             else{
                                 blocks.check(postOwnerId,user.userId,function(blocked){

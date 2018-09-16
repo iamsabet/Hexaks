@@ -586,7 +586,7 @@
             Filters.order = "latest";
             Filters.orderBy = "createdAt";
         }
-        debugger;
+        // debugger;
         if(["following","explore","home","latest","curated","top"].indexOf(window.location.pathname.split("/")[1]) === -1)
             order="profile/"+order;
         makeUrl(order);
@@ -965,7 +965,9 @@
         newText = commentsList[selectedComment].fullText;
         $(".commentsContainer .cancelComment").addClass("show");
         $(".commentsContainer .new.show").removeClass("show");
+        $(".commentsContainer .new.show").removeClass("show");
         $(".commentsContainer .newCommentDiv").addClass("show");
+        $("#newComment").removeClass("show");
         autoResizeTextArea(true);
         setTimeout(function(){
             $("#newComment").focus()
@@ -1362,7 +1364,7 @@
         var hashtag = "";
         var category = "";
         var order = "";
-        debugger;
+        // debugger;
         if (pageName) {
             if(pageName.startsWith("post")){
                 changePage("post","post/"+postId,true,postId);
@@ -1371,11 +1373,11 @@
                 if((pageName === "explore") || (pageName === "curated") || (pageName === "latest") || (pageName === "top")) {
                     changePage(window.location.pathname.split("/")[1],window.location.pathname.split("/")[1]+ "/" + pageName,true,"",true,true); // the same  
                 }
-                else if(pageName === "following"){
-                    changePage("following","following/"+pageName.split("/")[1],true,"",true,true);
+                else if(pageName.split("following/").length > 1){
+                    changePage("following","following/"+pageName,true,"",true,true);
                 }
                 else if(pageName.split("profile/").length > 1){
-                    debugger;
+                    // debugger;
                     changePage("profile",window.location.pathname.split("/")[1]+"/"+pageName.split("/")[1],true,"",true,true);
                 }
             }
@@ -1962,13 +1964,11 @@
                 $(".postsContainer").html("");
             }
             else{
-                for(var post = 0;post < res.docs.length ; post++){
-                    postsList.push(res.docs[post]);
-                }
+                postsList.push.apply(postsList,res.docs);
                 let tempUsersInfo = res.owners;
                 let keys = Object.keys(tempUsersInfo);
-                for(let x in keys){
-                    if(!usersInfo[keys[x]]){
+                for (let x in keys) {
+                    if (!usersInfo[keys[x]]) {
                         usersInfo[keys[x]] = tempUsersInfo[keys[x]];
                     }
                 }
@@ -2400,26 +2400,27 @@
         else {
             if (res.docs.length === 0) {
                 $(".post .commentsContainer .header").html(" No comments yet ");
+                $(".post .commentsContainer .commentsList").html("");
             }
             else if (res.docs === []) {
                 $(".post .commentsContainer .header").html(" No comments yet ");
+                $(".post .commentsContainer .commentsList").html("");
             }
             else if (res === []) {
                 $(".post .commentsContainer .header").html(" Oops Something Went Wrong ");
+                $(".post .commentsContainer .commentsList").html("");
             }
             else {
                 if (commentsPageNumber === 1) {
                     commentsList = res.docs;
-                    usersInfo = res.owners;
                     total = res.total;
                     commentsLastLength = -1;
-                    $(".post .commentsContainer .header").html(res.total + " Comments");
                     $(".post .commentsContainer .commentsList").html("");
+                    // add comments loader
+                    $(".post .commentsContainer .header").html(res.total + " Comments");
                 }
                 else {
-                    for (var comment = 0; comment < res.docs.length; comment++) {
-                        commentsList.push(res.docs[comment]);
-                    }
+                    commentsList.push.apply(notIncludeThese,res.docs);
                     let tempUsersInfo = res.owners;
                     let keys = Object.keys(tempUsersInfo);
                     for (let x in keys) {
@@ -2491,9 +2492,9 @@
                                                                         </defs>
                                                                     </svg>
                                                                     <div class="polygon-each-img-wrap">
-                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[Me.userId].split("/")[1]}"/>
+                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[Me.userId].profilePictureSet}"/>
                                                                     </div>
-                                                                    <a href="/${usersInfo[Me.userId].split("/")[0]}" class="ownerUsername usernameLink">${usersInfo[Me.userId].split("/")[0]}</a>
+                                                                    <a href="/${usersInfo[Me.userId].username}" class="ownerUsername usernameLink">${usersInfo[Me.userId].username}</a>
                                                                 <button class="commentMoreButton"></button>
                                                                 </div>
                                                                 <p class="text">
@@ -2522,9 +2523,9 @@
                                                                         </defs>
                                                                     </svg>
                                                                     <div class="polygon-each-img-wrap">
-                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[commentsList[index].ownerId].split("/")[1]}"/>
+                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[commentsList[index].ownerId].profilePictureSet}"/>
                                                                     </div>
-                                                                    <a href="/${usersInfo[commentsList[index].ownerId].split("/")[0]}" class="ownerUsername usernameLink">${usersInfo[commentsList[index].ownerId].split("/")[0]}</a>
+                                                                    <a href="/${usersInfo[commentsList[index].ownerId].username}" class="ownerUsername usernameLink">${usersInfo[commentsList[index].ownerId].username}</a>
                                                                 <button class="commentMoreButton"></button>
                                                                 </div>
                                                                 <p class="text">
