@@ -62,7 +62,6 @@ var auth = {
                                         });
                                         return;
                                     }
-
                                     if (userDbObject) {
                                         res.send(genToken(userDbObject.userId));
                                     }

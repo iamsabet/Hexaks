@@ -56,7 +56,7 @@ var posts = {
             if(category[0] !== "" && category[0] !== "All")
                 categoryQuery = {$in:category};
         }
-        let timeEdge = timeEdgeIn;
+        let timeEdge = parseInt(timeEdgeIn);
         if (orderedBy === "createdAt"|| orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.points" || orderedBy === "rate.value" ||  orderedBy === "rate"  || orderedBy === "views") {
             // timeWindow
 
@@ -152,8 +152,8 @@ var posts = {
             let inputx = null;
             if(!user.message)
                 inputx = user.userId;
-            blocks.getUserBlockers(inputx,function(blockers){
-                if(userIds === "all"){
+            if(userIds === "all"){
+                blocks.getUserBlockers(inputx,function(blockers){
                     if(!user.message){
                         notIncludeThese.push.apply(notIncludeThese,blockers);
                         if(notIncludeThese.length>0){
@@ -166,61 +166,66 @@ var posts = {
                     else{
                         query.ownerId= {$exists:true};
                     }
+                    posts.paginate(query,options,user,res);
+                });
+            }
+            else{
+                if(userIds.length === 1) { // profile
+                    timeEdge = (timeOrigin - (120 * 744 * 3600 * 1000)); // 31 days
+                    query.createdAt = {$lt: timeOrigin};  // time edge up to 31 days
+                }
+                else{ // followings or followers 
+                    query.createdAt = {$gte: timeEdge, $lt: timeOrigin};
+                }
+                posts.paginate(query,options,user,res);
+            }
+        
+        }
+    },
+
+    paginate:function(query,options,user,res){
+        post.Paginate(query, options,user,function(postsList){
+            if(postsList){
+                postsList.owners = {};
+                postsList.rates = [];
+                if(postsList.docs.length > 0) {
+                    let postIds = [];
+                    for (let x = 0; x < postsList.docs.length; x++) {
+                        users.getUserInfosFromCache(postsList.docs[x].ownerId,function(info){
+                            if (!info.message){ 
+                                if(!postsList.owners[postsList.docs[x].ownerId]){
+                                    // delete secure and unneccesary datas
+                                    postsList.owners[postsList.docs[x].ownerId] = info;
+                                }
+                            }
+                            else {
+                                console.log("User not found in cache in paginate posts");
+                            }
+                            postIds.push(postsList.docs[x].postId);
+                            if (x === postsList.docs.length - 1) {
+                                if(user){
+                                    rateSchema.find({postId:{$in:postIds},rater:user.userId,deleted:false,activated:true},{value:1,changes:1,rateId:1,postId:1},function(err,rates){
+                                        if(err) throw err;
+                                        postsList.rates = JSON.stringify(rates);
+                                        res.send(postsList);
+                                    });
+                                }
+                                else{
+                                    res.send(postsList);
+                                }
+                            }
+                        });
+                        
+                    }
                 }
                 else{
-                    if(userIds.length === 1) { // profile
-                        timeEdge = (timeOrigin - (120 * 744 * 3600 * 1000)); // 31 days
-                        query.createdAt = {$lt: timeOrigin};  // time edge up to 31 days
-                    }
-                    else{ // followings or followers 
-                        query.createdAt = {$gte: timeEdge, $lt: timeOrigin};
-                    }
+                    res.send({docs:[],total:0});
                 }
-            
-                post.Paginate(query, options,user,function(postsList){
-                    if(postsList){
-                        postsList.owners = {};
-                        postsList.rates = [];
-                        if(postsList.docs.length > 0) {
-                            let postIds = [];
-                            for (let x = 0; x < postsList.docs.length; x++) {
-                                users.getUserInfosFromCache(postsList.docs[x].ownerId,function(info){
-                                    if (!info.message){ 
-                                        if(!postsList.owners[postsList.docs[x].ownerId]){
-                                            // delete secure and unneccesary datas
-                                            postsList.owners[postsList.docs[x].ownerId] = info;
-                                        }
-                                    }
-                                    else {
-                                        console.log("User not found in cache in paginate posts");
-                                    }
-                                    postIds.push(postsList.docs[x].postId);
-                                    if (x === postsList.docs.length - 1) {
-                                        if(user){
-                                            rateSchema.find({postId:{$in:postIds},rater:user.userId,deleted:false,activated:true},{value:1,changes:1,rateId:1,postId:1},function(err,rates){
-                                                if(err) throw err;
-                                                postsList.rates = JSON.stringify(rates);
-                                                res.send(postsList);
-                                            });
-                                        }
-                                        else{
-                                            res.send(postsList);
-                                        }
-                                    }
-                                });
-                                
-                            }
-                        }
-                        else{
-                            res.send({docs:[],total:0});
-                        }
-                    }
-                    else{
-                        res.send(postsList);
-                    }
-                });
-            });
-        }
+            }
+            else{
+                res.send(postsList);
+            }
+        });
     },
 
     Create: function(user,format,postId,fileName,counts,callback) {
@@ -1101,7 +1106,7 @@ var posts = {
         });
     },
     getPostOwnerIdByDecrypt:function(postId){
-        
+
         let changedPostId = postId.split("|").join("/").slice(0,-2); // rooted
         let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
         let decrypted = bytes.toString(CryptoJS.enc.Utf8);

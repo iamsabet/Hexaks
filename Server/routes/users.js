@@ -29,7 +29,7 @@ var users = {
     getMe: function (req, res, data) {
         res.send(data);
     },
-    getUserByUsername: function (username,deleted,activated,callback) {
+    getUserIdByUsername: function (username,deleted,activated,callback) {
         userSchema.findOne({username:username,deleted:deleted,activated:activated},{userId:1},function(err,userx){
             if(err) throw err;
             return callback(userx);
@@ -157,7 +157,7 @@ var users = {
                                         expire: (now + (10 * 24 * 3600000)), // 10d
                                     }
                                 },
-                                bio: String,
+                                bio: "",
                                 badges: [], // badgeIds -->
                                 roles: [], // String - Sabet / Admin / Curator / Blogger / Premium / --> founder <-- under 1000 --> future advantages --> + premium ...
                                 activated: true,
@@ -168,16 +168,13 @@ var users = {
                             };
                             User.create(userObject, function (callback) {
                                 if (!callback) {
-                                    
                                     res.send({
                                         result: false,
                                         message: "Oops Something Went Wrong , please try again later"
                                     });
                                 }
                                 else {
-                                    users.pushNotification("system", " Welcome to Hexaks network '" + userObject.username + "' we hope you enjoy our service <3 ", userObject.userId, "Hexaks");
-
-
+                                    // users.pushNotification("system", " Welcome to Hexaks network '" + userObject.username + "' we hope you enjoy our service <3 ", userObject.userId, "Hexaks");
                                     res.send(genToken(userObject.userId));
                                 }
                             });
@@ -463,7 +460,7 @@ var users = {
         });
     },
     getUserInfosFromCache:function(userId,callback){
-        redisClient.hgetall( "info:"+userId, function (err, info) {
+        redisClient.hgetall("info:"+userId, function (err, info) {
             if (err) callback(err);
             if (info) {
                 return callback(info);
@@ -484,7 +481,7 @@ var users = {
                     return callback(userId);
                 }
                 else{
-                    users.getUserByUsername(username,false,true,function(hostUser){
+                    users.getUserIdByUsername(username,false,true,function(hostUser){
                         if(hostUser){
                             redisClient.set("userId:"+username,hostUser.userId,function(err,resx) {
                                 if(err) throw err;
@@ -522,13 +519,13 @@ var users = {
             if (err) throw err;
             if (user) {
                 redisClient.hmset(["info:"+user.userId,"userId",user.userId, "username", user.username,"fullName",user.fullName,"followersCount",user.followersCount,"followingsCount" ,user.followingsCount,"location",user.city+":"+user.country+"/"+user.location,
-                "postsCount",user.postsCount,"reportsCount",user.reportsCount,"roles",JSON.stringify(user.roles),"privacy", user.privacy, "gender", user.gender,
+                "postsCount",user.postsCount,"reportsCount",user.reportsCount,"roles",JSON.stringify(user.roles),"privacy", user.privacy, "gender", user.gender,"views",parseInt(user.views) ,
                     "profilePictureSet", user.profilePictureSet, "rate",JSON.stringify(user.rate.value)]); // must add to a zset --> points
                 redisClient.expire("info:"+user.userId, 300000);
                 console.log("user infos updated in cache ,expire : 5minutes ");
                 return callback({"userId":user.userId,"username": user.username,"fullName":user.fullName,"followersCount" : user.followersCount,"followingsCount" : user.followingsCount,"location":user.city+":"+user.country+"/"+user.location,
                                 "postsCount":user.postsCount,"reportsCount":user.reportsCount,"roles":user.roles,"privacy": user.privacy,"gender": user.gender,
-                                "profilePictureSet": user.profilePictureSet, "rate": user.rate.value});
+                                "profilePictureSet": user.profilePictureSet, "rate": user.rate.value,"views" : parseInt(user.views) });
             }
             else {
                 return callback({result:false,message:"User information not found"});

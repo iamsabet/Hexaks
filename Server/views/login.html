@@ -93,6 +93,7 @@
     function responseActionHandler(caller, res) {
         switch (caller) {
             case "loginHandler" : {
+                debugger;
               if(!res.message){
                 createCookie("X-ACCESS-TOKEN",res["token"],1);
                 window.location.pathname = "/explore";
