@@ -586,7 +586,8 @@
             Filters.order = "latest";
             Filters.orderBy = "createdAt";
         }
-        if(["following","explore","home","latest","curated","top"].indexOf(order) === -1)
+        debugger;
+        if(["following","explore","home","latest","curated","top"].indexOf(window.location.pathname.split("/")[1]) === -1)
             order="profile/"+order;
         makeUrl(order);
     });
@@ -1361,7 +1362,7 @@
         var hashtag = "";
         var category = "";
         var order = "";
-        // debugger;
+        debugger;
         if (pageName) {
             if(pageName.startsWith("post")){
                 changePage("post","post/"+postId,true,postId);
@@ -1374,7 +1375,8 @@
                     changePage("following","following/"+pageName.split("/")[1],true,"",true,true);
                 }
                 else if(pageName.split("profile/").length > 1){
-                    changePage("profile",window.location.pathname.split("/")[1]+"/"+pageName.split("/")[1],false,"",true,true);
+                    debugger;
+                    changePage("profile",window.location.pathname.split("/")[1]+"/"+pageName.split("/")[1],true,"",true,true);
                 }
             }
         }
@@ -1587,12 +1589,6 @@
         setTimeout(function () {
             if (pageName === "feed" || pageName === "home" || pageName === "" || pageName === "explore" || pageName === "following") {
                 $(".postFooter").removeClass("show");
-                if(newHistory){
-                    if(canReq){
-                        getPostsByFilter(Filters, pageType.split("/")[0]);
-                    }
-                    pushHistory(pageName, pageType, pageType, newHistory,writeUrl);  
-                } 
                 if (pageName !== currentPage) {
                     // show feed items --> hide Others
                     $("#postsContainer").addClass("show");
@@ -1608,18 +1604,40 @@
                     // hide elements
                     for (var x = 0; x < pageNames.length; x++) {
                         if (pageName.toLowerCase() !== pageNames[x].toLowerCase()) {
-                            if ($(`#${pageNames[x]}.show`)) {
+                            if ($(`#${pageNames[x]}.show`)[0]) {
                                 $(`#${pageNames[x]}.show`).removeClass("show");
                             }
                         }
                     }
+                    currentPage = pageName;
                 }
+                if(newHistory){
+                    if(canReq){
+                        getPostsByFilter(Filters, pageType.split("/")[0]);
+                    }
+                    pushHistory(pageName, pageType, pageType, newHistory,writeUrl);  
+                } 
                 
             }
             else if (pageName === "profile") {
                 $(".postFooter").removeClass("show");
                 host.username = pageType.split("/")[0];
                 selectTopNav(pageType.split("/")[1]);
+                if(!$("#postsContainer.show")[0])
+                    $("#postsContainer").addClass("show")
+                if(!$("#profileTop.show")[0])
+                    $("#profileTop").addClass("show")[0]; 
+                if (pageName !== currentPage) {
+                    pageNames = ["settings", "newPost", "post", "homeSliders", "people", "contact", "policy"];
+                    for (let x = 0; x < pageNames.length; x++) {
+                        if (pageName.toLowerCase() !== pageNames[x].toLowerCase()) {
+                            if ($(`#${pageNames[x]}.show`)) {
+                                $(`#${pageNames[x]}.show`).removeClass("show");
+                            }
+                        }
+                    }
+                    currentPage = pageName;
+                }
                 if(newHistory){
                     if(canReq){
                         loadProfileInfo(host.username);
@@ -1630,20 +1648,6 @@
                 else{
                     if(canReq){
                         getPostsByFilter({username:host.username},"profile");
-                    }
-                }
-                if(!$("#postsContainer.show")[0])
-                    $("#postsContainer").addClass("show")
-                    if(!$("#profileTop.show")[0])
-                    $("#profileTop").addClass("show")[0] 
-                if (pageName !== currentPage) {
-                    pageNames = ["settings", "newPost", "post", "homeSliders", "people", "contact", "policy"];
-                    for (let x = 0; x < pageNames.length; x++) {
-                        if (pageName.toLowerCase() !== pageNames[x].toLowerCase()) {
-                            if ($(`#${pageNames[x]}.show`)) {
-                                $(`#${pageNames[x]}.show`).removeClass("show");
-                            }
-                        }
                     }
                 }
             }
@@ -1669,18 +1673,17 @@
                             }
                         }
                     }
+                    currentPage = pageName;
                 }
                 else{
                     sendPagesInitialRequest(pageName.toLowerCase(),postid,slideAct);
                 }
                 // => function calls :
-
             }
             else {
                 alert("Oops , Page Name Not Defined !");
             }
-            currentPage = pageName;
-        }, 10);
+        }, 1);
 
     }
 

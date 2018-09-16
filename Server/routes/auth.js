@@ -130,7 +130,7 @@ function genToken(userId) {
     let token = jwt.encode({
         exp: expires,
         key: userId
-    }, secret.mongoKey);
+    }, secret.userIdKey);
 
     return {
         token: token,

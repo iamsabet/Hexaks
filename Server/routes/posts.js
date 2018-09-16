@@ -49,7 +49,7 @@ var posts = {
         var hashtagQuery = {$exists:true};
         var categoryQuery = {$exists:true};
         if(hashtags && hashtags.length > 0){
-            if(hashtags[0]!=="")
+            if(hashtags[0] && hashtags[0] !== "")
                 hashtagQuery = {$in:hashtags};
         }
         if(category && category.length > 0){
