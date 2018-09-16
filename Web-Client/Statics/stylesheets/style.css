@@ -2384,7 +2384,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	.postFooter .buttonGroup {
 		position: absolute;
 		left: 0;
-		top: -145px;
+		top: -220px;
 		display: inline-block;
 		width: 40px;
 		height: 0;
@@ -2397,23 +2397,24 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		height: 100%;
 		margin: 10px;
 		padding:5px;
+		height: auto;
 	}
 	.postFooter .buttonGroup button{
-		display: inline-block;
+		display: block;
 		position: relative;
 		float: left;
 		margin-left: 10px;
 		margin-bottom: 20px;
-		top: -60px;
+		top: 0x;
 		width: 54px;
 		padding: 2px;
-		height: 48px;
+		height: 52px;
 		outline: none;
-		-webkit-transition: all 0.2s ease-in-out;
-		-moz-transition: all 0.2s ease-in-out;
-		-ms-transition: all 0.2s ease-in-out;
-		-o-transition: all 0.2s ease-in-out;
-		transition: all 0.2s ease-in-out;
+		-webkit-transition: all 0.3s ease-in-out;
+		-moz-transition: all 0.3s ease-in-out;
+		-ms-transition: all 0.3s ease-in-out;
+		-o-transition: all 0.3s ease-in-out;
+		transition: all 0.3s ease-in-out;
 		background: transparent url(../images/icons/b-cam.png) no-repeat center center;
 		-webkit-border-radius: 3px;
 		-moz-border-radius: 3px;
