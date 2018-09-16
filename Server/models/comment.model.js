@@ -27,8 +27,10 @@ var commentSchema = new Schema({
 });
 commentSchema.methods.create = function(commentObject,callback){
     let newComment = new Comment(commentObject);
+    let commentId = CryptoJS.AES.encrypt((commentObject.ownerId+"-cm-"+random.generate(10)).toString(), secret.postIdKey).toString();
+    commentId = uploadingPost.split("/").join("|");
     newComment.createdAt = Date.now();
-    newComment.commentId = commentObject.ownerId+"-cm-"+random.generate(12);
+    newComment.commentId = commentId;
     newComment.updatedAt = Date.now();
     newComment.edited = false;
     newComment.deleted = false;

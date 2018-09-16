@@ -459,7 +459,8 @@
     var colNumber = 0;
     var pageType="";
     let postsColumns = 1;
-    var total=0;
+    let totalPosts = 0;
+    let totalComments = 0;
     let uploadingsCurrentIndex=0;
     var lastLength = 0;
     var usersInfo = {};
@@ -1261,6 +1262,7 @@
         $(".ratePad div div").removeClass("selected");
         $(".rateDiv .header").html(" Rate this post ( 1 - 6 ) ");
         $(".commentsContainer.show .cancelComment").click();   
+        $(".caption .cancelCaption").click();   
     }
 
     function sendPagesInitialRequest(pageName,postid,act){
@@ -1957,10 +1959,10 @@
                 usersInfo = res.owners;
                 rates = {};
                 lastLength = -1;
-                total = res.total;
+                totalPosts = res.total;
                 // $(".profileTop .profileTopContainer .userInfo .photos").html(total + " photos");
                 // $(".profileTop .profileTopContainer .userInfo .photos").removeClass("hide");
-                $("#postsHeader h3").html(total + " ");
+                $("#postsHeader h3").html(totalPosts + " ");
                 $(".postsContainer").html("");
             }
             else{
@@ -2103,7 +2105,7 @@
                 }
             }
             else {
-                if (currentPostItterator === total - 1 && postsList.length === total) {
+                if (currentPostItterator === totalPosts - 1 && postsList.length === totalPosts) {
                     alert("No More Posts");
                     loadPostDatas("no more posts left", -1);
                 }
@@ -2128,7 +2130,7 @@
                         <img src="../pictures/${right}" class="rightPic"/>
                     `);
                     }
-                    if (!$(".postFooter .rightButton.show")) {
+                    if (!$(".postFooter .rightButton.show")[0]) {
                         $(".postFooter .rightButton").addClass("show");
                     }
                 }
@@ -2137,15 +2139,15 @@
                     $(".pictureBox").append(`
                         <img src="../pictures/empty.jpg" class="rightPic"/>
                     `);
-                    if (total - 1 === currentPostItterator) {
+                    // debugger;
+                    if (totalPosts - 1 === currentPostItterator) {
                         if ($(".postFooter .rightButton.loadMore")[0] === undefined) {
                             $(".postFooter .rightButton").removeClass("loadMore");
                             $(".postFooter .rightButton").removeClass("show");
                         }
                     }
                     else {
-
-                        if ($(".postFooter .rightButton.loadMore")[0] === undefined) {
+                        if (!$(".postFooter .rightButton.loadMore")[0]) {
                             $(".postFooter .rightButton.show").addClass("loadMore");
                         }
                     }
@@ -2161,7 +2163,7 @@
                 }
             }
             else {
-                if (currentPostItterator === total - 1 && postsList.length === total) {
+                if (currentPostItterator === totalPosts - 1 && postsList.length === totalPosts) {
                     alert("No More Posts");
                     loadPostDatas("post not found", -1);
 
@@ -2183,7 +2185,7 @@
                         $(".postFooter .rightButton").removeClass("loadMore");
                     }
                 }
-                if (currentPostItterator === total - 1) {
+                if (currentPostItterator === totalPosts - 1) {
                     if (!$(".postFooter .rightButton.show")) {
                         $(".postFooter .rightButton.show").addClass("loadMore");
                     }
@@ -2413,11 +2415,11 @@
             else {
                 if (commentsPageNumber === 1) {
                     commentsList = res.docs;
-                    total = res.total;
+                    totalComments = res.total;
                     commentsLastLength = -1;
                     $(".post .commentsContainer .commentsList").html("");
                     // add comments loader
-                    $(".post .commentsContainer .header").html(res.total + " Comments");
+                    $(".post .commentsContainer .header").html(totalComments + " Comments");
                 }
                 else {
                     commentsList.push.apply(notIncludeThese,res.docs);

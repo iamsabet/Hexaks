@@ -5,7 +5,6 @@ var users = require('./users');
 var posts = require('./posts');
 var blocks = require('./blocks');
 var redis = require("redis");
-var random = require('randomstring');
 var requestIp = require("request-ip");
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -435,6 +434,12 @@ var comments = {
         else{
             res.send({result:false,message:"401 Unauthorized"});
         }
+    },
+    getCommentOwnerIdByDecrypt:function(commentId){
+
+        let bytes = CryptoJS.AES.decrypt(commentId,secret.commentIdKey);
+        let decrypted = bytes.toString(CryptoJS.enc.Utf8);
+        return decrypted.split("-cm")[0].toString();
     },
 };
 
