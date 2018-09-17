@@ -134,10 +134,10 @@ var comments = {
                         }
                         let n;
                         while ((n = reMention.exec(str)) != null) {
-                            if (m.index === reMention.lastIndex) {
+                            if (n.index === reMention.lastIndex) {
                                 reMention.lastIndex++;
                             }
-                            if (hashtags.indexOf(n[0]) === -1) {
+                            if (mentions.indexOf(n[0]) === -1) {
                                 mentions.push(n[0]);
                             }
                         }
@@ -352,7 +352,7 @@ var comments = {
 
                     }
                     else{ // try to be comment owner
-                        commentSchema.findOneAndUpdate({
+                        commentSchema.update({
                             postId: req.body.postId,
                             commentId: req.body.commentId,
                             postOwnerId: postOwnerId,

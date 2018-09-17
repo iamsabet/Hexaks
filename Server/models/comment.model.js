@@ -76,12 +76,13 @@ commentSchema.methods.Paginate = function(query,options,user,req,res){
                     for (let x = 0; x < comments.docs.length; x++) {
                         if (!comments.owners[comments.docs[x].ownerId]) {
                             users.getUserInfosFromCache(comments.docs[x].ownerId,function(info) {
-                                if (!info.message) { 
-                                    comments.owners[comments.docs[x].ownerId] = info.username + "/" + info.profilePictureSet;
+                                if (!info.message) {
+                                    if(!comments.owners[comments.docs[x].ownerId] || comments.owners[comments.docs[x].ownerId] === null) 
+                                        comments.owners[comments.docs[x].ownerId] = info;
                                 }
                                 else {
                                     console.log("err :" + err + " / values : " + info);
-                                    comments.owners[comments.docs[x].ownerId] = "not found" + "/" + "male.png";
+                                    comments.owners[comments.docs[x].ownerId] = null;
                                 }
 
                                 if (x === comments.docs.length - 1) {
