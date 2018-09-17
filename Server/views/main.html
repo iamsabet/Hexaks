@@ -543,8 +543,8 @@
 
     $("body").on("click",".usernameLink",function(event){
         event.preventDefault();
-        let changeusername = $(this).attr("href").toString();
-        changePage("profile",changeusername,true);
+        let changeusername = $(this).attr("href").toString().split("/")[1];
+        changePage("profile",changeusername+"/latest",true,"",true,true);
 
     });
 
@@ -587,9 +587,12 @@
             Filters.order = "latest";
             Filters.orderBy = "createdAt";
         }
-        // debugger;
-        if(["following","explore","home","latest","curated","top"].indexOf(window.location.pathname.split("/")[1]) === -1)
+        debugger;
+        if(order === "following")
+            order="following/"+Filters.order;
+        else if(["explore","home","latest","curated","top"].indexOf(order) === -1)
             order="profile/"+order;
+
         makeUrl(order);
     });
     $("body").on("click",".rows-2",function(){
@@ -653,7 +656,8 @@
         backward();
     });
     $("body").on("click","#logo",function(){
-        slideNav(this);
+        // slideNav(this);
+        changePage("explore","explore",true,"",true,true);
     });
 
     $("body").on("click","#follow",function(){
@@ -1376,7 +1380,7 @@
                     changePage(window.location.pathname.split("/")[1],window.location.pathname.split("/")[1]+ "/" + pageName,true,"",true,true); // the same  
                 }
                 else if(pageName.split("following/").length > 1){
-                    changePage("following","following/"+pageName,true,"",true,true);
+                    changePage("following","following/"+pageName.split("/")[1],true,"",true,true);
                 }
                 else if(pageName.split("profile/").length > 1){
                     // debugger;
@@ -1615,13 +1619,11 @@
                     }
                     currentPage = pageName;
                 }
-                if(newHistory){
-                    if(canReq){
-                        getPostsByFilter(Filters, pageType.split("/")[0]);
-                    }
-                    pushHistory(pageName, pageType, pageType, newHistory,writeUrl);  
-                } 
-                
+                if(canReq){
+                    getPostsByFilter(Filters, pageType.split("/")[0]);
+                }
+                pushHistory(pageName, pageType, pageType, newHistory,writeUrl);  
+         
             }
             else if (pageName === "profile") {
                 $(".postFooter").removeClass("show");
@@ -1745,8 +1747,7 @@
                 changePage(historyList[historyPointer].pageName+"/"+direction,historyList[historyPointer].urlData,false);
             }
             else{
-
-                changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false);
+                changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false,"",true,true);
             }
         }
         else{
