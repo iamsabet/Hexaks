@@ -460,25 +460,20 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 .postsContainerDiv{
 	position: relative;
-	width: 94%;
-	padding: 15px 0;
+	width: 98VW;
+	padding: 0;
 	height: auto;
-	display: inline-block;
+	display: block;
 	text-align: center;
-	top: 5px;
-	left: 47%;
-	-webkit-transform: translate(-50%,0);
-	-moz-transform: translate(-50%,0);
-	-ms-transform: translate(-50%,0);
-	-o-transform: translate(-50%,0);
-	transform: translate(-50%,0);
+	top:1px;
 	max-width: 1550px;
 	margin: 0 auto;
 }
 @media (max-width:768px){
 	.postsContainerDiv {
 		width: 100%;
-		left: 50%;
+		left: 0;
+		padding:5px 2px;
 	}
 }
 .postsContainer{
@@ -493,17 +488,18 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 @media (max-width:1550px){
 	.postsContainer{
 		position: relative;
-		margin: 1.5em;
+		margin: -10px 0;
 		vertical-align: top;
 		list-style-type: none;
 		padding: 0;
-		width:100%;
-		margin-left: 0;
+		width:102%;
+		margin-left: -10px;
 	}
 }
 @media (max-width:1100px){
 	.postsContainer{
-		padding:0;
+		width:100%;
+		margin-left:0;
 	}
 }
 @media (max-width:768){
@@ -2394,7 +2390,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		margin:0;
 		padding:0;
 	}
-	
+
 	.postFooter .buttonGroup.show{
 		height: 100%;
 		margin: 10px;
