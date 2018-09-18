@@ -77,13 +77,14 @@ router.get('/register/getKey', function(req,res){
 router.post('/register/checkIsTaken', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
-            users.checkIsTaken(req,res);
+            users.checkIsTaken(req,res,callback);
         }
         else{
-            res.send({result:false,message:" You are already logged in "});
+            res.send({result:false,message:" Access Denied "});
         }
     });
 });
+
 router.get('/about', function(req,res){
     res.render("about.html");
 });
@@ -729,6 +730,16 @@ router.post('/api/v1/users/rate',function(req,res){
         }
         else{
             res.send(null);
+        }
+    });
+});
+router.post('/users/checkIsTaken', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            users.checkIsTaken(req,res,callback);
+        }
+        else{
+            res.send(callback);
         }
     });
 });

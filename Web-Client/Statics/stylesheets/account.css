@@ -18,7 +18,8 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .footer{
 	position: relative;
-	float: left;display: inline-block;
+	float: left;
+	display: block;
 	clear: both;
 	height: 40px;
 	background-color:black;
@@ -37,10 +38,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 }
 
-.containerDiv .loginRegForm{
+.containerDiv > div{
 	position: relative;
 	background-color: rgba(50,50,50,0.90);
-	display: block;
+	display: inline-block;
 	height: 100%;
 	width: 100%;
 	max-width: 700px;
@@ -48,16 +49,15 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	overflow-y: auto;
 	overflow-x: hidden;
 }
-.containerDiv .loginRegForm form{
+.containerDiv > div form{
 	position: relative;
 	height: auto;
 	width:100%;
 	top:50px;
 	text-align: center;
 }
-.containerDiv .loginRegForm h2,.containerDiv .loginRegForm input,.containerDiv .loginRegForm button{
+.containerDiv > div h2,.containerDiv > div input,.containerDiv > div button{
 	position: relative;
-	float: left;
 	clear: right;
 	text-align: center;
 	width:100%;
@@ -66,19 +66,19 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	display: inline-block;
 	height: 40px;
 }
-.containerDiv .loginRegForm h2{
+.containerDiv > div h2{
 	margin-top:25px;
 	color:white;
 	margin-bottom:20px;
 }
-.containerDiv .loginRegForm form{
+.containerDiv > div form{
 	display: inline-block;
 	width:100%;
 	position: relative;
 	height: auto;
 	text-align: center;
 }
-.containerDiv .loginRegForm form div{
+.containerDiv > div form div{
 	left:0;
 	width:80%;
 	color:black;
@@ -87,7 +87,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position: relative;
 	display: inline-block;
 }
-.containerDiv .loginRegForm form div input{
+.containerDiv > div form div input{
 	background-color: white;
 	position: relative;
 	float: left;
@@ -105,13 +105,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-o-transition: all 0.3s ease-in;
 	transition: all 0.3s ease-in;
 }
-.containerDiv .loginRegForm form div input:focus{
+.containerDiv > div form div input:focus{
 	outline: #ff0055;
 }
-.containerDiv .loginRegForm form div input.changed{
+.containerDiv > div form div input.changed{
 	text-align: left;
 }
-.containerDiv .loginRegForm form div img{
+.containerDiv > div form div img{
 	background-color: white;
 	position: relative;
 	float: right;
@@ -130,10 +130,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	padding:1px 0;
 	background-color: transparent;
 }
-.containerDiv .loginRegForm form div img.show{
+.containerDiv > div form div img.show{
 	opacity: 1;
 }
-.containerDiv .loginRegForm form button{
+.containerDiv > div form button{
 	display: block;
 	position: relative;
 	width: 64%;
@@ -145,22 +145,22 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	margin: 40px auto;
 	left: 18.2%;
 }
-.containerDiv .loginRegForm form ul{
+.containerDiv > div form ul{
 	position: relative;
 	display: inline-block;
 	width: 100%;
 	left:10%;
 }
-.containerDiv .loginRegForm form ul.show{
+.containerDiv > div form ul.show{
 	display: block;
 }
 
 
 @media (max-width:520px){
-	.containerDiv .loginRegForm{
+	.containerDiv > div{
 		max-width: none;
 	}
-	.containerDiv .loginRegForm form div input{
+	.containerDiv > div form div input{
 		width:100%;
 		height: 42px;
 		padding:2px 0;
@@ -168,23 +168,23 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		line-height: 28px;
 		left:0;
 	}
-	.containerDiv .loginRegForm form div img{
+	.containerDiv > div form div img{
 		position: absolute ;
 		top:-10px;
 		right: 0;
 		z-index: 100;
 	}
-	.containerDiv .loginRegForm form button{
+	.containerDiv > div form button{
 		width:91.5%;
 		font-size:28px;
 		left:4%;
 	}
-	.containerDiv .loginRegForm form div {
+	.containerDiv > div form div {
 		left:0;
 		width:90%;
 	}
 }
-.containerDiv .loginRegForm form .socialBox{
+.containerDiv > div form .socialBox{
 	opacity: 0;
 	height: 0;
 	position: relative;
@@ -192,7 +192,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width:100%;
 	padding:0;
 }
-.containerDiv .loginRegForm form .socialBox.show{
+.containerDiv > div form .socialBox.show{
 	opacity: 1;
 	height: 70px;
 }

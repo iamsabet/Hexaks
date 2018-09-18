@@ -170,36 +170,67 @@
     </div>
     </div>
     <div class="settingsContainer" id="settings">
-        <div class="menu">
-            <h2>Account Information</h2>
-            <h2>Account Settings</h2>
-            <h2>Change Password</h2>
-            <h2>Badges</h2>
-            <h2>Deactive or Delete</h2>
-        </div>
-        <div class="formContainer">
-            <div class="accountSettings">
-                <label>Username</label>
-                <input type="text" class="username">
-                <label>Full Name</label>
-                <input type="text" class="fullName">
-                <label>Email</label>
-                <input type="text" class="email">
-                <label>City</label>
-                <input type="text" class="city">
-                <label>Bio</label>
-                <textarea type="text" class="bio">
-
-                </textarea>
-
-            </div>
-        </div>
+        <ul class="menu">
+            <h3 id="account">Account Settings</h3>
+            <h3 id="changePass">Change Password</h3>
+            <h3 id="badges">Badges</h3>
+            <h3 id="activation">Deactive / Delete Account</h3>
+        </ul>
+        <div id="settingsContainer" class="settingsForm">
+            <form action="/users/update">
+                <div>
+                    <label>Username</label>
+                    <input type="text" placeholder="Username" id="username"/>
+                    <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
+                </div>
+                <div>
+                    <label>Full Name</label>
+                    <input type="text" placeholder="Full name" id="fullName"/>
+                    <img src="../Statics/images/newIcons/tik.svg" id="fullNameStatus" />
+                </div>
+                <div>
+                    <label>Email</label>
+                    <input type="email" placeholder="email@example.com" id="email"/>
+                    <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
+                </div>
+                <div>
+                    <label>Phone number</label>
+                    <input type="text" placeholder="email@example.com" id="phoneNumber"/>
+                    <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
+                </div>
+                <div>
+                    <label>City</label>
+                    <input type="text" placeholder="City" id="city"/>
+                    <img src="../Statics/images/newIcons/tik.svg" id="cityStatus" />
+                </div>
+                <div>
+                    <label>Bio</label>
+                    <textarea type="text" id="bio" maxlength="250"></textarea>
+                </div>
+                <button id="setBtn" class="activate">Update</button>
+                <ul class="messageBox">
+    
+                </ul>
+                <div class="socialBox">
+                    <button id="instagram"></button>
+                    <button id="google"></button>
+                </div>
+            </form>
     </div>
-    <!--<div class="footer">-->
-    <!--<a href="/terms">Terms Of Service</a>-->
-    <!--<a href="/faq">FAQ</a>-->
-    <!--<a href="/contact">Contact</a>-->
-    <!--</div>-->
+    <!-- <div>
+        <input type="password" placeholder="password" id="password"/>
+        <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+    </div>
+    <div>
+        <input type="password" placeholder="confirm password" id="confPassword"/>
+        <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
+    </div> -->
+
+    <div class="footer">
+        <a href="/terms">Terms Of Service</a>
+        <a href="/faq">FAQ</a>
+        <a href="/contact">Contact</a>
+    </div>
 </div>
 <div class="post" id="post">
 
@@ -1289,6 +1320,9 @@
                 closePostAnimations();
             }
         }
+        else if(pageName === "settings"){
+            loadUserInfosInForm();
+        }
     }
     // Actions.js
     function responseActionHandler(caller, res,input) {
@@ -1363,6 +1397,15 @@
             case "initialAlbums":{
                 initialAlbumsResponseAction(res);
             }break;
+
+            // settings actions 
+            case "checkemail":{
+                checkMailResponse(res); // access only from authenticated consider in backend
+            }break;
+            case "checkusername":{
+                checkUsernameResponse(res);
+            }
+
         }
     }
 
@@ -1665,7 +1708,6 @@
                     }
                     var pageNames = ["settings", "newPost", "post", "contact", "people", "policy"];
                     for (var x = 0; x < pageNames.length; x++) {
-
                         if (pageName.toLowerCase() === pageNames[x].toLowerCase()) {
                             $(`#${pageNames[x]}`).addClass("show");
                             sendPagesInitialRequest(pageNames[x].toLowerCase(),postid,"initial");
@@ -1786,15 +1828,15 @@
             Me = null;
         }
         if(Me !== null && Me !== {}) {
-
-
-
             $(".accountCard").html(`
-    	<a href="" id="profileBtn">${res.username}</a>
-    	<a href="" id="newPostBtn"></a>
-    	<a href="" id="notifBtn"></a>
-    	<a href="" id="searchButton"></a>
+                <a href="" id="profileBtn">${res.username}</a>
+                <a href="" id="newPostBtn"></a>
+                <a href="" id="notifBtn"></a>
+                <a href="" id="searchButton"></a>
             `);
+            if(window.location.pathname.split("settings").length > 1){ // fill user infos in user infos form
+                loadUserInfosInForm();
+            }
         }
         else{
             $(".accountCard").html(`
@@ -1844,10 +1886,85 @@
         }
     }
 
-    function placeProfileInfo(res){
+    // settings functions
+    function loadUserInfosInForm(){
+        // profile picture
+        $(".accountSettings .username").val(Me.username.toString());
+        $(".accountSettings .fullName").val(Me.fullName.toString());
+        $(".accountSettings .phoneNumber").val(Me.phoneNumber.toString());
+        $(".accountSettings .email").val(Me.email.toString());
+        $(".accountSettings .bio").val(Me.bio.toString());
+        $(".accountSettings .city").val(Me.city.toString());
 
     }
-
+    $("body").on("keyup","#username",function(e){
+        if($(this).val().toString().length > 3) {
+            checkInputValidation("username",$(this).val().toString());
+        }
+    });
+    $("body").on("keyup","#email",function(e){
+        if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
+            checkInputValidation("email", $(this).val().toString());
+        }
+    });
+    $("body").on("keyup","#phoneNumber",function(e){
+        if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
+            checkInputValidation("email", $(this).val().toString());
+        }
+    });
+    $('body').on("submit",".settingsForm form",function(event) {
+        event.preventDefault();
+    });
+    $('.settingsForm').on("click","#setBtn",function(){
+        if(Me){
+            var input = {
+                username : $("#username").val().toString(),
+            };
+            requestHandler("/users/update", "POST", input,"registerHandler");
+        }
+    });
+    function checkInputValidation(type,text){
+        // characteric limiations -- check both sides later then => {
+        requestHandler("/users/checkIsTaken/","POST",{text:text,type:type},"check"+type);
+    }
+    function checkMailResponse(res){
+        if(!res.message){
+            $("#emailStatus").attr("src","../Statics/images/newIcons/tik.svg");
+            $("#emailStatus").addClass("show");
+            $(".loginRegForm ul .emailError").remove();
+        }
+        else{
+            $("#emailStatus").attr("src","../Statics/images/newIcons/cross.svg");
+            $("#emailStatus").addClass("show");
+            if($(".loginRegForm ul .mailError")[0]===undefined) {
+                $(".loginRegForm ul").append(`
+                <li class="mailError">${res.message}</li>
+            `);
+            }
+            else{
+                $(".loginRegForm ul .mailError").html(`${res.message}`);
+            }
+        }
+    }
+    function checkUserNameResponse(res){
+        if(!res.message){
+            $("#usernameStatus").attr("src","../Statics/images/newIcons/tik.svg");
+            $("#usernameStatus").addClass("show");
+            $(".loginRegForm ul .usernameError").remove();
+        }
+        else{
+            $("#usernameStatus").attr("src","../Statics/images/newIcons/cross.svg");
+            $("#usernameStatus").addClass("show");
+            if($(".loginRegForm ul .usernameError")[0]===undefined) {
+                $(".loginRegForm ul").append(`
+                <li class="usernameError">${res.message}</li>
+            `);
+            }
+            else{
+                $(".loginRegForm ul .usernameError").html(`${res.message}`);
+            }
+        }     
+    }
     function updateProfileResponse(res) {
 
     }

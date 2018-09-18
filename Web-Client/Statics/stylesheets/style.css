@@ -33,7 +33,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width:100%;
 
 }
-.containerDiv{
+.settingsContainer{
 	position: relative;
 	width: 100%;
 	margin:0;
@@ -226,7 +226,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 .timeNav > button{
 	cursor: pointer;
-	ouline:none;
+	outline:none;
 }
 .timeNav > button:focus{
 	outline: none;
@@ -1773,13 +1773,9 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	z-index: 500;
 }
 
-
-
 .profileTopSmall{
 
 }
-
-
 
 
 .homeSliders{
@@ -1794,11 +1790,11 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	min-width:400px;
 	padding:5px;
 	height: 92vh;
-	-webkit-transition: height 0.7s;
-	-moz-transition: height 0.7s;
-	-ms-transition: height 0.7s;
-	-o-transition: height 0.7s;
-	transition: height 0.7s;
+	-webkit-transition: height 0.7s ease-out;
+	-moz-transition: height 0.7s ease-out;
+	-ms-transition: height 0.7s ease-out;
+	-o-transition: height 0.7s ease-out;
+	transition: height 0.7s ease-out;
 }
 
 .homeSliders .bigSlider{
@@ -1834,16 +1830,185 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position: fixed;
 	width:100%;
 	left:-105%;
-	height: auto;
+	height: 100%;
 	top:0;
 	padding:5px;
 	margin:0;
 	z-index:103;
 	background-color:#e9e9e9;
 }
-@media (max-width) {
 
+.settingsContainer > div{
+	position: relative;
+	background-color: rgba(50,50,50,0.90);
+	display: inline-block;
+	height: 100%;
+	width: 100%;
+	max-width: 700px;
+	margin:0 auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
+.settingsContainer > ul{
+	position: absolute;
+	background-color: rgba(50,50,50,0.90);
+	display: inline-block;
+	height: 100%;
+	width: 100%;
+	max-width: 700px;
+	margin:0 auto;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding:0;
+}
+.settingsContainer > div form{
+	position: relative;
+	height: auto;
+	width:100%;
+	top:50px;
+	text-align: center;
+}
+.settingsContainer > div h2,.settingsContainer > div input,.settingsContainer > div button,.settingsContainer > div textarea{
+	position: relative;
+	clear: right;
+	text-align: center;
+	width:100%;
+	margin:10px 0;
+	top:5px;
+	display: inline-block;
+	height: 40px;
+}
+.settingsContainer > div h2,.settingsContainer > div label{
+	margin-top:25px;
+	color:white;
+	margin-bottom:20px;
+}
+.settingsContainer > div form{
+	display: inline-block;
+	width:100%;
+	position: relative;
+	height: auto;
+	text-align: center;
+}
+.settingsContainer > div form div{
+	left:0;
+	width:80%;
+	color:black;
+	background-color: transparent;
+	height: 60px;
+	position: relative;
+	display: inline-block;
+}
+.settingsContainer > div form div input{
+	background-color: white;
+	position: relative;
+	float: left;
+	left:10%;
+	width:80%;
+	height: 40px;
+	color:black;
+	font-size:24px;
+	line-height: 35px;
+	top:10px;
+	text-align: center;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-ms-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+}
+.settingsContainer > div form div input:focus{
+	outline: #ff0055;
+}
+.settingsContainer > div form div input.changed{
+	text-align: left;
+}
+.settingsContainer > div form div img{
+	background-color: white;
+	position: relative;
+	float: right;
+	right:0;
+	width:30px;
+	height: auto;
+	color:black;
+	font-size:21px;
+	top:30px;
+	opacity: 0;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-ms-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+	padding:1px 0;
+	background-color: transparent;
+}
+.settingsContainer > div form div img.show{
+	opacity: 1;
+}
+.settingsContainer > div form button{
+	display: block;
+	position: relative;
+	width: 64%;
+	font-size: 30px;
+	background-color: #4cae4c;
+	color: black;
+	height: 55px;
+	padding: 0;
+	margin: 40px auto;
+	left: 18.2%;
+}
+.settingsContainer > div form ul{
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	left:10%;
+}
+.settingsContainer > div form ul.show{
+	display: block;
+}
+
+
+@media (max-width:520px){
+	.settingsContainer > div{
+		max-width: none;
+	}
+	.settingsContainer > div form div input{
+		width:100%;
+		height: 42px;
+		padding:2px 0;
+		font-size:25px;
+		line-height: 28px;
+		left:0;
+	}
+	.settingsContainer > div form div img{
+		position: absolute ;
+		top:-10px;
+		right: 0;
+		z-index: 100;
+	}
+	.settingsContainer > div form button{
+		width:91.5%;
+		font-size:28px;
+		left:4%;
+	}
+	.settingsContainer > div form div {
+		left:0;
+		width:90%;
+	}
+}
+.settingsContainer > div form .socialBox{
+	opacity: 0;
+	height: 0;
+	position: relative;
+	display: inline-block;
+	width:100%;
+	padding:0;
+}
+.settingsContainer > div form .socialBox.show{
+	opacity: 1;
+	height: 70px;
+}
+
 .contactContainer{
 
 }

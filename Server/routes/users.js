@@ -10,6 +10,7 @@ var blocks = require("./follows");
 var blockSchema = require("../models/block.model");
 var Block = new blockSchema();
 var redis = require('redis');
+var validator = require('validator');
 var random = require('randomstring');
 var requestIp = require("request-ip");
 var CryptoJS = require("crypto-js");
@@ -42,31 +43,50 @@ var users = {
         redisClient.expire(type+"Key:"+ clientIp,300000); //5 minutes
         res.send(encryptionKey);
     },
-    checkIsTaken : function(req,res) {
+    checkValidationAndTaken : function(req,res,user) {
         let type = req.body.type || "username";
+
         if ((req.body.text) && ((type === "username") || (type === "email") || (type === "phoneNumber")) && (typeof req.body.text === "string" && (req.body.text.length > 3))) {
             let query;
-            if (type === "username") {
-                query = {username: req.body.text};
+            if(type === "email"){
+                if(!validator.isEmail(req.body.text)){
+                    res.send({result:false,message:"Invalid email"});
+                }
             }
-            else if (type === "email") {
-                query = {email: req.body.text}
+            else if(type==="phoneNumber"){
+                if(!validator.isMobilePhone(req.body.text)){
+                    res.send({result:false,message:"Invalid mobile phone number"});
+                }
             }
-            else {
-                query = {phoneNumber: req.body.text}
+            else{
+                
             }
 
-            userSchema.findOne(query,{username:1},function(err,userx){
-                if(err) res.send({result:false,message:"Oops something went wrong"});
-                console.log(userx);
-                if(!userx){
-                    res.send(true);
-                }
-                else{
-                    res.send({result:false,message:type + " already taken"});
-                }
-            })
 
+            if(user.message){
+                userSchema.findOne(query,{username:1},function(err,userx){
+                    if(err) res.send({result:false,message:"Oops something went wrong"});
+                    if(!userx){
+                        res.send(true);
+                    }
+                    else{
+                        res.send({result:false,message:type + " already taken"});
+                    }
+                });
+            }
+            else{
+                canQuery = (user[type] !== req.body.text) || false; // not the same condition
+                query[req.body.type] = req.body.text;
+                userSchema.findOne(query,{username:1},function(err,userx){
+                    if(err) res.send({result:false,message:"Oops something went wrong"});
+                    if(!userx){
+                        res.send(true);
+                    }
+                    else{
+                        res.send({result:false,message:type + " already taken"});
+                    }
+                });
+            }
         }
         else{
             res.send({result:false,message:"504 Bad request"});
