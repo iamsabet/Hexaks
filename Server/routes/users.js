@@ -411,18 +411,23 @@ var users = {
     });
    },
     updateProfileInfo:function(req,res,user){
+        let fullName = req.body["fullName"];
+        let email = req.body["email"];
+        let city = req.body["city"];
+        let bio = req.body["bio"];
+        let username = req.body["username"].toLowerCase();
         if(!user.ban.is){      
-            userSchema.findOneAndUpdate({userId:user.userId},function(err,user) {
+            let updates = {};
+            // check is taken ,, all validations check then update and reload in client
+
+
+            userSchema.findOneAndUpdate({userId:user.userId},{$set:updates},function(err,user) {
                 if (err) res.send(err);
                 if (user) {
                     res.send({result:false,message:"username already token"});
                 }
                 else{
-                    user.fullName = req.body["fullName"];
-                    user.email = req.body["email"];
-                    user.city = req.body["city"];
-                    user.bio = req.body["bio"];
-                    user.username = req.body["username"].toLowerCase();
+                    
                     
                 }
             });
