@@ -1841,7 +1841,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .settingsContainer > div{
 	position: relative;
 	background-color: rgba(50,50,50,0.90);
-	display: inline-block;
+	display: block;
 	height: 100%;
 	width: 100%;
 	max-width: 700px;
@@ -1955,7 +1955,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height: 55px;
 	padding: 0;
 	margin: 40px auto;
-	left: 18.2%;
 }
 .settingsContainer > div form ul{
 	position: relative;

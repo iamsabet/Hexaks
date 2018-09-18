@@ -411,28 +411,21 @@ var users = {
     });
    },
     updateProfileInfo:function(req,res,user){
-        if(!user.ban.is){
-            if(user.username === req.body["username"].toLowerCase()){
-
-            }
-            else{
-                userSchema.findOne({username:req.body["username"].toLowerCase()},function(err,user) {
-                    if (err) res.send(err);
-                    if (user) {
-                        res.send({result:false,message:"username already token"});
-                    }
-                    else{
-                        user.fullName = req.body["fullName"];
-                        user.email = req.body["email"];
-                        user.city = req.body["city"];
-                        user.bio = req.body["bio"];
-                        user.username = req.body["username"].toLowerCase();
-                        user.save();
-                        res.send(true);
-                    }
-                });
-            }
-
+        if(!user.ban.is){      
+            userSchema.findOneAndUpdate({userId:user.userId},function(err,user) {
+                if (err) res.send(err);
+                if (user) {
+                    res.send({result:false,message:"username already token"});
+                }
+                else{
+                    user.fullName = req.body["fullName"];
+                    user.email = req.body["email"];
+                    user.city = req.body["city"];
+                    user.bio = req.body["bio"];
+                    user.username = req.body["username"].toLowerCase();
+                    
+                }
+            });
         }
         else{
             res.send({result:false,false:"sorry you cant change your info till your ban expires : "+(user.ban.expire - Date.now()) });

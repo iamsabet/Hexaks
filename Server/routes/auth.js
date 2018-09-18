@@ -30,7 +30,7 @@ var auth = {
                     console.log("bytes : "+bytes);
                     let decrypted = bytes.toString(CryptoJS.enc.Utf8);
                     if(decrypted) {
-                        let username = decrypted.split("/")[0];
+                        let username = decrypted.split("/")[0].toLowerCase();
                         let password = decrypted.split("/")[1];
 
                         console.log(username + " --- " + password);

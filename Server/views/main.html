@@ -1321,7 +1321,9 @@
             }
         }
         else if(pageName === "settings"){
+            debugger;
             loadUserInfosInForm();
+
         }
     }
     // Actions.js
@@ -1835,6 +1837,7 @@
                 <a href="" id="searchButton"></a>
             `);
             if(window.location.pathname.split("settings").length > 1){ // fill user infos in user infos form
+               
                 loadUserInfosInForm();
             }
         }
@@ -1889,12 +1892,13 @@
     // settings functions
     function loadUserInfosInForm(){
         // profile picture
-        $(".accountSettings .username").val(Me.username.toString());
-        $(".accountSettings .fullName").val(Me.fullName.toString());
-        $(".accountSettings .phoneNumber").val(Me.phoneNumber.toString());
-        $(".accountSettings .email").val(Me.email.toString());
-        $(".accountSettings .bio").val(Me.bio.toString());
-        $(".accountSettings .city").val(Me.city.toString());
+        debugger;
+        $("#username").val(Me.username.toString());
+        $("#fullName").val(Me.fullName.toString());
+        $("#phoneNumber").val(Me.phoneNumber.toString());
+        $("#email").val(Me.email.toString());
+        $("#bio").val(Me.bio.toString());
+        $("#city").val(Me.city.toString());
 
     }
     $("body").on("keyup","#username",function(e){
