@@ -6,6 +6,8 @@ var posts = require('./posts');
 var blocks = require('./blocks');
 var redis = require("redis");
 var requestIp = require("request-ip");
+var secret = require("../config/secret");
+var CryptoJS = require("crypto-js");
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -34,9 +36,6 @@ var comments = {
                 deleted:false,
                 ownerId:{$exists:true}
             };
-            if (!user.message && userId === postOwnerId) {
-                query.ownerId = userId;
-            }
             if(isNaN(parseInt(pageNumber))){
                 res.send({result:false,message:"Bad Input"});
             }
@@ -307,11 +306,14 @@ var comments = {
     },
     delete: function (req, res, user) {
         if (req.body && req.body.commentId && typeof req.body.commentId === "string" && req.body.postId && typeof req.body.postId === "string") {
-            let postOwnerId = req.body.postId.split("|-p-|")[0];
+            let postOwnerId = posts.getPostOwnerIdByDecrypt(req.body.postId);
+            let commentOwnerId = comments.getCommentOwnerIdByDecrypt(req.body.commentId);
             if(user) {
-                if ((user.roles.indexOf("superuser") > -1) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)) { // owner access + superuser access
-                    commentSchema.findOneAndUpdate({
+                if ((user.roles && (user.roles.indexOf("superuser") > -1) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)))
+                    { // owner access + superuser access
+                    commentSchema.update({
                         postId: req.body.postId,
+                        postOwnerId : postOwnerId,
                         commentId: req.body.commentId,
                         deleted: false,
                     }, {
@@ -320,7 +322,7 @@ var comments = {
                         }
                     }, function (err, result) {
                         if (err) throw err;
-                        if(result) {
+                        if(result.n > 0) {
                             res.send(true);
                         }
                         else{
@@ -331,7 +333,7 @@ var comments = {
                 }
                 else {
                     if (user.userId === postOwnerId) { // owner access + superuser access
-                        commentSchema.findOneAndUpdate({
+                        commentSchema.update({
                             postId: req.body.postId,
                             commentId: req.body.commentId,
                             postOwnerId: postOwnerId,
@@ -342,7 +344,7 @@ var comments = {
                             }
                         }, function (err, result) {
                             if (err) throw err;
-                            if(result) {
+                            if(result.n) {
                                 res.send(true);
                             }
                             else{
@@ -355,9 +357,8 @@ var comments = {
                         commentSchema.update({
                             postId: req.body.postId,
                             commentId: req.body.commentId,
-                            postOwnerId: postOwnerId,
                             ownerId : user.userId,
-                            deleted: false,
+                            deleted: false
                         }, {
                             $set: {
                                 deleted: true,
@@ -436,8 +437,8 @@ var comments = {
         }
     },
     getCommentOwnerIdByDecrypt:function(commentId){
-
-        let bytes = CryptoJS.AES.decrypt(commentId,secret.commentIdKey);
+        let changedCommentId = commentId.split("|").join("/");
+        let bytes = CryptoJS.AES.decrypt(changedCommentId,secret.commentIdKey);
         let decrypted = bytes.toString(CryptoJS.enc.Utf8);
         return decrypted.split("-cm")[0].toString();
     },

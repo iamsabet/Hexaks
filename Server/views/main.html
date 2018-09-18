@@ -955,7 +955,6 @@
         }
         else {
             $(".commentMoreDiv").addClass("show");
-
             selectedComment = parseInt($(this).parents("li").children("p")[0].innerHTML); //
             if (selectedComment < 0) {
                 selectedComment *= -1; // >
@@ -967,22 +966,20 @@
     $("body").on("click",".commentCommands.show .editComment",function(e){
         commentMode = true;
         $(".commentCommands.show .cancel").click();
-        $(".commentsContainer .editable").val(commentsList[selectedComment].fullText);
+        $(".newCommentDiv .editable").val(commentsList[selectedComment].fullText);
+        $(".newCommentDiv .editable").addClass("show");
         newText = commentsList[selectedComment].fullText;
-        $(".commentsContainer .cancelComment").addClass("show");
+        $(".newCommentDiv .cancelComment").addClass("show");
+        // $(".commentsContainer .newComment").addClass("show");
         $(".commentsContainer .new.show").removeClass("show");
-        $(".commentsContainer .new.show").removeClass("show");
-        $(".commentsContainer .newCommentDiv").addClass("show");
-        $("#newComment").removeClass("show");
+        $(".newCommentDiv").addClass("show");
         autoResizeTextArea(true);
         setTimeout(function(){
-            $("#newComment").focus()
+            $("#newComment").focus();
         },50);
     });
     $("body").on("click",".commentCommands.show .deleteComment",function(e){
-
         deleteComment({commentId:commentsList[selectedComment].commentId,postId:postsList[currentPostItterator].postId});
-
     });
     $("body").on("click",".commentCommands.show .reportComment",function(e){
         commentMode = true;
@@ -993,25 +990,29 @@
         $(".commentsContainer .commentCommands.show").removeClass("show");
 
     });
-    $("body").on("keydown",".commentsContainer .editable.show",function(e){
+    $("body").on("keydown",".commentsContainer .editable.show",function(event){
+        
         autoResizeTextArea();
-
-        if (commentMode && Me.userId === commentsList[selectedComment].ownerId) {
-            if ($(".commentsContainer .newComment")[0].className.split("show")[1]) {
-                $(".commentsContainer .newComment").removeClass("show");
+        if (commentMode && (Me.userId === commentsList[selectedComment].ownerId)) { // edit 
+            if ($(".commentsContainer #newComment").val().toString()+event.originalEvent.key === commentsList[selectedComment].fullText) {
+                if ($(".commentsContainer .newComment.show")[0]) {
+                    $(".commentsContainer .newComment.show").removeClass("show");
+                }
             }
             else {
-                if ($(".commentsContainer .newComment")[0].className.split("show")[1] === undefined) {
+                if (!$(".commentsContainer .newComment.show")[0]) {
                     $(".commentsContainer .newComment").addClass("show");
                 }
             }
         }
         else{
-            if ($(".commentsContainer .newComment")[0].className.split("show")[1]) {
-                $(".commentsContainer .newComment").removeClass("show");
+            if($(".commentsContainer #newComment").val().toString()+event.originalEvent.key === ""){
+                if ($(".commentsContainer .newComment.show")[0]) {
+                    $(".commentsContainer .newComment.show").removeClass("show");
+                }
             }
             else {
-                if ($(".commentsContainer .newComment")[0].className.split("show")[1] === undefined) {
+                if (!$(".commentsContainer .newComment.show")[0]) {
                     $(".commentsContainer .newComment").addClass("show");
                 }
             }
@@ -1029,11 +1030,11 @@
     $("body").on("click",".commentsContainer .newComment.show",function(e){
         if(commentMode) { // editMode
             if (Me.userId === commentsList[selectedComment].ownerId) { // your comment
-                if (commentsList[selectedComment].fullText !== $(".commentsContainer .editable").val()) {
+                if (commentsList[selectedComment].fullText !== $(".commentsContainer .editable.show").val()) {
                     if ($(".commentsContainer .spinner")) {
                         $(".commentsContainer .spinner").addClass("show");
                     }
-                    var newCommentText = $(".commentsContainer .editable").val().toString();
+                    var newCommentText = $(".commentsContainer .editable.show").val().toString();
                     editComment({commentId:commentsList[selectedComment].commentId,postId:postsList[currentPostItterator].postId,text:newCommentText});
 
                     $(".caption .cancelComment").click();
@@ -1088,6 +1089,7 @@
     });
     $("body").on("click",".postFooter .comments",function(){
         closeSlideViewWindows();
+        getPostComments({postId: currentPostObject.postId, pageNumber: commentsPageNumber, counts: commentCounts});
         showPostWindow(".commentsContainer");
     });
     $("body").on("click",".postFooter .download",function(){
@@ -1266,7 +1268,7 @@
         $(".rateDiv.show").removeClass("show");
         $(".ratePad div div").removeClass("selected");
         $(".rateDiv .header").html(" Rate this post ( 1 - 6 ) ");
-        $(".commentsContainer.show .cancelComment").click();   
+        $(".cancelComment.show").click();   
         $(".caption .cancelCaption").click();   
     }
 
@@ -1334,13 +1336,13 @@
                 editPostResponseAction(res,caller);
             }break;
             case  "addComment":{
-                commentsResponseActions(res,caller);
+                commentsResponseActions(res,input,caller);
             }break;
             case "editComment" :{
-                commentsResponseActions(res,caller);
+                commentsResponseActions(res,input,caller);
             }break;
             case "deleteComment" :{
-                commentsResponseActions(res,caller);
+                commentsResponseActions(res,input,caller);
             }break;
             case "getPostComments":{
                 parseComments(res);
@@ -2239,6 +2241,8 @@
 
     function loadPostDatas(postObject,postNumber,updatePart,act){
         // change url
+        commentsPageNumber = 1;
+        commentCounts = 10;
         if(act){
             pushHistory("post","post/"+postObject.postId,act,true,true);
         }
@@ -2277,20 +2281,21 @@
                                                 </li>
                                             `);
             $(".post .downloadContainer").html("");
-
+                                                
             if (postObject.originalImage.cost === 0) {
                 $(".post .downloadContainer").append(`
 
                                             <button class="closeInfo"></button>
                                             <button id="downloadLarge">
                                                 <div class="cover">
-                                                    <span class="">Download</span>
-                                                    <span class="left">${postObject.originalImage.resolution.x} X ${postObject.originalImage.resolution.y}</span> pixels
+                                                    <span class="left"> Size </br>
+                                                         ${postObject.originalImage.resolution.x} X ${postObject.originalImage.resolution.y}</span> 
                                                     <span class="cost">Free</span>
+                                                    <img src="/../Statics/images/newIcons/downArrow.svg">
                                                 </div>
                                             </button>
                                           `);
-                $(".post .downloadContainer #downloadLarge").css("background-image", `url(../pictures/${postObject.postId}}--Small===.${postObject.ext})`);
+                $(".post .downloadContainer #downloadLarge").css("background-image", `url(../pictures/${postObject.postId}--Small===.${postObject.ext})`);
 
                 if (postObject.originalImage.resolution.x > 250 && postObject.originalImage.resolution.y > 250) {
                     initialDownloadButtonRatio(postObject.originalImage.resolution.x, postObject.originalImage.resolution.y);
@@ -2303,8 +2308,9 @@
                                             <button id="BuyLarge">
                                                 <div class="cover">
                                                     <span>Buy</span>
-                                                    <span class="left">${postObject.originalImage.resolution.x} X ${postObject.originalImage.resolution.y} </span> pixels
+                                                    <span class="left">${postObject.originalImage.resolution.x} X ${postObject.originalImage.resolution.y} </span>
                                                     <span class="cost">${postObject.originalImage.cost}$</span>
+                                                    <img src="/../Statics/images/newIcons/downArrow.svg">
                                                 </div>
                                             </button>
                                           `);
@@ -2316,7 +2322,9 @@
             $(".postFooter .views").html(postObject.views);
             extractAndPlaceExifData(postObject.exifData);
             initialRate(postObject.rate);
-            getPostComments({postId: postObject.postId, pageNumber: commentsPageNumber, counts: commentCounts});
+            if($(".commentsContainer.show")[0]){
+                getPostComments({postId: currentPostObject.postId, pageNumber: commentsPageNumber, counts: commentCounts});
+            }
             $(".postFooter .buttonGroup").addClass("show");
         }
         else if(updatePart === "rates"){
@@ -2479,7 +2487,7 @@
             }
             if(type === "append"){
                 $(".post .commentsContainer .commentsList").append(`
-                                                            <li class="eachComment comment-${commentsList[index].commentId}">
+                                                            <li class="eachComment" id=comment-${commentsList[index].commentId.split("|").join("-").split("+").join("-")}">
                                                             <p hidden>${-1*commentsLastLength}</p>
                                                             <p hidden>${commentsList[index].commentId}</p>
                                                                 <div class="commentOwnerProfile">
@@ -2510,7 +2518,7 @@
             else{
 
                 $(".post .commentsContainer .commentsList").prepend(`
-                                                            <li class="eachComment comment-${commentsList[index].commentId}">
+                                                            <li class="eachComment" id=comment-${commentsList[index].commentId.split("|").join("-").split("+").join("-")}>
                                                             <p hidden>${commentsLastLength}</p>
                                                             <p hidden>${commentsList[index].commentId}</p>
                                                                 <div class="commentOwnerProfile">
@@ -2545,8 +2553,8 @@
 
     function showCommentCommands(selectedComment){
         $(".post .commentCommands .cover").html("");
-        var commentOwnerId = commentsList[selectedComment].ownerId ;
-        var postOwnerId = postsList[currentPostItterator].postOwnerId;
+        var commentOwnerId = commentsList[selectedComment].ownerId;
+        var postOwnerId = postsList[currentPostItterator].ownerId;
         if(Me.userId === postOwnerId){ // post owner remove()
             $(".post .commentCommands .cover").append(`
                                                     <button class="deleteComment">Delete</button>
@@ -2563,6 +2571,14 @@
             }
         }
         if(Me.userId !== commentOwnerId){ // nobody report only
+            if(Me.roles && Me.roles.indexOf("admin") > -1){
+                if(!$(".post .commentCommands .cover .deleteComment")[0]) {
+                    $(".post .commentCommands .cover").append(`
+                        <button class="deleteComment">Delete</button>
+                    `);
+                }
+            }
+
             $(".post .commentCommands .cover").append(`
                                                     <button class="reportComment">Report</button>
                                                `);
@@ -2573,13 +2589,15 @@
         $(".commentsContainer .commentCommands").addClass("show");
     }
 
-    function commentsResponseActions(res,caller){
+    function commentsResponseActions(res,input,caller){
 
         if(!res.message) {
+            // debugger;
             if (caller === "addComment") {
                 commentsPageNumber = 1;
                 getPostComments({ postId : postsList[currentPostItterator].postId , pageNumber : commentsPageNumber , counts : commentCounts});
                 $(".commentsContainer .cancelComment.show").click();
+                $(".commentsContainer .header").html((parseInt($(".commentsContainer .header").html().split(" ")[0])+1) + " Comments");
                 $(".commentsList")[0].scrollTop = 	20000;
             }
             else if(caller === "editComment"){
@@ -2587,13 +2605,16 @@
                     alert("your Comment edited successfully");
                     $(".commentsContainer .cancelComment.show").click();
                     commentsList[selectedComment].edited = true;
-                    commentsList[selectedComment].fullText = newText;
-                    $(`.commentsContainer .eachComment.comment-${commentsList[selectedComment].commentId} .text`).html(commentsList[selectedComment].fullText);
+                    commentsList[selectedComment].fullText = input.text;
+                    $(`#comment-${commentsList[selectedComment].commentId.split("|").join("-").split("+").join("-")} .text`).html(commentsList[selectedComment].fullText);
                 }
             }
             else if(caller === "deleteComment"){
                 alert("comment deleted successfully");
-                $(`.commentsContainer .eachComment.comment-${commentsList[selectedComment].commentId}`).remove();
+                $(`#comment-${commentsList[selectedComment].commentId.split("|").join("-").split("+").join("-")}`).remove();
+                $(".commentCommands.show").removeClass("show");
+                commentsList[selectedComment].fullText = input.text;
+                $(".commentsContainer .header").html((parseInt($(".commentsContainer .header").html().split(" ")[0])-1) + " Comments");
                 $(".commentsContainer .cancelComment.show").click();
                 $(".commentsContainer .commentCommands.show").removeClass("show");
             }
@@ -2859,13 +2880,9 @@
                     points += `<h5>.${rateValue.split(".")[1]}</h5>`
                 }
             }
-            getColWithMinimumHeight(); // find colNumber
-            if(postsList[index].originalImage.resolution.y > postsList[index].originalImage.resolution.x){
-                columnsHeights[colNumber] += 500;
-            }
-            else{
-                columnsHeights[colNumber] += (postsList[index].originalImage.resolution.y/(postsList[index].originalImage.resolution.x/500));
-            }
+            let colNumber = getColWithMinimumHeight(); // find colNumber
+            columnsHeights[colNumber] += postsList[index].originalImage.resolution.y;
+            
             let rate = "";
             if(postsList[index].rate.value !== null) {
                 rate = `<h2>${rateValue.split(".")[0]}</h2>
@@ -2932,7 +2949,6 @@
     function getColWithMinimumHeight(){
         let minHeight = 999999;
         let minCole = 0;
-
         if(columnsHeights.length > 1) {
             for (let x = 0; x < columnsHeights.length; x++) {
                 if(columnsHeights[x] !== 0) {
@@ -2942,17 +2958,17 @@
                     }
                 }
                 else{
-                    colNumber = x;
-                    break;
+                    return x;
                 }
                 if (x === columnsHeights.length-1) {
-                    colNumber = minCole;
+                    return minCole;
                 }
             }
         }
         else{
-            colNumber = 0;
+            return 0;
         }
+
     }
     function resize(){
 
@@ -2967,7 +2983,7 @@
                 $(".timeNav .rows-3").removeClass("show");
             }
         }
-        else if(window.innerWidth < 1100 && window.innerWidth > 520 ){
+        else if(window.innerWidth < 1099 && window.innerWidth > 520 ){
             if($(".timeNav .rows-3.show")[0] !== undefined) {
                 if(window.innerWidth < 768) {
                     $(".timeNav .rows-3").removeClass("show");
@@ -2985,7 +3001,7 @@
                 parsePostsList(true);
             }
         }
-        else if(window.innerWidth < 1500 && window.innerWidth > 1101 ){
+        else if(window.innerWidth < 1500 && window.innerWidth >= 1099 ){
             newPostsColumns = 3;
             if(lastPostsColumns !== newPostsColumns){
                 if($(".timeNav .rows-3.show")[0] === undefined){

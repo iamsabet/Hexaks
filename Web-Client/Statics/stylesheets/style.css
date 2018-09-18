@@ -496,7 +496,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		margin-left: -10px;
 	}
 }
-@media (max-width:1100px){
+@media (max-width:1099px){
 	.postsContainer{
 		width:100%;
 		margin-left:0;
@@ -525,7 +525,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width: 48%;
 	margin:2% 0;
 }
-@media (max-width:1100px){
+@media (max-width:1099px){
 	.postsContainer ul.two.col-2{
 		float: right;
 	}
@@ -2147,7 +2147,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	border:0;
 	left: 0;
 	top:0;
-	background-color: rgba(50,50,50,0.9);
+	background-color: rgba(100,100,100,0.1);
 }
 
 .postFooter .caption .notEditable{
@@ -2357,23 +2357,26 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .postFooter .buttonGroup button{
 	display: block;
 	position: relative;
+	outline: none;
 	float: left;
 	margin-left:5px;
 	top:15px;
 	width:50px;
 	padding:2px;
 	height: 50px;
-	outline: none;
 	-webkit-transition: all 0.2s ease-in-out;
 	-moz-transition: all 0.2s ease-in-out;
 	-ms-transition: all 0.2s ease-in-out;
 	-o-transition: all 0.2s ease-in-out;
 	transition: all 0.2s ease-in-out;
-	background: transparent url("../images/icons/b-cam.png") no-repeat center center;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	-webkit-background-size: 100% auto;
+	background-size: 100% auto;
+}
+.postFooter .buttonGroup button.info{
+	background: #f7f7f7 url(../images/newIcons/information.svg) no-repeat center center;
 	background-size: 100% auto;
 }
 @media (max-width:968px){
@@ -2413,13 +2416,16 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		-ms-transition: all 0.3s ease-in-out;
 		-o-transition: all 0.3s ease-in-out;
 		transition: all 0.3s ease-in-out;
-		background: transparent url(../images/icons/b-cam.png) no-repeat center center;
 		-webkit-border-radius: 3px;
 		-moz-border-radius: 3px;
 		border-radius: 3px;
 		-webkit-background-size: 100% auto;
 		background-size: 100% auto;
 	}
+}
+.postFooter .buttonGroup button.info{
+	background: #f7f7f7 url(../images/newIcons/information.svg) no-repeat center;
+	background-size: 100% auto;
 }
 .postFooter .buttonGroup button.comments{
 	background: #f7f7f7 url("../images/newIcons/comment.svg") no-repeat center;
@@ -2431,8 +2437,8 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .postFooter .buttonGroup button:hover{
 	cursor: pointer;
-	background-color: #d9edf7;
-	height: 41px;
+	background-color: #ff0033;
+	height: 46px;
 }
 .postFooter .rateButton{
 	display: inline-block;
@@ -2581,15 +2587,16 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 
 .infoContainer{
-    background-color: #151515;
-    border:0;
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
     position: fixed;
     top:100vh;
-    height: 500px;
-    max-height: 65vh;
-    width:95%;
+    max-height: 80%;
+    min-height: 200px;
     max-width: 500px;
     min-width: 300px;
+    width:95%;
     left:50%;
     -webkit-transform: translate(-50%,5%);
     -moz-transform: translate(-50%,5%);
@@ -2602,16 +2609,19 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     -o-transition: all 0.3s ease-out;
     transition: all 0.3s ease-out;
     z-index: 99999999;
-	-webkit-border-radius: 7px;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
-	overflow: hidden;
+    background-size: 100% auto;
+	background: #151515 no-repeat center;
+	overflow-x:hidden;
+	overflow-y: auto; 
 }
 .infoContainer.show{
-    opacity: 0.8;
+    bottom:150px;
     top: auto;
-    bottom:120px;
+	padding: 0 5px 10px;
+	max-height: 65vh;
+	background-color: rgba(30,30,30,0.9);
 }
+
 .infoContainer.show:hover{
     border-color:#ff0055;
     opacity: 0.9;
@@ -2628,13 +2638,12 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	margin-top: 20px;
 }
 .infoContainer ul li{
-    width: 90%;
+    width: 98%;
     padding:5px;
     margin:1px;
     position: relative;
     display: inline-block;
-    height: 25px;
-    left:5%;
+    height: 32px;
 }
 .infoContainer ul li:hover{
 	background-color: #151515;
@@ -2642,12 +2651,20 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .infoContainer ul li span{
     position: relative;
-    display: inline-block;
-    margin-right:20px;
-    font-size:20px;
+	display: block;
+	text-align-last: right;
+	margin:0;
+	padding:0;
+	width: 47%;
+	text-align: right;
+	float: left;
+	font-size:19px;
+	height: 100%;
+	line-height: 30px;
 }
 .infoContainer ul li span.middleText{
 	position: absolute;
+	width:auto;
 	left:50%;
 	-webkit-transform: translate(-50%,0);
 	-moz-transform: translate(-50%,0);
@@ -2655,9 +2672,12 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-o-transform: translate(-50%,0);
 	transform: translate(-50%,0);
 	text-align: center;
+	font-size:25px;
+	font-weight: bold;
 }
 .infoContainer ul li span.rightText{
-    float: right;
+	float: right;
+	text-align-last: left;
     opacity: 1;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
@@ -2717,7 +2737,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .commentsContainer .newCommentDiv{
     position: absolute;
-    bottom:-200px;
+    bottom:-500px;
     z-index:10;
     left:0;
     width:98%;
@@ -3097,18 +3117,17 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     -ms-transform: translate(-50%,5%);
     -o-transform: translate(-50%,5%);
     transform: translate(-50%,5%);
-    -webkit-transition: all 0.3s ease-out;
-    -moz-transition: all 0.3s ease-out;
-    -ms-transition: all 0.3s ease-out;
-    -o-transition: all 0.3s ease-out;
-    transition: all 0.3s ease-out;
+    -webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
     z-index: 99999999;
     background-size: 100% auto;
     background: #151515 no-repeat center;
 }
 .downloadContainer.show{
     opacity: 0.85;
-    box-shadow: 1px 1px 1px 0;
     top: auto;
     bottom:110px;
     text-align: center;
@@ -3166,7 +3185,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     display: inline-block;
     position: relative;
     margin-right: auto;
-    width:85%;
+    width:80%;
     opacity: 0.8;
 	color:#ff0055;
     -webkit-border-radius: 2px;
@@ -3184,49 +3203,61 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     text-align: right;
 	background: #5e5e5e no-repeat center;
 	background-size: 100% auto;
-	padding-top: 90px;
 	overflow: hidden;
 }
 .downloadContainer button .cover{
 	display: block;
 	position: absolute;
-	left:0;
-	top:0;
+	left: 0;
+	bottom: 0;
+	height: 100%;
 	width:100%;
-	height: 0;
+	text-align: center;
 	background-color: transparent;
-	padding-top: 90px;
 	-webkit-transition: all 0.3s ease-in-out;
 	-moz-transition: all 0.3s ease-in-out;
 	-ms-transition: all 0.3s ease-in-out;
 	-o-transition: all 0.3s ease-in-out;
 	transition: all 0.3s ease-in-out;
+	top: 0;
+	margin: 0;
 }
 .downloadContainer button:hover .cover{
-	height: 100%;
 	background-color: rgba(50,50,50,0.3);
-	margin:0;
-	padding: 100px 0 0;
 }
 .downloadContainer button:hover{
     opacity: 0.95;
     cursor: pointer;
 	background-color: rgba(20, 20, 20, 0.9);
 	background-repeat: no-repeat;
-	background-position: top center;
+	background-position: bottom center;
 	color:white;
 	background-size: auto 100%;
+}
+
+.downloadContainer button .cover img{
+	position: absolute;
+	z-index: -1;
+	height: auto;
+	top: -10%;
+	width: 100%;
+	left: 0;
+	background-color: rgba(220,220,215,0.7);
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+.downloadContainer button:hover img{
+	background-color : rgba(255, 0, 85,0.7);
 }
 .downloadContainer button.clicked{
     background-color: #ff0055;
 }
-.downloadContainer button:hover span{
-	opacity:1;
-	color:#ff0055;
-}
 .downloadContainer button span{
 	font-size: 21px;
-	display: inline-block;
+	display: block;
 	float: left;
 	clear: both;
 	margin: 3px;
@@ -3236,7 +3267,19 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	left: 10%;
 	width: 80%;
 	text-align: center;
+	color:#ff0055;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 }
+.downloadContainer button:hover span{
+	opacity:1;
+	margin-top:10px;
+	color:white;
+}
+
 .commentsContainer .header,.downloadContainer .header,.infoContainer .header,.rateDiv .header{
 	position: relative;
 	margin: 0;

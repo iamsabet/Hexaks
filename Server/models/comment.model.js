@@ -29,7 +29,7 @@ var commentSchema = new Schema({
 });
 commentSchema.methods.create = function(commentObject,callback){
     let newComment = new Comment(commentObject);
-    let commentId = CryptoJS.AES.encrypt((commentObject.ownerId+"-cm-"+random.generate(10)).toString(), secret.postIdKey).toString();
+    let commentId = CryptoJS.AES.encrypt((commentObject.ownerId+"-cm-"+random.generate(10)).toString(), secret.commentIdKey).toString();
     commentId = commentId.split("/").join("|");
     newComment.createdAt = Date.now();
     newComment.commentId = commentId;
@@ -41,7 +41,7 @@ commentSchema.methods.create = function(commentObject,callback){
     return callback(newComment);
 };
 commentSchema.methods.edit = function(query,updates,callback){
-    commentSchema.findOneAndUpdate(query,{$set:updates}, function (err, result) {
+    comment.findOneAndUpdate(query,{$set:updates}, function (err, result) {
         if (err) throw err;
         if (result) {
             return callback(true);

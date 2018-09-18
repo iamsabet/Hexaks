@@ -1,7 +1,7 @@
 var express  = require('express');
-var app      = express();
 process.env.PORT = 3001;
-var port     = process.env.PORT || 3000;
+var port     = process.env.PORT || 3001;
+var app      = express();
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -16,10 +16,9 @@ var redis = require('redis');
 var client = redis.createClient(6379, 'localhost', {no_ready_check: true});
 
 
-mongoose.connect('mongodb://localhost:27017/hexaks_db', {autoIndex :true,useMongoClient : true});
+mongoose.connect('mongodb://localhost:27017/hexaks_db');
 db.on('error', console.error.bind(console, 'connection error:'));
 db.openUri("mongodb://localhost:27017/hexaks_db",function() {
-    console.log("Server Listening : "+port);
     console.log("connected to hexaks_db");
 });
 client.auth('c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna', function (err) {

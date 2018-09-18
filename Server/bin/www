@@ -4,30 +4,54 @@
  * Module dependencies.
  */
 
-var app = require('../core.node');
-var debug = require('debug')('hexaks:server');
+var core = require('../core.node');
+var service = require('../service.node');
+var debug = require('debug')('hexaks:Server');
 var http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+var port1 = normalizePort(3000);
+core.set('port', port1);
+var port2 = normalizePort(3001);
+service.set('port', port2);
+
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
-
+var coreServer = http.createServer(core);
+var serviceServer = http.createServer(service);
+var port3 = normalizePort(3002);
+service.set('port', port3);
+var serviceServer1 = http.createServer(service);
+var port4 = normalizePort(3003);
+service.set('port', port4);
+var serviceServer2 = http.createServer(service);
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+coreServer.listen(port1);
+serviceServer.listen(port2);
+serviceServer1.listen(port3);
+serviceServer2.listen(port4);
+
+coreServer.on('error', onError);
+coreServer.on('listening', onListening);
+
+serviceServer.on('error', onError);
+serviceServer.on('listening', onListening);
+
+serviceServer1.on('error', onError);
+serviceServer1.on('listening', onListening);
+
+serviceServer2.on('error', onError);
+serviceServer2.on('listening', onListening);
+
 
 /**
  * Normalize a port into a number, string, or false.
@@ -82,9 +106,11 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
+
+  var addr = this.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log("Core Listening on port : " + addr.port);
 }
