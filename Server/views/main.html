@@ -177,37 +177,35 @@
             <h3 id="activation">Deactive / Delete Account</h3>
         </ul>
         <div id="settingsContainer" class="settingsForm">
-            <form action="/users/update">
-                <div>
-                    <label>Username</label>
-                    <input type="text" placeholder="Username" id="username"/>
-                    <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
+
+            <div class="profPic">
+                <svg class="clip-svg">
+                    <defs>
+                        <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                            <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                        </clipPath>
+                    </defs>
+                </svg>
+                <div class="polygon-each-img-wrap">
+                    <img class="ownerProfilePicture polygon-clip-hexagon image" src="../profilePics/avatar.png"/>
                 </div>
+            </div>
+
+            
+            <form action="/users/updateProfileInfo" id="profileInfo">
                 <div>
                     <label>Full Name</label>
                     <input type="text" placeholder="Full name" id="fullName"/>
-                    <img src="../Statics/images/newIcons/tik.svg" id="fullNameStatus" />
-                </div>
-                <div>
-                    <label>Email</label>
-                    <input type="email" placeholder="email@example.com" id="email"/>
-                    <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
-                </div>
-                <div>
-                    <label>Phone number</label>
-                    <input type="text" placeholder="email@example.com" id="phoneNumber"/>
-                    <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
                 </div>
                 <div>
                     <label>City</label>
                     <input type="text" placeholder="City" id="city"/>
-                    <img src="../Statics/images/newIcons/tik.svg" id="cityStatus" />
                 </div>
                 <div>
                     <label>Bio</label>
                     <textarea type="text" id="bio" maxlength="250"></textarea>
                 </div>
-                <button id="setBtn" class="activate">Update</button>
+                <button id="setBtn" class="activate">Save Changes</button>
                 <ul class="messageBox">
     
                 </ul>
@@ -216,6 +214,11 @@
                     <button id="google"></button>
                 </div>
             </form>
+            <div id="passwordBox">
+                <h3 class="message"></h3>
+                <input type="password" placeholder="password" class="requiredPassword">
+                <button class="submitRequiredPassword">Submit</button>
+            </div>
     </div>
     <!-- <div>
         <input type="password" placeholder="password" id="password"/>

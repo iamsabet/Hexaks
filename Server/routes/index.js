@@ -14,6 +14,7 @@ var hashtags = require('./hashtag');
 var validateRequest = require('../middleWares/validateRequest');
 var redis = require('redis');
 var requestIp = require("request-ip");
+const ipCountry = require('ip-country');
 var redisClient = redis.createClient({
 
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -736,7 +737,9 @@ router.post('/api/v1/users/rate',function(req,res){
 router.post('/users/checkIsTaken', function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            users.checkIsTaken(req,res,callback);
+            users.checkValidationAndTaken(req,res,callback,function(resultv){
+                res.send(resultv);
+            });
         }
         else{
             res.send(callback);

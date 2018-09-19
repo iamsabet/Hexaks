@@ -20,7 +20,10 @@ var userSchema = new Schema({
     location:String,
     city:String,
     country:String,
-    phoneNumber:String,
+    phone:{
+        code: Number,
+        number : Number 
+    },
     rate: {
         value: Float,
         points: long,

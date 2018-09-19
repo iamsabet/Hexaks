@@ -11,7 +11,9 @@ var blockSchema = require("../models/block.model");
 var Block = new blockSchema();
 var redis = require('redis');
 var validator = require('validator');
+var phoneValidator = require( 'awesome-phonenumber' );
 var random = require('randomstring');
+const ipCountry = require('ip-country');
 var requestIp = require("request-ip");
 var CryptoJS = require("crypto-js");
 let validateUser = require('./auth').validateUser;
@@ -43,53 +45,51 @@ var users = {
         redisClient.expire(type+"Key:"+ clientIp,300000); //5 minutes
         res.send(encryptionKey);
     },
-    checkValidationAndTaken : function(req,res,user) {
-        let type = req.body.type || "username";
+    checkValidationAndTaken : function(text,type,user,callback) {
 
-        if ((req.body.text) && ((type === "username") || (type === "email") || (type === "phoneNumber")) && (typeof req.body.text === "string" && (req.body.text.length > 3))) {
-            let query;
+        if ((text) && ((type === "username") || (type === "email") || (type === "phoneNumber")) && (typeof text === "string" && (length > 4))) {
             if(type === "email"){
-                if(!validator.isEmail(req.body.text)){
-                    res.send({result:false,message:"Invalid email"});
+                if(!validator.isEmail(text)){
+                    return callback({result:false,message:"Invalid email"});
                 }
             }
             else if(type==="phoneNumber"){
-                if(!validator.isMobilePhone(req.body.text)){
-                    res.send({result:false,message:"Invalid mobile phone number"});
+                if(!validator.isMobilePhone(text)){
+                    return callback({result:false,message:"Invalid mobile phone number"});
                 }
             }
-            else{
-                
-            }
-
+            
+            let query={};
 
             if(user.message){
+                query[type] = text;
                 userSchema.findOne(query,{username:1},function(err,userx){
                     if(err) res.send({result:false,message:"Oops something went wrong"});
                     if(!userx){
-                        res.send(true);
+                        return callback(true);
                     }
                     else{
-                        res.send({result:false,message:type + " already taken"});
+                        return callback({result:false,message:type + " already taken"});
                     }
                 });
             }
             else{
+                
                 canQuery = (user[type] !== req.body.text) || false; // not the same condition
                 query[req.body.type] = req.body.text;
                 userSchema.findOne(query,{username:1},function(err,userx){
                     if(err) res.send({result:false,message:"Oops something went wrong"});
                     if(!userx){
-                        res.send(true);
+                        return callback(true);
                     }
                     else{
-                        res.send({result:false,message:type + " already taken"});
+                        return callback({result:false,message:type + " already taken"});
                     }
                 });
             }
         }
         else{
-            res.send({result:false,message:"504 Bad request"});
+            return callback({result:false,message:"504 Bad request"});
         }
     },
     register: function (req, res) {
@@ -156,7 +156,10 @@ var users = {
                                 location: "",
                                 city: "",
                                 country: "",
-                                phoneNumber: "",
+                                phone:{
+                                    code: -1,
+                                    number : -1 
+                                },
                                 rate: {
                                     value: 0.0,
                                     points: 0,
@@ -411,30 +414,35 @@ var users = {
     });
    },
     updateProfileInfo:function(req,res,user){
-        let fullName = req.body["fullName"];
+        let fullName = req.body["fullName"]
         let email = req.body["email"];
+        let phoneNumber = req.body["phoneNumber"];
         let city = req.body["city"];
         let bio = req.body["bio"];
+        let errorList = [];
         let username = req.body["username"].toLowerCase();
         if(!user.ban.is){      
             let updates = {};
+            let query = {userId:user.userId}; 
             // check is taken ,, all validations check then update and reload in client
-
-
-            userSchema.findOneAndUpdate({userId:user.userId},{$set:updates},function(err,user) {
-                if (err) res.send(err);
-                if (user) {
-                    res.send({result:false,message:"username already token"});
-                }
-                else{
-                    
-                    
-                }
+            users.checkValidationAndTaken(email,"email",user,function(resulte){
+                users.doUpdateInfo(query,updates);
             });
         }
         else{
             res.send({result:false,false:"sorry you cant change your info till your ban expires : "+(user.ban.expire - Date.now()) });
         }
+    },
+    doUpdateInfo:function(query,updates,res){
+        userSchema.update(query,{$set:updates},function(err,resultu) {
+            if (err) res.send(err);
+            if (resultu.n > 0) {
+                res.send(true);
+            }
+            else{
+                res.send({result:false,message:"username already token"});
+            }
+        });
     },
     changePassword:function(req,res,user){
         let password = req.body.password;
@@ -723,6 +731,7 @@ var users = {
 
         res.send(false);
     }
+    
 
 };
 
