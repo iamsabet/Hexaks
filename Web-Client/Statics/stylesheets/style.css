@@ -458,42 +458,42 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 
 
 
-.postsContainerDiv{
+.mainContainer{
 	position: relative;
 	width: 98VW;
-	padding: 0;
 	height: auto;
 	display: block;
 	text-align: center;
-	top:1px;
+	top:0;
 	max-width: 1550px;
 	margin: 0 auto;
+	padding:85px 0;
 }
 @media (max-width:768px){
-	.postsContainerDiv {
-		width: 100%;
+	.mainContainer{
+		width: 100vw;
 		left: 0;
-		padding:5px 2px;
+		padding:60px 3px;
 	}
 }
 .postsContainer{
 	position: relative;
-	margin: 2% 0;
+	margin:10px 0;
 	vertical-align: top;
 	list-style-type: none;
 	padding: 0;
-	width:102%;
-	margin-left: -15px;
+	width:100%;
 }
 @media (max-width:1550px){
 	.postsContainer{
 		position: relative;
-		margin: -10px 0;
+		margin: 0;
 		vertical-align: top;
 		list-style-type: none;
 		padding: 0;
-		width:102%;
-		margin-left: -10px;
+		width: 100%;
+		height: auto;
+		display: block;
 	}
 }
 @media (max-width:1099px){
