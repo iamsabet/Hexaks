@@ -1014,10 +1014,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	}
 }
 
-
-
-
-
 .newPostContainer .newPostForm button {
 	height: 40px;
 	width: 200px;
@@ -1145,10 +1141,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height: 50px;
 }
 
-
-
-
-
 .newPostForm #formArea div{
 	position: relative;
 	width: 100%;
@@ -1166,7 +1158,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	margin: 0;
 	-webkit-appearance: none;
 	margin-bottom: 10px;
-
 }
 
 #albumList #newAlbumForm{
@@ -1258,7 +1249,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-o-transition: all 0.5s ease-in;
 	transition: all 0.5s ease-in;
 	z-index: 100;
-
 }
 
 .newPostForm #formArea div .slideList.show{
@@ -1381,7 +1371,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	clear: left;
 	width: 100%;
 	padding-left: 10px;
-	font-size:19px;
+	font-size:18px;
 	height: 20px;
 	line-height: 10px;
 }
