@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <script src="../Statics/javascripts/cookies.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js"></script>
-    <script src="../Statics/javascripts/cc.json"></script>
+    <script src="../Statics/javascripts/jquery.ccpicker.js"></script>
+    <script src="../Statics/javascripts/countries.json"></script>
     <title>Hexaks Post</title>
 </head>
 
@@ -203,9 +204,12 @@
                     <label for="fullName">Full Name</label>
                 </div>
                 <div class="form-group phone">
-                    <input type="phoneNumber" id="phoneNumber" class="phone-field"/>
+                    <input id="phoneNumber" type="Number" class="phone-field"/>
                     <label for="phoneNumber">Phone Number</label>
                     <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
+                    <div class="list">
+
+                    </div>
                 </div>
                 <div class="form-group">
                         <input type="email" id="email"/>
@@ -1933,7 +1937,19 @@
     // settings functions
     function loadUserInfosInForm(){
         // profile picture
-        debugger;
+        let fields = document.querySelectorAll('.form-group input');
+
+        fields.forEach(field=>{
+            field.addEventListener('blur',()=>{
+                if(field.value.trim().length){
+                    field.classList.add("blurred");
+                }
+                else{
+                    field.classList.remove("blurred");
+                }
+            });
+        });
+
         $("#username").val(Me.username);
         $("#email").val(Me.email);
         if(!$("#username.blurred")[0])
@@ -1953,8 +1969,16 @@
         else{
             $("#phoneNumber").CcPicker({"countryCode":"ir"});
         }
-        $("#bio").val(Me.bio.toString());
-        $("#city").val(Me.city.toString());
+        if(Me.bio && Me.bio !== ""){
+            $("#bio").val(Me.bio);
+            if(!$("#bio.blurred")[0])
+                $("#bio").addClass("blurred");
+        }
+        if(Me.city && Me.city !== ""){
+            $("#city").val(Me.city);
+            if(!$("#city.blurred")[0])
+                $("#city").addClass("blurred");
+        }
 
     }
     $("body").on("keyup","#username",function(e){

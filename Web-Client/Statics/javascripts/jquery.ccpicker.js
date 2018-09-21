@@ -87,7 +87,7 @@
         id: this.element.id + "_" + this.options.dialCodeFieldName,
         name: this.element.name + "_" + this.options.dialCodeFieldName,
         value: cc.phoneCode
-      }).insertAfter(this.element);
+      }).insertBefore(this.element);
       this._ccPicker.prepend(this.createCountryListItem(this.options.countryCode.toLowerCase(), cc.phoneCode));
 	  this._ccSelectedCountry = {code: this.options.countryCode.toLowerCase(), phoneCode: cc.phoneCode};
       this._ccPicker.on("click", function (e) {
@@ -124,10 +124,10 @@
     },
     createCountryList: function (e) {
       var zIndex = e._ccPicker.css("z-index") === "auto" ? 0 : Number(e._ccPicker.css("z-index")) + 10;
-      e._list = $("<ul/>", {"class": "cc-picker-code-list"}).appendTo("body");
+      e._list = $("<ul/>", {"class": "cc-picker-code-list"}).appendTo(".phone .list");
       e._list.css({
-        top: e._ccPicker.offset().top + e._ccPicker.outerHeight() + (e.options.countryFilter === true ? 25 : 0),
-        left: e._ccPicker.offset().left,
+        top: 40,
+        left: 0,
         "z-index": zIndex
       });
       $.each(e._ccData, function (key, val) {
@@ -146,8 +146,8 @@
 	  if (e.options.countryFilter) {
         e._filter = $("<input/>", {"class": "cc-picker-code-filter", "placeholder": e.options.searchPlaceHolder}).insertBefore(e._list);
         e._filter.css({
-          top: e._ccPicker.offset().top + e._ccPicker.outerHeight(),
-          left: e._ccPicker.offset().left,
+          top: 0,
+          left: 0,
           "z-index": zIndex
         });
         e._filter.on("click", function (e) {

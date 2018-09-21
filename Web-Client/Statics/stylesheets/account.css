@@ -155,6 +155,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea,form,ul,li,div,label{
 	bottom:-12px;
 	opacity: 0.5;
 	color:#ff0055; 
+	margin:0;
 }
 .containerDiv > div form div img{
 	background-color: white;
