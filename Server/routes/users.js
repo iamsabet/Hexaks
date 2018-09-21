@@ -143,23 +143,25 @@ var users = {
                                 username: username,
                                 email: email,
                                 fullName: "",
+                                url : "",
                                 profilePictureSet: "male.png",
                                 favouriteProfiles: [], // user ids  //  up to 6   // -->   get most popular profile
                                 interestCategories: [], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
                                 password: password, // hashed password
-                                gender: "",
+                                gender: -1 , // 0 female 1male 2 others
                                 birthDate: null,
                                 followingsCount: 0,
                                 followersCount: 0,
                                 blockList:[],
-                                followings:[],
+                                followings:[], //
+                                followingCategories : [], //
+                                followingHashtags : [], //
+                                followingLocations : [], //
+                                followingDevices : [], //
                                 location: "",
                                 city: "",
                                 country: "",
-                                phone:{
-                                    code: -1,
-                                    number : -1 
-                                },
+                                phone:null,
                                 rate: {
                                     value: 0.0,
                                     points: 0,
@@ -181,11 +183,10 @@ var users = {
                                     }
                                 },
                                 bio: "",
-                                badges: [], // badgeIds -->
+                                badges: [], // badgeIds --> // selecteds only 
                                 roles: [], // String - Sabet / Admin / Curator / Blogger / Premium / --> founder <-- under 1000 --> future advantages --> + premium ...
                                 activated: true,
                                 privacy: req.body.privacy || false,
-                                viewedPosts: [], // last 100s
                                 ban:null,
                                 createdAt: now,
                             };
@@ -667,11 +668,13 @@ var users = {
     },
     follow:function(req,res,user){
         let hostId = req.body.followingId || null;
+        let type = req.body.type || "user";
         users.getUserInfosFromCache(hostId,function(hostUser){
             if(!hostUser.message){
                 if (hostId) {
                     let followObject = {
                         follower: user.userId,
+                        type:type,
                         following: hostId,
                     };
                     if (user.followings.indexOf(hostId) === -1) {
@@ -701,10 +704,12 @@ var users = {
     },
     unfollow:function(req,res,user){
         let hostId = req.body.followingId || null;
+        let type = req.body.type || "user";
         if(hostId && user.followings.indexOf(hostId) > -1) {
             if ((typeof hostId ==="string") && user) {
                 let unfollowObject = {
                     follower: user.userId,
+                    type:type,
                     following: hostId,
                 };
                 flw.unfollow(unfollowObject,function(callback){

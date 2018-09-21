@@ -45,11 +45,12 @@ var follows = {
             }
         });
     },
-    getFollowingsPaginated: function(req, res,user,hostId,timeOrigin,counts,pageNumber) {
+    getFollowingsPaginated: function(req, res,user,hostId,type,timeOrigin,counts,pageNumber) {
 
         let query = {
             "following": {$exists: true},
             "follower": hostId,
+            "type" : hostId,
             deactive: false,
 
         };

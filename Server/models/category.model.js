@@ -18,6 +18,8 @@ var categorySchema = new Schema({
     thumbnailUrl:String,
     hour:Number, // -1 - 23
     day:Number, // -1 - 31
+    month : Number, // 1 - 12
+    year:Number, // 2019 --> 
     createdAt:Number,
     updatedAt:Number,
     activated:Boolean,

@@ -14,14 +14,19 @@ var userSchema = new Schema({
     gender:String,
     birthDate:Date,
     followingsCount:Number,
+    followersCount:Number,
     followings:[], 
     blockList:[],// <= 100 
-    followersCount:Number,
-    location:String,
+    followingCategories : [], //
+    followingHashtags : [], //
+    followingLocations : [], //
+    followingDevices : [], //
+    location:{},
     city:String,
     country:String,
     phone:{
         code: Number,
+        countryCode :String,
         number : Number 
     },
     rate: {
@@ -50,7 +55,6 @@ var userSchema = new Schema({
     activated:Boolean,
     deleted:Boolean,
     privacy:Boolean,
-    viewedPosts:[], // last 100s
     ban:{
         reason:Boolean,
         expire:Number,

@@ -252,6 +252,7 @@ router.post('/api/v1/users/:uuid/followings',function(req,res) {
 
                 let timeOrigin;
                 let pageNumber = req.body.pageNumber || 1;
+                let type = req.body.type || "user";
                 let counts = req.body.counts || 10;
                 let now = Date.now();
                 if (requestOrigin) {
@@ -270,7 +271,7 @@ router.post('/api/v1/users/:uuid/followings',function(req,res) {
                     redisClient.set(user.username + "::requestOrigin", requestOrigin);
                     redisClient.expire(user.username + "::requestOrigin", 30000);
                 }
-                follows.getFollowingsPaginated(req, res, user, hostId,timeOrigin, counts, pageNumber);
+                follows.getFollowingsPaginated(req, res, user, hostId,type,timeOrigin, counts, pageNumber);
             });
         }
         else{

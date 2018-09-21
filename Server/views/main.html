@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <script src="../Statics/javascripts/cookies.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js"></script>
+    <script src="../Statics/javascripts/cc.json"></script>
     <title>Hexaks Post</title>
 </head>
 
@@ -29,14 +30,14 @@
     <div class="nav rightSide">
         <img id="logo" src="../Statics/images/images/LOGO.png">
         <!--// parse dynamicly for clients - authenticated - and role based-->
-        <!--<ul>-->
-        <!--<li class="navRightButtons">Home</li>-->
-        <!--<li class="navRightButtons">Explore</li>-->
-        <!--<li class="navRightButtons">Subscriptions</li>-->
-        <!--<li class="navRightButtons">People</li>-->
-        <!--<li class="navRightButtons">Settings</li>-->
-        <!--<li class="navRightButtons" id="about">About</li>-->
-        <!--</ul>-->
+        <!-- <ul>
+        <li class="navRightButtons">Home</li>
+        <li class="navRightButtons">Explore</li>
+        <li class="navRightButtons">Subscriptions</li>
+        <li class="navRightButtons">People</li>
+        <li class="navRightButtons">Settings</li>
+        <li class="navRightButtons" id="about">About</li>
+        </ul> -->
     </div>
     <div class="topNav">
         <ul>
@@ -190,20 +191,34 @@
                     <img class="ownerProfilePicture polygon-clip-hexagon image" src="../profilePics/avatar.png"/>
                 </div>
             </div>
-
             
             <form action="/users/updateProfileInfo" id="profileInfo">
-                <div>
-                    <label>Full Name</label>
-                    <input type="text" placeholder="Full name" id="fullName"/>
+                <div class="form-group">
+                    <input type="text" id="username"/>
+                    <label for="username">Username</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
                 </div>
-                <div>
-                    <label>City</label>
-                    <input type="text" placeholder="City" id="city"/>
+                <div class="form-group">
+                    <input type="text" id="fullName"/>
+                    <label for="fullName">Full Name</label>
                 </div>
-                <div>
-                    <label>Bio</label>
+                <div class="form-group phone">
+                    <input type="phoneNumber" id="phoneNumber" class="phone-field"/>
+                    <label for="phoneNumber">Phone Number</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
+                </div>
+                <div class="form-group">
+                        <input type="email" id="email"/>
+                        <label for="email">Email</label>
+                        <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
+                    </div>
+                <div class="form-group">
+                    <input type="city" id="city"/>
+                    <label for="city">City</label>
+                </div>
+                <div class="form-group">
                     <textarea type="text" id="bio" maxlength="250"></textarea>
+                    <label for="bio" class="bioLabel">Bio</label>
                 </div>
                 <button id="setBtn" class="activate">Save Changes</button>
                 <ul class="messageBox">
@@ -214,6 +229,30 @@
                     <button id="google"></button>
                 </div>
             </form>
+
+
+            <form action="/users/changePass" id="changePass">
+                
+                <div class="form-group">
+                    <input type="password" id="password"/>
+                    <label for="password">Password</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confPassword"/>
+                    <label for="confPassword">Confirm Password</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
+                </div>
+                <button id="regBtn">Register</button>
+                <ul class="messageBox">
+    
+                </ul>
+                <div class="socialBox">
+                    <button id="instagram"></button>
+                    <button id="google"></button>
+                </div>
+            </form>
+
             <div id="passwordBox">
                 <h3 class="message"></h3>
                 <input type="password" placeholder="password" class="requiredPassword">
@@ -879,7 +918,6 @@
                 }
                 counter--;
             }
-
         }
         else {
             slideAction(0, "right");
@@ -1324,7 +1362,7 @@
             }
         }
         else if(pageName === "settings"){
-            debugger;
+            // debugger;
             loadUserInfosInForm();
 
         }
@@ -1896,10 +1934,25 @@
     function loadUserInfosInForm(){
         // profile picture
         debugger;
-        $("#username").val(Me.username.toString());
-        $("#fullName").val(Me.fullName.toString());
-        $("#phoneNumber").val(Me.phoneNumber.toString());
-        $("#email").val(Me.email.toString());
+        $("#username").val(Me.username);
+        $("#email").val(Me.email);
+        if(!$("#username.blurred")[0])
+            $("#username").addClass("blurred");
+        if(!$("#email.blurred")[0])
+            $("#email").addClass("blurred");
+        if(Me.fullName && Me.fillName !== ""){
+            if(!$("#username.blurred")[0]){
+                $("#username").addClass("blurred");
+            }
+            $("#fullName").val(Me.fullName.toString());
+        }
+        if(Me.phone){
+            $("#phoneNumber").CcPicker({"countryCode":Me.phoneNumber.countryCode});
+            $("#phoneNumber").val(Me.phone.number);
+        }
+        else{
+            $("#phoneNumber").CcPicker({"countryCode":"ir"});
+        }
         $("#bio").val(Me.bio.toString());
         $("#city").val(Me.city.toString());
 
@@ -1919,10 +1972,11 @@
             checkInputValidation("email", $(this).val().toString());
         }
     });
-    $('body').on("submit",".settingsForm form",function(event) {
+    $('body').on("submit","#profileInfo",function(event) {
         event.preventDefault();
     });
     $('.settingsForm').on("click","#setBtn",function(){
+        // add changes to object ==> dont send null
         if(Me){
             var input = {
                 username : $("#username").val().toString(),

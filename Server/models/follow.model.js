@@ -17,7 +17,8 @@ redisClient.select(2,function(){
 var followSchema = new Schema({
     followId : String,
     follower : String, // userId
-    following : String , // userId
+    type : String, // users , hashtag , category , location , device 
+    following : String , // userId , "hashtagText" , "categoryText" , locationId , deviceId 
     activated : Boolean,
     accepted : Boolean,
     deleted:Boolean,
@@ -87,6 +88,7 @@ followSchema.methods.create = function(followObject,hostUser,callback){
     var newFollow = {};
     follow.update({
         follower: followObject.follower,
+        type:followObject.type,
         following: followObject.following,
         activated:false
     }, updateFields , function (err, result) {
@@ -111,7 +113,7 @@ followSchema.methods.create = function(followObject,hostUser,callback){
 };
 
 followSchema.methods.unfollow = function(unfollowObject,callback){
-    follow.findOneAndUpdate({follower:unfollowObject.follower,following:unfollowObject.following,activated:true},{activated:false,accepted:false},function(err,result){
+    follow.findOneAndUpdate({follower:unfollowObject.follower,type:unfollowObject.type,following:unfollowObject.following,activated:true},{activated:false,accepted:false},function(err,result){
        if(err) return callback({result:false,message:"Oops Something went wrong"});
        if(result) {
             return callback(true);

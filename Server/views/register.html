@@ -15,20 +15,24 @@
     <div class="loginRegForm">
         <h2>Register</h2>
         <form action="/register">
-            <div>
-                <input type="text" placeholder="username" id="username"/>
+            <div class="form-group">
+                <input type="text" id="username"/>
+                <label for="username">Username</label>
                 <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
             </div>
-            <div>
-                <input type="email" placeholder="email@example.com" id="email"/>
+            <div class="form-group">
+                <input type="email" id="email"/>
+                <label for="email">Email</label>
                 <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
             </div>
-            <div>
-                <input type="password" placeholder="password" id="password"/>
+            <div class="form-group">
+                <input type="password" id="password"/>
+                <label for="password">Password</label>
                 <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
             </div>
-            <div>
-                <input type="password" placeholder="confirm password" id="confPassword"/>
+            <div class="form-group">
+                <input type="password" id="confPassword"/>
+                <label for="confPassword">Confirm Password</label>
                 <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
             </div>
             <button id="regBtn">Register</button>
@@ -58,6 +62,20 @@
 
     $(document).ready(function(event){
         requestHandler("/register/getKey", "GET", {}, "getKey");
+
+        let fields = document.querySelectorAll('.form-group input');
+        debugger;
+        fields.forEach(field=>{
+            field.addEventListener('blur',()=>{
+                if(field.value.trim().length){
+                    field.classList.add("blurred");
+                }
+                else{
+                    field.classList.remove("blurred");
+                }
+            });
+        });
+
     });
     $("body").on("keyup","#username",function(e){
         if($(this).val().toString().length > 3) {
