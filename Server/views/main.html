@@ -173,26 +173,26 @@
     </div>
     <div class="settingsContainer" id="settings">
         <div id="settingsContainer" class="settingsForm">
-            <div class="menu">
-                <a href="/account">Account Settings</a>
-                <a href="/changePass">Change Password</a>
-                <a href="/badges">Badges</a>
-                <a href="/activation">Deactive / Delete Account</a>
-            </div>
-            <div class="profPic">
-                <svg class="clip-svg">
-                    <defs>
-                        <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
-                            <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
-                        </clipPath>
-                    </defs>
-                </svg>
-                <div class="polygon-each-img-wrap">
-                    <img class="ownerProfilePicture polygon-clip-hexagon image" src="../profilePics/avatar.png"/>
-                </div>
-            </div>
             
-            <form action="/users/updateProfileInfo" id="profileInfo">
+            <div class="menu">
+            <div class="profPic">
+                    <svg class="clip-svg">
+                        <defs>
+                            <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                                <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                    <div class="polygon-each-img-wrap">
+                        <img class="ownerProfilePicture polygon-clip-hexagon image" src="../profilePics/avatar.png"/>
+                    </div>
+                </div>
+                <a href="/account" id="accountBtn">Account Settings</a>
+                <a href="/changePass" id="changePassBtn">Change Password</a>
+                <a href="/badges" id="badgesBtn">Badges</a>
+                <a href="/activation" id="activationBtn">Deactive / Delete Account</a>
+            </div>
+            <form action="/users/updateProfileInfo" id="account">
                 <div class="form-group">
                     <input type="text" id="username"/>
                     <label for="username">Username</label>
@@ -254,37 +254,29 @@
                 <ul class="messageBox">
     
                 </ul>
-                <div class="socialBox">
-                    <button id="instagram"></button>
-                    <button id="google"></button>
-                </div>
-            </form>
-            <form id="activation" action="/users/changePass" >
                 
-                <div class="form-group">
-                    <input type="password" id="password"/>
-                    <label for="password">Password</label>
-                    <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
-                </div>
-                <div class="form-group">
-                    <input type="password" id="confPassword"/>
-                    <label for="confPassword">Confirm Password</label>
-                    <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
-                </div>
-                <button id="regBtn">Register</button>
+            </form>
+            <form id="badges" action="/users/badges" >
+                
+                <h3>Badges</h3>
+
+            </form>
+            <form id="activation" action="/users/activation" >
+
+                <button id="deactiveAccount">Deactive Account</button>
+                <button id="deleteAccount">Delete Account</button>
                 <ul class="messageBox">
     
                 </ul>
-                <div class="socialBox">
-                    <button id="instagram"></button>
-                    <button id="google"></button>
+                
+            </form>
+            <form class="passRequired">
+                <div class="form-group">
+                    <input type="password" class="passRequired"/>
+                    <label for="passRequired">Enter Your Password To Complete This Action</label>
+                    <button class="submitRequiredPassword">Submit</button>
                 </div>
             </form>
-            <div id="passwordBox">
-                <h3 class="message"></h3>
-                <input type="password" placeholder="password" class="requiredPassword">
-                <button class="submitRequiredPassword">Submit</button>
-            </div>
     </div>
     <!-- <div>
         <input type="password" placeholder="password" id="password"/>
@@ -1395,6 +1387,9 @@
         else if(pageName.startsWith("settings")){
             // debugger;
             showTargetForm(pageName.split("/")[1]);
+            if(!$(`#${pageName.split("/")[1]}Btn.selected`)[0])
+                $(`#${pageName.split("/")[1]}Btn`).addClass("selected");
+            pushHistory("settings", pageName, pageName, false,true);  
             loadUserInfosInForm();
 
         }
@@ -1498,7 +1493,7 @@
             }
             else {
                 if((pageName === "explore") || (pageName === "curated") || (pageName === "latest") || (pageName === "top")) {
-                    changePage(window.location.pathname.split("/")[1],window.location.pathname.split("/")[1]+ "/" + pageName,true,"",true,true); // the same  
+                    changePage(urlArray[1],urlArray[1]+ "/" + pageName,true,"",true,true); // the same  
                 }
                 else if(pageName.split("following/").length > 1){
                     changePage("following","following/"+pageName.split("/")[1],true,"",true,true);
@@ -1611,7 +1606,8 @@
                     changePage(pageType + "/" + postId, pageType + "/" + postId, writeState, postId);
                 }
                 else {
-                    changePage(pageType, pageType, writeState);
+                    let formName = window.location.pathname.split("/")[2] || "account";
+                    changePage(pageType, pageType+"/"+formName, true,"",true,true);
                 }
             }
             else {
@@ -1785,7 +1781,12 @@
                     for (var x = 0; x < pageNames.length; x++) {
                         if (pageName.toLowerCase() === pageNames[x].toLowerCase()) {
                             $(`#${pageNames[x]}`).addClass("show");
-                            sendPagesInitialRequest(pageNames[x].toLowerCase(),postid,"initial");
+                            if(pageName.toLowerCase()==="settings"){
+                                sendPagesInitialRequest(pageType);
+                            }
+                            else{
+                                sendPagesInitialRequest(pageNames[x].toLowerCase(),postid,"initial");
+                            }
                         }
                         else {
                             if ($(`#${pageNames[x]}.show`)) {
@@ -1985,6 +1986,14 @@
                 this.classList.remove("blurred");
             }
         });
+        $("#requiredPassword").on("blur",function(){
+            if(this.value.trim().length){
+                this.classList.add("blurred");
+            }
+            else{
+                this.classList.remove("blurred");
+            }
+        });
         $("#username").val(Me.username);
         $("#email").val(Me.email);
         if(!$("#username.blurred")[0])
@@ -2016,10 +2025,16 @@
         }
 
     }
+    function showTargetForm(formName){
+        $(".settingsContainer form").removeClass("show");
+        $(`.settingsContainer #${formName}`).addClass("show");
+    }
     // settings events
     $("body").on("click",".settingsContainer .menu a",function(e){
         e.preventDefault();
-        changePage("settings","settings/"+this.href.split("/")[-0],false,"",true,false);
+        changePage("settings","settings/"+this.href.split("/").pop(),true,"",true,true);
+        $(".settingsContainer .menu a").removeClass("selected");
+        $(this).addClass("selected");
     });
     $("body").on("keyup","#username",function(e){
         if($(this).val().toString().length > 3) {
@@ -3638,6 +3653,9 @@ Wedding`;
         }
 
     }
+
+
+   
 
     function showTopBox(type){
        for(let z = 0 ; z  < boxes.length ; z++){
