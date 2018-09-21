@@ -328,16 +328,6 @@ router.post('/api/v1/users/disconnect',function(req,res) {
     });
 });
 
-router.post('/api/v1/users/disconnect',function(req,res) {
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            users.disconnect(req, res, callback);
-        }
-        else{
-            res.send(callback);
-        }
-    });
-});
 
 router.post('/api/v1/users/block',function(req,res) {
     validateRequest(req,res,function(callback){
@@ -735,7 +725,7 @@ router.post('/api/v1/users/rate',function(req,res){
         }
     });
 });
-router.post('/users/checkIsTaken', function(req,res){
+router.post('/api/v1/users/checkIsTaken', function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
             users.checkValidationAndTaken(req,res,callback,function(resultv){

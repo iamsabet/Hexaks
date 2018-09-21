@@ -371,11 +371,12 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .nav img{
     position: absolute;
     width: auto;
-    left: 50%;
     top: -1px;
-    height: 100%;
-    display: inline-block;
-    float: left;
+	height: auto;
+	left:50%;
+	width:auto;
+	height: 100%;
+    display: block;
     clear: both;
     margin-bottom: 0;
     margin-left: 0;
@@ -401,14 +402,17 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .nav ul{
 	width:100%;
-	height: auto;
+	height: 0;
 	padding: 0;
 	margin:0;
 	list-style-type: none;
 	display: inline-block;
-	position: relative;
-	float: left;
+	position: absolute;
 	clear: both;
+	right: -200px;
+}
+.nav ul.show{
+	right:0;
 }
 .nav ul li,.nav a{
 	position: relative;
@@ -421,7 +425,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	font-size: 20px;
 	height: 28px;
 	vertical-align: middle;
-	float: left;
 	color:white;
 	clear: both;
 	text-align: left;
@@ -2055,6 +2058,17 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-moz-appearance: none;
 	color: white;
 	margin: 0;
+}
+.settingsContainer > div form .form-group select{
+	background: none;
+	border: none;
+	width: 40px;
+	height: 35px;
+	border-bottom: 2px solid #aaa;
+	border-bottom-color: rgb(170, 170, 170);
+	color: white;
+	font-size:18px;
+
 }
 .settingsContainer > div form .form-group textarea{
 	text-align: left;

@@ -31,14 +31,14 @@
     <div class="nav rightSide">
         <img id="logo" src="../Statics/images/images/LOGO.png">
         <!--// parse dynamicly for clients - authenticated - and role based-->
-        <!-- <ul>
+        <ul>
         <li class="navRightButtons">Home</li>
         <li class="navRightButtons">Explore</li>
         <li class="navRightButtons">Subscriptions</li>
         <li class="navRightButtons">People</li>
         <li class="navRightButtons">Settings</li>
         <li class="navRightButtons" id="about">About</li>
-        </ul> -->
+        </ul>
     </div>
     <div class="topNav">
         <ul>
@@ -220,8 +220,11 @@
                     <label for="city">City</label>
                 </div>
                 <div class="form-group">
-                    <input type="city" id="city"/>
-                    <label for="city">City</label>
+                    <select id="days"></select>
+                    <select id="months"></select>
+                    <select id="years"></select>
+                    <input type="text" id="birth"/>
+                    <label for="birth">Birth</label>
                 </div>
                 <div class="form-group">
                     <textarea type="text" id="bio" maxlength="250"></textarea>
@@ -749,8 +752,8 @@
         backward();
     });
     $("body").on("click","#logo",function(){
-        // slideNav(this);
-        changePage("explore","explore/top",true,"",true,true);
+        slideNav();
+        // changePage("explore","explore/top",true,"",true,true);
     });
 
     $("body").on("click","#follow",function(){
@@ -1394,6 +1397,35 @@
 
         }
     }
+    
+    function initialDates(){
+        for (i = new Date().getFullYear() ; i > 1900; i--) {
+            $('#years').append($('<option />').val(i).html(i));
+        }
+
+        for (i = 1; i < 13; i++) {
+            $('#months').append($('<option />').val(i).html(i));
+        }
+        updateNumberOfDays();
+    }
+    $('#years, #months').change(function () {
+        updateNumberOfDays();
+    });
+    function updateNumberOfDays() {
+        $('#days').html('');
+        month = $('#months').val();
+        year = $('#years').val();
+        days = daysInMonth(month, year);
+
+        for (i = 1; i < days + 1 ; i++) {
+            $('#days').append($('<option />').val(i).html(i));
+        }
+
+    }
+
+    function daysInMonth(month, year) {
+        return new Date(year, month, 0).getDate();
+    }
     // Actions.js
     function responseActionHandler(caller, res,input) {
         switch (caller) {
@@ -1932,33 +1964,28 @@
         }
     }
 
-    function slideNav(element){
-        if (window.innerWidth < 768) {
-            if (element.className === "") {
-                if ($(".rightSide")[0]) {
-                    $(element).addClass("halfRight");
-                    $(".rightSide").addClass("hide");
-                    $(".accountCard").css("right","0");
-                }
-                else if ($(".leftSide")[0]) {
-                    $(element).addClass("halfLeft");
-                    $(".leftSide").addClass("hide");
-                    $(".accountCard").css("right","0");
-                }
+    function slideNav(){
+        let nav = $(".nav");
+        if (element.className === "") {
+            if ($(".rightSide")[0]) {
+                $(element).addClass("halfRight");
+                $(".rightSide").removeClass("show");
             }
-            else if (element.className === "halfLeft") {
-                $(element).removeClass("halfLeft");
+            else if ($(".leftSide")[0]) {
+                $(element).addClass("halfLeft");
                 $(".leftSide").removeClass("hide");
-                $(".accountCard").css("right","120px");
             }
-            else if (element.className === "halfRight") {
-                $(element).removeClass("halfRight");
-                $(".rightSide").removeClass("hide");
-                $(".accountCard").css("right","120px");
-            }
-            else {
-                //
-            }
+        }
+        else if (element.className === "halfLeft") {
+            $(element).removeClass("halfLeft");
+            $(".leftSide").removeClass("show");
+        }
+        else if (element.className === "halfRight") {
+            $(element).removeClass("halfRight");
+            $(".rightSide").removeClass("hide");
+        }
+        else {
+            //
         }
     }
 
@@ -1993,6 +2020,7 @@
                 this.classList.remove("blurred");
             }
         });
+        initialDates();
         $("#username").val(Me.username);
         $("#email").val(Me.email);
         if(!$("#username.blurred")[0])
@@ -2059,18 +2087,32 @@
     $('body').on("submit","#profileInfo",function(event) {
         event.preventDefault();
     });
-    $('.settingsForm').on("click","#setBtn",function(){
+    $('.settingsForm').on("click","#setBtn",function(e){
         // add changes to object ==> dont send null
         if(Me){
-            var input = {
-                username : $("#username").val().toString(),
-            };
-            requestHandler("/users/update", "POST", input,"registerHandler");
+            // gather datas to update
+            var input = {};
+            if(Me.username !== $("#username").val()){
+                input.username = $("#username").val();
+            }
+            if(Me.email !== $("#email").val()){
+                input.email = $("#email").val();
+            }
+            if(Me.fullName !== $("#fullName").val()){
+                input.fullName = $("#fullName").val();
+            }
+            if(Me.city !== $("#city").val()){
+                input.city = $("#city").val();
+            }
+            if(Me.phone && (Me.phone.number !== parseInt($("#phoneNumber").val()) || (Me.phone.code !== parseInt($(".cc-picker-code").html())))){
+                input.phoneNumber = parseInt($(".cc-picker-code").html())+"/"+parseInt($("#phoneNumber").val());
+            }
+            requestHandler("/api/v1/users/updateProfileInfo", "POST", input,"updateProfileInfo");
         }
     });
     function checkInputValidation(type,text){
         // characteric limiations -- check both sides later then => {
-        requestHandler("/users/checkIsTaken/","POST",{text:text,type:type},"check"+type);
+        requestHandler("/api/v1/users/checkIsTaken/","POST",{text:text,type:type},"check"+type);
     }
     function checkMailResponse(res){
         if(!res.message){
