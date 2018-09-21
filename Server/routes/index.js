@@ -728,7 +728,9 @@ router.post('/api/v1/users/rate',function(req,res){
 router.post('/api/v1/users/checkIsTaken', function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            users.checkValidationAndTaken(req,res,callback,function(resultv){
+            let type = req.body.type || "";
+            let text = req.body.text || "";
+            users.checkValidationAndTaken(text,type,callback,function(resultv){
                 res.send(resultv);
             });
         }

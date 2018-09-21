@@ -46,8 +46,10 @@ var users = {
         res.send(encryptionKey);
     },
     checkValidationAndTaken : function(text,type,user,callback) {
-
-        if ((text) && ((type === "username") || (type === "email") || (type === "phoneNumber")) && (typeof text === "string" && (length > 4))) {
+        if(text===null){
+            return callback(true); 
+        }
+        if ((text) && ((type === "username") || (type === "email") || (type === "phoneNumber")) && (typeof text === "string" && (text.length > 3))) {
             if(type === "email"){
                 if(!validator.isEmail(text)){
                     return callback({result:false,message:"Invalid email"});
@@ -64,7 +66,7 @@ var users = {
             if(user.message){
                 query[type] = text;
                 userSchema.findOne(query,{username:1},function(err,userx){
-                    if(err) res.send({result:false,message:"Oops something went wrong"});
+                    if(err) return callback({result:false,message:"Oops something went wrong"});
                     if(!userx){
                         return callback(true);
                     }
@@ -75,10 +77,10 @@ var users = {
             }
             else{
                 
-                canQuery = (user[type] !== req.body.text) || false; // not the same condition
-                query[req.body.type] = req.body.text;
+                canQuery = (user[type] !== text) || false; // not the same condition
+                query[type] = text;
                 userSchema.findOne(query,{username:1},function(err,userx){
-                    if(err) res.send({result:false,message:"Oops something went wrong"});
+                    if(err) return callback({result:false,message:"Oops something went wrong"});
                     if(!userx){
                         return callback(true);
                     }
@@ -421,13 +423,13 @@ var users = {
         let city = req.body["city"];
         let bio = req.body["bio"];
         let errorList = [];
-        let username = req.body["username"].toLowerCase();
+        let username = req.body["username"];
         if(!user.ban.is){      
             let updates = {};
             let query = {userId:user.userId}; 
             // check is taken ,, all validations check then update and reload in client
             users.checkValidationAndTaken(email,"email",user,function(resulte){
-                users.doUpdateInfo(query,updates);
+                users.doUpdateInfo(query,updates,res);
             });
         }
         else{

@@ -205,7 +205,7 @@
                 <div class="form-group phone">
                     <input id="phoneNumber" type="Number" class="phone-field"/>
                     <label for="phoneNumber">Phone Number</label>
-                    <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
+                    <img src="../Statics/images/newIcons/tik.svg" id="phoneNumberStatus" />
                     <div class="list">
 
                     </div>
@@ -1499,14 +1499,11 @@
             case "initialAlbums":{
                 initialAlbumsResponseAction(res);
             }break;
-
             // settings actions 
-            case "checkemail":{
-                checkMailResponse(res); // access only from authenticated consider in backend
+            case "checkemail" || "checkusername" || "checkphoneNumber":{
+                debugger;
+                checkResponse(res,caller.split("check")[1]);
             }break;
-            case "checkusername":{
-                checkUsernameResponse(res);
-            }
 
         }
     }
@@ -2068,17 +2065,19 @@
     });
     $("body").on("keyup","#username",function(e){
         if($(this).val().toString().length > 3) {
-            checkInputValidation("username",$(this).val().toString());
+            checkInputValidation("username",$(this).val().toString()+e.originalEvent.key);
         }
     });
     $("body").on("keyup","#email",function(e){
         if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
-            checkInputValidation("email", $(this).val().toString());
+            checkInputValidation("email", $(this).val().toString()+e.originalEvent.key);
         }
     });
     $("body").on("keyup","#phoneNumber",function(e){
-        if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
-            checkInputValidation("email", $(this).val().toString());
+        if($(this).val().toString().length > 3) {
+            if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
+                checkInputValidation("phoneNumber", $(".cc-picker-code").html()+"/"+$(this).val()+e.originalEvent.key);
+            }
         }
     });
     $("body").on("keyup","#bio",function(event){
@@ -2114,44 +2113,26 @@
         // characteric limiations -- check both sides later then => {
         requestHandler("/api/v1/users/checkIsTaken/","POST",{text:text,type:type},"check"+type);
     }
-    function checkMailResponse(res){
+    function checkResponse(res,type){
         if(!res.message){
-            $("#emailStatus").attr("src","../Statics/images/newIcons/tik.svg");
-            $("#emailStatus").addClass("show");
-            $(".loginRegForm ul .emailError").remove();
+            $(`#${type}Status`).attr("src","../Statics/images/newIcons/tik.svg");
+            $(`#${type}Status`).addClass("show");
+            $(`.messageBox .${type}Error`).remove();
         }
         else{
-            $("#emailStatus").attr("src","../Statics/images/newIcons/cross.svg");
-            $("#emailStatus").addClass("show");
-            if($(".loginRegForm ul .mailError")[0]===undefined) {
-                $(".loginRegForm ul").append(`
-                <li class="mailError">${res.message}</li>
+            $(`#${type}Status`).attr("src","../Statics/images/newIcons/cross.svg");
+            $(`#${type}Status`).addClass("show");
+            if($(`.messageBox .${type}Error`)[0]===undefined) {
+                $(".messageBox").append(`
+                <li class="${type}Error">${res.message}</li>
             `);
             }
             else{
-                $(".loginRegForm ul .mailError").html(`${res.message}`);
+                $(`.messageBox .${type}Error`).html(`${res.message}`);
             }
         }
     }
-    function checkUserNameResponse(res){
-        if(!res.message){
-            $("#usernameStatus").attr("src","../Statics/images/newIcons/tik.svg");
-            $("#usernameStatus").addClass("show");
-            $(".loginRegForm ul .usernameError").remove();
-        }
-        else{
-            $("#usernameStatus").attr("src","../Statics/images/newIcons/cross.svg");
-            $("#usernameStatus").addClass("show");
-            if($(".loginRegForm ul .usernameError")[0]===undefined) {
-                $(".loginRegForm ul").append(`
-                <li class="usernameError">${res.message}</li>
-            `);
-            }
-            else{
-                $(".loginRegForm ul .usernameError").html(`${res.message}`);
-            }
-        }     
-    }
+    
     function updateProfileResponse(res) {
 
     }
