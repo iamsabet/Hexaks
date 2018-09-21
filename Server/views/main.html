@@ -172,14 +172,13 @@
     </div>
     </div>
     <div class="settingsContainer" id="settings">
-        <ul class="menu">
-            <h3 id="account">Account Settings</h3>
-            <h3 id="changePass">Change Password</h3>
-            <h3 id="badges">Badges</h3>
-            <h3 id="activation">Deactive / Delete Account</h3>
-        </ul>
         <div id="settingsContainer" class="settingsForm">
-
+            <div class="menu">
+                <a href="/account">Account Settings</a>
+                <a href="/changePass">Change Password</a>
+                <a href="/badges">Badges</a>
+                <a href="/activation">Deactive / Delete Account</a>
+            </div>
             <div class="profPic">
                 <svg class="clip-svg">
                     <defs>
@@ -221,8 +220,12 @@
                     <label for="city">City</label>
                 </div>
                 <div class="form-group">
+                    <input type="city" id="city"/>
+                    <label for="city">City</label>
+                </div>
+                <div class="form-group">
                     <textarea type="text" id="bio" maxlength="250"></textarea>
-                    <label for="bio" class="bioLabel">Bio</label>
+                    <label for="bio">Bio</label>
                 </div>
                 <button id="setBtn" class="activate">Save Changes</button>
                 <ul class="messageBox">
@@ -235,7 +238,7 @@
             </form>
 
 
-            <form action="/users/changePass" id="changePass">
+            <form id="changePass" action="/users/changePass" >
                 
                 <div class="form-group">
                     <input type="password" id="password"/>
@@ -256,7 +259,27 @@
                     <button id="google"></button>
                 </div>
             </form>
-
+            <form id="activation" action="/users/changePass" >
+                
+                <div class="form-group">
+                    <input type="password" id="password"/>
+                    <label for="password">Password</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confPassword"/>
+                    <label for="confPassword">Confirm Password</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
+                </div>
+                <button id="regBtn">Register</button>
+                <ul class="messageBox">
+    
+                </ul>
+                <div class="socialBox">
+                    <button id="instagram"></button>
+                    <button id="google"></button>
+                </div>
+            </form>
             <div id="passwordBox">
                 <h3 class="message"></h3>
                 <input type="password" placeholder="password" class="requiredPassword">
@@ -1049,7 +1072,7 @@
         // $(".commentsContainer .newComment").addClass("show");
         $(".commentsContainer .new.show").removeClass("show");
         $(".newCommentDiv").addClass("show");
-        autoResizeTextArea(true);
+        autoResizeTextArea(true,'.newCommentDiv textarea.editable.show');
         setTimeout(function(){
             $("#newComment").focus();
         },50);
@@ -1066,9 +1089,10 @@
         $(".commentsContainer .commentCommands.show").removeClass("show");
 
     });
+    
     $("body").on("keydown",".commentsContainer .editable.show",function(event){
         
-        autoResizeTextArea();
+        autoResizeTextArea(false,".newCommentDiv textarea.editable.show'");
         if (commentMode && (Me.userId === commentsList[selectedComment].ownerId)) { // edit 
             if ($(".commentsContainer #newComment").val().toString()+event.originalEvent.key === commentsList[selectedComment].fullText) {
                 if ($(".commentsContainer .newComment.show")[0]) {
@@ -1195,6 +1219,9 @@
     });
 
 
+
+
+    // settings events 
     function requestHandler(url, method, input, caller) {
         $.ajax({
             url: url || "/",
@@ -1365,8 +1392,9 @@
                 closePostAnimations();
             }
         }
-        else if(pageName === "settings"){
+        else if(pageName.startsWith("settings")){
             // debugger;
+            showTargetForm(pageName.split("/")[1]);
             loadUserInfosInForm();
 
         }
@@ -1745,7 +1773,7 @@
                 
             }
             else if (pageName === "settings" || pageName.toLowerCase() === "newpost" || pageName === "post" || pageName === "people" || pageName === "contact") {
-
+                debugger;
                 if (pageName !== currentPage) {
                     if (pageName === "post") {
                         $(".postFooter").addClass("show");
@@ -1768,7 +1796,7 @@
                     currentPage = pageName;
                 }
                 else{
-                    sendPagesInitialRequest(pageName.toLowerCase(),postid,slideAct);
+                    sendPagesInitialRequest(pageType,postid,slideAct);
                 }
                 // => function calls :
             }
@@ -1938,7 +1966,7 @@
     function loadUserInfosInForm(){
         // profile picture
         let fields = document.querySelectorAll('.form-group input');
-
+        // autoResizeTextArea(true,'#bio');
         fields.forEach(field=>{
             field.addEventListener('blur',()=>{
                 if(field.value.trim().length){
@@ -1949,7 +1977,14 @@
                 }
             });
         });
-
+        $("#bio").on("blur",function(){
+            if(this.value.trim().length){
+                this.classList.add("blurred");
+            }
+            else{
+                this.classList.remove("blurred");
+            }
+        });
         $("#username").val(Me.username);
         $("#email").val(Me.email);
         if(!$("#username.blurred")[0])
@@ -1981,6 +2016,11 @@
         }
 
     }
+    // settings events
+    $("body").on("click",".settingsContainer .menu a",function(e){
+        e.preventDefault();
+        changePage("settings","settings/"+this.href.split("/")[-0],false,"",true,false);
+    });
     $("body").on("keyup","#username",function(e){
         if($(this).val().toString().length > 3) {
             checkInputValidation("username",$(this).val().toString());
@@ -1995,6 +2035,9 @@
         if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
             checkInputValidation("email", $(this).val().toString());
         }
+    });
+    $("body").on("keyup","#bio",function(event){
+        // autoResizeTextArea(false,"#bio");
     });
     $('body').on("submit","#profileInfo",function(event) {
         event.preventDefault();
@@ -2881,12 +2924,12 @@
             alert(res.message);
         }
     }
-    function autoResizeTextArea(initial){
-        var textarea = $('.newCommentDiv textarea.editable.show');
+    function autoResizeTextArea(initial,selector){
+        var textarea = $(selector);
         var el = textarea[0];
         if(lastScroolValue < el.scrollHeight || initial) { // characters
             textarea.css("height", parseInt((parseInt(textarea.css("height").split("p")[0]) + el.scrollHeight - lastScroolValue)) + 'px');
-            if(el.scrollHeight < 80 || initial) {
+            if(el.scrollHeight < 10 || initial) {
                 textarea.css("bottom", parseInt((parseInt(textarea.css("bottom").split("p")[0]) + (el.scrollHeight - lastScroolValue)/2)) + 'px');
             }
             lastScroolValue = el.scrollHeight;

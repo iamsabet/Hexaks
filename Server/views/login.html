@@ -14,14 +14,16 @@
     <div class="loginRegForm">
         <h2>Login to Hexaks </h2>
         <form action="/login">
-            <div>
-                <input type="text" placeholder="username or email" id="username"/>
-                <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
-            </div>
-            <div>
-                <input type="password" placeholder="password" id="password"/>
-                <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
-            </div>
+            <div class="form-group">
+                    <input type="text" id="username"/>
+                    <label for="username">Username or Email</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password"/>
+                    <label for="password">Password</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+                </div>
             <button id="logBtn">Login</button>
             <ul class="messageBox">
 
@@ -53,6 +55,19 @@
 
     $(document).ready(function(event){
         requestHandler("/login/getKey", "GET", {}, "getKey");
+
+         let fields = document.querySelectorAll('.form-group input');
+        debugger;
+        fields.forEach(field=>{
+            field.addEventListener('blur',()=>{
+                if(field.value.trim().length){
+                    field.classList.add("blurred");
+                }
+                else{
+                    field.classList.remove("blurred");
+                }
+            });
+        });
     });
 
 

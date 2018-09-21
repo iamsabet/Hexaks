@@ -55,6 +55,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea,form,ul,li,div,label{
 	width:100%;
 	top:50px;
 	text-align: center;
+	padding-right:10px;
 }
 
 .containerDiv > div h2,.containerDiv > div input,.containerDiv > div button{
@@ -106,9 +107,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea,form,ul,li,div,label{
 	font-size: 24px;
 	line-height: 35px;
 	width: 300px;
-	margin: 30px 20px;
+	margin: 20px 20px;
 	display: inline-grid;
-	
+}
+@media (max-width:768px){
+	.containerDiv > div form .form-group{
+		float: none;
+		margin: 10px auto;
+	}
 }
 .containerDiv > div form .form-group input{
 	background: none;
