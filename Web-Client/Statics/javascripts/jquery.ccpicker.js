@@ -142,7 +142,6 @@
 			$(l).addClass("cc-picker-selected-country");
 		}
       });
-
 	  if (e.options.countryFilter) {
         e._filter = $("<input/>", {"class": "cc-picker-code-filter", "placeholder": e.options.searchPlaceHolder}).insertBefore(e._list);
         e._filter.css({
@@ -171,7 +170,7 @@
     },
     selectCountry: function (e, c) {
       var i = $(c).data("countryItem");
-	  this._ccSelectedCountry = i;
+    this._ccSelectedCountry = i;
       e._ccPicker.html(e.createCountryListItem(i.code, i.phoneCode));
       e._ccDialCodeTrackerField.val(i.phoneCode, i.code, i.phoneCode);
 	  $(e.element).trigger("countrySelect", i);

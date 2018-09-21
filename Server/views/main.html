@@ -1911,7 +1911,6 @@
                 <a href="" id="searchButton"></a>
             `);
             if(window.location.pathname.split("settings").length > 1){ // fill user infos in user infos form
-               
                 loadUserInfosInForm();
             }
         }
@@ -2012,6 +2011,9 @@
         }
         else{
             $("#phoneNumber").CcPicker({"countryCode":"ir"});
+            if($(".cc-picker-code-select-enabled")[1]){
+                $(".cc-picker-code-select-enabled")[0].remove();
+            }
         }
         if(Me.bio && Me.bio !== ""){
             $("#bio").val(Me.bio);
