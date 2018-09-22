@@ -219,12 +219,14 @@
                     <input type="city" id="city"/>
                     <label for="city">City</label>
                 </div>
-                <div class="form-group">
-                    <select id="days"></select>
-                    <select id="months"></select>
-                    <select id="years"></select>
+                <div class="form-group dateBox">
                     <input type="text" id="birth"/>
                     <label for="birth">Birth</label>
+                    <div class="datePicker">
+                        <select id="days"></select>
+                        <select id="months"></select>
+                        <select id="years"></select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <textarea type="text" id="bio" maxlength="250"></textarea>
@@ -1399,25 +1401,24 @@
     }
     
     function initialDates(){
-        for (i = new Date().getFullYear() ; i > 1900; i--) {
+        for (var i = new Date().getFullYear() ; i > 1900; i--) {
             $('#years').append($('<option />').val(i).html(i));
         }
-
-        for (i = 1; i < 13; i++) {
-            $('#months').append($('<option />').val(i).html(i));
+        for (var j = 1; j < 13; j++) {
+            if($('#months option').length < 12)
+                $('#months').append($('<option />').val(j).html(j));
         }
         updateNumberOfDays();
     }
-    $('#years, #months').change(function () {
-        updateNumberOfDays();
-    });
+
+
+    
     function updateNumberOfDays() {
         $('#days').html('');
         month = $('#months').val();
         year = $('#years').val();
         days = daysInMonth(month, year);
-
-        for (i = 1; i < days + 1 ; i++) {
+        for (var i = 1; i < days + 1 ; i++) {
             $('#days').append($('<option />').val(i).html(i));
         }
 
@@ -2056,7 +2057,17 @@
         $(".settingsContainer form").removeClass("show");
         $(`.settingsContainer #${formName}`).addClass("show");
     }
+    function updateDateInput(day,month,year){
+        $("#birth").val(`${month} / ${day} / ${year}`);
+        $("#birth").addClass("blurred");
+    }
     // settings events
+    $('#years, #months').change(function () {
+        updateNumberOfDays();
+    });
+    $('#days, #years, #months').change(function () {
+        updateDateInput($("#days").val(),$("#months").val(),$("#years").val());
+    });
     $("body").on("click",".settingsContainer .menu a",function(e){
         e.preventDefault();
         changePage("settings","settings/"+this.href.split("/").pop(),true,"",true,true);

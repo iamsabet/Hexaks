@@ -1990,12 +1990,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .settingsContainer > div form div{
 	left:0;
-	width:80%;
+	width:100%;
 	color:black;
 	background-color: transparent;
 	height: 60px;
 	position: relative;
 	display: inline-block;
+	top:15px;
 }
 .settingsContainer > div form div input{
 	background-color: white;
@@ -2026,6 +2027,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	display: inline-grid;
 	float:left;
 }
+
 @media (max-width:768px){
 	.settingsContainer > div form .form-group{
 		float: none;
@@ -2041,7 +2043,9 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .settingsContainer > div .form-group.phone .list{
 	z-index:100;
 }
-
+.settingsContainer > div form .form-group .datePicker{
+	display: inline-block;
+}
 .settingsContainer > div form .form-group input,.settingsContainer > div form .form-group textarea{
 	background: none;
 	border: none;
@@ -2062,7 +2066,8 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .settingsContainer > div form .form-group select{
 	background: none;
 	border: none;
-	width: 40px;
+	width: auto;
+	margin:5px 10px;
 	height: 35px;
 	border-bottom: 2px solid #aaa;
 	border-bottom-color: rgb(170, 170, 170);
@@ -2094,6 +2099,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .settingsContainer > div form .form-group textarea + label{
 	bottom:20px;
 }
+
 .settingsContainer > div form .form-group input:focus ,.settingsContainer > div form  .form-group input.blurred{
 	color:white;
 	border-color:#ff0055;
@@ -2127,6 +2133,9 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	bottom:10px;
 	opacity: 0.6;
 	color:#ff0055; 
+}
+.settingsContainer > div form .form-group.dateBox input:focus + label,.settingsContainer > div form .form-group.dateBox input.blurred + label{
+	bottom:70px;
 }
 .settingsContainer > div form .form-group textarea:focus + label ,.settingsContainer > div form .form-group textarea.blurred + label{
 	font-size:15px;
@@ -4412,6 +4421,7 @@ div.cc-picker-flag.ee{
     font-size:16px;
     text-align: right;
 }
+
 .commentsList li .profPic img{
 }
 
