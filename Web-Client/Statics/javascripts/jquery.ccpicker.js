@@ -143,12 +143,13 @@
 		}
       });
 	  if (e.options.countryFilter) {
-        e._filter = $("<input/>", {"class": "cc-picker-code-filter", "placeholder": e.options.searchPlaceHolder}).insertBefore(e._list);
+        e._filter = $("<input/>", {"class": "cc-picker-code-filter","id":"searchCountry", "placeholder": e.options.searchPlaceHolder}).insertBefore(e._list);
         e._filter.css({
           top: 0,
           left: 0,
           "z-index": zIndex
         });
+        $("#searchCountry").focus();
         e._filter.on("click", function (e) {
           e.stopPropagation();
         });
@@ -156,6 +157,7 @@
           var text = $(this).val();
           $('.cc-picker-code-list li:not(:ccContains("' + text + '"))').hide();
           $('.cc-picker-code-list li:ccContains("' + text + '")').show();
+         
         });
       }
     },

@@ -151,7 +151,12 @@ var users = {
                                 interestCategories: [], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
                                 password: password, // hashed password
                                 gender: -1 , // 0 female 1male 2 others
-                                birthDate: null,
+                                birthDate: -1,
+                                birth:{
+                                    day:-1,
+                                    month:-1,
+                                    year:-1,
+                                },
                                 followingsCount: 0,
                                 followersCount: 0,
                                 blockList:[],
@@ -417,13 +422,15 @@ var users = {
     });
    },
     updateProfileInfo:function(req,res,user){
-        let fullName = req.body["fullName"]
+        let fullName = req.body["fullName"];
         let email = req.body["email"];
         let phoneNumber = req.body["phoneNumber"];
         let city = req.body["city"];
         let bio = req.body["bio"];
+        let birthDate = req.body["birthDate"];
         let errorList = [];
         let username = req.body["username"];
+        
         if(!user.ban.is){      
             let updates = {};
             let query = {userId:user.userId}; 

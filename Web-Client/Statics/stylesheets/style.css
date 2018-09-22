@@ -2218,6 +2218,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	font-size: 12px;
 	text-align: left;
 }
+.settingsContainer > div form .form-group .cc-picker-code-list li.selected{
+	border:2px solid #ff0055;
+	background-color:#aaa;
+}
 .settingsContainer > div form .form-group .cc-picker-code-list .cc-picker-flag{
 	float: left;
 	margin-top:10px;

@@ -1414,6 +1414,7 @@
 
     
     function updateNumberOfDays() {
+        var tempDay = $('#days').val();
         $('#days').html('');
         month = $('#months').val();
         year = $('#years').val();
@@ -1421,6 +1422,8 @@
         for (var i = 1; i < days + 1 ; i++) {
             $('#days').append($('<option />').val(i).html(i));
         }
+        if(tempDay)
+            $("#days").val(tempDay);
 
     }
 
@@ -1437,7 +1440,7 @@
                 placeProfileInfo(res);
             }break;
             case "updateProfileInfo" : {
-                updateProfileResponse(res);
+                updateProfileResponse(res,input);
             }break;
             case "loadProfile" : {
                 loadProfileResponse(res);
@@ -1469,8 +1472,11 @@
             case "view":{
                 views[postsList[currentPostItterator].postId] = 1;
             }break;
-            case  "editCaption" || "editCategory" || "editPrivacy":{
+            case  "editCaption":{
                 editPostResponseAction(res,caller);
+            }break;
+            case "editPrivacy":{
+
             }break;
             case  "addComment":{
                 commentsResponseActions(res,input,caller);
@@ -1501,9 +1507,14 @@
                 initialAlbumsResponseAction(res);
             }break;
             // settings actions 
-            case "checkemail" || "checkusername" || "checkphoneNumber":{
-                debugger;
-                checkResponse(res,caller.split("check")[1]);
+            case "checkemail":{
+                checkResponseAction(res,caller.split("check")[1]);
+            }break;
+            case "checkusername":{
+                checkResponseAction(res,caller.split("check")[1]);
+            }break;
+            case "checkphoneNumber":{
+                checkResponseAction(res,caller.split("check")[1]);
             }break;
 
         }
@@ -2078,23 +2089,62 @@
         if($(this).val().toString().length > 3) {
             checkInputValidation("username",$(this).val().toString()+e.originalEvent.key);
         }
+        else{
+            checkResponseAction({message:"Username must be at least 4 chars"},"username");
+        }
     });
     $("body").on("keyup","#email",function(e){
-        if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
+        if(($(this).val().toString().length >4) &&  $(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
             checkInputValidation("email", $(this).val().toString()+e.originalEvent.key);
+        }
+        else{
+            checkResponseAction({message:"Invalid Email"},"email");
         }
     });
     $("body").on("keyup","#phoneNumber",function(e){
-        if($(this).val().toString().length > 3) {
-            if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
-                checkInputValidation("phoneNumber", $(".cc-picker-code").html()+"/"+$(this).val()+e.originalEvent.key);
+        if($(this).val().toString().length > 3){
+            checkInputValidation("phoneNumber", $(".cc-picker-code").html()+"/"+$(this).val()+e.originalEvent.key);
+        }
+        else{
+            checkResponseAction({message:"Invalid Phone Number"},"phoneNumber");
+        }
+    });
+    countrySelectorItterator = -1;
+    $("body").on("keypress","#searchCountry",function(e){
+        if(e.keyCode === 13){
+            e.preventDefault();
+        }
+        else if(e.keyCode === 37){ // ;left
+            
+        }
+        else if(e.keyCode === 38){ // up
+            if(countrySelectorItterator > -1){
+                countrySelectorItterator--;
+                $(".list ul li").removeClass("selected");
+                $($(".list ul li")[countrySelectorItterator]).addClass("selected");
+            }
+        }
+        else if(e.keyCode === 39){ // ;right
+
+        }
+        else if(e.keyCode === 40){ // down
+            if($(".list ul li").length > 0 && countrySelectorItterator < ($(".list ul li").length-1)){
+                countrySelectorItterator++;
+                $(".list ul li").removeClass("selected");
+                $($(".list ul li")[countrySelectorItterator]).addClass("selected");
             }
         }
     });
     $("body").on("keyup","#bio",function(event){
         // autoResizeTextArea(false,"#bio");
     });
-    $('body').on("submit","#profileInfo",function(event) {
+    $('body').on("submit","#account",function(event) {
+        event.preventDefault();
+    });
+    $('body').on("submit","#changePass",function(event) {
+        event.preventDefault();
+    });
+    $('body').on("submit","#activation",function(event) {
         event.preventDefault();
     });
     $('.settingsForm').on("click","#setBtn",function(e){
@@ -2108,15 +2158,19 @@
             if(Me.email !== $("#email").val()){
                 input.email = $("#email").val();
             }
-            if(Me.fullName !== $("#fullName").val()){
+            if(Me.fullName !== $("#fullName").val() && $("#fullName").val().toString()){
                 input.fullName = $("#fullName").val();
             }
-            if(Me.city !== $("#city").val()){
+            if(Me.city !== $("#city").val() && $("#city").val().toString()){
                 input.city = $("#city").val();
+            }
+            if(Me.bio !== $("#bio").val() && $("#bio").val().toString() !== ""){
+                input.bio = $("#bio").val();
             }
             if(Me.phone && (Me.phone.number !== parseInt($("#phoneNumber").val()) || (Me.phone.code !== parseInt($(".cc-picker-code").html())))){
                 input.phoneNumber = parseInt($(".cc-picker-code").html())+"/"+parseInt($("#phoneNumber").val());
             }
+            input.birthDate = parseInt($(".cc-picker-code").html())+"/"+parseInt($("#phoneNumber").val());
             requestHandler("/api/v1/users/updateProfileInfo", "POST", input,"updateProfileInfo");
         }
     });
@@ -2124,7 +2178,7 @@
         // characteric limiations -- check both sides later then => {
         requestHandler("/api/v1/users/checkIsTaken/","POST",{text:text,type:type},"check"+type);
     }
-    function checkResponse(res,type){
+    function checkResponseAction(res,type){
         if(!res.message){
             $(`#${type}Status`).attr("src","../Statics/images/newIcons/tik.svg");
             $(`#${type}Status`).addClass("show");
@@ -2145,7 +2199,7 @@
     }
     
     function updateProfileResponse(res) {
-
+        debugger;
     }
 
     function loadProfileResponse(res) {

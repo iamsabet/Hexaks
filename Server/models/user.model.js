@@ -12,7 +12,12 @@ var userSchema = new Schema({
     interestCategories:[], // categories  //  up to 6   // -->   field of theyr intrest for suggest and advertise
     password : String,
     gender:String,
-    birthDate:Date,
+    birthDate:Number,
+    birth:{
+        day:Number,
+        month:Number,
+        year:Number,
+    },
     followingsCount:Number,
     followersCount:Number,
     followings:[], 
