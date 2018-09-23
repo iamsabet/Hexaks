@@ -40,7 +40,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height: auto;
 	display: block;
 	float: left;
-	padding: 0 0 100px;
+	padding:0;
 }
 .topNav{
     position: fixed;
@@ -1831,7 +1831,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	left:-105%;
 	height: 100%;
 	top:0;
-	padding:5px;
+	padding:0;
 	margin:0;
 	z-index:103;
 	background-color:#e9e9e9;
@@ -1878,7 +1878,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .settingsContainer .menu{
 	background-color: rgba(50,50,50,0.90);
 	margin-bottom: 0;
-	position: relative;
+	position: absolute;
 	height: 170px;
 	width: 100%;
 	text-align: center;
@@ -1887,7 +1887,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	display: block;
 	overflow: hidden;
 	z-index: 100;
-	top:-33px;
+	top:41px;
 }
 .settingsContainer .menu a{
 	max-width: 300px;
@@ -1938,6 +1938,10 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	z-index: 1;
 	opacity: 0;
 	padding:0;
+	top:160px;
+	height: calc(100% - 130px);
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 #account.show,#changePass.show,#badges.show,#activation.show{
 	-webkit-transform: translate(0,0);

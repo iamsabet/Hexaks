@@ -2086,8 +2086,14 @@
         $(this).addClass("selected");
     });
     $("body").on("keyup","#username",function(e){
-        if($(this).val().toString().length > 3) {
-            checkInputValidation("username",$(this).val().toString()+e.originalEvent.key);
+        if($(this).val().toString().length > 3){
+            if($(this).val().toString().length < 25){
+                checkInputValidation("username",$(this).val().toString()+e.originalEvent.key);
+            }
+            else{
+                e.preventDefault();
+                checkResponseAction({message:"Maximum Characters Reached = 24"},"username");
+            }
         }
         else{
             checkResponseAction({message:"Username must be at least 4 chars"},"username");
@@ -2103,7 +2109,9 @@
     });
     $("body").on("keyup","#phoneNumber",function(e){
         if($(this).val().toString().length > 3){
-            checkInputValidation("phoneNumber", $(".cc-picker-code").html()+"/"+$(this).val()+e.originalEvent.key);
+            if(!isNaN(parseInt(e.originalEvent.key)) && (parseInt(e.originalEvent.key) >= 0) && (parseInt(e.originalEvent.key) < 10)){
+                checkInputValidation("phoneNumber", $(".cc-picker-code").html()+"/"+$(this).val());
+            }
         }
         else{
             checkResponseAction({message:"Invalid Phone Number"},"phoneNumber");
@@ -2172,6 +2180,7 @@
             }
             input.birthDate = parseInt($(".cc-picker-code").html())+"/"+parseInt($("#phoneNumber").val());
             requestHandler("/api/v1/users/updateProfileInfo", "POST", input,"updateProfileInfo");
+            // show loader
         }
     });
     function checkInputValidation(type,text){
@@ -2198,7 +2207,15 @@
         }
     }
     
-    function updateProfileResponse(res) {
+    function updateProfileResponse(res,input) {
+        // remove loader
+        if(res.message){
+            // add messages 
+            // res.message["username"] , res.message["email"] , res.message["phoneNumber"]
+        }
+        else{
+            window.location.reload();
+        }
         debugger;
     }
 

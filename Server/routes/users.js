@@ -14,6 +14,7 @@ var validator = require('validator');
 var phoneValidator = require( 'awesome-phonenumber' );
 var random = require('randomstring');
 const ipCountry = require('ip-country');
+const variables = require("../variables");
 var requestIp = require("request-ip");
 var CryptoJS = require("crypto-js");
 let validateUser = require('./auth').validateUser;
@@ -46,46 +47,67 @@ var users = {
         res.send(encryptionKey);
     },
     checkValidationAndTaken : function(text,type,user,callback) {
+        let canQuery = true;
+        let TempText = text;
         if(text===null){
             return callback(true); 
         }
         if ((text) && ((type === "username") || (type === "email") || (type === "phoneNumber")) && (typeof text === "string" && (text.length > 3))) {
             if(type === "email"){
                 if(!validator.isEmail(text)){
-                    return callback({result:false,message:"Invalid email"});
+                    return callback({result:true,message:"Invalid email"});
                 }
             }
             else if(type==="phoneNumber"){
-                if(!validator.isMobilePhone(text)){
-                    return callback({result:false,message:"Invalid mobile phone number"});
+                text = text.split("/").join("");
+                if(text.length < 8 || !validator.isMobilePhone(text)){
+                    return callback({result:true,message:"Invalid mobile phone number"});
                 }
             }
-            
+            if(type==="username"){
+                text = text.slice(0,23).toLowerCase();
+            }
             let query={};
-
             if(user.message){
-                query[type] = text;
-                userSchema.findOne(query,{username:1},function(err,userx){
-                    if(err) return callback({result:false,message:"Oops something went wrong"});
-                    if(!userx){
-                        return callback(true);
+                if(type="phoneNumber"){
+                    let countryObj = variables.phoneCodes[TempText.split("/")[0]];
+                    if(countryObj){
+                        query["phone.code"] = parseInt(TempText.split("/")[0]);
+                        query["phone.number"] = parseInt(TempText.split("/")[1]);
                     }
                     else{
-                        return callback({result:false,message:type + " already taken"});
+                        canQuery = false;
                     }
-                });
+                }
+                else{
+                    query[type] = text;
+                }
+                if(canQuery){
+                    userSchema.findOne(query,{username:1},function(err,userx){
+                        if(err) return callback({result:true,message:"Oops something went wrong"});
+                        if(!userx){
+                            return callback(true);
+                        }
+                        else{
+                            return callback({result:true,message:" already taken"});
+                        }
+                    });
+                }
+                else{
+                    return callback({result:true,message:"Country code does not found / invalid phone number"});
+                }
             }
             else{
                 
                 canQuery = (user[type] !== text) || false; // not the same condition
                 query[type] = text;
                 userSchema.findOne(query,{username:1},function(err,userx){
-                    if(err) return callback({result:false,message:"Oops something went wrong"});
+                    if(err) return callback({result:true,message:"Oops something went wrong"});
                     if(!userx){
                         return callback(true);
                     }
                     else{
-                        return callback({result:false,message:type + " already taken"});
+                        return callback({result:true,message:" already taken"});
                     }
                 });
             }
@@ -423,34 +445,143 @@ var users = {
    },
     updateProfileInfo:function(req,res,user){
         let fullName = req.body["fullName"];
-        let email = req.body["email"];
-        let phoneNumber = req.body["phoneNumber"];
         let city = req.body["city"];
         let bio = req.body["bio"];
-        let birthDate = req.body["birthDate"];
-        let errorList = [];
+        let errorMessages = {};
+        let birthDay = req.body["birthDate"];
         let username = req.body["username"];
-        
+        let email = req.body["email"];
+        let phoneNumber = req.body["phoneNumber"];
         if(!user.ban.is){      
             let updates = {};
+            let canQuery = true;
             let query = {userId:user.userId}; 
+            // 
+            if(fullName && typeof fullName ==="string" && fullName !== ""){
+                updates["fullName"] = fullName.slice(0,30);
+            }
+            if(city && typeof city ==="string" && city !== ""){
+                city["city"] = city.slice(0,30);
+            }
+            if(bio && typeof bio ==="string" && bio !== ""){
+                bio["bio"] = bio.slice(0,256);
+            }
             // check is taken ,, all validations check then update and reload in client
-            users.checkValidationAndTaken(email,"email",user,function(resulte){
-                users.doUpdateInfo(query,updates,res);
-            });
+
+
+
+            let birth = birthDay.split("/");
+            // bithdate
+            if(birthDate.split("/").length===3){
+                let month = parseInt(bith[0]);
+                let day = parseInt(bith[1]);
+                let year = parseInt(bith[2]);
+                let thisYear = new Date().getFullYear();
+                if((!isNaN(month) && (month < 13) && (month > 0)) && (!isNaN(day) && (day < 32) && (day > 0)) && (!isNaN(year) && (year < thisYear) && (year > 0))){
+                    updates["birth"] = {
+                        day : birth[1],
+                        month : birth[0],
+                        year : birth[2],
+                    }
+                    let birthDate = new Date(birth[2], birth[0], birth[1]).getTime();
+                    updates["birthDate"] = birthDate;
+                }
+                else{
+                    // add error date message
+                }
+            }
+            let password = req.body["password"];
+            if(username){
+                updates["username"] = username;
+            }
+            else{
+                updates["username"] = null;
+            }
+            if(email){
+                updates["email"] = email ;
+            }
+            else{
+                updates["email"] = null;
+            }
+            if(phoneNumber && (typeof phoneNumber==="string") && (phoneNumber.split("/").length===2)){
+                updates["phoneNumber"] = phoneNumber.slice(0,23);
+            }
+            else{
+                updates["phoneNumber"] = null;
+            }
+            // username
+            if(updates["username"] || updates["email"] || updates["phoneNumber"]){
+                if(!password || (typeof password !== "string") || password.length > 5){
+                    canQuery = false;
+                }
+                else{
+                    query["password"] = password;
+                }
+            }
+            if(canQuery){
+                users.checkValidationAndTaken(updates["username"],"username",user,function(resultu){
+                    users.checkValidationAndTaken(updates["email"],"email",user,function(resulte){
+                        users.checkValidationAndTaken(updates["phoneNumber"],"phoneNumber",user,function(resultp){
+                            if(resultu.message){    
+                                errorMessages["username"] = resultu.message;
+                                delete updates["username"];
+                            }
+                            if(resulte.message){    
+                                errorMessages["email"] = resulte.message;
+                                delete updates["email"];
+                            }
+                            if(resultp.message){    
+                                errorMessages["phoneNumber"] = resultp.message;
+                                delete updates["phoneNumber"];
+                            }
+                            users.doUpdateInfo(query,updates,res,errorMessages);
+                        });
+                    });
+                });
+            }
+            else{
+                res.send({result:false,message:"incorrect password"});
+            }
         }
         else{
-            res.send({result:false,false:"sorry you cant change your info till your ban expires : "+(user.ban.expire - Date.now()) });
+            res.send({result:false,message:"sorry you cant change your info till your ban expires : "+(user.ban.expire - Date.now()) });
         }
     },
-    doUpdateInfo:function(query,updates,res){
+    doUpdateInfo:function(query,updates,res,errorMessages){
+        console.log(query["password"]);
+        if(query["password"]){
+            query["password"] = CryptoJS.HmacSHA512(query["userId"],query["password"]).toString();
+        }
+        if(updates["phoneNumber"]){
+            updates["phone.code"] = parseInt(TempText.split("/")[0]);
+            updates["phone.number"] = parseInt(TempText.split("/")[1]);
+            let countryObj = variables.phoneCodes[TempText.split("/")[0]];
+            if(countryObj){
+                updates["phone.countryCode"] = countryObj.code;
+
+            }
+        }
+        if(updates["email"]){
+            // verification email create expire in 1h
+        }
         userSchema.update(query,{$set:updates},function(err,resultu) {
             if (err) res.send(err);
             if (resultu.n > 0) {
-                res.send(true);
+                if(updates["username"]){
+                    
+                }
+                if(updates["email"]){
+                    users.sendEmailVerification(userId,updates["email"]);
+                }
+                if(updates["phoneNumber"]){
+                    users.sendPhoneVerification(userId,updates["phoneNumber"]);
+                }
+                // update cache 
+                res.send({result:true,message:errorMessages});
             }
             else{
-                res.send({result:false,message:"username already token"});
+                errorMessages["result"] = "update failed";
+                res.send({result:false,message:errorMessages});
             }
         });
     },
@@ -476,6 +607,18 @@ var users = {
             res.send({result:false,message:"504 Bad Request"});
         }
 
+    },
+    sendPhoneVerification:function(userId,phoneNumber){ // set in redis for verification code create expire in 
+        console.log(userId + "   set   " + phoneNumber);
+    },
+    sendEmailVerification:function(userId,email){
+        console.log(userId + "   set   " + email);
+    },
+    checkPhoneVerification:function(userId,phoneNumber){ // set in redis for verification code create expire in 
+        console.log(userId + "   check   " + phoneNumber);
+    },
+    checkEmailVerification:function(userId,email){
+        console.log(userId + "   check   " + email);
     },
     resetPassword:function(type,identification){ // email or phone number , username or email
 
