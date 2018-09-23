@@ -13,6 +13,7 @@ var redis = require('redis');
 var validator = require('validator');
 var phoneValidator = require( 'awesome-phonenumber' );
 var random = require('randomstring');
+var rn = require('random-number');
 const ipCountry = require('ip-country');
 const variables = require("../variables");
 var requestIp = require("request-ip");
@@ -136,6 +137,7 @@ var users = {
                     let userId = random.generate(12);
                     let pst = decrypted.split("/")[2].toString();
                     let password = CryptoJS.HmacSHA512(userId,pst);
+                    // send email verifications 1day
                     let emailVerificationKey = random.generate(6);
                     let smsVerificationKey = random.generate(6);
 
@@ -580,7 +582,7 @@ var users = {
                 res.send({result:true,message:errorMessages});
             }
             else{
-                errorMessages["result"] = "update failed";
+                errorMessages["result"] = "Wrong Password";
                 res.send({result:false,message:errorMessages});
             }
         });

@@ -1925,7 +1925,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	text-align: center;
 	padding-left:10px;
 }
-#account,#changePass,#badges,#activation,.passRequired{
+#account,#changePass,#badges,#activation,#passRequired{
 	-webkit-transition: all 0.3s ease-out;
 	-moz-transition: all 0.3s ease-out;
 	-ms-transition: all 0.3s ease-out;
@@ -1954,26 +1954,61 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 @media (max-width:686px){
 	#account.show, #changePass.show, #badges.show, #activation.show{
-		padding:30px 0;
+		padding:30px 0 80px;
+		height: auto;
 	}
 }
-.passRequired{
-	position: absolute;
-	height:0;
-	left:50%;
+.settingsContainer > div #passRequired{
+	position: fixed;
+	width:100%;
+	left:0;
+	top:0;
+	background-color:rgba(15,15,15,0.85);
+	text-align: center;
 	-webkit-transition: all 0.3s ease-out;
 	-moz-transition: all 0.3s ease-out;
 	-ms-transition: all 0.3s ease-out;
 	-o-transition: all 0.3s ease-out;
 	transition: all 0.3s ease-out;
-	-webkit-transform: translate(-50%,0);
-	-moz-transform: translate(-50%,0);
-	-ms-transform: translate(-50%,0);
-	-o-transform: translate(-50%,0);
-	transform: translate(-50%,0);
+	opacity: 0;
+	height:0;
+	z-index:-1;
 }
-.passRequired.show{
-	height: 100px;
+.settingsContainer > div #passRequired.show{
+	height: 100%;
+	opacity: 1;
+	z-index:1000;
+}
+.settingsContainer > div #passRequired .form-group{
+	float: none;
+	padding: 100px 0 0;
+}
+.settingsContainer > div #passRequired .form-group p{
+	width: 100%;
+	padding: 10px 0;
+	margin:0;
+	display: block;
+	height: 90px;
+}
+.settingsContainer > div #passRequired .form-group p button{
+	position: relative;
+	display: block;
+	width: 100px;
+	height: 50%;
+	margin: 50px 0 0px;
+	font-size: 20px;
+}
+.settingsContainer > div #passRequired .form-group p button.cancel{
+	float: left;
+	clear: left;
+	background-color: #777;
+	color:black;
+}
+.settingsContainer > div #passRequired .form-group p button.ok{
+	float: right;
+	background-color: #ff0044;
+	color:white;
+	clear: right;
 }
 .settingsContainer > div h2,.settingsContainer > div input,.settingsContainer > div button,.settingsContainer > div textarea{
 	position: relative;

@@ -275,11 +275,14 @@
                 </ul>
                 
             </form>
-            <form class="passRequired">
+            <form id="passRequired">
                 <div class="form-group">
-                    <input type="password" class="passRequired"/>
-                    <label for="passRequired">Enter Your Password To Complete This Action</label>
-                    <button class="submitRequiredPassword">Submit</button>
+                    <input type="password" id="passwordRequiredField"/>
+                    <label for="passwordRequiredField">Password Required</label>
+                    <p>
+                        <button class="ok">Send</button>
+                        <button class="cancel">Cancel</button>
+                    </p>
                 </div>
             </form>
     </div>
@@ -548,6 +551,7 @@
     var currentPost = {};
     var left = {};
     var right = {};
+    var updateInfo = null;
     var currentPostItterator = 0;
     var currentImageItterator = 0;
     var lastPostItterator = -1;
@@ -2085,10 +2089,16 @@
         $(".settingsContainer .menu a").removeClass("selected");
         $(this).addClass("selected");
     });
+    let usernameInterval = null;
     $("body").on("keyup","#username",function(e){
         if($(this).val().toString().length > 3){
             if($(this).val().toString().length < 25){
-                checkInputValidation("username",$(this).val().toString()+e.originalEvent.key);
+                let text = $(this).val().toString()+e.originalEvent.key;
+                window.clearInterval(usernameInterval);
+                usernameInterval = setInterval(function(){
+                    checkInputValidation("username",text);
+                    window.clearInterval(usernameInterval);
+                },300);
             }
             else{
                 e.preventDefault();
@@ -2099,18 +2109,30 @@
             checkResponseAction({message:"Username must be at least 4 chars"},"username");
         }
     });
+    let emailInterval = null;
     $("body").on("keyup","#email",function(e){
         if(($(this).val().toString().length >4) &&  $(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
-            checkInputValidation("email", $(this).val().toString()+e.originalEvent.key);
+            window.clearInterval(emailInterval);
+            let text = $(this).val().toString()+e.originalEvent.key;
+            emailInterval = setInterval(function(){
+                checkInputValidation("email", text);
+                window.clearInterval(emailInterval);
+            },300);
         }
         else{
             checkResponseAction({message:"Invalid Email"},"email");
         }
     });
+    let phoneNumberInterval = null;
     $("body").on("keyup","#phoneNumber",function(e){
         if($(this).val().toString().length > 3){
             if(!isNaN(parseInt(e.originalEvent.key)) && (parseInt(e.originalEvent.key) >= 0) && (parseInt(e.originalEvent.key) < 10)){
-                checkInputValidation("phoneNumber", $(".cc-picker-code").html()+"/"+$(this).val());
+                let text = $(".cc-picker-code").html()+"/"+$(this).val();
+                window.clearInterval(phoneNumberInterval);
+                phoneNumberInterval = setInterval(function(){
+                    checkInputValidation("phoneNumber",text);
+                    window.clearInterval(phoneNumberInterval);
+                },300);
             }
         }
         else{
@@ -2143,6 +2165,23 @@
             }
         }
     });
+    
+    $("body").on("submit","#passRequired",function(e){
+        e.preventDefault();
+    });
+    $("body").on("submit","#passRequired .ok",function(e){
+        e.preventDefault();
+        sendUpdateRequestWithPassword($("#passwordRequiredField").val());
+        $("#passwordRequiredField").val("");
+        $("#passRequired.show").removeClass("show");
+    });
+    $("body").on("submit","#passRequired .cancel",function(e){
+        e.preventDefault();
+        $("#passwordRequiredField").val("");
+        $("#passRequired.show").removeClass("show");
+    });
+    $("#passwordRequiredField").html();
+
     $("body").on("keyup","#bio",function(event){
         // autoResizeTextArea(false,"#bio");
     });
@@ -2179,10 +2218,23 @@
                 input.phoneNumber = parseInt($(".cc-picker-code").html())+"/"+parseInt($("#phoneNumber").val());
             }
             input.birthDate = parseInt($(".cc-picker-code").html())+"/"+parseInt($("#phoneNumber").val());
-            requestHandler("/api/v1/users/updateProfileInfo", "POST", input,"updateProfileInfo");
+            if(input["username"] || input["email"] || input["phoneNumber"]){
+                setUpdateInput(input,"/users/updateProfileInfo");
+                $("#passRequired").addClass("show");
+            }
+            else
+                updateProfileInfo(input);
             // show loader
         }
     });
+    function sendUpdateRequestWithPassword(password){
+        updateInfo["password"] = password;
+        requestHandler("/api/v1"+updateInfo.url, "POST", updateInfo,updateInfo.url.split("/").join(""));
+    };
+    function setUpdateInput(input,url){
+        updateInfo = input;
+        updateInfo["url"] = url;
+    }
     function checkInputValidation(type,text){
         // characteric limiations -- check both sides later then => {
         requestHandler("/api/v1/users/checkIsTaken/","POST",{text:text,type:type},"check"+type);
