@@ -341,35 +341,41 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     right: 0;
     left: auto;
     position: fixed;
-    width: 120px;
+    width: 110px;
     top: 0;
     z-index: 1000002;
     display: block;
-    height: 80px;
-    border: 0;
+	border: 0;
+	right: 0;
     background-color: black;
     padding-top: 4px;
     padding-bottom: 0;
-    -webkit-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
-    -ms-transition: all 0.3s ease-in-out;
-    -o-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -ms-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+	transition: all 0.4s ease-in-out;
+	text-align: center;
+	height: 80px;
 }
 .nav.show{
+	padding: 0;
 	height: 100vh;
 }
 @media (max-width:768px){
 	.nav{
-		right:-43px;
-		width:160px;
+		height: 100vh;
+		right: -61px;
+		background: transparent;
+		width: 130px;
 	}
 	.nav.show{
-		height: 100vh;
+		right: 0;
+		background-color: black;
 	}
 }
 
-.nav:hover{
+.nav.show:hover{
 	box-shadow: 5px 1px 10px 5px #777777;
 }
 .nav #logo{
@@ -381,6 +387,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	width:90%;
 	max-width: 70px;
 	height: auto;
+	z-index: 1000003;
     display: block;
     clear: both;
     margin-bottom: 0;
@@ -395,7 +402,8 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     -moz-transition: all 0.3s ease-in-out;
     -ms-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+	background: transparent;
 }
 .nav.show #logo{
 	
@@ -403,9 +411,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 @media (max-width:768px){
 	.nav #logo{
 		right:-40px;
+		max-width:80px;
 	}
 	.nav.show #logo{
 		right:auto;
+	}
+	.nav #logo:hover{
+		background-color: transparent;
 	}
 }
 .nav img:hover{
@@ -413,28 +425,37 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .nav ul{
 	width:100%;
-	height: 0;
 	padding: 0;
 	margin:0;
 	list-style-type: none;
 	display: inline-block;
 	position: absolute;
 	clear: both;
-	right: -200px;
-	-webkit-transition: all 0.2s ease-in-out;
-    -moz-transition: all 0.2s ease-in-out;
-    -ms-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-	transition: all 0.2s ease-in-out;
-	right: -200;
+	right: -180px;
+	-webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+	top:100px;
 }
 
 .nav.show ul{
-	height: auto;
 	right: 0;
-	top:100px;
 }
-.nav ul li,.nav a{
+
+@media (max-width:768px){
+	.nav ul{
+		right:-150px;
+		
+	}
+	.nav.show ul{
+		right:0;
+	}
+}
+
+
+.nav ul li{
 	position: relative;
 	display: inline-block;
 	width:100%;
@@ -443,53 +464,73 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	margin-bottom:5px;
 	line-height: 25px;
 	font-size: 20px;
-	height: 28px;
+	height: auto;
 	vertical-align: middle;
 	color:white;
 	clear: both;
-	text-align: left;
+	text-align: center;
 	background-color: black;
 	margin-left:0;
-	-webkit-transition: background-color,color,margin-left 200ms;
-	-moz-transition: background-color,color,margin-left 200ms;
-	-ms-transition: background-color,color,margin-left 200ms;
-	-o-transition: background-color,color,margin-left 200ms;
-	transition: background-color,color,margin-left 200ms;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-ms-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+	padding:0;
 }
 
 
-@media (max-width:768px){
-	.nav ul{
-		right:-43px;
-		width:90px;
-	}
-	.nav.show ul{
-		right:0;
-	}
-}
+
 
 
 .nav ul li.selected{
 	background-color: #ededed;
 	color:black;
 	cursor: pointer;
-	margin-left:-5px;
+	margin-left:-8px;
 }
-.nav a.selected{
+.nav.show ul li.selected a{
+	background-color:#ff0055;
+}
+.nav ul li:hover,#about:hover{
 	background-color: #ededed;
 	color:black;
 	cursor: pointer;
+	box-shadow: 5px 1px 10px 5px #777777;
 	margin-left:-5px;
 }
-.nav ul li:hover,.nav a:hover ,#about:hover{
-	background-color: #ededed;
-	color:black;
-	cursor: pointer;
-	margin-left:-5px;
+.nav ul li a{
+	position: relative;
+	width:100%;
+	height: 100%;
+	margin:0;
+	padding:0;
+	outline: none;
+	display: block;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-ms-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
 }
 
-
-
+.nav ul li a img{
+	height: 50px;
+	width: auto;
+	margin: 0 auto;
+	display: block;
+	float: none;
+	padding: 5px 0 0 0;
+}
+.nav ul li a img svg{
+	
+}
+.nav ul li a span{
+	width: 100%;
+	padding:2px 2px;
+	font-size:20px;
+	text-align: center;
+}
 
 .mainContainer{
 	position: relative;
@@ -781,7 +822,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .accountCard{
     position: fixed;
     top: 0;
-    z-index: 10000000;
+    z-index: 10000; 
     right: 120px;
     width: auto;
     min-width: 300px;

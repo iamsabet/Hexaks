@@ -34,19 +34,19 @@
         <ul>
             <li class="navRightButtons">
                 <a href="/home">
-                    <img src="../Statics/images/newIcons/home.svg" class="navIcon">
+                    <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
                     <span>Home</span>
                 </a>
             </li>
             <li class="navRightButtons">
                 <a href="/explore">
-                    <img src="../Statics/images/newIcons/Explore.svg" class="navIcon">
+                    <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
                     <span>Explore</span>
                 </a>
             </li>
             <li class="navRightButtons">
                 <a href="/following">
-                    <img src="../Statics/images/newIcons/following.svg" class="navIcon">
+                    <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
                     <span>Following</span>
                 </a>
             </li>
@@ -63,7 +63,7 @@
                 </a>
             </li>
             
-            
+
             
         </ul>
     </div>
@@ -784,11 +784,35 @@
     $("body").on("click","#backwardBtn",function(){
         backward();
     });
-    $("body").on("click","#logo",function(){
+    $("body").on("click",".nav #logo",function(){
         slideNav();
         // changePage("explore","explore/top",true,"",true,true);
     });
+    $("body").on("click",".nav ul li a",function(e){
+        $(".nav ul li.selected").removeClass("selected");
+        $(this).parents("li").addClass("selected");
+        let txt = this.href.split("/")[this.href.split("/").length -1];
+        Filters = {
+            username:pageType,
+            pageNumber : 1,
+            counts: 10,
+            isCurated : false,
+            curator : "" ,
+            hashtag : "",
+            order : "latest",
+            orderBy : "createdAt",
+            timeEdge: 31*24, // hours
+            leftCost:0,
+            rightCost:1000000,
+            category : "",
+        };
+        // slideNav();
+        changePage(txt,txt+"/",true,"",true,true);
+        // re initial variables
+        e.preventDefault();
+        // remove all filters in UI for a selected page
 
+    });
     $("body").on("click","#follow",function(){
         follow(host.userId);
     });
@@ -1811,7 +1835,10 @@
                 if(canReq){
                     getPostsByFilter(Filters, pageType.split("/")[0]);
                 }
-                pushHistory(pageName, pageType, pageType, newHistory,writeUrl);  
+                if(!pageType.split("/")[1]){
+                    pageType += "latest";
+                }
+                pushHistory(pageName, pageType, pageType,newHistory,writeUrl);  
          
             }
             else if (pageName === "profile") {
@@ -1985,12 +2012,20 @@
             if(window.location.pathname.split("settings").length > 1){ // fill user infos in user infos form
                 loadUserInfosInForm();
             }
+            let pageName = window.location.pathname.split("/")[1].toString();
+            if(!pageName || pageName === ""){
+                pageName === "explore";
+            }
+
+            $(`.navRightButtons a[href="/${pageName}"]`).parents("li").addClass("selected");
+            $(`.navRightButtons`).parents("li").addClass("selected");
         }
         else{
+            $(".nav").removeClass("show");
             $(".accountCard").html(`
-    	<a href="/login" id="loginBtn">Login</a>
-        <a href="/register">Register</a>
-        `);
+                <a href="/login" id="loginBtn">Login</a>
+                <a href="/register">Register</a>
+            `);
         }
     }
 
@@ -2005,28 +2040,19 @@
     }
 
     function slideNav(){
-        let nav = $(".nav");
-        if (element.className === "") {
-            if ($(".rightSide")[0]) {
-                $(element).addClass("halfRight");
-                $(".rightSide").removeClass("show");
+        if(Me){
+            if(!$(".nav.show")[0]){
+                $(".nav").addClass("show");
             }
-            else if ($(".leftSide")[0]) {
-                $(element).addClass("halfLeft");
-                $(".leftSide").removeClass("hide");
+            else{
+                $(".nav.show").removeClass("show");
             }
         }
-        else if (element.className === "halfLeft") {
-            $(element).removeClass("halfLeft");
-            $(".leftSide").removeClass("show");
+        else{
+            showLoginOrReg("You must Login first to access tools","User Actions"); // modal full view middle
         }
-        else if (element.className === "halfRight") {
-            $(element).removeClass("halfRight");
-            $(".rightSide").removeClass("hide");
-        }
-        else {
-            //
-        }
+        
+        
     }
 
     // settings functions
