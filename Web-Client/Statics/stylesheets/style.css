@@ -300,7 +300,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .timeNav .category{
 	position: relative;
 	display: inline-block;
-	float: left;
 	vertical-align: top;
 	padding: 0;
 	margin: 0 30px;
@@ -308,7 +307,6 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .timeNav .hashtagSearchDiv{
     position: relative;
     display: inline-block;
-    float: left;
     height: 100%;
     padding: 0;
     color: black;
@@ -352,30 +350,37 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     background-color: black;
     padding-top: 4px;
     padding-bottom: 0;
-    -webkit-transition: background-color,left,right 500ms;
-    -moz-transition: background-color,left,right 500ms;
-    -ms-transition: background-color,left,right 500ms;
-    -o-transition: background-color,left,right 500ms;
-    transition: background-color,left,right 500ms;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.nav.show{
+	height: 100vh;
 }
 @media (max-width:768px){
 	.nav{
 		right:-43px;
-		width:90px;
+		width:160px;
+	}
+	.nav.show{
+		height: 100vh;
 	}
 }
 
 .nav:hover{
 	box-shadow: 5px 1px 10px 5px #777777;
 }
-.nav img{
+.nav #logo{
     position: absolute;
     width: auto;
     top: -1px;
 	height: auto;
 	left:50%;
-	width:auto;
-	height: 100%;
+	width:90%;
+	max-width: 70px;
+	height: auto;
     display: block;
     clear: both;
     margin-bottom: 0;
@@ -386,15 +391,21 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     -o-transform: translate(-50%,0);
     transform: translate(-50%,0);
     margin-right: 0;
-    -webkit-transition: all 400ms;
-    -moz-transition: all 400ms;
-    -ms-transition: all 400ms;
-    -o-transition: all 400ms;
-    transition: all 400ms;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.nav.show #logo{
+	
 }
 @media (max-width:768px){
-	.nav img{
-		right:-43px;
+	.nav #logo{
+		right:-40px;
+	}
+	.nav.show #logo{
+		right:auto;
 	}
 }
 .nav img:hover{
@@ -410,9 +421,18 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	position: absolute;
 	clear: both;
 	right: -200px;
+	-webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -ms-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+	right: -200;
 }
-.nav ul.show{
-	right:0;
+
+.nav.show ul{
+	height: auto;
+	right: 0;
+	top:100px;
 }
 .nav ul li,.nav a{
 	position: relative;
@@ -435,6 +455,17 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	-ms-transition: background-color,color,margin-left 200ms;
 	-o-transition: background-color,color,margin-left 200ms;
 	transition: background-color,color,margin-left 200ms;
+}
+
+
+@media (max-width:768px){
+	.nav ul{
+		right:-43px;
+		width:90px;
+	}
+	.nav.show ul{
+		right:0;
+	}
 }
 
 
@@ -1847,10 +1878,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	margin:0 auto;
 	overflow-y: auto;
 	overflow-x: hidden;
-	padding-top:70px;
+	padding-top:29px;
 	padding-bottom:140px;
 }
-
+@media (max-width:px){
+	.settingsContainer > div{
+		
+	}
+}
 .settingsContainer > div .profPic{
 	position: relative;
 	width: 128px;
