@@ -2045,10 +2045,12 @@
                 $("#username").addClass("blurred");
             }
             $("#fullName").val(Me.fullName.toString());
+            $("#fullName").addClass("blurred");
         }
         if(Me.phone){
-            $("#phoneNumber").CcPicker({"countryCode":Me.phoneNumber.countryCode});
+            $("#phoneNumber").CcPicker({"countryCode":Me.phone.countryCode});
             $("#phoneNumber").val(Me.phone.number);
+            $("#phoneNumber").addClass("blurred");
         }
         else{
             $("#phoneNumber").CcPicker({"countryCode":"ir"});
@@ -2093,7 +2095,7 @@
     $("body").on("keyup","#username",function(e){
         if($(this).val().toString().length > 3){
             if($(this).val().toString().length < 25){
-                let text = $(this).val().toString()+e.originalEvent.key;
+                let text = $(this).val().toString();
                 window.clearInterval(usernameInterval);
                 usernameInterval = setInterval(function(){
                     checkInputValidation("username",text);
@@ -2111,9 +2113,9 @@
     });
     let emailInterval = null;
     $("body").on("keyup","#email",function(e){
-        if(($(this).val().toString().length >4) &&  $(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
+        if(($(this).val().toString().length > 4) &&  $(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
             window.clearInterval(emailInterval);
-            let text = $(this).val().toString()+e.originalEvent.key;
+            let text = $(this).val().toString();
             emailInterval = setInterval(function(){
                 checkInputValidation("email", text);
                 window.clearInterval(emailInterval);
@@ -2169,13 +2171,13 @@
     $("body").on("submit","#passRequired",function(e){
         e.preventDefault();
     });
-    $("body").on("submit","#passRequired .ok",function(e){
+    $("body").on("click","#passRequired .ok",function(e){
         e.preventDefault();
         sendUpdateRequestWithPassword($("#passwordRequiredField").val());
         $("#passwordRequiredField").val("");
         $("#passRequired.show").removeClass("show");
     });
-    $("body").on("submit","#passRequired .cancel",function(e){
+    $("body").on("click","#passRequired .cancel",function(e){
         e.preventDefault();
         $("#passwordRequiredField").val("");
         $("#passRequired.show").removeClass("show");
@@ -2214,10 +2216,15 @@
             if(Me.bio !== $("#bio").val() && $("#bio").val().toString() !== ""){
                 input.bio = $("#bio").val();
             }
-            if(Me.phone && (Me.phone.number !== parseInt($("#phoneNumber").val()) || (Me.phone.code !== parseInt($(".cc-picker-code").html())))){
+            if(!Me.phone || (Me.phone.number && (Me.phone.number !== parseInt($("#phoneNumber").val())) || (Me.phone.code  && (Me.phone.code !== parseInt($(".cc-picker-code").html()))))){
                 input.phoneNumber = parseInt($(".cc-picker-code").html())+"/"+parseInt($("#phoneNumber").val());
             }
-            input.birthDate = parseInt($(".cc-picker-code").html())+"/"+parseInt($("#phoneNumber").val());
+            let birth = $("#birth").val();
+            if(birth !== "" && birth.split("/").length === 3){
+                let birthTime = new Date(parseInt(birth[2]),parseInt(birth[0]),parseInt(birth[1])).getTime();
+                if(Me.birthDate === -1 || Me.birthDate !== birthTime)
+                    input.birthDate = $("#birth").val();
+            }
             if(input["username"] || input["email"] || input["phoneNumber"]){
                 setUpdateInput(input,"/users/updateProfileInfo");
                 $("#passRequired").addClass("show");

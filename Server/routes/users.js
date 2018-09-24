@@ -56,6 +56,7 @@ var users = {
         if ((text) && ((type === "username") || (type === "email") || (type === "phoneNumber")) && (typeof text === "string" && (text.length > 3))) {
             if(type === "email"){
                 if(!validator.isEmail(text)){
+
                     return callback({result:true,message:"Invalid email"});
                 }
             }
@@ -474,10 +475,10 @@ var users = {
 
             let birth = birthDay.split("/");
             // bithdate
-            if(birthDate.split("/").length===3){
-                let month = parseInt(bith[0]);
-                let day = parseInt(bith[1]);
-                let year = parseInt(bith[2]);
+            if(birth.length===3){
+                let month = parseInt(birth[0]);
+                let day = parseInt(birth[1]);
+                let year = parseInt(birth[2]);
                 let thisYear = new Date().getFullYear();
                 if((!isNaN(month) && (month < 13) && (month > 0)) && (!isNaN(day) && (day < 32) && (day > 0)) && (!isNaN(year) && (year < thisYear) && (year > 0))){
                     updates["birth"] = {
@@ -513,7 +514,7 @@ var users = {
             }
             // username
             if(updates["username"] || updates["email"] || updates["phoneNumber"]){
-                if(!password || (typeof password !== "string") || password.length > 5){
+                if(!password || (typeof password !== "string") || password.length < 5){
                     canQuery = false;
                 }
                 else{
@@ -523,6 +524,7 @@ var users = {
             if(canQuery){
                 users.checkValidationAndTaken(updates["username"],"username",user,function(resultu){
                     users.checkValidationAndTaken(updates["email"],"email",user,function(resulte){
+                        
                         users.checkValidationAndTaken(updates["phoneNumber"],"phoneNumber",user,function(resultp){
                             if(resultu.message){    
                                 errorMessages["username"] = resultu.message;
@@ -533,7 +535,7 @@ var users = {
                                 delete updates["email"];
                             }
                             if(resultp.message){    
-                                errorMessages["phoneNumber"] = resultp.message;
+                                errorMessages["phone"] = resultp.message;
                                 delete updates["phoneNumber"];
                             }
                             users.doUpdateInfo(query,updates,res,errorMessages);
@@ -555,17 +557,22 @@ var users = {
             query["password"] = CryptoJS.HmacSHA512(query["userId"],query["password"]).toString();
         }
         if(updates["phoneNumber"]){
-            updates["phone.code"] = parseInt(TempText.split("/")[0]);
-            updates["phone.number"] = parseInt(TempText.split("/")[1]);
-            let countryObj = variables.phoneCodes[TempText.split("/")[0]];
+            let tempPhone = updates["phoneNumber"];
+            delete updates["phoneNumber"];
+            updates["phone"] = {
+                "code" : parseInt(tempPhone.split("/")[0]),
+                "number" : parseInt(tempPhone.split("/")[1])
+            };
+            let countryObj = variables.phoneCodes[tempPhone.split("/")[0]];
             if(countryObj){
-                updates["phone.countryCode"] = countryObj.code;
+                updates["phone"].countryCode = countryObj.code;
 
             }
         }
         if(updates["email"]){
             // verification email create expire in 1h
         }
+        console.log(updates);
         userSchema.update(query,{$set:updates},function(err,resultu) {
             if (err) res.send(err);
             if (resultu.n > 0) {
@@ -573,10 +580,10 @@ var users = {
                     
                 }
                 if(updates["email"]){
-                    users.sendEmailVerification(userId,updates["email"]);
+                    // users.sendEmailVerification(userId,updates["email"]);
                 }
-                if(updates["phoneNumber"]){
-                    users.sendPhoneVerification(userId,updates["phoneNumber"]);
+                if(updates["phone"]){
+                    // users.sendPhoneVerification(userId,updates["phone"]);
                 }
                 // update cache 
                 res.send({result:true,message:errorMessages});
