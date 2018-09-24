@@ -70,7 +70,7 @@ var users = {
             }
             let query={};
             if(user.message){
-                if(type="phoneNumber"){
+                if(type==="phoneNumber"){
                     let countryObj = variables.phoneCodes[TempText.split("/")[0]];
                     if(countryObj){
                         query["phone.code"] = parseInt(TempText.split("/")[0]);

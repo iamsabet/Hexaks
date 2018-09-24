@@ -3172,14 +3172,16 @@ div.cc-picker-flag.ee{
 	}
 	.settingsContainer > div form div img{
 		position: absolute ;
-		top:-10px;
+		bottom:-10px;
 		right: 0;
 		z-index: 100;
 	}
 	.settingsContainer > div form button{
-		width:91.5%;
+		width:90%;
+		width: auto;
+		min-width: 200px;
 		font-size:28px;
-		left:4%;
+		margin:50px auto;
 	}
 	.settingsContainer > div form div {
 		left:0;

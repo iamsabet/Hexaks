@@ -78,7 +78,15 @@ router.get('/register/getKey', function(req,res){
 router.post('/register/checkIsTaken', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
-            users.checkIsTaken(req,res,callback);
+            let type = req.body.type || null;
+            let text = req.body.text || null;
+            if(type !==null && text !== null && typeof text ==="string" && typeof type ==="string" )
+                users.checkValidationAndTaken(text,type,callback,function(resultx){
+                    res.send(resultx);
+                });
+            else
+                res.send({result:false,message:"504 Bad Request",status:504});
+
         }
         else{
             res.send({result:false,message:" Access Denied "});
