@@ -1396,6 +1396,7 @@
 
     // Post(Picture) Handlers
     function getPostsByFilter(input,pageType){
+        // debugger;
         switch (pageType) {
             case "following":{
                     requestHandler("/api/v1/posts/subscriptions", "POST", Filters, "getPostsByFilter");
@@ -1404,7 +1405,7 @@
                     requestHandler("/api/v1/posts/explore", "POST", Filters, "getPostsByFilter");
             }break;
             case "home" || "":{
-                    requestHandler("/api/v1/posts/home", "POST", Filters, "getPostsByFilter");
+                    requestHandler("/api/v1/posts/explore", "POST", Filters, "getPostsByFilter"); // /api/v1/posts/home
             }break;
             default : {
                 requestHandler("/api/v1/posts/" + input.username, "POST", Filters, "getPostsByFilter");
@@ -1446,12 +1447,17 @@
         }
         else if(pageName.startsWith("settings")){
             // debugger;
-            showTargetForm(pageName.split("/")[1]);
-            if(!$(`#${pageName.split("/")[1]}Btn.selected`)[0])
+            if(pageName.split("/")[1]){
+                $(".settingsContainer .menu a").removeClass("selected");
+                $(".settingsContainer form.show").removeClass("show");
                 $(`#${pageName.split("/")[1]}Btn`).addClass("selected");
-            pushHistory("settings", pageName, pageName, false,true);  
+                $(`#${pageName.split("/")[1]}`).addClass("show");
+            }
+            let firstTime = false;
+            if(window.location.pathname.split("/")[1] && window.location.pathname.split("/")[1] !== "settings")
+                firstTime = true;
+            pushHistory("settings", pageName, pageName, firstTime,true); 
             loadUserInfosInForm();
-
         }
     }
     
@@ -1819,6 +1825,7 @@
                     if (pageName === "") {
                         $($(".topNav ul li:nth-child(1)")[0]).addClass("selected");
                     }
+                    
                     pageNames = ["settings", "newPost", "post", "profileTop", "people", "profileTopSmall", "contact", "policy"];
                     // --> Function Calls
                       
@@ -1832,11 +1839,12 @@
                     }
                     currentPage = pageName;
                 }
-                if(canReq){
-                    getPostsByFilter(Filters, pageType.split("/")[0]);
-                }
                 if(!pageType.split("/")[1]){
                     pageType += "latest";
+                }
+                if(canReq){
+                    // debugger;
+                    getPostsByFilter(Filters, pageType.split("/")[0]);
                 }
                 pushHistory(pageName, pageType, pageType,newHistory,writeUrl);  
          
@@ -1881,6 +1889,9 @@
                         if (pageName.toLowerCase() === pageNames[x].toLowerCase()) {
                             $(`#${pageNames[x]}`).addClass("show");
                             if(pageName.toLowerCase()==="settings"){
+                                if(!pageType.split("/")[1]){
+                                    pageType += "account";
+                                }
                                 sendPagesInitialRequest(pageType);
                             }
                             else{
@@ -1961,6 +1972,8 @@
                 changePage(historyList[historyPointer].pageName+"/"+direction,historyList[historyPointer].urlData,false,"",true,true);
             }
             else{
+                $(`.nav ul li`).removeClass("selected");
+                $(`.navRightButtons a[href="/${historyList[historyPointer].pageName}"]`).parents("li").addClass("selected");
                 changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false,"",true,true);
             }
         }
@@ -1976,6 +1989,8 @@
                 changePage(historyList[historyPointer].pageName+"/"+direction,historyList[historyPointer].urlData,false,"",true,true);
             }
             else{
+                $(`.nav ul li`).removeClass("selected");
+                $(`.navRightButtons a[href="/${historyList[historyPointer].pageName}"]`).parents("li").addClass("selected");
                 changePage(historyList[historyPointer].pageName,historyList[historyPointer].urlData,false,"",true,true);
             }
         }
@@ -2124,8 +2139,9 @@
 
     }
     function showTargetForm(formName){
+        debugger;
         $(".settingsContainer form").removeClass("show");
-        $(`.settingsContainer #${formName}`).addClass("show");
+        $(`#${formName}`).addClass("show");
     }
     function updateDateInput(day,month,year){
         $("#birth").val(`${month} / ${day} / ${year}`);
