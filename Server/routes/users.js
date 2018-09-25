@@ -70,12 +70,14 @@ var users = {
                 text = text.slice(0,23).toLowerCase();
             }
             let query={};
-            if(user.message){
+
+            if(!user.message){
                 if(type==="phoneNumber"){
                     let countryObj = variables.phoneCodes[TempText.split("/")[0]];
                     if(countryObj){
                         query["phone.code"] = parseInt(TempText.split("/")[0]);
                         query["phone.number"] = parseInt(TempText.split("/")[1]);
+                        
                     }
                     else{
                         canQuery = false;
@@ -85,6 +87,7 @@ var users = {
                     query[type] = text;
                 }
                 if(canQuery){
+                    
                     userSchema.findOne(query,{username:1},function(err,userx){
                         if(err) return callback({result:true,message:"Oops something went wrong"});
                         if(!userx){
@@ -463,11 +466,12 @@ var users = {
             if(fullName && typeof fullName ==="string" && fullName !== ""){
                 updates["fullName"] = fullName.slice(0,30);
             }
-            if(city && typeof city ==="string" && city !== ""){
-                city["city"] = city.slice(0,30);
+
+            if(city && (typeof city ==="string") && city !== ""){
+                updates["city"] = city.slice(0,30);
             }
             if(bio && typeof bio ==="string" && bio !== ""){
-                bio["bio"] = bio.slice(0,256);
+                updates["bio"] = bio.slice(0,256);
             }
             // check is taken ,, all validations check then update and reload in client
 
@@ -480,13 +484,13 @@ var users = {
                 let day = parseInt(birth[1]);
                 let year = parseInt(birth[2]);
                 let thisYear = new Date().getFullYear();
-                if((!isNaN(month) && (month < 13) && (month > 0)) && (!isNaN(day) && (day < 32) && (day > 0)) && (!isNaN(year) && (year < thisYear) && (year > 0))){
+                if((!isNaN(month) && (month < 13) && (month > 0)) && (!isNaN(day) && (day < 32) && (day > 0)) && (!isNaN(year) && (year <= thisYear) && (year > 0))){
                     updates["birth"] = {
-                        day : birth[1],
-                        month : birth[0],
-                        year : birth[2],
+                        day : day,
+                        month : month,
+                        year : year,
                     }
-                    let birthDate = new Date(birth[2], birth[0], birth[1]).getTime();
+                    let birthDate = new Date(year, day, month).getTime();
                     updates["birthDate"] = birthDate;
                 }
                 else{
@@ -556,9 +560,8 @@ var users = {
         if(query["password"]){
             query["password"] = CryptoJS.HmacSHA512(query["userId"],query["password"]).toString();
         }
-        if(updates["phoneNumber"]){
+        if(updates["phoneNumber"] && updates["phoneNumber"]){
             let tempPhone = updates["phoneNumber"];
-            delete updates["phoneNumber"];
             updates["phone"] = {
                 "code" : parseInt(tempPhone.split("/")[0]),
                 "number" : parseInt(tempPhone.split("/")[1])
@@ -569,8 +572,29 @@ var users = {
 
             }
         }
+        delete updates["phoneNumber"];
         if(updates["email"]){
             // verification email create expire in 1h
+        }
+        if(!updates["username"] || updates["username"]=== null){
+            delete updates["username"];
+        }
+        else{
+
+        }
+        if(!updates["email"] || updates["email"]=== null){
+            delete updates["email"];
+
+        }
+        else{
+
+        }
+        if(updates["phone"] || updates["phone"]=== null){
+            delete updates["phone"];
+
+        }
+        else{
+
         }
 
         userSchema.update(query,{$set:updates},function(err,resultu) {

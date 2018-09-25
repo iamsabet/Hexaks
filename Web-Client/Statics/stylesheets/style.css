@@ -823,7 +823,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     position: fixed;
     top: 0;
     z-index: 10000; 
-    right: 120px;
+    right: 110px;
     width: auto;
     min-width: 300px;
     max-width: 400px;
@@ -4796,20 +4796,25 @@ div.cc-picker-flag.ee{
 	height:92vh;
 }
 #settings,#contact,#policy{
-	left: -105%;
-	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);
+	left:-100vw;
 	-webkit-transition: all 0.3s ease-out;
 	-moz-transition: all 0.3s ease-out;
 	-ms-transition: all 0.3s ease-out;
 	-o-transition: all 0.3s ease-out;
 	transition: all 0.3s ease-out;
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
 }
 #settings.show,#contact.show,#policy.show{
-	left:0;
+	left: 0;
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
 }
 #newPost{
 	top:-150%;

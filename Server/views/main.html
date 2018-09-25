@@ -2156,6 +2156,9 @@
                 $("#city").addClass("blurred");
         }
 
+        if(Me.birth && Me.birthDate && Me.birthDate !== -1 && Me.birth.day &&  Me.birth.day!== -1 && Me.birth.month && Me.birth.month!== -1 && Me.birth.year && Me.birth.year!== -1){
+            updateDateInput(Me.birth.day,Me.birth.month,Me.birth.year);
+        }
     }
     function showTargetForm(formName){
 
@@ -2163,8 +2166,11 @@
         $(`#${formName}`).addClass("show");
     }
     function updateDateInput(day,month,year){
-        $("#birth").val(`${month} / ${day} / ${year}`);
+        $("#birth").val(`${month}/${day}/${year}`);
         $("#birth").addClass("blurred");
+        $("#days").val(day);
+        $("#months").val(month);
+        $("#year").val(year);
     }
     // settings events
     $('#years, #months').change(function () {
