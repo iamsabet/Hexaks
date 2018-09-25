@@ -6,8 +6,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <script src="../Statics/javascripts/cookies.js"></script>
     <script src="../Statics/javascripts/fine-uploader/all.fine-uploader/all.fine-uploader.js"></script>
-    <script src="../Statics/javascripts/jquery.ccpicker.js"></script>
-    <script src="../Statics/javascripts/countries.json"></script>
+
+    <script id="settingsScript"></script>
+    <script>
+        let script = $('#settingsScript');
+        script.attr("src", "../Statics/javascripts/jquery.ccpicker.js");
+        document.head.append(script);
+    </script>
     <title>Hexaks Post</title>
 </head>
 
@@ -561,7 +566,9 @@
 
 
 <script>
+    // threads
 
+   
 
     // Global Variables.JS
 
@@ -632,6 +639,9 @@
     let currentUploadingRoot = null;
     let uploadRequestDatas = {};
     $(document).ready(function(){
+        if(readCookie("X-ACCESS-TOKEN") !== null){
+            
+        }
         getMe();
         resize();
         urlParser(true,"first");
@@ -1442,16 +1452,17 @@
         else if(pageName.startsWith("settings")){
             // debugger;
             if(pageName.split("/")[1]){
-                $(".settingsContainer .menu a").removeClass("selected");
                 $(".settingsContainer form.show").removeClass("show");
-                $(`#${pageName.split("/")[1]}Btn`).addClass("selected");
                 $(`#${pageName.split("/")[1]}`).addClass("show");
+                $(".settingsContainer .menu a").removeClass("selected");
+                $(`#${pageName.split("/")[1]}Btn`).addClass("selected");
             }
             let firstTime = false;
             if(window.location.pathname.split("/")[1] && window.location.pathname.split("/")[1] !== "settings")
                 firstTime = true;
-            pushHistory("settings", pageName, pageName, firstTime,true); 
             loadUserInfosInForm();
+            if(postid)
+                pushHistory("settings", pageName, pageName, firstTime,true); 
         }
     }
     
@@ -1873,24 +1884,26 @@
                 // debugger;
                 if (pageName !== currentPage) {
                     if (pageName === "post") {
-                        $(".postFooter").addClass("show");
+                        if(!$(".postFooter.show")[0])
+                            $(".postFooter").addClass("show");
                     }
                     else {
-                        $(".postFooter").removeClass("show");
+                        if($(".postFooter.show")[0])
+                            $(".postFooter.show").removeClass("show");
+                    }
+                    if(pageName.toLowerCase()==="settings"){
+                        if(!pageType.split("/")[1]){
+                            pageType += "account";
+                        }
+                        sendPagesInitialRequest(pageType,writeHistory);
+                    }
+                    else{
+                        sendPagesInitialRequest(pageName,postid,"initial");
                     }
                     var pageNames = ["settings", "newPost", "post", "contact", "people", "policy"];
                     for (var x = 0; x < pageNames.length; x++) {
                         if (pageName.toLowerCase() === pageNames[x].toLowerCase()) {
                             $(`#${pageNames[x]}`).addClass("show");
-                            if(pageName.toLowerCase()==="settings"){
-                                if(!pageType.split("/")[1]){
-                                    pageType += "account";
-                                }
-                                sendPagesInitialRequest(pageType);
-                            }
-                            else{
-                                sendPagesInitialRequest(pageNames[x].toLowerCase(),postid,"initial");
-                            }
                         }
                         else {
                             if ($(`#${pageNames[x]}.show`)) {
@@ -2096,6 +2109,7 @@
             }
         });
         initialDates();
+        
         $("#username").val(Me.username);
         $("#email").val(Me.email);
         if(!$("#username.blurred")[0])
@@ -2109,16 +2123,27 @@
             $("#fullName").val(Me.fullName.toString());
             $("#fullName").addClass("blurred");
         }
+        let ccPickerInterval = null;
         if(Me.phone){
-            $("#phoneNumber").CcPicker({"countryCode":Me.phone.countryCode});
-            $("#phoneNumber").val(Me.phone.number);
-            $("#phoneNumber").addClass("blurred");
+            ccPickerInterval = setInterval(function(){
+                if($("#phoneNumber").CcPicker){
+                    window.clearInterval(ccPickerInterval);
+                    $("#phoneNumber").CcPicker({"countryCode":Me.phone.countryCode});
+                    $("#phoneNumber").val(Me.phone.number);
+                    $("#phoneNumber").addClass("blurred");
+                }
+            },400);
         }
         else{
-            $("#phoneNumber").CcPicker({"countryCode":"ir"});
-            if($(".cc-picker-code-select-enabled")[1]){
-                $(".cc-picker-code-select-enabled")[0].remove();
-            }
+            ccPickerInterval = setInterval(function(){
+                if($("#phoneNumber").CcPicker){
+                    window.clearInterval(ccPickerInterval);
+                    $("#phoneNumber").CcPicker({"countryCode":"ir"});
+                    if($(".cc-picker-code-select-enabled")[1]){
+                        $(".cc-picker-code-select-enabled")[0].remove();
+                    }
+                }
+            },400);
         }
         if(Me.bio && Me.bio !== ""){
             $("#bio").val(Me.bio);
@@ -2133,7 +2158,7 @@
 
     }
     function showTargetForm(formName){
-        debugger;
+
         $(".settingsContainer form").removeClass("show");
         $(`#${formName}`).addClass("show");
     }

@@ -1897,8 +1897,9 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	float: left;
 	clear: both;
 }
-.settingsContainer{
+#settings{
 	position: fixed;
+	display: block;
 	width:100%;
 	left:-105%;
 	height: 100%;
@@ -4796,11 +4797,16 @@ div.cc-picker-flag.ee{
 }
 #settings,#contact,#policy{
 	left: -105%;
-	-webkit-transition: left 0.5s;
-	-moz-transition: left 0.5s;
-	-ms-transition: left 0.5s;
-	-o-transition: left 0.5s;
-	transition: left 0.5s;
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+	-webkit-transition: all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-ms-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
 }
 #settings.show,#contact.show,#policy.show{
 	left:0;

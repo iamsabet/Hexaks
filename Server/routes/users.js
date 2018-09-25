@@ -572,7 +572,7 @@ var users = {
         if(updates["email"]){
             // verification email create expire in 1h
         }
-        console.log(updates);
+
         userSchema.update(query,{$set:updates},function(err,resultu) {
             if (err) res.send(err);
             if (resultu.n > 0) {
