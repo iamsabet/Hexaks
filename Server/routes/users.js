@@ -614,7 +614,11 @@ var users = {
         }
         else{
             updates["verified.phoneVerified"] = false;
-            phoneVerificationKey = random.generate(6);
+            phoneVerificationKey = rn.generator({
+                min:  100000
+              , max:  999999
+              , integer: true
+              });
         }
 
         userSchema.updateOne(query,{$set:updates},function(err,resultu) {
@@ -908,7 +912,11 @@ var users = {
                     function(err,targetUser){ // no verified at first 
                         if(err) throw err;
                         if(targetUser){
-                            let smsVerificationKey = random.generate(6);
+                            let smsVerificationKey = rn.generator({
+                                min:  100000
+                              , max:  999999
+                              , integer: true
+                              });
                             users.sendPhoneVerification(targetUser.userId,identification,smsVerificationKey,function(results){
                                 if(!results.message){
                                     return callback({result:true,message:"Verification code sent to phone number : +" + identification.split("/").join("")});
@@ -936,7 +944,7 @@ var users = {
         }
     },
     resetPasswordWithKey:function(userId,type,newPass,newConfirm){
-        redisClient.get(""userId)
+        
         let newHashPassword = CryptoJS.HmacSHA512(userId,newPass).toString();
         userSchema.updateOne({userId:userId},{$set:{password:newHashPassword}},function(err,resultu){
             if(err) throw err;
