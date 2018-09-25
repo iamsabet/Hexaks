@@ -13,6 +13,8 @@ var redis = require('redis');
 var validator = require('validator');
 var phoneValidator = require( 'awesome-phonenumber' );
 var random = require('randomstring');
+var usedProtocol = "http://";
+var webHostName = "localhost:8081";
 var rn = require('random-number');
 const ipCountry = require('ip-country');
 const variables = require("../variables");
@@ -604,7 +606,7 @@ var users = {
         }
         else{
             updates["verified.emailVerified"] = false;
-            emailVerificationKey = random.generate(14);
+            emailVerificationKey = random.generate(16);
         }
         if(!updates["phone"] || updates["phone"]=== null){
             delete updates["phone"];
@@ -612,7 +614,7 @@ var users = {
         }
         else{
             updates["verified.phoneVerified"] = false;
-            phoneVerificationKey = random.generate(7);
+            phoneVerificationKey = random.generate(6);
         }
 
         userSchema.updateOne(query,{$set:updates},function(err,resultu) {
@@ -638,7 +640,7 @@ var users = {
     },
     changePassword:function(req,res,user){
         let password = req.body.password;
-        let newPassword = req.body.password;
+        let newPassword = req.body.newPassword;
         if(password && typeof password === "string" && newPassword && typeof newPassword === "string" && password.length > 5 && newPassword.length > 5){
             let hashPassword = CryptoJS.HmacSHA512(password, user.userId);
             let newHashPassword = CryptoJS.HmacSHA512(password, user.userId);
@@ -794,8 +796,9 @@ var users = {
         userSchema.updateOne({userId:userId,"verified.email.key":key},{$set:{"verified.emailVerified":true}},function(err,resultu){
             if(err) throw err;
             if(resultu.n > 0){
-                users.updateAllUserInfosInCache(userObject.userId,function(resultu){
+                users.updateAllUserInfosInCache(userId,function(resultu){
                     if(!resultu.message){
+                        redisClient.del(userId+":emailKey");
                         return callback(true);
                     }
                     else{
@@ -833,69 +836,117 @@ var users = {
         });
     },
     sendEmail:function(email,key,title,callback){
-        console.log(title + " / email key : " + key + " / email : " + email);
+        console.log(title +" : -->   " + usedProtocol + "/" + webHostName + "/users/verifyEmail/"+key + "\n" + " to  : " + email);
         return callback(true);
     },
     sendSms:function(phoneNumber,key,title,callback){
-        console.log(title + " / sms key : " + key + " / number : " + phoneNumber);
+        console.log(title + " / sms key : " + key + " / number : " + phoneNumber.split("/").join(""));
         return callback(true);
     },
     resetPassword:function(userId,type,identification,callback){ // email or phone number
         if(userId){
-
+            if(type==="change"){
+                let oldPass = identification["old"];
+                let newPass = identification["new"];
+                let confirmNewPass = identification["confirmNew"];
+                if(newPass && confirmNewPass && oldPass && (newPass.length > 5) && (confirmNewPass.length > 5) && (oldPass.length > 5)){
+                    if(newPass === confirmNewPass){
+                        let hashPassword = CryptoJS.HmacSHA512(userId,oldPass).toString();
+                        let newHashPassword = CryptoJS.HmacSHA512(userId,newPass).toString();
+                        userSchema.updateOne({userId:userId,password:hashPassword},{$set:{password:newHashPassword}},function(err,resultu){
+                            if(err) throw err;
+                            if(resultu.n > 0){
+                                return callback(true); // password reset successfully done
+                            }
+                            else{
+                                return callback({result:false,message:"Wrong password"});
+                            }
+                        });
+                    }
+                    else{
+                        return callback({result:false,message:"Password and confirm password does not match"});
+                    }
+                }
+                else{
+                    return callback({result:false,message:"504 bad input - minimum length = 6"});
+                }
+            }
         }
         else if((userId === null) && (typeof identification === "string")){
             if(type==="email"){
-                userSchema.findOne({email:identification.toLowerCase()},{userId:1},function(err,targetUser){ // no verified at first 
-                    if(err) throw err;
-                    if(targetUser){
-                        let emailVerificationKey = random.generate(16);
-                        users.sendEmailVerification(targetUser.userId,identification.toLowerCase(),emailVerificationKey,function(results){
-                            if(!results.message){
-                                res.send({result:true,message:"Verification link sent to your Email : " + identification.toLowerCase()});
-                            }   
-                            else{
-                                res.send(results);
-                            }
-                        });
-                    }
-                    else{
-                        return callback({result:true,message:"No verified email found "})
-                    }
-                });
+                if(validator.isEmail(identification.toLowerCase())){
+                    userSchema.findOne({email:identification.toLowerCase()},{userId:1},function(err,targetUser){ // no verified at first 
+                        if(err) throw err;
+                        if(targetUser){
+                            let emailVerificationKey = random.generate(16);
+                            users.sendEmailVerification(targetUser.userId,identification.toLowerCase(),emailVerificationKey,function(results){
+                                if(!results.message){
+                                    return callback({result:true,message:"Verification link sent to your Email : " + identification.toLowerCase()});
+                                }   
+                                else{ // 
+                                    return callback(results);
+                                }
+                            });
+                        }
+                        else{
+                            return callback({result:true,message:"No verified email found "});
+                        }
+                    });
+                }
+                else{
+                    return callback({result:true,message:"Invalid email"});
+                }
             }
             else if(type="phone"){
-                userSchema.findOne(
-                    {
-                        "phone.number":parseInt(identification.split("/")[1]),
-                        "phone.code":parseInt(identification.split("/")[0]),
-                        "verified.phoneVerified":true
-                    },{userId:1},
-                function(err,targetUser){ // no verified at first 
-                    if(err) throw err;
-                    if(targetUser){
-                        let smsVerificationKey = random.generate(6);
-                        users.sendPhoneVerification(targetUser.userId,identification,smsVerificationKey,function(results){
-                            if(!results.message){
-                                return callback({result:true,message:"Verification code sent to phone number : +" + identification.split("/").join("")});
-                            }   
-                            else{
-                                return callback(results);
-                            }
-                        });
-                    }
-                    else{
-                        return callback({result:true,message:"No verified phone number found "});
-                    }
-                });      
+                if(identification.split("/")[0] && (identification.split("/")[1]) && (!isNaN(parseInt(identification.split("/")[1]))) && (!isNaN(parseInt(identification.split("/")[0])))){
+                    userSchema.findOne(
+                        {
+                            "phone.number":parseInt(identification.split("/")[1]),
+                            "phone.code":parseInt(identification.split("/")[0]),
+                            "verified.phoneVerified":true
+                        },{userId:1},
+                    function(err,targetUser){ // no verified at first 
+                        if(err) throw err;
+                        if(targetUser){
+                            let smsVerificationKey = random.generate(6);
+                            users.sendPhoneVerification(targetUser.userId,identification,smsVerificationKey,function(results){
+                                if(!results.message){
+                                    return callback({result:true,message:"Verification code sent to phone number : +" + identification.split("/").join("")});
+                                }   
+                                else{ 
+                                    return callback(results);
+                                }
+                            });
+                        }
+                        else{
+                            return callback({result:true,message:"No verified phone number found "});
+                        }
+                    });   
+                }  
+                else{
+                    return callback({result:false,message:"504 Bad request"});
+                } 
             }
             else{
                 return callback({result:false,message:"no more types for now"});
             }
         }
         else{
-            return callback({result:false,message:"No other type for now :/ "});
+            return callback({result:false,message:"504 Bad request"});
         }
+    },
+    resetPasswordWithKey:function(userId,type,newPass,newConfirm){
+        redisClient.get(""userId)
+        let newHashPassword = CryptoJS.HmacSHA512(userId,newPass).toString();
+        userSchema.updateOne({userId:userId},{$set:{password:newHashPassword}},function(err,resultu){
+            if(err) throw err;
+            if(resultu.n > 0){
+                return callback(true); // password reset successfully done
+            }
+            else{
+                return callback({result:false,message:"Wrong password"});
+            }
+        });
     },
     updatePrivacy:function(userId,situation,callback){
         userSchema.update({userId: userId,privacy:!situation}, {

@@ -112,6 +112,30 @@ router.get('/terms', function(req,res){
         }
     });
 });
+router.get('/users/verifyEmail/:uuid/',function(req,res) {
+    let emailKey = req.params.uuid.toString();
+    validateRequest(req,res,function(callback){
+        if(callback.message){
+            callback.userId=null;
+        }
+        users.checkEmailVerification(callback.userId,emailKey,function(resultx){
+            if(resultx.message){
+                res.send(resultx); // show error verification page - 
+            }
+            else{
+                if(callback.userId === null){
+                    res.redirect("/login");
+                }
+                else{
+                    res.redirect("/settings");
+                }
+            }
+        });
+    });
+});
+
+
+
 
 router.get('/api/v1/admin/', function(req,res){
     validateRequest(req,res,function(callback){
@@ -251,6 +275,48 @@ router.get('/:uuid/:uuid', function(req,res){
 });
 
 
+router.post('/api/v1/users/verifyPhone/',function(req,res) {
+    let code = req.body.code || "";
+    validateRequest(req,res,function(callback){
+        if(!callback.message){
+            if(code !== "" && code.length === 6){
+                users.checkPhoneVerification(callback.userId,code,function(resultx){
+                    res.send(resultx);
+                });
+            }
+            else{
+                res.send({result:false,message:"Invalid verification code"});
+            }
+        }
+        else{
+            res.send({result:false,message:"401 Not Authorized"});
+        }
+    });
+});
+router.post('/api/v1/users/resetPassword/',function(req,res) {
+    validateRequest(req,res,function(user){
+        let type = req.body.type || "email";
+        let obj = {};
+        if(!user.message){
+            obj = {
+                "old" : req.body["old"],
+                "new" : req.body["new"],
+                "confirmNew" : req.body["confirmNew"],
+            }
+        }
+        else{
+            user.userId = null;
+            obj = req.body.identification || ""; // email or phone number
+        }
+        users.resetPassword(user.userId,type,obj,function(result){
+            res.send(result);
+        });
+        
+    });
+});
+router.post('/api/v1/users/resetPassword/',function(req,res) {
+    
+});
 router.post('/api/v1/users/:uuid/followings',function(req,res) {
     let hostId = req.params.uuid.toString();
     validateRequest(req,res,function(user){
