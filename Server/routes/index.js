@@ -314,8 +314,8 @@ router.post('/api/v1/users/resetPassword/',function(req,res) {
         
     });
 });
-router.post('/api/v1/users/resetPassword/',function(req,res) {
-    
+router.post('/api/v1/users/doResetPassword/',function(req,res) { // new and confirm password + userId verified by anyways in above
+
 });
 router.post('/api/v1/users/:uuid/followings',function(req,res) {
     let hostId = req.params.uuid.toString();
