@@ -1900,12 +1900,11 @@
                     else{
                         sendPagesInitialRequest(pageName,postid,"initial");
                     }
+                    if(!$(`#${pageName}.show`)[0])
+                        $(`#${pageName}`).addClass("show");
                     var pageNames = ["settings", "newPost", "post", "contact", "people", "policy"];
                     for (var x = 0; x < pageNames.length; x++) {
-                        if (pageName.toLowerCase() === pageNames[x].toLowerCase()) {
-                            $(`#${pageNames[x]}`).addClass("show");
-                        }
-                        else {
+                        if (pageName.toLowerCase() !== pageNames[x].toLowerCase()) {
                             if ($(`#${pageNames[x]}.show`)) {
                                 $(`#${pageNames[x]}.show`).removeClass("show");
                             }

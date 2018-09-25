@@ -142,9 +142,8 @@ var users = {
                     let pst = decrypted.split("/")[2].toString();
                     let password = CryptoJS.HmacSHA512(userId,pst);
                     // send email verifications 1day
-                    let emailVerificationKey = random.generate(6);
-                    let smsVerificationKey = random.generate(6);
-
+                    let emailVerificationKey = random.generate(16);
+                    
 
                     userSchema.findOne({$or: [{username: username}, {email: username}]}, function (err, user) {
      
@@ -210,21 +209,22 @@ var users = {
                                     phoneVerified: false,
                                     email: {
                                         key: emailVerificationKey,
-                                        expire: (now + (10 * 24 * 3600000)), // 10d
+                                        expire:0, // 1 day
                                     },
                                     sms: {
                                         key: smsVerificationKey,
-                                        expire: (now + (10 * 24 * 3600000)), // 10d
+                                        createdAt:0, // verified time
                                     }
                                 },
                                 bio: "",
                                 badges: [], // badgeIds --> // selecteds only 
-                                roles: [], // String - Sabet / Admin / Curator / Blogger / Premium / --> founder <-- under 1000 --> future advantages --> + premium ...
+                                roles: roles, // String - Sabet / Admin / Curator / Blogger / Premium / --> founder <-- under 1000 --> future advantages --> + premium ...
                                 activated: true,
                                 privacy: req.body.privacy || false,
                                 ban:null,
                                 createdAt: now,
                             };
+                            
                             User.create(userObject, function (callback) {
                                 if (!callback) {
                                     res.send({
@@ -232,9 +232,23 @@ var users = {
                                         message: "Oops Something Went Wrong , please try again later"
                                     });
                                 }
-                                else {
-                                    // users.pushNotification("system", " Welcome to Hexaks network '" + userObject.username + "' we hope you enjoy our service <3 ", userObject.userId, "Hexaks");
-                                    res.send(genToken(userObject.userId));
+                                else { // create user successfull 
+                                    users.sendEmailVerification(userObject.userId,userObject.email,emailVerificationKey,function(resultV){
+                                        if(!resultV.message){
+                                            users.updateAllUserInfosInCache(userObject.userId,function(callback){
+                                                if(callback && !callback.message){
+                                                    res.send(genToken(userObject.userId));
+                                                }
+                                                else{
+                                                    res.send(callback);
+                                                }
+                                            });
+                                        }
+                                        else{
+                                            res.send(resultV);
+                                        }
+                                    });
+                                    // users.pushNotification("system", " Welcome to Hexaks network '" + userObject.username + "' we hope you enjoy our service <3 ", userObject.userId, "Hexaks");  
                                 }
                             });
                             // users.sendVerificationEmail();
@@ -528,8 +542,8 @@ var users = {
             if(canQuery){
                 users.checkValidationAndTaken(updates["username"],"username",user,function(resultu){
                     users.checkValidationAndTaken(updates["email"],"email",user,function(resulte){
-                        
                         users.checkValidationAndTaken(updates["phoneNumber"],"phoneNumber",user,function(resultp){
+
                             if(resultu.message){    
                                 errorMessages["username"] = resultu.message;
                                 delete updates["username"];
@@ -539,7 +553,7 @@ var users = {
                                 delete updates["email"];
                             }
                             if(resultp.message){    
-                                errorMessages["phone"] = resultp.message;
+                                errorMessages["phoneNumber"] = resultp.message;
                                 delete updates["phoneNumber"];
                             }
                             users.doUpdateInfo(query,updates,res,errorMessages);
@@ -556,26 +570,29 @@ var users = {
         }
     },
     doUpdateInfo:function(query,updates,res,errorMessages){
+
         console.log(query["password"]);
         if(query["password"]){
             query["password"] = CryptoJS.HmacSHA512(query["userId"],query["password"]).toString();
         }
-        if(updates["phoneNumber"] && updates["phoneNumber"]){
+        if(updates["phoneNumber"]){
             let tempPhone = updates["phoneNumber"];
             updates["phone"] = {
                 "code" : parseInt(tempPhone.split("/")[0]),
                 "number" : parseInt(tempPhone.split("/")[1])
             };
-            let countryObj = variables.phoneCodes[tempPhone.split("/")[0]];
+            let countryObj = variables.phoneCodes[updates["phone"].code];
             if(countryObj){
                 updates["phone"].countryCode = countryObj.code;
+            }
+            else{
 
             }
         }
+        let emailVerificationKey = null;
+        let phoneVerificationKey = null;
         delete updates["phoneNumber"];
-        if(updates["email"]){
-            // verification email create expire in 1h
-        }
+        
         if(!updates["username"] || updates["username"]=== null){
             delete updates["username"];
         }
@@ -584,30 +601,31 @@ var users = {
         }
         if(!updates["email"] || updates["email"]=== null){
             delete updates["email"];
-
         }
         else{
-
+            updates["verified.emailVerified"] = false;
+            emailVerificationKey = random.generate(14);
         }
-        if(updates["phone"] || updates["phone"]=== null){
+        if(!updates["phone"] || updates["phone"]=== null){
             delete updates["phone"];
 
         }
         else{
-
+            updates["verified.phoneVerified"] = false;
+            phoneVerificationKey = random.generate(7);
         }
 
-        userSchema.update(query,{$set:updates},function(err,resultu) {
+        userSchema.updateOne(query,{$set:updates},function(err,resultu) {
             if (err) res.send(err);
             if (resultu.n > 0) {
                 if(updates["username"]){
                     
                 }
                 if(updates["email"]){
-                    // users.sendEmailVerification(userId,updates["email"]);
+                    users.sendEmailVerification(userId,updates["email"],emailVerificationKey);
                 }
                 if(updates["phone"]){
-                    // users.sendPhoneVerification(userId,updates["phone"]);
+                    users.sendPhoneVerification(userId,updates["phone"],phoneVerificationKey);
                 }
                 // update cache 
                 res.send({result:true,message:errorMessages});
@@ -641,17 +659,139 @@ var users = {
         }
 
     },
-    sendPhoneVerification:function(userId,phoneNumber){ // set in redis for verification code create expire in 
-        console.log(userId + "   set   " + phoneNumber);
+    sendPhoneVerification:function(userId,phoneNumber,key,callback){ // set in redis for verification code create expire in 
+        let now = Date.now();
+        now = now + 125000;
+        users.sendSms(phoneNumber,key,"Phone Verification Key",function(resultSms){
+            if(!resultSms.message){ // sms successfully sent    
+                redisClient.set(userId+":phoneKey",key,function(err,result){
+                    if(err) throw err;
+                    if(result){
+                        redisClient.del(userId+":phoneKeyTimes");
+                        redisClient.set(userId+":phoneExpire",now,function(err,resx){
+                            if(err) throw err;
+                            if(resx){
+                                redisClient.expire(userId+":phoneExpire",120000);
+                                redisClient.expire(userId+":phoneKey",120000); // 2mins
+                                return callback(true);
+                            }
+                            else{
+                                return callback({result:false,message:"phone expire set failed"});
+                            }
+                        });
+                    }
+                    else{
+                        return callback({result:false,message:"phone key set failed"});
+                    }
+                });
+            }
+            else{
+                return callback({result:false,message:"Send Message to number " + phoneNumber + " Failed"});
+            }
+        });
     },
-    sendEmailVerification:function(userId,email){
-        console.log(userId + "   set   " + email);
+    sendEmailVerification:function(userId,email,key,callback){
+        let now = Date.now();
+        let expire = now + (1 * 24 * 3600000); // 1 day expiration
+        users.sendEmail(email,key,"Email Verification Key",function(resultEmail){
+            if(!resultEmail.message){ // email successfully sent    
+                userSchema.updateOne({userId:userId},{$set:{"verified.emailVerified":false,"verified.email.key":key,"verified.email.expire":expire}},function(err,resultu){
+                    if(err) throw err;
+                    if(resultu.n > 0){
+                        return callback(true);
+                    }
+                    else{
+                        return callback({result:false,message:"update email veirfication key failed"});
+                    }
+                });
+            }
+            else{
+                return callback({result:false,message:"Send Email to " + email + " Failed"});
+            }
+        });
     },
-    checkPhoneVerification:function(userId,phoneNumber){ // set in redis for verification code create expire in 
-        console.log(userId + "   check   " + phoneNumber);
+    getPhoneVerificationTimeLeft:function(userId,callback){
+        redisClient.get(userId+":phoneExpire",function(err,targetKey){
+            if(err) throw err;
+            if(targetKey && (parseInt(targetKey) > 1000 )){
+                return callback(parseInt(targetKey));
+            }
+        });
     },
-    checkEmailVerification:function(userId,email){
-        console.log(userId + "   check   " + email);
+    checkPhoneVerification:function(userId,key,callback){ // set in redis for verification code create expire in 
+        redisClient.get(userId+":phoneKey",function(err,targetKey){
+            if(err) throw err;
+            if(targetKey && typeof targetKey === "string"){
+                if(targetKey === key){
+                    userSchema.updateOne({userId: userId,activated:true,deleted:false},{$set:{"verified.phoneVerified":true,"verified.sms.key":key,"verified.sms.createdAt":Date.now()}},function(err,result){
+                        if(err) throw err;
+                        if(result.n > 0){
+                            users.updateAllUserInfosInCache(userObject.userId,function(resultu){
+                                if(resultu){
+                                    console.log("updated user cache done.");
+                                }
+                                else{
+                                    console.log("updated user cache failed!");
+                                }
+                            });
+                            return callback(true);
+                        }
+                        else{
+                            return callback(result);
+                        }
+                    });
+                }
+                else{ // wrong key entered // 5times allowed 
+                    redisClient.incr(userId+":phoneKeyTimes",function(err,targetKey){
+                        if(err) throw err;
+                        if(!targetKey || ((parseInt(targetKey) > 0) && (parseInt(targetKey) < 5))){
+                            return callback({result:false,message:"Invalid Phone Verification Key"});
+                        }
+                        else if(tagetKey && parseInt(targetKey >= 5)){
+                            redisClient.del(userId+":phoneKey");
+                            redisClient.del(userId+":phoneKeyTimes");
+                            redisClient.del(userId+":phoneExpire");
+                            return callback({result:false,message:"phone key expired because of 5 times invalid attempt , request resend"});
+                        }
+                    });
+                }
+            }
+            else{
+                return callback({result:false,message:"verification key expired , request resend"});
+            }
+        });
+    },
+    checkEmailVerification:function(userId,key){
+        if(userId){
+            userSchema.updateOne({userId:userId,"verified.email.key":key},{$set:{"verified.emailVerified":true}},function(err,resultu){
+                if(err) throw err;
+                if(resultu.n > 0){
+                    users.updateAllUserInfosInCache(userObject.userId,function(resultu){
+                        if(resultu){
+                            console.log("updated user cache done.");
+                        }
+                        else{
+                            console.log("updated user cache failed!");
+                        }
+                    });
+                    return callback(true);
+                }
+                else{
+                    return callback({result:false,message:"update email veirfication key failed"});
+                }
+            });
+        }
+        else{
+
+        }
+    },
+    sendEmail(email,key,title,callback){
+        console.log(title + " / email key : " + key + " / email : " + email);
+        return callback(true);
+    },
+    sendSms(phoneNumber,key,title,callback){
+        console.log(title + " / sms key : " + key + " / number : " + phoneNumber);
+        return callback(true);
     },
     resetPassword:function(type,identification){ // email or phone number , username or email
 

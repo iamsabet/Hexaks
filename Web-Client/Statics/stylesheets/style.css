@@ -4809,12 +4809,12 @@ div.cc-picker-flag.ee{
 	transform: translateZ(0);
 }
 #settings.show,#contact.show,#policy.show{
-	left: 0;
-	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);
+	left: 50%;
+	-webkit-transform: translate(-50%,0);
+	-moz-transform: translate(-50%,0);
+	-ms-transform: translate(-50%,0);
+	-o-transform: translate(-50%,0);
+	transform: translate(-50%,0);
 }
 #newPost{
 	top:-150%;

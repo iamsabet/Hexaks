@@ -51,7 +51,7 @@ var userSchema = new Schema({
         },
         sms: {
             key: String,
-            expire: Number,
+            createdAt: Number,
         }
     },
     bio : String,
@@ -74,6 +74,8 @@ userSchema.methods.create = function (userObject,callback) {
     let newUser = new User(userObject);
     newUser.createdAt = now;
     newUser.updatedAt = now;
+    newUser.ban = null;
+    newUser.phone = null;
     newUser.deleted = false;
     newUser.save(function(err){
         if(err) return callback(false);
