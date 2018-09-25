@@ -212,7 +212,7 @@ var users = {
                                         expire:0, // 1 day
                                     },
                                     sms: {
-                                        key: smsVerificationKey,
+                                        key: null,
                                         createdAt:0, // verified time
                                     }
                                 },
@@ -761,40 +761,141 @@ var users = {
             }
         });
     },
-    checkEmailVerification:function(userId,key){
+    checkEmailVerification:function(userId,key,callback){
         if(userId){
-            userSchema.updateOne({userId:userId,"verified.email.key":key},{$set:{"verified.emailVerified":true}},function(err,resultu){
+            users.doVerifyEmail(userId,key,function(resultv){
+                return callback(resultv);
+            });
+        }
+        else if((userId === null) && key){
+            userSchema.findOne({"verified.email.key":key,activated:true,deleted:false},{userId:1,username:1,fullName:1,verified:1},function(err,targetUser){
                 if(err) throw err;
-                if(resultu.n > 0){
-                    users.updateAllUserInfosInCache(userObject.userId,function(resultu){
-                        if(resultu){
-                            console.log("updated user cache done.");
-                        }
-                        else{
-                            console.log("updated user cache failed!");
-                        }
-                    });
-                    return callback(true);
+                if(targetUser){
+                    let now = Date.now();
+                    if(targetUser.verified.email.expire > now){
+                        users.setEmailKeyInCache(targetUser.userId,key,function(resultg){
+                            return callback(resultg);
+                        });
+                    }
+                    else{
+                        return callback({result:false,message:"Link has expired , request resend"});
+                    }
                 }
                 else{
-                    return callback({result:false,message:"update email veirfication key failed"});
+                    return callback({result:false,message:"No verified email"})
                 }
             });
         }
         else{
-
+            return callback({result:false,message:"bad input for now"});
         }
     },
-    sendEmail(email,key,title,callback){
+    doVerifyEmail:function(userId,key,callback){
+        userSchema.updateOne({userId:userId,"verified.email.key":key},{$set:{"verified.emailVerified":true}},function(err,resultu){
+            if(err) throw err;
+            if(resultu.n > 0){
+                users.updateAllUserInfosInCache(userObject.userId,function(resultu){
+                    if(!resultu.message){
+                        return callback(true);
+                    }
+                    else{
+                        return callback({result:false,message:"update user infos in cache failed"});
+                    }
+                });
+                
+            }
+            else{
+                return callback({result:false,message:"update email veirfication key failed"});
+            }
+        });
+    },
+    setEmailKeyInCache:function(userId,key,callback){
+        redisClient.set(userId+":emailKey",key,function(err,resultt){
+            if(err) throw err;
+            if(resultt){
+                redisClient.expire(userId+":emailKey",5*60000); // 5mins
+                return callback({result:true,message:""});
+            }
+            else{
+                return callback({result:false,message:"email key in cache set failed!"});
+            }
+        });
+    },
+    getEmailKeyFromCache:function(userId,callback){
+        redisClient.get(userId+":emailKey",function(err,key){
+            if(err) throw err;
+            if(key){
+                return callback(key);
+            }
+            else{
+                return callback({result:false,message:"email key not found in cache"});
+            }
+        });
+    },
+    sendEmail:function(email,key,title,callback){
         console.log(title + " / email key : " + key + " / email : " + email);
         return callback(true);
     },
-    sendSms(phoneNumber,key,title,callback){
+    sendSms:function(phoneNumber,key,title,callback){
         console.log(title + " / sms key : " + key + " / number : " + phoneNumber);
         return callback(true);
     },
-    resetPassword:function(type,identification){ // email or phone number , username or email
+    resetPassword:function(userId,type,identification,callback){ // email or phone number
+        if(userId){
 
+        }
+        else if((userId === null) && (typeof identification === "string")){
+            if(type==="email"){
+                userSchema.findOne({email:identification.toLowerCase()},{userId:1},function(err,targetUser){ // no verified at first 
+                    if(err) throw err;
+                    if(targetUser){
+                        let emailVerificationKey = random.generate(16);
+                        users.sendEmailVerification(targetUser.userId,identification.toLowerCase(),emailVerificationKey,function(results){
+                            if(!results.message){
+                                res.send({result:true,message:"Verification link sent to your Email : " + identification.toLowerCase()});
+                            }   
+                            else{
+                                res.send(results);
+                            }
+                        });
+                    }
+                    else{
+                        return callback({result:true,message:"No verified email found "})
+                    }
+                });
+            }
+            else if(type="phone"){
+                userSchema.findOne(
+                    {
+                        "phone.number":parseInt(identification.split("/")[1]),
+                        "phone.code":parseInt(identification.split("/")[0]),
+                        "verified.phoneVerified":true
+                    },{userId:1},
+                function(err,targetUser){ // no verified at first 
+                    if(err) throw err;
+                    if(targetUser){
+                        let smsVerificationKey = random.generate(6);
+                        users.sendPhoneVerification(targetUser.userId,identification,smsVerificationKey,function(results){
+                            if(!results.message){
+                                return callback({result:true,message:"Verification code sent to phone number : +" + identification.split("/").join("")});
+                            }   
+                            else{
+                                return callback(results);
+                            }
+                        });
+                    }
+                    else{
+                        return callback({result:true,message:"No verified phone number found "});
+                    }
+                });      
+            }
+            else{
+                return callback({result:false,message:"no more types for now"});
+            }
+        }
+        else{
+            return callback({result:false,message:"No other type for now :/ "});
+        }
     },
     updatePrivacy:function(userId,situation,callback){
         userSchema.update({userId: userId,privacy:!situation}, {

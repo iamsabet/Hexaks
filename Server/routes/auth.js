@@ -86,14 +86,23 @@ var auth = {
 
     validate: function(username, password,callback) {
         // spoofing the DB response for simplicity
-
-        userSchema.findOne({$or: [{username: username}, {email: username}]},{_id:0,userId:1,username:1,password:1,fullName:1,gender:1,followingsCount:1,followersCount:1,followings:1,postsCounts:1,blockList:1,interestCategories:1,favouriteProfiles:1,profilePictureSet:1,profilePictureUrls:1,privacy:1,phone:1,verified:1,rate:1},function(err,user) {
+        userSchema.findOne({$or: [{username: username}, {email: username}]},{_id:0,userId:1,username:1,password:1,fullName:1,gender:1,followingsCount:1,followersCount:1,followings:1,postsCounts:1,blockList:1,interestCategories:1,favouriteProfiles:1,profilePictureSet:1,reportsCount:1,postsCount:1,profilePictureUrls:1,privacy:1,phone:1,verified:1,rate:1},function(err,user) {
             if (err) throw err;
             if (user) {
                 let hashPassword = CryptoJS.HmacSHA512(user.userId,password).toString();
                 console.log("pass1 :" + user.password , "\n pass2 :" + hashPassword);
                 if (user.password === hashPassword) {
-                    return callback(user);
+                    // logged in 
+                    usrs.getEmailKeyFromCache(user.userId,function(key){
+                        if(callback && !callback.message){
+                            usrs.doVerifyEmail(user.userId,key,function(callback){
+                                res.send(user);
+                            })
+                        }
+                        else{
+                            res.send(user);
+                        }
+                    })
                 }
                 else {
                     return callback({result:false,message:"Username or password incorrect"});
