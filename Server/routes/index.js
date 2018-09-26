@@ -302,12 +302,14 @@ router.post('/api/v1/users/resetPassword/',function(req,res) {
                 "old" : req.body["old"],
                 "new" : req.body["new"],
                 "confirmNew" : req.body["confirmNew"],
-            }
+            };
+            type = "change";
         }
         else{
             user.userId = null;
             obj = req.body.identification || ""; // email or phone number
         }
+        
         users.resetPassword(user.userId,type,obj,function(result){
             res.send(result);
         });
@@ -315,7 +317,7 @@ router.post('/api/v1/users/resetPassword/',function(req,res) {
     });
 });
 router.post('/api/v1/users/doResetPassword/',function(req,res) { // new and confirm password + userId verified by anyways in above
-
+    users.checkPhoneVerification()
 });
 router.post('/api/v1/users/:uuid/followings',function(req,res) {
     let hostId = req.params.uuid.toString();

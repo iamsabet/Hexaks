@@ -491,11 +491,12 @@ var users = {
             }
             // check is taken ,, all validations check then update and reload in client
 
-
-
-            let birth = birthDay.split("/");
+            let birth = null;
+            if(birthDay){
+            birth = birthDay.split("/");
+            }
             // bithdate
-            if(birth.length===3){
+            if(birth !== null && birth.length===3){
                 let month = parseInt(birth[0]);
                 let day = parseInt(birth[1]);
                 let year = parseInt(birth[2]);
@@ -618,7 +619,7 @@ var users = {
                 min:  100000
               , max:  999999
               , integer: true
-              });
+              })();
         }
 
         userSchema.updateOne(query,{$set:updates},function(err,resultu) {
@@ -628,10 +629,14 @@ var users = {
                     
                 }
                 if(updates["email"]){
-                    users.sendEmailVerification(userId,updates["email"],emailVerificationKey);
+                    users.sendEmailVerification(query.userId,updates["email"],emailVerificationKey,function(resulte){
+
+                    });
                 }
                 if(updates["phone"]){
-                    users.sendPhoneVerification(userId,updates["phone"],phoneVerificationKey);
+                    users.sendPhoneVerification(query.userId,updates["phone"].code+"/"+updates["phone"].number,phoneVerificationKey,function(resultp){
+
+                    });
                 }
                 // update cache 
                 res.send({result:true,message:errorMessages});
@@ -729,22 +734,8 @@ var users = {
             if(err) throw err;
             if(targetKey && typeof targetKey === "string"){
                 if(targetKey === key){
-                    userSchema.updateOne({userId: userId,activated:true,deleted:false},{$set:{"verified.phoneVerified":true,"verified.sms.key":key,"verified.sms.createdAt":Date.now()}},function(err,result){
-                        if(err) throw err;
-                        if(result.n > 0){
-                            users.updateAllUserInfosInCache(userObject.userId,function(resultu){
-                                if(resultu){
-                                    console.log("updated user cache done.");
-                                }
-                                else{
-                                    console.log("updated user cache failed!");
-                                }
-                            });
-                            return callback(true);
-                        }
-                        else{
-                            return callback(result);
-                        }
+                    users.doVerifyPhone(userId,key,function(resultd){
+                        
                     });
                 }
                 else{ // wrong key entered // 5times allowed 
@@ -764,6 +755,25 @@ var users = {
             }
             else{
                 return callback({result:false,message:"verification key expired , request resend"});
+            }
+        });
+    },
+    doVerifyPhone:function(userId,key,callback){
+        userSchema.updateOne({userId: userId,activated:true,deleted:false},{$set:{"verified.phoneVerified":true,"verified.sms.key":key,"verified.sms.createdAt":Date.now()}},function(err,result){
+            if(err) throw err;
+            if(result.n > 0){
+                users.updateAllUserInfosInCache(userObject.userId,function(resultu){
+                    if(resultu){
+                        console.log("updated user cache done.");
+                    }
+                    else{
+                        console.log("updated user cache failed!");
+                    }
+                });
+                return callback(true);
+            }
+            else{
+                return callback(result);
             }
         });
     },
@@ -848,6 +858,7 @@ var users = {
         return callback(true);
     },
     resetPassword:function(userId,type,identification,callback){ // email or phone number
+
         if(userId){
             if(type==="change"){
                 let oldPass = identification["old"];
@@ -916,8 +927,9 @@ var users = {
                                 min:  100000
                               , max:  999999
                               , integer: true
-                              });
+                              })();
                             users.sendPhoneVerification(targetUser.userId,identification,smsVerificationKey,function(results){
+
                                 if(!results.message){
                                     return callback({result:true,message:"Verification code sent to phone number : +" + identification.split("/").join("")});
                                 }   

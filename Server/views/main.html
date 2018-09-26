@@ -229,7 +229,7 @@
                     <label for="fullName">Full Name</label>
                 </div>
                 <div class="form-group phone">
-                    <input id="phoneNumber" type="Number" class="phone-field"/>
+                    <input id="phoneNumber" type="tel" class="phone-field"/>
                     <label for="phoneNumber">Phone Number</label>
                     <img src="../Statics/images/newIcons/tik.svg" id="phoneNumberStatus" />
                     <div class="list">
@@ -1582,6 +1582,10 @@
             case "checkphoneNumber":{
                 checkResponseAction(res,caller.split("check")[1]);
             }break;
+            case "verifyPhone":{
+                phoneVerifyResponseAction(res);
+            }break;
+            
 
         }
     }
@@ -2186,14 +2190,21 @@
     });
     let usernameInterval = null;
     $("body").on("keyup","#username",function(e){
-        if($(this).val().toString().length > 3){
-            if($(this).val().toString().length < 25){
-                let text = $(this).val().toString();
-                window.clearInterval(usernameInterval);
-                usernameInterval = setInterval(function(){
-                    checkInputValidation("username",text);
+        if($(this).val().length > 3){
+            if($(this).val().length < 25){
+                if((Me.username === $(this).val())){
+                    $(`#usernameStatus`).attr("src","../Statics/images/newIcons/tik.svg");
+                    $(`#usernameStatus`).removeClass("show");
+                    $(`.messageBox .usernameError`).remove();
+                }
+                else{
+                    let text = $(this).val().toString();
                     window.clearInterval(usernameInterval);
-                },300);
+                    usernameInterval = setInterval(function(){
+                        checkInputValidation("username",text);
+                        window.clearInterval(usernameInterval);
+                    },300);
+                }
             }
             else{
                 e.preventDefault();
@@ -2207,12 +2218,19 @@
     let emailInterval = null;
     $("body").on("keyup","#email",function(e){
         if(($(this).val().toString().length > 4) &&  $(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
-            window.clearInterval(emailInterval);
-            let text = $(this).val().toString();
-            emailInterval = setInterval(function(){
-                checkInputValidation("email", text);
+            if((Me.email === $(this).val())){
+                $(`#emailStatus`).attr("src","../Statics/images/newIcons/tik.svg");
+                $(`#emailStatus`).removeClass("show");
+                $(`.messageBox .emailError`).remove();
+            }
+            else{
                 window.clearInterval(emailInterval);
-            },300);
+                let text = $(this).val().toString();
+                emailInterval = setInterval(function(){
+                    checkInputValidation("email", text);
+                    window.clearInterval(emailInterval);
+                },300);
+            }
         }
         else{
             checkResponseAction({message:"Invalid Email"},"email");
@@ -2223,6 +2241,12 @@
         if($(this).val().toString().length > 3){
             if(!isNaN(parseInt(e.originalEvent.key)) && (parseInt(e.originalEvent.key) >= 0) && (parseInt(e.originalEvent.key) < 10)){
                 let text = $(".cc-picker-code").html()+"/"+$(this).val();
+                if((Me.phone.number === parseInt(text.split("/")[1])) && (Me.phone.code === parseInt(text.split("/")[0]))){
+                    $(`#phoneNumberStatus`).attr("src","../Statics/images/newIcons/tik.svg");
+                    $(`#phoneNumberStatus`).removeClass("show");
+                    $(`.messageBox .phoneNumberError`).remove();
+                }
+                else{
                 window.clearInterval(phoneNumberInterval);
                 phoneNumberInterval = setInterval(function(){
                     checkInputValidation("phoneNumber",text);
@@ -2331,6 +2355,25 @@
         updateInfo["password"] = password;
         requestHandler("/api/v1"+updateInfo.url, "POST", updateInfo,updateInfo.url.split("/").join(""));
     };
+    function requestPhoneVerification(code){
+        if(Me && Me.userId){
+            requestHandler("/api/v1/users/verifyPhone/", "POST", {code:code},"verifyPhone");
+        }
+    }
+    function changePass(old,newPass,confPass){
+        let inputc = {
+            "old" : old,
+            "new" : newPass,
+            "newConf" : confPass,
+            "type" : "change"
+        };
+        if(Me && Me.userId){
+            requestHandler("/api/v1/users/resetPass/", "POST", inputc,"verifyPhone");
+        }
+    }
+    function phoneVerifyResponseAction(res){
+        debugger;
+    }
     function setUpdateInput(input,url){
         updateInfo = input;
         updateInfo["url"] = url;
