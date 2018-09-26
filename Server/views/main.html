@@ -270,7 +270,10 @@
 
 
             <form id="changePass" action="/users/changePass" >
-                
+                <div class="form-group">
+                    <input type="password" id="password"/>
+                    <label for="password">Password</label>
+                </div>
                 <div class="form-group">
                     <input type="password" id="password"/>
                     <label for="password">Password</label>
@@ -281,7 +284,7 @@
                     <label for="confPassword">Confirm Password</label>
                     <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
                 </div>
-                <button id="regBtn">Register</button>
+                <button id="changePassBtn">Register</button>
                 <ul class="messageBox">
     
                 </ul>
@@ -303,12 +306,39 @@
             </form>
             <form id="passRequired">
                 <div class="form-group">
-                    <input type="password" id="passwordRequiredField"/>
-                    <label for="passwordRequiredField">Password Required</label>
-                    <p>
-                        <button class="ok">Send</button>
-                        <button class="cancel">Cancel</button>
-                    </p>
+                    <div class="dialog"> 
+                        <h4>Password is required to submit these changes to profile</h4>
+                        <div class="digits">
+                            <input type="password" id="passwordRequiredField"/>
+                            <label for="passwordRequiredField">Password Required</label>
+
+                            <button class="ok">Send</button>
+                            <button class="cancel">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form id="verifyPhone" class="show">
+                <div class="form-group">
+                    <div class="dialog"> 
+                        <h4>Please enter the 6-digit verification code we sent via SMS to : </h4>
+                        <div class="digits">
+                            <input class="digit" id="digit-1" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                            <input class="digit" id="digit-2" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                            <input class="digit" id="digit-3" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                            <input class="digit" id="digit-4" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                            <input class="digit" id="digit-5" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                            <input class="digit" id="digit-6" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                            <button class="send">Verify</button>
+                        </div>
+                        <h3 class="countDown"></h3>
+                        <div class="formFooter">
+                            Didn't receive the code?<br />
+                            <a href="#">Send another again</a><br />
+                            <a href="#">Change phone number</a>
+                        </div>
+                        <img src="http://jira.moovooz.com/secure/attachment/10424/VmVyaWZpY2F0aW9uLnN2Zw==" alt="test" />
+                    </div>
                 </div>
             </form>
     </div>
@@ -2188,6 +2218,7 @@
         $(".settingsContainer .menu a").removeClass("selected");
         $(this).addClass("selected");
     });
+    
     let usernameInterval = null;
     $("body").on("keyup","#username",function(e){
         if($(this).val().length > 3){
@@ -2252,12 +2283,50 @@
                     checkInputValidation("phoneNumber",text);
                     window.clearInterval(phoneNumberInterval);
                 },300);
+                }
             }
         }
         else{
             checkResponseAction({message:"Invalid Phone Number"},"phoneNumber");
         }
     });
+    $("body").on("keyup","#password",function(e){
+        console.log($(this).val());
+        if(($(this).val().toString().length < 6)) {
+            $("#passwordStatus").attr("src","../Statics/images/newIcons/cross.svg");
+            $("#passwordStatus").addClass("show");
+            if($(".messageBox .passwordError")[0]===undefined){
+                $(".loginRegForm form ul").append(`
+                    <li class="passwordError">password must have at least 6 characters</li>
+                `);
+            }
+        }
+        else{
+            $("#passwordStatus").attr("src","../Statics/images/newIcons/tik.svg");
+            $("#passwordStatus").addClass("show");
+            if($(".loginRegForm form ul .passwordError")[0]!==undefined){
+                $(".loginRegForm form ul .passwordError").remove();
+            }
+        }
+    });
+    $("body").on("keyup",".digit",function(e){
+        if (Me.userId) {
+            if(!isNaN(parseInt(e.originalEvent.key)) && (parseInt(e.originalEvent.key) >= 0) && (parseInt(e.originalEvent.key) < 10)){
+                // x
+                $("#digit-"+(parseInt(this.id.split("-")[1])+1)).focus();
+                
+            }
+            else{
+                if(e.originalEvent.keyCode === 8){
+                    $("#digit-"+(parseInt(this.id.split("-")[1])-1)).focus();
+                }
+                else{
+                    e.preventDefault();
+                }
+            }
+        }
+    });
+
     countrySelectorItterator = -1;
     $("body").on("keypress","#searchCountry",function(e){
         if(e.keyCode === 13){
@@ -2287,6 +2356,16 @@
     
     $("body").on("submit","#passRequired",function(e){
         e.preventDefault();
+    });
+    $("body").on("submit","#verifyPhone",function(e){
+        e.preventDefault();
+    });
+    $("body").on("click","#verifyPhone .send",function(e){
+        e.preventDefault(); // fetch input 
+        debugger
+
+        sendPhoneVerificationCode(); // 
+        $("#verifyPhone.show").removeClass("show");
     });
     $("body").on("click","#passRequired .ok",function(e){
         e.preventDefault();
@@ -2351,14 +2430,43 @@
             // show loader
         }
     });
+    $('.settingsForm').on("click","#changePassBtn",function(e){
+
+        changePass()
+    });
     function sendUpdateRequestWithPassword(password){
         updateInfo["password"] = password;
         requestHandler("/api/v1"+updateInfo.url, "POST", updateInfo,updateInfo.url.split("/").join(""));
     };
-    function requestPhoneVerification(code){
+    function sendPhoneVerificationCode(code){
         if(Me && Me.userId){
             requestHandler("/api/v1/users/verifyPhone/", "POST", {code:code},"verifyPhone");
         }
+    }
+    let verifyCountDownInterval = null;
+    function showVerifyPhoneBox(phoneNumber,timeLeft){
+        if(!timeLeft){
+            timeLeft = 120; // seconds
+        }
+        $(".dialog h4").html($(".dialog h4").html().split(":")[0] + ": +"+phoneNumber); 
+
+        $(".dialog .countDown").html("time left : " + timeLeft +" seconds");
+        let lastText = "";
+        let secondCounter = 0;
+        verifyCountDownInterval = setInterval(function(){
+            lastText = $(".dialog .countDown").html();
+            secondCounter = parseInt(lastText.split(": ")[1].split(" seconds")[0]);
+            if(secondCounter === -1){
+                window.clearInterval(verifyCountDownInterval);
+                $(".dialog .countDown").html("times up! , verification code has expired request a new one");
+            }
+            else{
+                $(".dialog .countDown").html(lastText.split(":")[0] + ":" + (secondCounter -1) +" seconds");
+            }
+        },999);
+    }
+    function hideVerifyBox(){
+
     }
     function changePass(old,newPass,confPass){
         let inputc = {
@@ -2372,7 +2480,16 @@
         }
     }
     function phoneVerifyResponseAction(res){
-        debugger;
+        if(res && !res.message){
+            window.clearInterval(verifyCountDownInterval);
+            $(".digits button").html(" Verification Successful !");
+            setTimeout(function(){
+                hideVerifyBox();
+            },1000);
+        }
+        else{
+            alert(res.message);
+        }
     }
     function setUpdateInput(input,url){
         updateInfo = input;
@@ -2410,6 +2527,11 @@
         }
         else{
             window.location.reload();
+        }
+
+        if(input["phoneNumber"] && (!res.message || !res.message.phoneNumber)){
+            changePage("settings","settings/"+this.href.split("/").pop(),true,"",true,true);
+            showVerifyPhoneBox(input["phoneNumber"]);
         }
         debugger;
     }

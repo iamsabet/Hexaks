@@ -675,15 +675,15 @@ var users = {
         now = now + 125000;
         users.sendSms(phoneNumber,key,"Phone Verification Key",function(resultSms){
             if(!resultSms.message){ // sms successfully sent    
-                redisClient.set(userId+":phoneKey",key,function(err,result){
+                redisClient.set(userId+":phoneKey:"+phoneNumber,key,function(err,result){
                     if(err) throw err;
                     if(result){
-                        redisClient.del(userId+":phoneKeyTimes");
-                        redisClient.set(userId+":phoneExpire",now,function(err,resx){
+                        redisClient.del(userId+":phoneKeyTimes:"+phoneNumber);
+                        redisClient.set(userId+":phoneExpire:"+phoneNumber,now,function(err,resx){
                             if(err) throw err;
                             if(resx){
-                                redisClient.expire(userId+":phoneExpire",120000);
-                                redisClient.expire(userId+":phoneKey",120000); // 2mins
+                                redisClient.expire(userId+":phoneExpire"+phoneNumber,120000);
+                                redisClient.expire(userId+":phoneKey"+phoneNumber,120000); // 2mins
                                 return callback(true);
                             }
                             else{
@@ -729,25 +729,25 @@ var users = {
             }
         });
     },
-    checkPhoneVerification:function(userId,key,callback){ // set in redis for verification code create expire in 
-        redisClient.get(userId+":phoneKey",function(err,targetKey){
+    checkPhoneVerification:function(userId,phoneNumber,key,callback){ // set in redis for verification code create expire in 
+        redisClient.get(userId+":phoneKey:"+phoneNumber,function(err,targetKey){
             if(err) throw err;
             if(targetKey && typeof targetKey === "string"){
                 if(targetKey === key){
                     users.doVerifyPhone(userId,key,function(resultd){
-                        
+                        return callback(resultd);
                     });
                 }
                 else{ // wrong key entered // 5times allowed 
-                    redisClient.incr(userId+":phoneKeyTimes",function(err,targetKey){
+                    redisClient.incr(userId+":phoneKeyTimes:"+phoneNumber,function(err,targetKey){
                         if(err) throw err;
                         if(!targetKey || ((parseInt(targetKey) > 0) && (parseInt(targetKey) < 5))){
                             return callback({result:false,message:"Invalid Phone Verification Key"});
                         }
                         else if(tagetKey && parseInt(targetKey >= 5)){
-                            redisClient.del(userId+":phoneKey");
-                            redisClient.del(userId+":phoneKeyTimes");
-                            redisClient.del(userId+":phoneExpire");
+                            redisClient.del(userId+":phoneKey:"+phoneNumber);
+                            redisClient.del(userId+":phoneKeyTimes:"+phoneNumber);
+                            redisClient.del(userId+":phoneExpire:"+phoneNumber);
                             return callback({result:false,message:"phone key expired because of 5 times invalid attempt , request resend"});
                         }
                     });
@@ -762,7 +762,7 @@ var users = {
         userSchema.updateOne({userId: userId,activated:true,deleted:false},{$set:{"verified.phoneVerified":true,"verified.sms.key":key,"verified.sms.createdAt":Date.now()}},function(err,result){
             if(err) throw err;
             if(result.n > 0){
-                users.updateAllUserInfosInCache(userObject.userId,function(resultu){
+                users.updateAllUserInfosInCache(userId,function(resultu){
                     if(resultu){
                         console.log("updated user cache done.");
                     }

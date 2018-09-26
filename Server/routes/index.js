@@ -280,7 +280,7 @@ router.post('/api/v1/users/verifyPhone/',function(req,res) {
     validateRequest(req,res,function(callback){
         if(!callback.message){
             if(code !== "" && code.length === 6){
-                users.checkPhoneVerification(callback.userId,code,function(resultx){
+                users.checkPhoneVerification(callback.userId,callback.phone.code+"/"+callback.phone.number,code,function(resultx){
                     res.send(resultx);
                 });
             }
@@ -309,7 +309,7 @@ router.post('/api/v1/users/resetPassword/',function(req,res) {
             user.userId = null;
             obj = req.body.identification || ""; // email or phone number
         }
-        
+
         users.resetPassword(user.userId,type,obj,function(result){
             res.send(result);
         });

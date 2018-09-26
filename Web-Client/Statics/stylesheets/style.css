@@ -2002,7 +2002,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	text-align: center;
 	padding-left:10px;
 }
-#account,#changePass,#badges,#activation,#passRequired{
+#account,#changePass,#badges,#activation,#passRequired,#verifyPhone{
 	-webkit-transition: all 0.3s ease-out;
 	-moz-transition: all 0.3s ease-out;
 	-ms-transition: all 0.3s ease-out;
@@ -2035,7 +2035,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		height: auto;
 	}
 }
-.settingsContainer > div #passRequired{
+.settingsContainer > div #passRequired,.settingsContainer > div #verifyPhone{
 	position: fixed;
 	width:100%;
 	left:0;
@@ -2051,23 +2051,23 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	height:0;
 	z-index:-1;
 }
-.settingsContainer > div #passRequired.show{
+.settingsContainer > div #passRequired.show,.settingsContainer > div #verifyPhone.show{
 	height: 100%;
 	opacity: 1;
 	z-index:1000;
 }
-.settingsContainer > div #passRequired .form-group{
+.settingsContainer > div #passRequired .form-group,.settingsContainer > div #verifyPhone .form-group{
 	float: none;
 	padding: 100px 0 0;
 }
-.settingsContainer > div #passRequired .form-group p{
+.settingsContainer > div #passRequired .form-group p,.settingsContainer > div #verifyPhone .form-group p{
 	width: 100%;
 	padding: 10px 0;
 	margin:0;
 	display: block;
 	height: 90px;
 }
-.settingsContainer > div #passRequired .form-group p button{
+.settingsContainer > div #passRequired .form-group p button,.settingsContainer > div #verifyPhone .form-group p button{
 	position: relative;
 	display: block;
 	width: 100px;
@@ -2075,13 +2075,13 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	margin: 50px 0 0px;
 	font-size: 20px;
 }
-.settingsContainer > div #passRequired .form-group p button.cancel{
+.settingsContainer > div #passRequired .form-group p button.cancel,.settingsContainer > div #verifyPhone .form-group p button.cancel{
 	float: left;
 	clear: left;
 	background-color: #777;
 	color:black;
 }
-.settingsContainer > div #passRequired .form-group p button.ok{
+.settingsContainer > div #passRequired .form-group p button.ok,.settingsContainer > div #verifyPhone .form-group p button.ok{
 	float: right;
 	background-color: #ff0044;
 	color:white;
@@ -2097,6 +2097,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	display: inline-block;
 	height: 40px;
 }
+
 .settingsContainer > div h2,.settingsContainer > div label{
 	margin-top:25px;
 	color:white;
@@ -3264,6 +3265,100 @@ div.cc-picker-flag.ee{
 		left:0;
 		width:90%;
 	}
+}
+.settingsContainer > div #verifyPhone .form-group .dialog{
+	padding:10px 20px;
+	width:300px;
+	height: auto;
+	max-height: 90vh;
+	min-height:400px;
+	backface-visibility: hidden;
+	left:50%;
+	top:5%;
+	-webkit-transform: translate(-50%,0);
+	-moz-transform: translate(-50%,0);
+	-ms-transform: translate(-50%,0);
+	-o-transform: translate(-50%,0);
+	transform: translate(-50%,0);
+	border-radius: 8px;
+	border: 2px solid white;
+	background-color: rgba(200,200,200,0.8);
+}
+.settingsContainer > div #verifyPhone .form-group .dialog h4{
+	margin: 0 0 10px;
+	padding: 0;
+	line-height: 1.25;
+	font-size:22px;
+}
+.settingsContainer > div #verifyPhone .form-group .dialog span{
+	margin: 0 0 10px;
+	padding: 0;
+	line-height: 1.25;
+}
+
+.settingsContainer > div #verifyPhone .form-group .dialog .digits{
+	width: 100%;
+	display: block;
+	margin: 15px auto;
+	height: 150px;
+}
+.settingsContainer > div #verifyPhone .form-group .dialog .digits > button{
+	display: block;
+	position: relative;
+	font-size: 25px;
+	background-color: #ff0044;
+	color: white;
+	height: 55px;
+	padding: 0;
+	margin: 40px auto;
+	width: auto;
+	clear: both;
+	padding: 10px 20px;
+	top: 30px;
+	border-radius: 8px;
+}
+.settingsContainer > div #verifyPhone .form-group .dialog .digits .digit{
+	text-align: center;
+	line-height: 70px;
+	font-size: 38px;
+	border: solid 1px #ccc;
+	box-shadow: 0 0 5px #ccc inset;
+	outline: none;
+	width: 14%;
+	border-radius: 3px;
+	margin : 2px 4px;
+	-webkit-transition: all 0.2s ease-in-out;
+	-moz-transition: all 0.2s ease-in-out;
+	-ms-transition: all 0.2s ease-in-out;
+	-o-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+	color: black;
+}
+.settingsContainer > div #verifyPhone .form-group .dialog .digits .digit:focus {
+	border-color: #ff0044;
+	box-shadow: 0 0 5px #ff0055;
+}
+.settingsContainer > div #verifyPhone .form-group .dialog .digits .digit:selection {
+	background: transparent;
+}
+.settingsContainer > div #verifyPhone .form-group .dialog .formFooter{
+	position: relative;
+	display: block;
+	width: 100%;
+	height: auto;
+	padding:10px 5px;
+	margin:0 auto;
+}
+.settingsContainer > div #verifyPhone .form-group .dialog .formFooter a{
+	font-size:21px;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3 ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+.settingsContainer > div #verifyPhone .form-group .dialog .formFooter a:hover{
+	color:#ff0044;
 }
 .settingsContainer > div form .socialBox{
 	opacity: 0;
