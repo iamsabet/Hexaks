@@ -676,6 +676,7 @@
         resize();
         urlParser(true,"first");
         initialCategories();
+        onDragMoveNavHorizontaly();
         if( readCookie("X-ACCESS-TOKEN") !== null) {
             setUploaders();
             ratePadInitial();
@@ -1836,7 +1837,50 @@
         });
 
     }
+    function onDragMoveNavHorizontaly(){
+        let moveLogo = false;
+        
+        $("#logo")[0].addEventListener('touchstart', function(e){
+            moveLogo = true;
+        }, false);
 
+        $(".nav").on("mousedown","#logo",function(e){
+            moveLogo = true;
+        });
+        $(".nav").mousemove(function( event ) {
+            if(moveLogo){
+                if(!this.classList.contains("show")){
+                    $("#logo").css({"top":event.pageY - ($("#logo")[0].offsetHeight/2)});
+                }
+            }
+        });
+        $(".nav").mouseup(function( event ) {
+            if(moveLogo){
+                if(!this.classList.contains("show")){
+                    $("#logo").css({"top":event.pageY - ($("#logo")[0].offsetHeight/2) });
+                    moveLogo = false;
+                }
+            }
+        });
+        
+        $(".nav").on('touchmove',"#logo",function(event){
+            if(moveLogo){
+                if(!this.classList.contains("show")){
+                    $("#logo").css({"top":event.originalEvent.touches[0].pageY - ($("#logo")[0].offsetHeight/2) });
+                }
+            }
+        });
+        $(".nav").on('touchend',"#logo",function(event){
+          if(moveLogo){
+            if(!this.classList.contains("show")){
+                $("#logo").css({"top":event.originalEvent.touches[0].pageY - ($("#logo")[0].offsetHeight/2) });
+                moveLogo = false;
+                event.preventDefault();
+            }
+          }
+        });
+        
+    }
     function changePage(pageName,pageType,writeHistory,postid,changeUrl,canRequest) {
         let canReq = true;
         if(canRequest === false){
@@ -2530,8 +2574,7 @@
         }
 
         if(input["phoneNumber"] && (!res.message || !res.message.phoneNumber)){
-            changePage("settings","settings/"+this.href.split("/").pop(),true,"",true,true);
-            showVerifyPhoneBox(input["phoneNumber"]);
+            changePage("settings","settings/verifyPhone",true,"",true,false);
         }
         debugger;
     }

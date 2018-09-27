@@ -56,7 +56,7 @@ var postSchema = new Schema({
         CustomRendered: Number,
         ExposureMode: Number,
         WhiteBalance: Number
-    }, // exif object
+    }, // exif object ( for .jpg & .jpeg only :/ maybe )
     reportsCount : Number,
     hashtags:[],
     mentions:[],

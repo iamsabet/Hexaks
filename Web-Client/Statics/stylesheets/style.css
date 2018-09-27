@@ -381,7 +381,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .nav #logo{
     position: absolute;
     width: auto;
-    top: -1px;
+    top: auto;
 	height: auto;
 	left:50%;
 	width:90%;
@@ -398,16 +398,14 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
     -o-transform: translate(-50%,0);
     transform: translate(-50%,0);
     margin-right: 0;
-    -webkit-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
-    -ms-transition: all 0.3s ease-in-out;
-    -o-transition: all 0.3s ease-in-out;
-	transition: all 0.3s ease-in-out;
+    -webkit-transition: bottom,right,left,height 0.3s ease-in-out, top 0.02s ease-in;
+    -moz-transition: bottom,right,left,height 0.3s ease-in-out, top 0.02s ease-in;
+    -ms-transition: bottom,right,left,height 0.3s ease-in-out, top 0.02s ease-in;
+    -o-transition: bottom,right,left,height 0.3s ease-in-out, top 0.02s ease-in;
+	transition: bottom,right,left,height 0.3s ease-in-out, top 0.02s ease-in;
 	background: transparent;
 }
-.nav.show #logo{
-	
-}
+
 @media (max-width:768px){
 	.nav #logo{
 		right:-40px;
@@ -420,6 +418,15 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 		background-color: transparent;
 	}
 }
+.nav.show #logo{
+	-webkit-transition: all 0.3s ease-in;
+    -moz-transition: all 0.3s ease-in;
+    -ms-transition: all 0.3s ease-in;
+    -o-transition: all 0.3s ease-in;
+	transition: all 0.3s ease-in;
+	top:-1px !important;
+}
+
 .nav img:hover{
 	cursor: pointer;
 }

@@ -35,7 +35,7 @@ var userSchema = new Schema({
         number : Number 
     },
     rate: {
-        value : Float, // rate.counts / views * rate.number = rate.value
+        value : Float, // (rate.counts / views) * rate.number = rate.value
         number : Float,
         counts : long
     },
