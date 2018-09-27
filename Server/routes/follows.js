@@ -50,7 +50,7 @@ var follows = {
         let query = {
             "following": {$exists: true},
             "follower": hostId,
-            "type" : hostId,
+            "hostType" : type,
             deactive: false,
 
         };

@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+var autoIncrement = require('mongoose-auto-increment');
+var connection = mongoose.createConnection("mongodb://localhost:27017/hexaks_db");
+autoIncrement.initialize(connection);
 var Float = require('mongoose-float').loadType(mongoose);
-var long = require('mongoose-long')(mongoose);
 var userSchema = new Schema({
+    id : { type: Schema.Types.ObjectId, ref: 'id' },
     userId:String,
     username : String,
     email:String,
@@ -37,9 +40,10 @@ var userSchema = new Schema({
     rate: {
         value : Float, // (rate.counts / views) * rate.number = rate.value
         number : Float,
-        counts : long
+        points : Number,
+        counts : Number
     },
-    views : long,
+    views : Number,
     postsCount:Number,
     reportsCount:Number,
     verified:{
@@ -94,7 +98,7 @@ userSchema.pre('save', function(next){
     }
     next();
 });
-
+userSchema.plugin(autoIncrement.plugin,"id");
 let User = mongoose.model('users', userSchema);
 let user = mongoose.model('users');
 module.exports = user;

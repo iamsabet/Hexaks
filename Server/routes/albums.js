@@ -35,7 +35,7 @@ var albums = {
                 categoryQuery = {$in:category};
         }
 
-        if (orderedBy === "createdAt" || orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.number" || orderedBy === "rate.value" || orderedBy === "views") {
+        if (orderedBy === "createdAt" || orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.points" || orderedBy === "rate" || orderedBy === "rate.value" || orderedBy === "views") {
             // timeWindow
 
             let costQuery = {cost: {$gte: left, $lte: right}};
@@ -115,6 +115,9 @@ var albums = {
             else if (orderBy === "rate.value") {
                 options.sort = {"rate.value" : -1};
             }
+            else if (orderBy === "rate.points") {
+                options.sort = {"rate.points" : -1};
+            }
             else if (orderBy === "rate") {
                 options.sort = {"rate.number": -1};
             }
@@ -162,6 +165,7 @@ var albums = {
                         rate : {      // for all childrennew and old
                             number: 0.0,
                             counts : 0,
+                            points : 0,
                             value : 0.0
                         },
                         activated:true,

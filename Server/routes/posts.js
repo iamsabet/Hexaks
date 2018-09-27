@@ -267,6 +267,7 @@ var posts = {
                     value: 0.0,
                     number: 0.0,
                     counts: 0,
+                    points: 0
                 },
                 views: 0,
                 curatorId: "",
@@ -871,7 +872,7 @@ var posts = {
         if(user) {
             if(req.body && req.body.postId && typeof req.body.postId === "string") {
                 let postId = req.body.postId;
-                viewSchema.findOne({viewer:user.userId,postId:req.body.postId,deleted:false,activated:true},{viewer:1,deleted:1},function(err,viewx) {
+                viewSchema.findOne({viewer:user.userId,refrenceId:postId,referenceType:"post",deleted:false,activated:true},{viewer:1,deleted:1},function(err,viewx) {
                     if (err) throw err;
                     if (viewx) {
                         res.send({result:true,message:"already viewd"});
@@ -880,7 +881,7 @@ var posts = {
                         var postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
 
                         if(user.followings.indexOf(postOwnerId) > -1 || postOwnerId === user.userId){
-                            posts.doView(user.userId,postId,true,res); // post and account privacy bypass
+                            posts.doView(user.userId,postId,true,"post",res); // post and account privacy bypass
                         }
                         else{
                             let blocked = (user.blockList.indexOf(postOwnerId) > -1);
@@ -899,11 +900,11 @@ var posts = {
                                             }
                                             else{
                                                 if(!hostUser.privacy){
-                                                    posts.doView(user.userId,postId,true,res); // post privacy bypass
+                                                    posts.doView(user.userId,postId,true,"post",res); // post privacy bypass
                                                 }
                                                 else{ // certainly didnt view so 
 
-                                                    posts.doView(user.userId,postId,false,res); // post privacy bypass
+                                                    posts.doView(user.userId,postId,false,"post",res); // post privacy bypass
                                                 }
                                             }          
                                         });
@@ -922,9 +923,10 @@ var posts = {
             res.send({result:true,message:"Not Authenticated - view"});
         }
     },
-    doView:function(userId,postId,privacyStat,res){
+    doView:function(userId,referenceId,privacyStat,referenceType,res){
         let query = {
-            postId:postId,
+            referenceType:referenceId,
+            referenceType : referenceType, // post , blog , new , message ... 
             rejected:null,
             activated:true,
             deleted:false,
@@ -933,6 +935,7 @@ var posts = {
         if(!privacyStat){
             query.isPrivate = false;
         }
+        // if type === post 
         postSchema.findOneAndUpdate(query,{"$inc":{views:1}},{
             "fields":{
                 "album":1,
@@ -944,7 +947,7 @@ var posts = {
                 res.send({result:false,message:"Oops Do view Went Wrong"});
             }
             if(postx){
-                View.create({viewer:userId,postId:postId},function(resultv){
+                View.create({viewer:userId,referenceId:postId,referenceType:referenceType},function(resultv){
                     if(resultv===true){
                         users.increasePostOwnerViews(userId,function(resultc){
                             if(!resultc.message){
@@ -980,7 +983,7 @@ var posts = {
             if(req.body && req.body.postId && typeof req.body.postId === "string" && req.body.value && parseInt(req.body.value) <= 7 && parseInt(req.body.value) >= 1) {
                 let postId = req.body.postId;
                 let rateValue = parseInt(req.body.value);
-                rateSchema.findOne({rater:user.userId,postId:postId},{rateId:1,changes:1,rater:1,postId:1,value:1},function(err,ratex) {
+                rateSchema.findOne({rater:user.userId,referenceId:postId,referenceType:"post"},{rateId:1,changes:1,rater:1,postId:1,value:1},function(err,ratex) {
                     if (err) throw err;
                     let rateObject = ratex;
                     if(!ratex || ratex.changes < 3){
@@ -991,7 +994,7 @@ var posts = {
                         else{
                             let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
                             if(user.followings.indexOf(postOwnerId) > -1){
-                                posts.doRate(user.userId,postId,rateValue,rateObject,true,res); // post and account privacy bypass
+                                posts.doRate(user.userId,postId,"post",rateValue,rateObject,true,res); // post and account privacy bypass
                             }
                             else if(user.userId === postOwnerId){
                                 res.send({result:true,message:"You cant rate your own post"});
@@ -1008,10 +1011,10 @@ var posts = {
                                             }
                                             else{
                                                 if(!hostUser.privacy){
-                                                    posts.doRate(user.userId,postId,rateValue,rateObject,true,res); // post privacy bypass
+                                                    posts.doRate(user.userId,postId,rateValue,rateObject,true,"post",res); // post privacy bypass
                                                 }
                                                 else{ 
-                                                    posts.doRate(user.userId,postId,rateValue,rateObject,false,res); // only publics
+                                                    posts.doRate(user.userId,postId,rateValue,rateObject,false,"post",res); // only publics
                                                 }
                                             }          
                                         });
@@ -1028,13 +1031,13 @@ var posts = {
             }
         }
     },
-    doRate:function(userId,postId,rateNumber,rateObject,privacyStat,res){
-        posts.getPostInfoById(postId,privacyStat,function(post){
+    doRate:function(userId,referenceId,rateNumber,rateObject,privacyStat,referenceType,res){
+        posts.getPostInfoById(referenceId,privacyStat,function(post){
             if(post){
                 if(rateObject){
                     let now = Date.now();
                     let newChanges = rateObject.changes + 1;
-                    rateSchema.update({postId:rateObject.postId,rater:userId,value:{$ne:rateNumber}},{ // last rate value
+                    rateSchema.update({referenceId:rateObject.referenceId,rater:userId,referenceType:"post",value:{$ne:rateNumber}},{ // last rate value
                         $set:{
                             value:rateNumber,
                             changes : (newChanges),
@@ -1069,7 +1072,7 @@ var posts = {
                         let rateObj = {};
                         rateObj.rater = userId;
                         rateObj.value = rateNumber;
-                        rateObj.postId = postId;
+                        rateObj.referenceId = referenceId;
                         Rate.create(rateObj,function(rateId){
                             if(rateId !== false){
                                 // let smallImageUrl = "../pictures/"+postId + "-Small===.";
@@ -1081,7 +1084,7 @@ var posts = {
                                 let differance = parseFloat(rateNumber - avg); // + , - 0.change
                                 let numberChange = parseFloat(differance/(counts));
                                 let valueChange =  parseFloat (numberChange / post.views); //
-                                posts.updatePostRates(res,{postId:rateObj.postId},{
+                                posts.updatePostRates(res,{postId:post.postId},{
                                     $inc:{
                                         "rate.value" : valueChange,
                                         "rate.number" : numberChange, // + 1 to 6
@@ -1109,7 +1112,7 @@ var posts = {
                     albums.updateAlbumRates(input,function(resulta){
                         if(!resulta.message){
                             console.log("album rates updated");
-                            
+
 
                         }
                         else{

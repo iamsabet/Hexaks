@@ -17,7 +17,7 @@ redisClient.select(2,function(){
 var followSchema = new Schema({
     followId : String,
     follower : String, // userId
-    type : String, // users , hashtag , category , location , device 
+    hostType : String, // users , hashtag , category , location , device 
     following : String , // userId , "hashtagText" , "categoryText" , locationId , deviceId 
     activated : Boolean,
     accepted : Boolean,
@@ -88,7 +88,7 @@ followSchema.methods.create = function(followObject,hostUser,callback){
     var newFollow = {};
     follow.update({
         follower: followObject.follower,
-        type:followObject.type,
+        hostType:followObject.hostType,
         following: followObject.following,
         activated:false
     }, updateFields , function (err, result) {
@@ -98,6 +98,7 @@ followSchema.methods.create = function(followObject,hostUser,callback){
             followObject.activated = true;
             followObject.deleted = false;
             followObject.accepted = hostUser.privacy;
+            followObject.hostType = followObject.hostType;
             followObject.followId = CryptoJS.SHA1(followObject.follower, followObject.following).toString(); //("content","key")
             newFollow = new Follow(followObject);
             newFollow.save(function (err) {

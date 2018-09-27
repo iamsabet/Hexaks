@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
-require('mongoose-long')(mongoose);
 let users = require("../routes/users");
 let mongoosePaginate = require('mongoose-paginate');
 let redis = require("redis");
@@ -16,8 +15,8 @@ redisClient.select(2,function(){
 
 var reportSchema = new Schema({
     reportId : String,
-    type : String, // "user - post  - "
-    subjectId : String , // userId - postId - commentId ...
+    referenceType : String, // "user - post  - "
+    referenceId : String , // userId - postId - commentId ...
     value : Number, //
     message : String,
     createdAt : Number,

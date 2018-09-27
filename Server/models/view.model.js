@@ -7,9 +7,10 @@ var mongoosePaginate = require('mongoose-paginate');
 var viewSchema = new Schema({
     viewId : String,
     viewer : String, // userId
-    postId : String,
+    refrenceId : String,
     deleted : Boolean,
     activated:Boolean,
+    referenceType : String, // users , hashtag , category , location , device 
     createdAt : Number,
     updatedAt : Number
 });
@@ -19,8 +20,9 @@ viewSchema.methods.create = function(viewObject,callback){
     newView.createdAt = Date.now();
     newView.updatedAt = Date.now();
     newView.viewer = viewObject.viewer;
-    newView.postId = viewObject.postId;
-    let hashed = CryptoJS.SHA1(viewObject.viewer, viewObject.postId); //("content","key")
+    newView.viewer = viewObject.referenceType || "post";
+    newView.refrenceId = viewObject.refrenceId;
+    let hashed = CryptoJS.SHA1(viewObject.viewer, viewObject.refrenceId); //("content","key")
     newView.viewId = hashed;
     newView.deleted = false;
     newView.activated = true;

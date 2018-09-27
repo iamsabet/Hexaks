@@ -21,6 +21,11 @@ const variables = require("../variables");
 var requestIp = require("request-ip");
 var CryptoJS = require("crypto-js");
 let validateUser = require('./auth').validateUser;
+
+
+
+
+
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -1023,6 +1028,7 @@ var users = {
     updateAllUserInfosInCache:function(userId,callback){
         userSchema.findOne({userId: userId}, {
             _id: 0,
+            id:0,
             userId: 1,
             username: 1,
             fullName:1,
@@ -1044,12 +1050,12 @@ var users = {
             if (user) {
                 redisClient.hmset(["info:"+user.userId,"userId",user.userId, "username", user.username,"fullName",user.fullName,"followersCount",user.followersCount,"followingsCount" ,user.followingsCount,"location",user.city+":"+user.country+"/"+user.location,
                 "postsCount",user.postsCount,"reportsCount",user.reportsCount,"roles",JSON.stringify(user.roles),"privacy", user.privacy, "gender", user.gender,"views",parseInt(user.views) ,
-                    "profilePictureSet", user.profilePictureSet, "rate",JSON.stringify(user.rate.value)]); // must add to a zset --> points
+                    "profilePictureSet", user.profilePictureSet, "rate",JSON.stringify(user.rate)]); // must add to a zset --> points
                 redisClient.expire("info:"+user.userId, 300000);
                 console.log("user infos updated in cache ,expire : 5minutes ");
                 return callback({"userId":user.userId,"username": user.username,"fullName":user.fullName,"followersCount" : user.followersCount,"followingsCount" : user.followingsCount,"location":user.city+":"+user.country+"/"+user.location,
                                 "postsCount":user.postsCount,"reportsCount":user.reportsCount,"roles":user.roles,"privacy": user.privacy,"gender": user.gender,
-                                "profilePictureSet": user.profilePictureSet, "rate": user.rate.value,"views" : parseInt(user.views) });
+                                "profilePictureSet": user.profilePictureSet, "rate": JSON.stringify(user.rate),"views" : parseInt(user.views) });
             }
             else {
                 return callback({result:false,message:"User information not found"});

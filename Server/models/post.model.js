@@ -9,8 +9,10 @@ var redisClient = redis.createClient({
 redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
+var autoIncrement = require('mongoose-auto-increment');
+var connection = mongoose.createConnection("mongodb://localhost:27017/hexaks_db");
+autoIncrement.initialize(connection);
 var Float = require('mongoose-float').loadType(mongoose);
-var long = require('mongoose-long')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
 var rateSchema = require('../models/rate.model');
 var postSchema = new Schema({
@@ -67,11 +69,12 @@ var postSchema = new Schema({
     categories:[], // 3 max
     caption:String,
     rate:{
-        value: Float,
-        number : Float, // (rate.counts / views) * rate.number = rate.value
-        counts: long
+        value : Float, // (rate.counts / views) * rate.number = rate.value
+        number : Float,
+        points : Number,
+        counts : Number
     },
-    views : long ,     // viewers.length length
+    views : Number ,     // viewers.length length
     curatorId:String,
     isPrivate:Boolean,
     rejected:String,
@@ -129,6 +132,7 @@ postSchema.pre('save', function(next){
 });
 
 postSchema.plugin(mongoosePaginate);
+postSchema.plugin(autoIncrement.plugin,'id');
 let Post = mongoose.model('posts', postSchema);
 let post = mongoose.model('posts');
 module.exports = post;

@@ -5,18 +5,19 @@ var users = require('../routes/users');
 var posts = require('../routes/posts');
 var mongoosePaginate = require('mongoose-paginate');
 var Float = require('mongoose-float').loadType(mongoose);
-var long = require('mongoose-long')(mongoose);
+
 var albumSchema = new Schema({
     albumId : String, // must have ownerId after Encryption
     ownerId : String,
     thumbnail : String, // 1 post id - default - first one - can be chosen by user
     collaborators : [], // userIds who can attach posts in this album shared by the owner [] default
     title : String,
-    views : long, // all children views
+    views : Number, // all children views
     rate : {      // for all childrennew and old
-        number: Float,
-        counts : long,
-        value : Float
+        value : Float, // (rate.counts / views) * rate.number = rate.value
+        number : Float,
+        points : Number,
+        counts : Number
     },
     activated:Boolean,
     deleted:Boolean,
@@ -41,6 +42,7 @@ albumSchema.methods.Create = function(albumObject,callback){
         newAlbum.rate = {      //
             number: 0.0,
             counts: 0,
+            points: 0,
             value: 0.0
         };
         newAlbum.reportsCount = 0;

@@ -676,7 +676,6 @@
         resize();
         urlParser(true,"first");
         initialCategories();
-        onDragMoveNavHorizontaly();
         if( readCookie("X-ACCESS-TOKEN") !== null) {
             setUploaders();
             ratePadInitial();
@@ -1865,14 +1864,14 @@
         
         $(".nav").on('touchmove',"#logo",function(event){
             if(moveLogo){
-                if(!this.classList.contains("show")){
+                if(!this.classList.contains("show") && event.originalEvent.touches[0]){
                     $("#logo").css({"top":event.originalEvent.touches[0].pageY - ($("#logo")[0].offsetHeight/2) });
                 }
             }
         });
         $(".nav").on('touchend',"#logo",function(event){
           if(moveLogo){
-            if(!this.classList.contains("show")){
+            if(!this.classList.contains("show") && event.originalEvent.touches[0]){
                 $("#logo").css({"top":event.originalEvent.touches[0].pageY - ($("#logo")[0].offsetHeight/2) });
                 moveLogo = false;
                 event.preventDefault();
@@ -2102,32 +2101,43 @@
             Me = null;
         }
         if(Me !== null && Me !== {}) {
-            $(".accountCard").html(`
-                <a href="" id="profileBtn">${res.username}</a>
-                <a href="" id="newPostBtn"></a>
-                <a href="" id="notifBtn"></a>
-                <a href="" id="searchButton"></a>
-            `);
+
+            showCard(res.username);
+            
             if(window.location.pathname.split("settings").length > 1){ // fill user infos in user infos form
                 loadUserInfosInForm();
             }
             let pageName = window.location.pathname.split("/")[1].toString();
-            if(!pageName || pageName === ""){
-                pageName === "explore";
-            }
+            selectRightNavItem(pageName);
 
-            $(`.navRightButtons a[href="/${pageName}"]`).parents("li").addClass("selected");
-            $(`.navRightButtons`).parents("li").addClass("selected");
+
+
+
+            onDragMoveNavHorizontaly();
         }
         else{
+
+
             $(".nav").removeClass("show");
+            showCard();
+        }
+    }
+    function showCard(username){
+        if(username){
+            $(".accountCard").html(`
+                <a href="" id="profileBtn">${username}</a>
+                <a href="" id="newPostBtn"></a>
+                <a href="" id="notifBtn"></a>
+                <a href="" id="searchButton"></a>
+            `);
+        }
+        else{
             $(".accountCard").html(`
                 <a href="/login" id="loginBtn">Login</a>
                 <a href="/register">Register</a>
             `);
         }
     }
-
     function selectTopNav(order){
         var orderElements = $(".topNav ul li");
         orderElements.removeClass("selected");
@@ -3914,7 +3924,13 @@ Wedding`;
             }
         }
     }
-
+    function selectRightNavItem(pageName){
+        if(!pageName || pageName === ""){
+            pageName === "explore";
+        }
+        $(`.navRightButtons a[href="/${pageName}"]`).parents("li").addClass("selected");
+        $(`.navRightButtons`).parents("li").addClass("selected");
+    }
     function initialAlbumsElements(position,list){
 
         let target = "";
