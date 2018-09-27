@@ -22,6 +22,7 @@ var Hashtag = new hashtagSchema();
 var CryptoJS = require("crypto-js");
 var Float = require('mongoose-float').loadType(mongoose);
 var users = require('./users');
+var albums = require('./albums');
 var blocks = require('./blocks');
 var redis = require("redis");
 var requestIp = require("request-ip");
@@ -57,7 +58,7 @@ var posts = {
                 categoryQuery = {$in:category};
         }
         let timeEdge = parseInt(timeEdgeIn);
-        if (orderedBy === "createdAt"|| orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.points" || orderedBy === "rate.value" ||  orderedBy === "rate"  || orderedBy === "views") {
+        if (orderedBy === "createdAt"|| orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.number" || orderedBy === "rate.value" ||  orderedBy === "rate"  || orderedBy === "views") {
             // timeWindow
 
             let costQuery = {cost: {$gte: left, $lte: right}};
@@ -137,8 +138,8 @@ var posts = {
             else if (orderedBy === "rate.value" || orderedBy === "rate") {
                 options.sort = {"rate.value" : -1};
             }
-            else if (orderedBy === "rate.points") {
-                options.sort = {"rate.points": -1};
+            else if (orderedBy === "rate.number") {
+                options.sort = {"rate.number": -1};
             }
             else if(orderedBy === "views"){ // "views"
                 options.sort = {views: -1};
@@ -264,7 +265,7 @@ var posts = {
                 caption: "",
                 rate: {
                     value: 0.0,
-                    points: 0,
+                    number: 0.0,
                     counts: 0,
                 },
                 views: 0,
@@ -1032,10 +1033,11 @@ var posts = {
             if(post){
                 if(rateObject){
                     let now = Date.now();
+                    let newChanges = rateObject.changes + 1;
                     rateSchema.update({postId:rateObject.postId,rater:userId,value:{$ne:rateNumber}},{ // last rate value
                         $set:{
                             value:rateNumber,
-                            changes : (rateObject.changes+1),
+                            changes : (newChanges),
                             updatedAt : now
                         },
                     },function(err,resultr){
@@ -1047,14 +1049,15 @@ var posts = {
                             let lastRate = rateObject.value;
                             let counts = parseInt(post.rate.counts);
                             let diff = parseFloat(rateNumber - lastRate); // + , - 0.change
-                            let change = parseFloat(diff/(counts));
-
+                            let Numberchange = parseFloat(diff/(counts));
+                            let valueChange =  (parseFloat (Numberchange / post.views)); // (changes+1)); // anytime changes drops + valuation effect 
                             posts.updatePostRates(res,{postId:post.postId},{
                                 $inc:{
+                                    "rate.number" : Numberchange,
+                                    "rate.value" : valueChange,
                                     "rate.points" : diff,
-                                    "rate.value" : change
                                     }
-                            },parseFloat(rateObject.value+diff).toString()+"/update");
+                            },{albumId:post.album,rateDiff:differance,postRateCounts:counts,postViews:post.views,response:parseFloat(rateObject.number+Numberchange).toString()+"/update"});
                         }
                         else{
                             res.send({result:false,message:"Update rate object failed"});
@@ -1068,23 +1071,24 @@ var posts = {
                         rateObj.value = rateNumber;
                         rateObj.postId = postId;
                         Rate.create(rateObj,function(rateId){
-
                             if(rateId !== false){
                                 // let smallImageUrl = "../pictures/"+postId + "-Small===.";
                                 // users.pushNotification("environment"," Rated your post "+ rateNumber,hostUser.userId,user.userId,postId,"/post/"+postId,"",smallImageUrl,function(resultx){
                                 //     console.log(" xxxxxxxxxx unread notifications after create " + resultx);
                                 // });
                                 let counts = parseInt(post.rate.counts) + 1;
-                                let avg = parseFloat(post.rate.value);
+                                let avg = parseFloat(post.rate.number);
                                 let differance = parseFloat(rateNumber - avg); // + , - 0.change
-                                let changeValue = parseFloat(differance/(counts));
+                                let numberChange = parseFloat(differance/(counts));
+                                let valueChange =  parseFloat (numberChange / post.views); //
                                 posts.updatePostRates(res,{postId:rateObj.postId},{
                                     $inc:{
-                                        "rate.value" : changeValue,
-                                        "rate.points" : rateNumber, // + 1 to 6
+                                        "rate.value" : valueChange,
+                                        "rate.number" : numberChange, // + 1 to 6
+                                        "rate.points" : differance,
                                         "rate.counts": 1
                                     }
-                                },parseFloat(avg+changeValue).toString()+"/new/"+rateId.toString());
+                                },{albumId:post.album,rateDiff:differance,postRateCounts:counts,postViews:post.views,response:parseFloat(avg+numberChange).toString()+"/new/"+rateId.toString()});
                             }
                             else{
                                 res.send({result:false,message:"Rate Object Did not Created"});
@@ -1097,11 +1101,27 @@ var posts = {
                 }
         });
     },
-    updatePostRates:function(res,query,updates,value){
+    updatePostRates:function(res,query,updates,input){
         postSchema.update(query,updates,function(err,result){
             if(err) throw err;
             if(result.n > 0){
-                res.send(value);
+                if(input.albumId){
+                    albums.updateAlbumRates(input,function(resulta){
+                        if(!resulta.message){
+                            console.log("album rates updated");
+                            
+
+                        }
+                        else{
+                            res.send(resulta);
+                        }
+                    });
+                    res.send(object.response);
+                }
+                else{
+                    res.send(input.response);
+                }
+                
             }
             else{
                 res.send({result:false,message:"post rate values failed to update"});

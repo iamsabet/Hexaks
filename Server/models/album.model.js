@@ -14,7 +14,7 @@ var albumSchema = new Schema({
     title : String,
     views : long, // all children views
     rate : {      // for all childrennew and old
-        points: long,
+        number: Float,
         counts : long,
         value : Float
     },
@@ -39,7 +39,7 @@ albumSchema.methods.Create = function(albumObject,callback){
         newAlbum.collaborators = []; // userIds who can attach posts in this album shared by the owner [] default
         newAlbum.activated = true;
         newAlbum.rate = {      //
-            points: 0,
+            number: 0.0,
             counts: 0,
             value: 0.0
         };

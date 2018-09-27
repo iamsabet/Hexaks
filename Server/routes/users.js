@@ -200,7 +200,7 @@ var users = {
                                 phone:null,
                                 rate: {
                                     value: 0.0,
-                                    points: 0,
+                                    number: 0.0,
                                     counts: 0,
                                 },
                                 views: 0,
