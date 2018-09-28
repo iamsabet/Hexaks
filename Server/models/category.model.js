@@ -121,27 +121,26 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                                 redisClient.set("categoriesInitialized:"+mode, true);
                                 for (let z = 0; z < cats.length; z++) {
                                     let countsX = cats[z].counts;
-                                    if(parseInt(result)===1){
-                                        Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),countsX,function(resultu){
-                                            if(resultu){
+                                    Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),countsX,function(resultu){
+                                        if(resultu){
+                                            if ((z === cats.length - 1) && (n === 0)) {
+                                                console.log("categories initialized for mode = :" + mode  +" in cache.");
                                                 if ((z === cats.length - 1) && (n === 0)) {
-                                                    console.log("categories initialized for mode = :" + mode  +" in cache.");
-                                                    if ((z === cats.length - 1) && (n === 0)) {
-                                                        let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
-                                                        redisClient.set("categoriesInitialized:"+mode, true);
-                                                        redisClient.expire("categoriesTrend:"+mode, expireTime); // expire
-                                                        redisClient.expire("categoriesInitialized:"+mode, expireTime);
-                                                    }
+                                                    let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
+                                                    redisClient.set("categoriesInitialized:"+mode, true);
+                                                    redisClient.expire("categoriesTrend:"+mode, expireTime); // expire
+                                                    redisClient.expire("categoriesInitialized:"+mode, expireTime);
                                                 }
                                             }
-                                           
-                                        }); 
-                                    }
+                                        }
+                                        
+                                    }); 
+                                    
                                 }
                             });
                         }
                         else {
-                            //nop
+                            console.log("No categories found in initial mode : " + mode);
                         }
                     });
                 }
@@ -163,13 +162,13 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
             category.findOne({name:categoryName.toLowerCase(),hour:mode,day:mode,year:mode,month:mode},function(err,resultc){
                 if(err) throw err;
                 if(!resultc) {
-                    let newCategory = new Category({name: categoryName});
+                    let newCategory = new Category({name: categoryName.toLowerCase()});
                     newCategory.createdAt = nowTime;
                     newCategory.updatedAt = nowTime;
                     newCategory.hour = mode, // -1 - 23
                     newCategory.day = mode, // -1 - 31
                     newCategory.month = mode, // -1 - 12
-                    newCategory.year = mode, // -1 , 2019 --> 
+                    newCategory.year = mode, // -1 , 2018 --> 
                     newCategory.thumbnailUrl="../profilePics/avatar.png"; // 
                     newCategory.counts = 0;
                     newCategory.name = categoryName.toLowerCase();
@@ -179,7 +178,7 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                     return callback(true);
                 }
                 else{
-                    return callback({result:false,message:"Already exists category : "+categoryName});
+                    return callback({result:false,message:"Already exists category : "+categoryName.toLowerCase()});
                 }
             })
         }
@@ -224,19 +223,20 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
 
                     Post.updateCategoryTrendsInCache(mode,1,function(updateResponse){
                         category.update(query,
-                            {$inc: {counts: 1},$set:{updatedAt:nowTime}}, function (err, resultx) {
+                            {$inc: {counts: 1},$set:{updatedAt:nowTime}
+                            }, function (err, resultx) {
                             if (err) throw err;
                             if (resultx.n === 0) {
-                                let newCategory = new Category({name: categoryName.toLowerCase()});
+                                let newCategory = new Category({name: query.name});
                                 newCategory.createdAt = nowTime;
                                 newCategory.updatedAt = nowTime;
                                 newCategory.counts = 1;
-                                newCategory.name = categoryName.toLowerCase();
+                                newCategory.name = query.name;
                                 newCategory.thumbnailUrl=""; // 
-                                newCategory.hours = hours;
-                                newCategory.day = day;
-                                newCategory.month = month;
-                                newCategory.year = year;
+                                newCategory.hours = query.hours;
+                                newCategory.day = query.day;
+                                newCategory.month = query.month;
+                                newCategory.year = query.year;
                                 if(mode === 0){
                         
                                 }
