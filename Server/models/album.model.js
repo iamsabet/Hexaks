@@ -4,9 +4,11 @@ var postSchema = require('../models/post.model');
 var users = require('../routes/users');
 var posts = require('../routes/posts');
 var mongoosePaginate = require('mongoose-paginate');
+var autoIncrement = require('mongoose-sequence')(mongoose);
 var Float = require('mongoose-float').loadType(mongoose);
 
 var albumSchema = new Schema({
+    id:Number,
     albumId : String, // must have ownerId after Encryption
     ownerId : String,
     thumbnail : String, // 1 post id - default - first one - can be chosen by user
@@ -138,7 +140,9 @@ albumSchema.pre('save', function(next){
     }
     next();
 });
+autoIncrement
 albumSchema.plugin(mongoosePaginate);
+viewSchema.plugin(autoIncrement, {inc_field: 'id'});
 let Album = mongoose.model('albums', albumSchema);
 let album = mongoose.model('albums');
 module.exports = album;

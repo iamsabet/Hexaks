@@ -543,25 +543,32 @@ var posts = {
                                         for (let c = 0; c < categoryx.length; c++) { // create hourly category
                                             if (categoryx[c] && (categoryx[c] !== undefined)) {
                                                 Category.Create(now, 0, categoryx[c],function (callback) {
-                                                    console.log("category create hourly callback : " + callback);
                                                     if (callback === true) {
-                                                        if (allCategories.indexOf(categoryx[c]) === -1)
-                                                            allCategories.push(categoryx[c]);
-                                                        }
-                                                        else{
-        
-                                                        }
-                                                    });
-                                                Category.Create(now, 1, categoryx[c],function (callback) {
-                                                    console.log("category create daily callback : " + callback);
-                                                    if (callback === true) {
-                                                        if (allCategories.indexOf(categoryx[c]) === -1)
-                                                            allCategories.push(categoryx[c]);
-                                                        }
-                                                        else{
-        
-                                                        }
-                                                    });
+                                                        console.log("add hour category");
+                                                        Category.Create(now, 1, categoryx[c],function (callback) {
+                                                            if (callback === true) {
+                                                                // month and yearly objects creates schaduled // for month , yeach 1 week maybe 
+                                                                // console.log("add day category");
+                                                                // Category.Create(now, 2, categoryx[c],function (callback) { // month
+                                                                //     if (callback === true) {
+                                                                //         console.log("add month category");
+                                                                //     }
+                                                                //     else{
+                    
+                                                                //     }
+                                                                // });
+                                                                
+                                                            }
+                                                            else{
+            
+                                                            }
+                                                        });
+                                                    }
+                                                    else{
+    
+                                                    }
+                                                });
+                                                
                                             }
                                         }
 

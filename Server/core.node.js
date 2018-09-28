@@ -40,26 +40,30 @@ client.on('connect', function() {
 
 // Scheduling
 Hashtag.Paginate(6,10000);
-Category.initialCategoriesInCache(24);
+Category.initialCategoriesInCache(0);
 console.log("Startup Functions");
 new CronJob('50 59 * * * *', function() { // hourly
     console.log("1h Scheduled");
-    Category.initialCategoriesInCache(6);
+    Category.initialCategoriesInCache(0);
     Hashtag.Paginate(6,10000);
 }, null, true);
 
-new CronJob('50 59 11 * * *', function() { // daily
+new CronJob('50 59 11 * * *', function() { // daily //
     console.log("12 hours Scheduled");
-    Category.initialCategoriesInCache(24);
+    Category.initialCategoriesInCache(1);
     Hashtag.Paginate(24,50000);
 }, null, true);
-new CronJob('50 59 3 1 * *', function() { // weekley
+new CronJob('50 59 3 1 * *', function() { // weekley every day
     console.log("28 hours Scheduled");
-    Category.initialCategoriesInCache(168);
+    Category.initialCategoriesInCache(2);
     Hashtag.Paginate(168,100000);
 }, null, true);
-new CronJob('50 59 23 6 *', function(){ // every week / / Monthly Trend
-    Category.initialCategoriesInCache(720);
+new CronJob('50 59 23 6 *', function(){ // 
+    Category.initialCategoriesInCache(3);
+    Hashtag.Paginate(720,200000);
+});
+new CronJob('50 59 23 6 *', function(){ // yearly
+    Category.initialCategoriesInCache(3);
     Hashtag.Paginate(720,200000);
 });
 

@@ -19,6 +19,7 @@ redisClient.select(2,function(){
 
 
 var hashtagSchema = new Schema({
+    id:Number,
     name : String,
     counts : Number,
     hour:Number, //0 - 23 -- > 24 means daily record
