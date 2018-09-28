@@ -18,6 +18,7 @@ var categorySchema = new Schema({
     id:Number,
     name : String,
     counts:Number,
+    number : Number,
     thumbnailUrl:String,
     hour:Number, // 0 - 23
     day:Number, // 0 - 31
@@ -112,7 +113,8 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                 for (let n = 0; n < categories.length; n++) {
                     category.find(query, {
                         name: 1,
-                        counts: 1
+                        counts: 1,
+                        number:1
                         }, function (err, cats) {
                         if (err) throw err;
                         if (cats.length > 0) {
@@ -121,7 +123,7 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                                 redisClient.set("categoriesInitialized:"+mode, true);
                                 for (let z = 0; z < cats.length; z++) {
                                     let countsX = cats[z].counts;
-                                    Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),countsX,function(resultu){
+                                    Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),categoriesText.split("\n"),countsX,function(resultu){
                                         if(resultu){
                                             if ((z === cats.length - 1) && (n === 0)) {
                                                 console.log("categories initialized for mode = :" + mode  +" in cache.");
@@ -162,20 +164,26 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
             category.findOne({name:categoryName.toLowerCase(),hour:mode,day:mode,year:mode,month:mode},function(err,resultc){
                 if(err) throw err;
                 if(!resultc) {
-                    let newCategory = new Category({name: categoryName.toLowerCase()});
-                    newCategory.createdAt = nowTime;
-                    newCategory.updatedAt = nowTime;
-                    newCategory.hour = mode, // -1 - 23
-                    newCategory.day = mode, // -1 - 31
-                    newCategory.month = mode, // -1 - 12
-                    newCategory.year = mode, // -1 , 2018 --> 
-                    newCategory.thumbnailUrl="../profilePics/avatar.png"; // 
-                    newCategory.counts = 0;
-                    newCategory.name = categoryName.toLowerCase();
-                    newCategory.activated = true;
-                    newCategory.deleted = false;
-                    newCategory.save();
-                    return callback(true);
+                    if(categoriesDefined.indexOf(categoryName.toLowerCase()) > -1){
+                        let newCategory = new Category({name: categoryName.toLowerCase()});
+                        newCategory.createdAt = nowTime;
+                        newCategory.updatedAt = nowTime;
+                        newCategory.number = categoriesDefined.indexOf(categoryName.toLowerCase());
+                        newCategory.hour = mode, // -1 - 23
+                        newCategory.day = mode, // -1 - 31
+                        newCategory.month = mode, // -1 - 12
+                        newCategory.year = mode, // -1 , 2018 --> 
+                        newCategory.thumbnailUrl="../profilePics/avatar.png"; // 
+                        newCategory.counts = 0;
+                        newCategory.name = categoryName.toLowerCase();
+                        newCategory.activated = true;
+                        newCategory.deleted = false;
+                        newCategory.save();
+                        return callback(true);
+                    }
+                    else{
+                        return callback({result:false,message:"Not Defiend Category"});
+                    }
                 }
                 else{
                     return callback({result:false,message:"Already exists category : "+categoryName.toLowerCase()});
@@ -190,6 +198,7 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                 if(value.n > 0){
                     let query = {
                         name: categoryName.toLowerCase(),
+                        number: categoriesDefined.indexOf(categoryName.toLowerCase()),
                         hour: hours,
                         day:day,
                         month:month,
@@ -232,6 +241,7 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                                 newCategory.updatedAt = nowTime;
                                 newCategory.counts = 1;
                                 newCategory.name = query.name;
+                                newCategory.number = categoriesDefined.indexOf(query.name);
                                 newCategory.thumbnailUrl=""; // 
                                 newCategory.hours = query.hours;
                                 newCategory.day = query.day;
@@ -307,3 +317,64 @@ let Category = mongoose.model('categories', categorySchema);
 let category = mongoose.model('categories');
 module.exports = category;
 
+let categoriesDefined = [
+    "abstract",
+    "aerial",
+    "animal",
+    "architecture",
+    "astrophotography",
+    "avian",
+    "black and white",
+    "cityscape",
+    "current events",
+    "decisive moment",
+    "defocused",
+    "documentary",
+    "emotive",
+    "expression",
+    "family",
+    "fashion",
+    "film",
+    "fine art",
+    "food",
+    "glamour",
+    "hdri (high dynamic range imaging)",
+    "humorous",
+    "icm (intentional camera movement)",
+    "industrial",
+    "infrared",
+    "interior",
+    "journalism",
+    "landscape",
+    "lomo",
+    "macro",
+    "nature",
+    "nude",
+    "panoramas/mosaics",
+    "performance",
+    "pinhole",
+    "portrait",
+    "product",
+    "publicity",
+    "random",
+    "recycled art",
+    "rough camera",
+    "rural",
+    "sea and sand",
+    "sky",
+    "snapshot",
+    "sports",
+    "still life",
+    "stock",
+    "street photography",
+    "suburban",
+    "swimsuit",
+    "tourist",
+    "travel",
+    "underwater",
+    "urban",
+    "vehicle",
+    "vintage",
+    "weather",
+    "wedding"
+  ];

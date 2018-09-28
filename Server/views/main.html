@@ -3813,70 +3813,71 @@
     }
     function initialMasterCategories(){
         uploadRequestDatas = {postsList:JSON.stringify(storedPostDatas)}; // already set
-        let categoriesText = `Abstract
-Aerial
-Animal
-Architecture
-Astrophotography
-Avian
-Black and White
-Cityscape
-Current Events
-Decisive Moment
-Defocused
-Documentary
-Emotive
-Expression
-Family
-Fashion
-Film
-Fine Art
-Food
-Glamour
-HDRI (High Dynamic Range Imaging)
-Humorous
-ICM (intentional camera movement)
-Industrial
-Infrared
-Interior
-Journalism
-Landscape
-Lomo
-Macro
-Nature
-Nude
-Panoramas/Mosaics
-Performance
-Pinhole
-Portrait
-Product
-Publicity
-Random
-Recycled Art
-Rough Camera
-Rural
-Sea and Sand
-Sky
-Snapshot
-Sports
-Still Life
-Stock
-Street Photography
-Suburban
-Swimsuit
-Tourist
-Travel
-Underwater
-Urban
-Vehicle
-Vintage
-Weather
-Wedding`;
+        let categoriesDefined = [
+  "abstract",
+  "aerial",
+  "animal",
+  "architecture",
+  "astrophotography",
+  "avian",
+  "black and white",
+  "cityscape",
+  "current events",
+  "decisive moment",
+  "defocused",
+  "documentary",
+  "emotive",
+  "expression",
+  "family",
+  "fashion",
+  "film",
+  "fine art",
+  "food",
+  "glamour",
+  "hdri (high dynamic range imaging)",
+  "humorous",
+  "icm (intentional camera movement)",
+  "industrial",
+  "infrared",
+  "interior",
+  "journalism",
+  "landscape",
+  "lomo",
+  "macro",
+  "nature",
+  "nude",
+  "panoramas/mosaics",
+  "performance",
+  "pinhole",
+  "portrait",
+  "product",
+  "publicity",
+  "random",
+  "recycled art",
+  "rough camera",
+  "rural",
+  "sea and sand",
+  "sky",
+  "snapshot",
+  "sports",
+  "still life",
+  "stock",
+  "street photography",
+  "suburban",
+  "swimsuit",
+  "tourist",
+  "travel",
+  "underwater",
+  "urban",
+  "vehicle",
+  "vintage",
+  "weather",
+  "wedding"
+];
 
-        let ctgs = categoriesText.split("\n");
-        for(let b = 0 ; b < ctgs.length ; b++){
-        if(ctgs[b]!==""){
-            uploadRequestDatas.category = ctgs[b];
+        for(let b = 0 ; b < categoriesDefined.length ; b++){
+        if(categoriesDefined[b]!==""){
+            uploadRequestDatas.category = categoriesDefined[b];
             requestHandler("/api/v1/admin/createCategory","POST",
                     uploadRequestDatas
                     ,"createCategories");
