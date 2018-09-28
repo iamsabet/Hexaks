@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 var CryptoJS = require("crypto-js");
 const random = require('randomstring');
-
+var autoIncrement = require('mongoose-sequence')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
 var viewSchema = new Schema({
+    id: Number,
     viewId : String,
     viewer : String, // userId
     refrenceId : String,
@@ -52,6 +53,7 @@ viewSchema.pre('save', function(next){
 });
 
 viewSchema.plugin(mongoosePaginate);
+viewSchema.plugin(autoIncrement, {inc_field: 'id'});
 let View = mongoose.model('views', viewSchema);
 let view = mongoose.model('views');
 module.exports = view;

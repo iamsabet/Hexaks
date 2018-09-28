@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
-let users = require("../routes/users");
+var users = require("../routes/users");
+var autoIncrement = require('mongoose-auto-increment');
 let mongoosePaginate = require('mongoose-paginate');
 let redis = require("redis");
 
@@ -14,6 +15,7 @@ redisClient.select(2,function(){
 });
 
 var reportSchema = new Schema({
+    id:Number,
     reportId : String,
     referenceType : String, // "user - post  - "
     referenceId : String , // userId - postId - commentId ...
@@ -146,7 +148,9 @@ reportSchema.pre('save', function(next){
     }
     next();
 });
+reportSchema.plugin(autoIncrement, {inc_field: 'id'});
+reportSchema.plugin(mongoosePaginate);
+
 let Report = mongoose.model('reports', reportSchema);
 let report = mongoose.model('reports');
-reportSchema.plugin(mongoosePaginate);
 module.exports = report;

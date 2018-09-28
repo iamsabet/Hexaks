@@ -5,7 +5,7 @@ var random = require('randomstring');
 var usrs = require("./users");
 var requestIp = require("request-ip");
 var CryptoJS = require("crypto-js");
-let secret = require('../config/secret');
+var secret = require('../config/secret');
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 

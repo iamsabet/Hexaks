@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 var autoIncrement = require('mongoose-auto-increment');
-var connection = mongoose.createConnection("mongodb://localhost:27017/hexaks_db");
-autoIncrement.initialize(connection);
 var Float = require('mongoose-float').loadType(mongoose);
 var userSchema = new Schema({
     id : { type: Schema.Types.ObjectId, ref: 'id' },
