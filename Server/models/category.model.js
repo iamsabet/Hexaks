@@ -40,108 +40,114 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
         if(err) throw err;
         console.log(value);
         if(!value){
-            if((mode) && ((mode > -1) && mode <= 4)) {
-                let timeLimit = (1 * 3600000) || (2 * 3600000);   // last 24 hours default --> change to 6hours 24hours 1week and 31days for all trends
+            if((mode) && (mode > -1) && (mode <= 4)){
+                
                 let now = new Date.now();
                 let thisHour = now.getHours();
                 let thisDay = now.getDay();
                 let thisMonth = now.getMonth();
-                let thisYear = now.getYear();
+                let thisYear = now.getYear() + 1900;
                 let now = new Date.now();
+                query.hour = thisHour;
+                
+                let timeLimit = (1 * 3600000);   // 1h
                 if(mode === 0){
-                    query.hour = thisHour;
-                    query.day = -1;
-                    query.month = -1;
-                    query.year = -1;
+                    if(thisHour > 0){
+                        query.hour = {$in:[thisHour,thisHour-1]};
+                    }
+                    else{
+                        query.hour = {$in:[thisHour,23]};
+                    }
                 }
                 else if(mode===1){ // day
                     timeLimit = (24 * 3600000);
                     query.hour = -1;
-                    query.day = thisDay;
-                    query.month = -1;
-                    query.year = -1;
+                    if(thisDay > 1){
+                        query.day = {$in:[thisDay,thisDay-1]};
+                    }
+                    else{
+                        query.day = {$in:[thisDay,30]};
+                    }
                 }
-                else if(mode===2){ // week
+                else if(mode===2){ // week // 1/3 hafte bzane 
                     timeLimit = (7 * 24 * 3600000);
                     query.hour = -1;
-                    query.month = -1;
-                    query.year = -1;
                     var days = [];
                     for(var z = 0 ; z < 7 ;z++){
                         if(thisDay > z){
                             days.push(thisDay - z);
                         }
                         else{
-                            days.push(31 - (z - thisDay));
+                            days.push(30 - (z - thisDay));
                         }
                     }
                     query.day = {$in:days};
                 }
-                if(mode===3){ // month
-                    timeLimit = (30 * 7 * 24 * 3600000);
-                    timeLimit = (7 * 24 * 3600000);
+                else if(mode===3){ // (har hafte bzane) startings 1/4 month initial bzane amalan ke unke akhare mahe ruze 30 akhario bzane record
                     query.hour = -1;
-                    query.month = -1;
-                    query.year = -1;
-                    query.month = {$in:[thisMonth, (thisMonth-1)]};
+                    query.day = -1;
+                    timeLimit = (30 * 24 * 3600000);
+                    if(thisMonth > 1){
+                        query.month = {$in:[thisMonth, (thisMonth-1)]};
+                    }
+                    else{
+                        query.month = {$in:[thisMonth, 12]};
+                        query.year = {$in:[thisYear,(thisYear-1)]};
+                    }
+         
                 }
-                else if(mode===4){ // year
-                    // timeLimit = (12 * 31 * 7 * 24 * 3600000);
-                    // newCategory.year = year;
-                    // newCategory.day = -1;
-                    // newCategory.month = -1;
-                    // newCategory.hour = -1;
+                else if(mode===4){ // year not initial at first
+                    timeLimit = (12 * 30 * 24 * 3600000);
+                    query.hour = -1;
+                    query.day = -1;
+                    query.month = {$exists:true}; // category counts for each month ... last 12 months
+                    query.year = {$gte:(thisYear-1)};
                 }
-                
-                let timeEdge = now.getTime() - timeLimit;
-
-                let query = {name: categories[n].name, createdAt: {$gt: timeEdge}};
                 if(mode === 0){
                     query.hour = -1;
                 }
-                
+                let timeEdge = now.getTime() - timeLimit;
+                query.name = categories[n].name;
+                query.updatedAt = {$gt: timeEdge}};
                 for (let n = 0; n < categories.length; n++) {
                     category.find(query, {
-                                name: 1,
-                                counts: 1
-                            }, function (err, cats) {
-                                if (err) throw err;
-                                if (cats.length > 0) {
-                                    console.log(cats.length);
-
-                                    for (let z = 0; z < cats.length; z++) {
-                                        let countsX = cats[z].counts;
-                                        if (cats[z].hour !== -1) {
-                                            redisClient.zincrby("categoriesTrend:" + hours.toString() + "cache", cats[z].counts, cats[z].name, function (err, resultm) {
-                                                console.log(resultm + " / count  " + cats[z].counts + " / name : " + cats[z].name);
-                                            });
-                                        }
-                                        if ((z === cats.length - 1) && (n === 0)) {
-                                            console.log("set to initilized for an hour");
-                                            let expireTime = (((hours / 6) * 3600000) - 30000); // -30 seconds --> maximum code delay or shit for now
-                                            redisClient.set("categoriesInitialized:" + hours.toString() + "cache", true);
-                                            redisClient.expire("categoriesTrend:" + hours.toString() + "cache", expireTime); // expire
-                                            redisClient.expire("categoriesInitialized:" + hours.toString() + "cache", expireTime);
-                                        }
+                        name: 1,
+                        counts: 1
+                        }, function (err, cats) {
+                        if (err) throw err;
+                        if (cats.length > 0) {
+                            console.log(cats.length);
+                            redisClient.del("categoriesTrend:"+mode,function(result){
+                                redisClient.set("categoriesInitialized:"+mode, true);
+                                for (let z = 0; z < cats.length; z++) {
+                                    let countsX = cats[z].counts;
+                                    if(parseInt(result)===1){
+                                        Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),countsX,function(resultu){
+                                            if(resultu){
+                                                if ((z === cats.length - 1) && (n === 0)) {
+                                                    console.log("categories initialized for mode = :" + mode  +" in cache.");
+                                                    if ((z === cats.length - 1) && (n === 0)) {
+                                                        let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
+                                                        redisClient.set("categoriesInitialized:"+mode, true);
+                                                        redisClient.expire("categoriesTrend:"+mode, expireTime); // expire
+                                                        redisClient.expire("categoriesInitialized:"+mode, expireTime);
+                                                    }
+                                                }
+                                            }
+                                           
+                                        }); 
                                     }
-                                }
-                                else {
-                                    //nop
                                 }
                             });
                         }
-                    
-                        // switch expire time with modes
-                    
+                        else {
+                            //nop
+                        }
+                    });
+                }
             }
-            else {
-                console.log("Bad input for categories expire cached");
-            }
-    }
-    else{
-            console.log("Already Initialized The Categories Cache for "+hours + " hours");
-        }
-    });
+        });
+                // switch expire time with mode
 };
 
 categorySchema.methods.Create = function(now,mode,categoryName,callback) {
@@ -152,21 +158,21 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
         let month = now.getMonth();
         let year = now.getYear() + 1900;
         let nowTime = now.getTime();
-        let windowEdge = (now.getTime() - 3600000 + 60000); // 59 minutes before
+        
         if (mode === -1) {
-            category.findOne({name:categoryName,hour:mode,day:mode},function(err,resultc){
+            category.findOne({name:categoryName.toLowerCase(),hour:mode,day:mode,year:mode,month:mode},function(err,resultc){
                 if(err) throw err;
                 if(!resultc) {
                     let newCategory = new Category({name: categoryName});
                     newCategory.createdAt = nowTime;
                     newCategory.updatedAt = nowTime;
-                    newCategory.hour = mode, // 0 - 23
-                    newCategory.day = mode, // 0 - 31
-                    newCategory.month = mode, // 0 - 12
-                    newCategory.year = mode, // 0 , 2019 --> 
+                    newCategory.hour = mode, // -1 - 23
+                    newCategory.day = mode, // -1 - 31
+                    newCategory.month = mode, // -1 - 12
+                    newCategory.year = mode, // -1 , 2019 --> 
                     newCategory.thumbnailUrl="../profilePics/avatar.png"; // 
                     newCategory.counts = 0;
-                    newCategory.name = categoryName.toString();
+                    newCategory.name = categoryName.toLowerCase();
                     newCategory.activated = true;
                     newCategory.deleted = false;
                     newCategory.save();
@@ -180,52 +186,71 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
         else {
                 //
                 
-            category.update({name:categoryName,hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
+            category.update({name:categoryName.toLowerCase(),hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
                 if(err) throw err;
                 if(value.n > 0){
+                    let query = {
+                        name: categoryName.toLowerCase(),
+                        hour: hours,
+                        day:day,
+                        month:month,
+                        year:year
+                    };
+                    let timeLimit = (1 * 3600000);
+                    if(mode === 0){
+                        
+                    }
+                    else if(mode === 1 || mode === 2){
+                        query.hours = -1;
+                        if(mode === 1){
+                            timeLimit = (24 * 3600000);
+                        }
+                        else{
+                            timeLimit = (7 * 24 * 3600000);
+                        }
+                    }
+                    else if(mode === 3){
+                        timeLimit = (30 * 24 * 3600000);
+                        query.hours = -1;
+                        query.day = -1;
+                    }
+                    else if(mode === 4){
+                        timeLimit = (12 * 30 * 24 * 3600000);
+                        query.hours = -1;
+                        query.day = -1;
+                        query.month = -1;
+                    }
+                    query.updatedAt = {$gt: (nowTime - (timeLimit+(30000)))};
+
                     Post.updateCategoryTrendsInCache(mode,1,function(updateResponse){
-                        category.update({
-                            name: categoryName,
-                            hour: hours,
-                            day:day,
-                            month:month,
-                            year:year,
-                            month:month,
-                            createdAt: {$gt: windowEdge}
-                            },
-                            {$inc: {counts: 1}}, function (err, resultx) {
+                        category.update(query,
+                            {$inc: {counts: 1},$set:{updatedAt:nowTime}}, function (err, resultx) {
                             if (err) throw err;
                             if (resultx.n === 0) {
-                                let newCategory = new Category({name: categoryName});
+                                let newCategory = new Category({name: categoryName.toLowerCase()});
                                 newCategory.createdAt = nowTime;
                                 newCategory.updatedAt = nowTime;
                                 newCategory.counts = 1;
-                                newCategory.name = categoryName.toString();
+                                newCategory.name = categoryName.toLowerCase();
                                 newCategory.thumbnailUrl=""; // 
+                                newCategory.hours = hours;
+                                newCategory.day = day;
+                                newCategory.month = month;
+                                newCategory.year = year;
                                 if(mode === 0){
-                                    newCategory.hours = hours
-                                    newCategory.day = -1;
-                                    newCategory.year = -1;
-                                    newCategory.month = -1;
+                        
                                 }
-                                else if(mode === 1){
-                                    newCategory.day = day;
-                                    newCategory.year = -1;
-                                    newCategory.month = -1;
+                                else if(mode === 1 || mode === 2){
                                     newCategory.hours = -1;
                                 }
-                                
                                 else if(mode === 3){
-                                    newCategory.month = month;
-                                    newCategory.day = -1;
-                                    newCategory.year = -1;
                                     newCategory.hours = -1;
+                                    newCategory.day = -1;
                                 }
-                                else if(mode === 4){
-                                    newCategory.year = year;
+                                else if ( mode === 4){
+                                    newCategory.hours = -1;
                                     newCategory.day = -1;
                                     newCategory.month = -1;
-                                    newCategory.hours = -1;
                                 }
                                 newCategory.activated = true;
                                 newCategory.deleted = false;
@@ -240,13 +265,16 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                                 });
                             }
                         });
+
+
+                        if(updateResponse){
+                            return callback(true);
+                        }   
+                        else{
+                            console.log("update category trends cache in mode " + mode +" failed!");
+                        }
+
                     });
-                    if(updateResponse){
-                        return callback(true);
-                    }   
-                    else{
-                        console.log("update category trends cache in mode " + mode +" failed!");
-                    }
                 }
                 else{
                     callback({result:false,message:"Category : '"+ categoryName +"' is not defined yet"});
@@ -258,13 +286,14 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
         callback({result:false,message:"Bad Input"});
     }
 };
-categorySchema.methods.updateCategoryTrendsInCache = function(type,incValue,callback){
+categorySchema.methods.updateCategoryTrendsInCache = function(type,categoryName,incValue,callback){
     let increaseValue = incValue || 1;
     if((type) && ((type > -1) && type <= 4)) {
         redisClient.zincrby("categoriesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
             if (err) throw err;
             if(counts.toString() === "1"){
-                redisClient.set("categoriesTrendInitialized:"+type,false);
+
+                redisClient.expire("categoriesTrend:"+mode,expireTime);
                 return callback(true);
             }
         });
@@ -277,3 +306,4 @@ categorySchema.plugin(mongoosePaginate);
 let Category = mongoose.model('categories', categorySchema);
 let category = mongoose.model('categories');
 module.exports = category;
+
