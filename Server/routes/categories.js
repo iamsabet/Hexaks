@@ -20,7 +20,6 @@ var categories = {
         });
     },
     addCategory: function(now,mode,categoryName,callback) {
-        let now = new Date();
         Cagtegory.Create(now,mode,categoryName,function(resultC){
             return callback(resultC);
         });
@@ -31,17 +30,6 @@ var categories = {
                 res.send(defCategories);
         });
 
-    },
-    updateCategoryTrendsInCache :function(type,categoryName,incValue,callback){
-        let increaseValue = incValue || 1;
-        if((type) && ((type > -1) && type <= 4)) {
-            redisClient.zincrby("categoriesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
-                if (err) throw err;
-                if(counts.toString() === "1"){
-                    return callback(true);
-                }
-            });
-        }
     }
 };
 

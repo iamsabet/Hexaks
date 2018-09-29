@@ -13,7 +13,7 @@ var rateSchema = require('../models/rate.model');
 var Rate = new rateSchema();
 var viewSchema = require('../models/view.model');
 var View = new viewSchema();
-var categorySchema = require('../models/category.model');
+// var categorySchema = require('../models/category.model');
 
 var categories = require('./categories');
 var deviceSchema = require('../models/device.model');
@@ -443,7 +443,7 @@ var posts = {
                                 let privacy = newPostDatas.privacy;
                                 let caption = newPostDatas.caption;
                                 let cost = newPostDatas.cost;
-                                let categories = newPostDatas.category;
+                                
                                 let location = newPostDatas.location;
                                 let tags = newPostDatas.tags;
                                 
@@ -543,11 +543,17 @@ var posts = {
                                         console.log(postQuery + "post activated"); // post activated successfully   
                                         for (let c = 0; c < categoryx.length; c++) { // create hourly category
                                             if (categoryx[c] && (categoryx[c] !== undefined)) {
-                                                categories.addNewCategory(now, 0, categoryx[c],function (callback) {
+                                                categories.addCategory(now, 0, categoryx[c],function (callback) {
                                                     if (callback === true) {
                                                         console.log("add hour category");
-                                                        categories.addNewCategory(now, 1, categoryx[c],function (callback) {
-                                                            if (callback === true) {
+                                                        categories.addCategory(now, 1, categoryx[c],function (callback2) {
+                                                            if (callback2 === true) {
+                                                                console.log("add day category");
+                                                                categories.addCategory(now, 2, categoryx[c],function (callback2) {
+                                                                    if (callback2 === true) {
+                                                                        console.log("add month category");
+                                                                    }
+                                                                });
                                                                 // month and yearly objects creates schaduled // for month , yeach 1 week maybe 
                                                                 // console.log("add day category");
                                                                 // Category.Create(now, 2, categoryx[c],function (callback) { // month
@@ -592,7 +598,6 @@ var posts = {
                                                 console.log("album update failed err : " + JSON.stringify(updates));
                                             }
 
-                                            
                                             for (let h = 0; h < hashtags.length; h++) {
                                                 if ((hashtags[h] !== undefined) && (hashtags[h].length > 2)) {
                                                     console.log("hashes:" + hashtags[h]);

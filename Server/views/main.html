@@ -1178,7 +1178,7 @@
     
     $("body").on("keydown",".commentsContainer .editable.show",function(event){
         
-        autoResizeTextArea(false,".newCommentDiv textarea.editable.show'");
+        autoResizeTextArea(false,".newCommentDiv textarea.editable.show");
         if (commentMode && (Me.userId === commentsList[selectedComment].ownerId)) { // edit 
             if ($(".commentsContainer #newComment").val().toString()+event.originalEvent.key === commentsList[selectedComment].fullText) {
                 if ($(".commentsContainer .newComment.show")[0]) {

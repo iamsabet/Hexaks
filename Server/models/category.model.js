@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 var redis = require("redis");
-let categories = require("../routes/categories");
+var categories = require("../routes/categories");
 var mongoosePaginate = require('mongoose-paginate');
 const autoIncrement = require('mongoose-sequence')(mongoose);
 
@@ -124,7 +124,8 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                             redisClient.set("categoriesInitialized:"+mode, true);
                             for (let z = 0; z < cats.length; z++) {
                                 let countsX = cats[z].counts;
-                                categories.updateCategoryTrendsInCache(mode,cats[z].name,countsX,function(resultu){
+                              
+                                updateCategoryTrendsInCache(mode,cats[z].name,countsX,function(resultu){
                                     if(resultu){
                                         if ((z === cats.length - 1) && (n === 0)) {
                                             console.log("categories initialized for mode = :" + mode  +" in cache.");
@@ -203,7 +204,6 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                 if(value.n > 0){
                     let query = {
                         name: categoryName.toLowerCase(),
-                        number: categoriesDefined.indexOf(categoryName.toLowerCase()),
                         hour: hours,
                         day:day,
                         month:month,
@@ -233,10 +233,10 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                         query.day = -1;
                         query.month = -1;
                     }
-                    query.updatedAt = {$gt: (nowTime - (timeLimit+(30000)))};
                     
-                    categories.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),1,function(updateResponse){
-                        category.update(query,
+                    query.updatedAt = {$gt: (nowTime - (timeLimit+(30000)))};
+                    updateCategoryTrendsInCache(mode,query.name,1,function(updateResponse){
+                        category.updateOne(query,
                             {$inc: {counts: 1},$set:{updatedAt:nowTime}
                             }, function (err, resultx) {
                             if (err) throw err;
@@ -269,19 +269,21 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                                 }
                                 newCategory.activated = true;
                                 newCategory.deleted = false;
-                                newCategory.save(function (err, resultc) {
+                                newCategory.setNext('category_id', function(err, cmt){
                                     if(err) throw err;
-                                    if (resultc) {
-                                        return callback(true);
-                                    }
-                                    else {
-                                        return callback({result:false,message:"create category in mode " + mode +" failed!"});
-                                    }
+                                    newCategory.save(function (err, resultc) {
+                                        if(err) throw err;
+                                        if (resultc) {
+                                            return callback(true);
+                                        }
+                                        else {
+                                            return callback({result:false,message:"create category in mode " + mode +" failed!"});
+                                        }
+                                    });
                                 });
+                               
                             }
                         });
-
-
                         if(updateResponse){
                             return callback(true);
                         }   
@@ -302,6 +304,16 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
     }
 };
 
+function updateCategoryTrendsInCache(type,categoryName,incValue,callback){
+    let increaseValue = incValue || 1;
+    if((type) && ((type > -1) && type <= 4)) {
+        redisClient.zincrby("categoriesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
+            if (err) throw err; // 
+            
+            return callback(true);
+        });
+    }
+}
 
 categorySchema.plugin(autoIncrement, {inc_field: 'category_id', disable_hooks: true});
 categorySchema.plugin(mongoosePaginate);

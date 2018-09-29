@@ -2,9 +2,9 @@ var fs = require("fs"),
     rimraf = require("rimraf"),
     mkdirp = require("mkdirp");
 var postSchema = require('../models/post.model');
-var post = new postSchema();
+
 var userSchema = require('../models/user.model');
-var user = new userSchema();
+
 var posts = require('../routes/posts.js');
 var users = require('./users');
 var multiparty = require('multiparty');
@@ -271,7 +271,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                         if(postId !== "") {
                             gm((sourceFile)).identify(
                                 function (err, data) {
-                                    if (err) throw err;
+                                    if (err) console.log("ERR "+err);
                                     if (data) {
                                         console.log(data.size.width, data.size.height);
                                         let rejectReason = null;
