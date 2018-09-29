@@ -2326,7 +2326,7 @@
         if($(this).val().toString().length > 3){
             if(!isNaN(parseInt(e.originalEvent.key)) && (parseInt(e.originalEvent.key) >= 0) && (parseInt(e.originalEvent.key) < 10)){
                 let text = $(".cc-picker-code").html()+"/"+$(this).val();
-                if((Me.phone.number === parseInt(text.split("/")[1])) && (Me.phone.code === parseInt(text.split("/")[0]))){
+                if(Me.phone && (Me.phone.number === parseInt(text.split("/")[1])) && (Me.phone.code === parseInt(text.split("/")[0]))){
                     $(`#phoneNumberStatus`).attr("src","../Statics/images/newIcons/tik.svg");
                     $(`#phoneNumberStatus`).removeClass("show");
                     $(`.messageBox .phoneNumberError`).remove();
@@ -2417,9 +2417,17 @@
     $("body").on("click","#verifyPhone .send",function(e){
         e.preventDefault(); // fetch input 
         debugger
-
-        sendPhoneVerificationCode(); // 
-        $("#verifyPhone.show").removeClass("show");
+        var inputs = $(".digits input.digit");
+        var code = "";
+        var valueNumber = "s";
+        for(var j in inputs){
+            valueNumber = parseInt(inputs[j.toString()].value);
+            if(!isNaN(valueNumber)){
+                code += ""+valueNumber;
+            }
+        }
+        sendPhoneVerificationCode(code); // 
+        // $("#verifyPhone.show").removeClass("show");
     });
     $("body").on("click","#passRequired .ok",function(e){
         e.preventDefault();

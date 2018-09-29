@@ -101,9 +101,12 @@ followSchema.methods.create = function(followObject,hostUser,callback){
             followObject.hostType = followObject.hostType;
             followObject.followId = CryptoJS.SHA1(followObject.follower, followObject.following).toString(); //("content","key")
             newFollow = new Follow(followObject);
-            newFollow.save(function (err) {
-                if (err) res.send({result:false,message:"err in follow object"});
-                return callback(true);
+            newFollow.setNext('follow_id', function(err, flw){
+                if(err) throw err;
+                newFollow.save(function (err) {
+                    if (err) return callback({result:false,message:"err in follow object"});
+                    return callback(true);
+                });
             });
         }
         else{
@@ -148,7 +151,7 @@ followSchema.methods.check = function(follower,following,callback){
     })
 };
 followSchema.plugin(mongoosePaginate);
-followSchema.plugin(autoIncrement, {id:"follow_id",inc_field: 'follow_id', disable_hooks: true});
+followSchema.plugin(autoIncrement, {inc_field: 'follow_id', disable_hooks: true});
 let Follow = mongoose.model('follows', followSchema);
 let follow = mongoose.model('follows');
 module.exports = follow;

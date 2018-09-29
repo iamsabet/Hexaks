@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const random = require('randomstring');
 require('mongoose-long')(mongoose);
 let mongoosePaginate = require('mongoose-paginate');
+const autoIncrement = require('mongoose-sequence')(mongoose);
 let redis = require("redis");
 let users = require("../routes/users");
 var CryptoJS = require("crypto-js");
@@ -15,6 +16,7 @@ redisClient.select(2,function(){
 });
 
 var blockSchema = new Schema({
+    block_id:Number,
     blocker : String,
     blocked : String, // userId
     blockId : String , // userId
@@ -87,13 +89,17 @@ blockSchema.methods.create = function(blocker,blocked,callback){
             blockObject.activated = true;
             blockObject.blockId = CryptoJS.SHA1(blockObject.blocker, blockObject.blocked); //("content","key")
             blockx = new Block(blockObject);
-            blockx.save(function (err) {
-                if (err) 
-                    return callback({result:false,message:"Create Block Object Failed"});
-                else {
-                    return callback(true);
-                }
+            blockx.setNext('block_id', function(err, blk){
+                if(err) throw err;
+                blockx.save(function (err) {
+                    if (err) 
+                        return callback({result:false,message:"Create Block Object Failed"});
+                    else {
+                        return callback(true);
+                    }
+                });
             });
+            
         }
         else{
             return callback(true);
@@ -140,7 +146,8 @@ blockSchema.pre('save', function(next){
     }
     next();
 });
+blockSchema.plugin(autoIncrement, {inc_field: 'block_id', disable_hooks: true});
+blockSchema.plugin(mongoosePaginate);
 let Block = mongoose.model('blocks', blockSchema);
 let block = mongoose.model('blocks');
-blockSchema.plugin(mongoosePaginate);
 module.exports = block;

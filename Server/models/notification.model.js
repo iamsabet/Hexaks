@@ -49,21 +49,24 @@ notificationSchema.methods.Create = function(notificationObject,now,callback){
         newNotification.imageUrl = notificationObject.imageUrl;
         newNotification.activated = true;
         newNotification.deleted = false;
-        newNotification.save(function (err, result) {
-            if (result) {
-                let tab = "environment";
-                if(newNotification.type === "system"){
-                    tab = "system";
+        newNotification.setNext('notification_id', function(err, notif){
+            if(err) throw err;
+            newNotification.save(function (err, result) {
+                if (result) {
+                    let tab = "environment";
+                    if(newNotification.type === "system"){
+                        tab = "system";
+                    }
+                    console.log(" notification created ");
+                    redisClient.hincrby(newNotification.ownerId+":unreadNotifications",tab,1,function (err, counts) {
+                        if (err) throw err;
+                        callback(counts);
+                    });
                 }
-                console.log(" notification created ");
-                redisClient.hincrby(newNotification.ownerId+":unreadNotifications",tab,1,function (err, counts) {
-                    if (err) throw err;
-                    callback(counts);
-                });
-            }
-            else{
-                callback({result:false,message:"Create notification failed"});
-            }
+                else{
+                    callback({result:false,message:"Create notification failed"});
+                }
+            });
         });
     }
 };
@@ -205,7 +208,7 @@ notificationSchema.pre('save', function(next){
     next();
 });
 notificationSchema.plugin(mongoosePaginate);
-notificationSchema.plugin(autoIncrement, {id:"notification_id",inc_field: 'notification_id', disable_hooks: true});
+notificationSchema.plugin(autoIncrement, {inc_field: 'notification_id', disable_hooks: true});
 let Notification = mongoose.model('notifications', notificationSchema);
 let notification = mongoose.model('notifications');
 module.exports = notification;

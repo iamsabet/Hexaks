@@ -125,38 +125,41 @@ hashtagSchema.methods.Create = function(now,hashtagName,callback){
                 newHashtag.activated = true;
                 newHashtag.deleted = false;
                 console.log(resultx);
-                newHashtag.save(function (err, result) {
-                    if (result) {
-                        redisClient.zincrby("hashtagsTrend:6cache",1, hashtagName, function (err, counts) {
-                            if (err) throw err;
-                            if(counts.toString() === "1"){
-                                redisClient.set("hashtagsInitialized:6cache",false);
-                            }
-                            redisClient.zincrby("hashtagsTrend:24cache",1, hashtagName, function (err, counts2) {
+                newHashtag.setNext('hashtag_id', function(err, hashtag){
+                    if(err) throw err;
+                    newHashtag.save(function (err, result) {
+                        if (result) {
+                            redisClient.zincrby("hashtagsTrend:6cache",1, hashtagName, function (err, counts) {
                                 if (err) throw err;
-                                if(counts2.toString() === "1"){
-                                    redisClient.set("hashtagsInitialized:24cache",false);
+                                if(counts.toString() === "1"){
+                                    redisClient.set("hashtagsInitialized:6cache",false);
                                 }
-                                redisClient.zincrby("hashtagsTrend:168cache",1, hashtagName, function (err, counts3) {
+                                redisClient.zincrby("hashtagsTrend:24cache",1, hashtagName, function (err, counts2) {
                                     if (err) throw err;
-                                    if(counts3.toString() === "1"){
-                                        redisClient.set("hashtagsInitialized:168cache",false);
+                                    if(counts2.toString() === "1"){
+                                        redisClient.set("hashtagsInitialized:24cache",false);
                                     }
-                                    redisClient.zincrby("hashtagsTrend:720cache",1, hashtagName, function (err, counts4) {
+                                    redisClient.zincrby("hashtagsTrend:168cache",1, hashtagName, function (err, counts3) {
                                         if (err) throw err;
-                                        console.log(counts4);
-                                        if(counts4.toString() === "1"){
-                                            redisClient.set("hashtagsInitialized:720cache",false);
+                                        if(counts3.toString() === "1"){
+                                            redisClient.set("hashtagsInitialized:168cache",false);
                                         }
-                                        callback(true);
+                                        redisClient.zincrby("hashtagsTrend:720cache",1, hashtagName, function (err, counts4) {
+                                            if (err) throw err;
+                                            console.log(counts4);
+                                            if(counts4.toString() === "1"){
+                                                redisClient.set("hashtagsInitialized:720cache",false);
+                                            }
+                                            callback(true);
+                                        });
                                     });
                                 });
                             });
-                        });
-                    }
-                    else {
-                        callback(false);
-                    }
+                        }
+                        else {
+                            callback(false);
+                        }
+                    });
                 });
             }
             else {
@@ -191,7 +194,7 @@ hashtagSchema.methods.Create = function(now,hashtagName,callback){
     }
 };
 
-hashtagSchema.plugin(autoIncrement, {id:"hashtag_id",inc_field: 'hashtag_id', disable_hooks: true});
+hashtagSchema.plugin(autoIncrement, {inc_field: 'hashtag_id', disable_hooks: true});
 hashtagSchema.plugin(mongoosePaginate);
 let Hashtag = mongoose.model('hashtags', hashtagSchema);
 let hashtag = mongoose.model('hashtags');

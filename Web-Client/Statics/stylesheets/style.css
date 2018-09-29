@@ -3309,7 +3309,7 @@ div.cc-picker-flag.ee{
 	margin: 15px auto;
 	height: 150px;
 }
-.settingsContainer > div #verifyPhone .form-group .dialog .digits > button{
+.settingsContainer > div .form-group .dialog .digits > button{
 	display: block;
 	position: relative;
 	font-size: 25px;
@@ -3324,7 +3324,7 @@ div.cc-picker-flag.ee{
 	top: 30px;
 	border-radius: 8px;
 }
-.settingsContainer > div #verifyPhone .form-group .dialog .digits .digit{
+.settingsContainer > div .form-group .dialog .digits .digit{
 	text-align: center;
 	line-height: 70px;
 	font-size: 38px;

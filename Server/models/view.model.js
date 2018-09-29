@@ -27,15 +27,12 @@ viewSchema.methods.create = function(viewObject,callback){
     newView.viewId = hashed;
     newView.deleted = false;
     newView.activated = true;
-    newView.save(function(err,result) {
-        if(err)
-            return callback(true);
-        if (result) {
-            return callback(result);
-        }
-        else {
-            return callback(false);
-        }
+    newView.setNext('view_id', function(err, view){
+        if(err) throw err;
+        newView.save(function(err){
+            if(err) return callback(false);
+            callback(true);
+        });
     });
 };
 
@@ -53,7 +50,7 @@ viewSchema.pre('save', function(next){
 });
 
 viewSchema.plugin(mongoosePaginate);
-viewSchema.plugin(autoIncrement, {id:"view_id",inc_field: 'view_id', disable_hooks: true});
+viewSchema.plugin(autoIncrement, {inc_field: 'view_id', disable_hooks: true});
 let View = mongoose.model('views', viewSchema);
 let view = mongoose.model('views');
 module.exports = view;

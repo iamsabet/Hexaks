@@ -15,7 +15,7 @@ redisClient.select(2,function(){
 });
 
 var reportSchema = new Schema({
-    id:Number,
+    report_id:Number,
     reportId : String,
     referenceType : String, // "user - post  - "
     referenceId : String , // userId - postId - commentId ...

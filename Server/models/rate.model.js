@@ -34,8 +34,11 @@ rateSchema.methods.create = function(rateObject,callback){
     let hashed = CryptoJS.SHA1(rateObject.rater, rateObject.referenceId); //("content","key")
     newRate.rateId = hashed;
     newRate.deleted = false;
-    newRate.save();
-    return callback(hashed);
+    newRate.setNext('rate_id', function(err, rt){
+        if(err) throw err;
+        newRate.save();
+        return callback(hashed);
+    });
 };
 
 
@@ -51,7 +54,7 @@ rateSchema.pre('save', function(next){
     next();
 });
 rateSchema.plugin(mongoosePaginate);
-rateSchema.plugin(autoIncrement, {id:"rate_id",inc_field: 'rate_id', disable_hooks: true});
+rateSchema.plugin(autoIncrement, {inc_field: 'rate_id', disable_hooks: true});
 let Rate = mongoose.model('rates', rateSchema);
 let rate = mongoose.model('rates');
 module.exports = rate;

@@ -39,8 +39,13 @@ commentSchema.methods.create = function(commentObject,callback){
     newComment.edited = false;
     newComment.deleted = false;
     newComment.activated = true;
-    newComment.save();
-    return callback(newComment);
+    newComment.setNext('comment_id', function(err, cmt){
+        if(err) throw err;
+        newComment.save(function (err) {
+            if (err) return callback({result:false,message:"err in comment object"});
+            return callback(newComment);
+        });
+    });
 };
 commentSchema.methods.edit = function(query,updates,callback){
     comment.findOneAndUpdate(query,{$set:updates}, function (err, result) {

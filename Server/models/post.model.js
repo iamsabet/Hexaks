@@ -93,8 +93,11 @@ postSchema.methods.create = function(postObject,user,callback){
     newPost.createdAt = now;
     newPost.updatedAt = now;
     newPost.deleted = false;
-    newPost.save();
-    return callback(true);
+    newPost.setNext('post_id', function(err, pst){
+        if(err) throw err;
+        newPost.save();
+        return callback(true);
+    });
 
 };
 postSchema.methods.Paginate = function(query,options,user,callback){
@@ -131,7 +134,7 @@ postSchema.pre('save', function(next){
 });
 
 postSchema.plugin(mongoosePaginate);
-postSchema.plugin(autoIncrement, {id:"post_id",inc_field: 'post_id', disable_hooks: true});
+postSchema.plugin(autoIncrement, {inc_field: 'post_id', disable_hooks: true});
 let Post = mongoose.model('posts', postSchema);
 let post = mongoose.model('posts');
 module.exports = post;

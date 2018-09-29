@@ -18,7 +18,7 @@ var categorySchema = new Schema({
     category_id:Number,
     name : String,
     counts:Number,
-    number : Number,
+    number : Number, // movazi ba name Unique int 
     thumbnailUrl:String,
     hour:Number, // 0 - 23
     day:Number, // 0 - 31
@@ -37,7 +37,7 @@ var categorySchema = new Schema({
 // });
 
 categorySchema.methods.initialCategoriesInCache = function(mode){
-    redisClient.get("categoriesTrendInitialized:"+mode,function(err,value) {
+    redisClient.get("categoriesInitialized:"+mode,function(err,value) {
         if(err) throw err;
         console.log(value);
         if(!value){
@@ -122,7 +122,7 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                             redisClient.set("categoriesInitialized:"+mode, true);
                             for (let z = 0; z < cats.length; z++) {
                                 let countsX = cats[z].counts;
-                                Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),categoriesText.split("\n"),countsX,function(resultu){
+                                Category.updateCategoryTrendsInCache(mode,cats[z].name,countsX,function(resultu){
                                     if(resultu){
                                         if ((z === cats.length - 1) && (n === 0)) {
                                             console.log("categories initialized for mode = :" + mode  +" in cache.");
@@ -148,6 +148,17 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
             }
         });
                 // switch expire time with mode
+};
+categorySchema.methods.updateCategoryTrendsInCache = function(type,categoryName,incValue,callback){
+    let increaseValue = incValue || 1;
+    if((type) && ((type > -1) && type <= 4)) {
+        redisClient.zincrby("categoriesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
+            if (err) throw err;
+            if(counts.toString() === "1"){
+                return callback(true);
+            }
+        });
+    }
 };
 
 categorySchema.methods.Create = function(now,mode,categoryName,callback) {
@@ -177,8 +188,13 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                         newCategory.name = categoryName.toLowerCase();
                         newCategory.activated = true;
                         newCategory.deleted = false;
-                        newCategory.save();
-                        return callback(true);
+                        newCategory.setNext('category_id', function(err, cmt){
+                            if(err) throw err;
+                            newCategory.save(function (err) {
+                                if (err) return callback({result:false,message:"err in category object"});
+                                return callback(true);
+                            });
+                        });
                     }
                     else{
                         return callback({result:false,message:"Not Defiend Category"});
@@ -228,8 +244,8 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                         query.month = -1;
                     }
                     query.updatedAt = {$gt: (nowTime - (timeLimit+(30000)))};
-
-                    Post.updateCategoryTrendsInCache(mode,1,function(updateResponse){
+                    
+                    Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),1,function(updateResponse){
                         category.update(query,
                             {$inc: {counts: 1},$set:{updatedAt:nowTime}
                             }, function (err, resultx) {
@@ -295,25 +311,12 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
         callback({result:false,message:"Bad Input"});
     }
 };
-categorySchema.methods.updateCategoryTrendsInCache = function(type,categoryName,incValue,callback){
-    let increaseValue = incValue || 1;
-    if((type) && ((type > -1) && type <= 4)) {
-        redisClient.zincrby("categoriesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
-            if (err) throw err;
-            if(counts.toString() === "1"){
-
-                redisClient.expire("categoriesTrend:"+mode,expireTime);
-                return callback(true);
-            }
-        });
-    }
-};
 
 
-categorySchema.plugin(autoIncrement, {id:"category_id",inc_field: 'category_id', disable_hooks: true});
+categorySchema.plugin(autoIncrement, {inc_field: 'category_id', disable_hooks: true});
 categorySchema.plugin(mongoosePaginate);
-let Category = mongoose.model('categories', categorySchema);
-let category = mongoose.model('categories');
+var Category = mongoose.model('categories', categorySchema);
+var category = mongoose.model('categories');
 module.exports = category;
 
 let categoriesDefined = [

@@ -1,4 +1,4 @@
-var mailer = require("mailer");
+var mailer = require("nodemailer");
 var jwt = require('jwt-simple');
 var redis = require('redis');
 var random = require('randomstring');
@@ -13,7 +13,7 @@ var redisClient = redis.createClient({
 redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
-var mails = {
+var mails = { // https://nodemailer.com/about/  , https://itnext.io/a-step-by-step-guide-to-make-html-email-templates-in-node-js-d67797284595
 
     sendEmail:function(input,title,callback){
         if(input && input.key && input.email){

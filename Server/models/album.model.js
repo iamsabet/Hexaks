@@ -52,7 +52,16 @@ albumSchema.methods.Create = function(albumObject,callback){
         newAlbum.deleted = false;
         newAlbum.ownerId = albumObject.ownerId;
         newAlbum.save();
-        return callback(true);
+        newAlbum.setNext('block_id', function(err, blk){
+            if(err) throw err;
+            newAlbum.save(function (err) {
+                if (err) 
+                    return callback({result:false,message:"Create Block Object Failed"});
+                else {
+                    return callback(true);
+                }
+            });
+        });
     }
     else{
         return callback({result:false,message:"504 Bad Request"});
@@ -140,9 +149,9 @@ albumSchema.pre('save', function(next){
     }
     next();
 });
-autoIncrement
+
 albumSchema.plugin(mongoosePaginate);
-albumSchema.plugin(autoIncrement, {id:"album_id",inc_field: 'album_id', disable_hooks: true});
+albumSchema.plugin(autoIncrement, {inc_field: 'album_id', disable_hooks: true});
 let Album = mongoose.model('albums', albumSchema);
 let album = mongoose.model('albums');
 module.exports = album;
