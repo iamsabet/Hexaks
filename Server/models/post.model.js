@@ -68,7 +68,7 @@ var postSchema = new Schema({
     categories:[], // 3 max
     caption:String,
     rate:{
-        value : Float, // (rate.counts / views) * rate.number = rate.value
+        value : Float, // ((rate.counts / views) * rate.number)*100 = rate.value
         number : Float,
         points : Number,
         counts : Number

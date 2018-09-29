@@ -36,8 +36,8 @@ var userSchema = new Schema({
         number : Number 
     },
     rate: {
-        value : Float, // (rate.counts / views) * rate.number = rate.value
-        number : Float,
+        value : Float, // ((rate.counts / views) * rate.number)*100 = rate.value
+        number : Float,//
         points : Number,
         counts : Number
     },
@@ -79,11 +79,14 @@ userSchema.methods.create = function (userObject,callback) {
     newUser.ban = null;
     newUser.phone = null;
     newUser.deleted = false;
-    newUser.save(function(err){
-        if(err) return callback(false);
-        callback(true);
-    });
+    newUser.setNext('user_id', function(err, user){
+        if(err) throw err;
 
+        newUser.save(function(err){
+            if(err) return callback(false);
+            callback(true);
+        });
+    });
 };
 userSchema.pre('save', function(next){
     if(this.updatedAt) {
@@ -96,7 +99,8 @@ userSchema.pre('save', function(next){
     }
     next();
 });
-userSchema.plugin(autoIncrement, {id:"user_id",inc_field: 'user_id', disable_hooks: true});
+
+userSchema.plugin(autoIncrement, {inc_field: 'user_id' , disable_hooks: true});
 let User = mongoose.model('users', userSchema);
 let user = mongoose.model('users');
 module.exports = user;

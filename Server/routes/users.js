@@ -6,19 +6,18 @@ var Follow = new followSchema();
 var notificationSchema = require('../models/notification.model');
 var Notification = new notificationSchema();
 var flw = require("./follows");
-var blocks = require("./follows");
+var blocks = require("./blocks");
 var blockSchema = require("../models/block.model");
 var Block = new blockSchema();
 var redis = require('redis');
 var validator = require('validator');
 var phoneValidator = require( 'awesome-phonenumber' );
 var random = require('randomstring');
-var usedProtocol = "http://";
-var webHostName = "localhost:8081";
 var rn = require('random-number');
 const ipCountry = require('ip-country');
 const variables = require("../variables");
 var requestIp = require("request-ip");
+var mails =  require("./mails");
 var CryptoJS = require("crypto-js");
 let validateUser = require('./auth').validateUser;
 
@@ -175,6 +174,7 @@ var users = {
                             }
                             let now = Date.now();
                             let userObject = {
+                                user_id: 0,
                                 userId: userId,
                                 username: username,
                                 email: email,
@@ -205,6 +205,7 @@ var users = {
                                 phone:null,
                                 rate: {
                                     value: 0.0,
+                                    points:0,
                                     number: 0.0,
                                     counts: 0,
                                 },
@@ -233,6 +234,7 @@ var users = {
                             };
                             
                             User.create(userObject, function (callback) {
+
                                 if (!callback) {
                                     res.send({
                                         result: false,
@@ -242,8 +244,11 @@ var users = {
                                 else { // create user successfull 
                                     users.sendEmailVerification(userObject.userId,userObject.email,emailVerificationKey,function(resultV){
                                         if(!resultV.message){
+
                                             users.updateAllUserInfosInCache(userObject.userId,function(callback){
+
                                                 if(callback && !callback.message){
+
                                                     res.send(genToken(userObject.userId));
                                                 }
                                                 else{
@@ -709,7 +714,7 @@ var users = {
     sendEmailVerification:function(userId,email,key,callback){
         let now = Date.now();
         let expire = now + (1 * 24 * 3600000); // 1 day expiration
-        users.sendEmail(email,key,"Email Verification Key",function(resultEmail){
+        mails.sendEmail({email:email,key:key},"Email Verification Key",function(resultEmail){
             if(!resultEmail.message){ // email successfully sent    
                 userSchema.updateOne({userId:userId},{$set:{"verified.emailVerified":false,"verified.email.key":key,"verified.email.expire":expire}},function(err,resultu){
                     if(err) throw err;
@@ -854,10 +859,7 @@ var users = {
             }
         });
     },
-    sendEmail:function(email,key,title,callback){
-        console.log(title +" : -->   " + usedProtocol + "/" + webHostName + "/users/verifyEmail/"+key + "\n" + " to  : " + email);
-        return callback(true);
-    },
+   
     sendSms:function(phoneNumber,key,title,callback){
         console.log(title + " / sms key : " + key + " / number : " + phoneNumber.split("/").join(""));
         return callback(true);
@@ -901,7 +903,8 @@ var users = {
                             let emailVerificationKey = random.generate(16);
                             users.sendEmailVerification(targetUser.userId,identification.toLowerCase(),emailVerificationKey,function(results){
                                 if(!results.message){
-                                    return callback({result:true,message:"Verification link sent to your Email : " + identification.toLowerCase()});
+                                    let xxx = "Verification link sent to your Email : " + identification.toLowerCase();
+                                    return callback({result:true,message:xxx});
                                 }   
                                 else{ // 
                                     return callback(results);
@@ -1028,7 +1031,7 @@ var users = {
     updateAllUserInfosInCache:function(userId,callback){
         userSchema.findOne({userId: userId}, {
             _id: 0,
-            id:0,
+            user_id:1,
             userId: 1,
             username: 1,
             fullName:1,

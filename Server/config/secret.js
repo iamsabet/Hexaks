@@ -5,4 +5,6 @@ module.exports = {
     postIdKey:"super super post Id key",
     commentIdKey:"super.super.secret.shhhasdasdasdasd",
     albumIdKey:"super super album Id key",
+    usedProtocol:"http://",
+    webHostName:"localhost:8081"
 }

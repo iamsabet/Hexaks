@@ -14,7 +14,7 @@ redisClient.select(2,function(){
 });
 
 var followSchema = new Schema({
-    id:Number,
+    follow_id:Number,
     followId : String,
     follower : String, // userId
     hostType : String, // users , hashtag , category , location , device 

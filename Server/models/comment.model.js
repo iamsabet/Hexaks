@@ -15,7 +15,7 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 var commentSchema = new Schema({
-    id:Number,
+    comment_id:Number,
     commentId : String,
     postId : String,
     postOwnerId : String,

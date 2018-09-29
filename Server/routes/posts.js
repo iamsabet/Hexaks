@@ -1060,14 +1060,14 @@ var posts = {
                             let counts = parseInt(post.rate.counts);
                             let diff = parseFloat(rateNumber - lastRate); // + , - 0.change
                             let Numberchange = parseFloat(diff/(counts));
-                            let valueChange =  (parseFloat (Numberchange / post.views)); // (changes+1)); // anytime changes drops + valuation effect 
+                            let valueChange =  (parseFloat (Numberchange / post.views))*100; // (changes+1)); // anytime changes drops + valuation effect 
                             posts.updatePostRates(res,{postId:post.postId},{
                                 $inc:{
                                     "rate.number" : Numberchange,
                                     "rate.value" : valueChange,
                                     "rate.points" : diff,
                                     }
-                            },{albumId:post.album,rateDiff:differance,postRateCounts:counts,postViews:post.views,response:parseFloat(rateObject.number+Numberchange).toString()+"/update"});
+                            },{albumId:post.album,ownerId:post.ownerId,rateDiff:differance,postRateCounts:counts,postViews:post.views,response:parseFloat(rateObject.number+Numberchange).toString()+"/update"});
                         }
                         else{
                             res.send({result:false,message:"Update rate object failed"});
@@ -1090,7 +1090,7 @@ var posts = {
                                 let avg = parseFloat(post.rate.number);
                                 let differance = parseFloat(rateNumber - avg); // + , - 0.change
                                 let numberChange = parseFloat(differance/(counts));
-                                let valueChange =  parseFloat (numberChange / post.views); //
+                                let valueChange =  parseFloat (numberChange / post.views)*100; //
                                 posts.updatePostRates(res,{postId:post.postId},{
                                     $inc:{
                                         "rate.value" : valueChange,
@@ -1098,7 +1098,7 @@ var posts = {
                                         "rate.points" : differance,
                                         "rate.counts": 1
                                     }
-                                },{albumId:post.album,rateDiff:differance,postRateCounts:counts,postViews:post.views,response:parseFloat(avg+numberChange).toString()+"/new/"+rateId.toString()});
+                                },{albumId:post.album,rateDiff:differance,ownerId:post.ownerId,postRateCounts:counts,postViews:post.views,response:parseFloat(avg+numberChange).toString()+"/new/"+rateId.toString()});
                             }
                             else{
                                 res.send({result:false,message:"Rate Object Did not Created"});
@@ -1115,23 +1115,29 @@ var posts = {
         postSchema.update(query,updates,function(err,result){
             if(err) throw err;
             if(result.n > 0){
-                if(input.albumId){
-                    albums.updateAlbumRates(input,function(resulta){
-                        if(!resulta.message){
-                            console.log("album rates updated");
-
-
-                        }
-                        else{
-                            res.send(resulta);
+                if(input.ownerId){
+                    users.updateUserRates(input,function(resultu){
+                        if(!resultu.message){
+                            if(input.albumId){
+                                albums.updateAlbumRates(input,function(resulta){
+                                    if(!resulta.message){
+                                        console.log("post parent album rates updated");
+                                    }
+                                    else{
+                                        res.send(resulta);
+                                    }
+                                });
+                                res.send(object.response);
+                            }
+                            else{
+                                res.send(input.response);
+                            }
                         }
                     });
-                    res.send(object.response);
                 }
                 else{
-                    res.send(input.response);
+
                 }
-                
             }
             else{
                 res.send({result:false,message:"post rate values failed to update"});
