@@ -9,7 +9,7 @@ var albums = require('./albums');
 var uploader = require('./uploader');
 var follows = require('./follows');
 var users = require('./users');
-var categories = require('./category');
+var categories = require('./categories');
 var hashtags = require('./hashtag');
 var validateRequest = require('../middleWares/validateRequest');
 var redis = require('redis');
@@ -828,7 +828,7 @@ router.delete('/api/v1/admin/user/:id', users.delete);
 
 router.post('/api/v1/admin/createCategory/', function(req,res){
     validateRequest(req,res,function(callback) {
-        if(callback) {
+        if(!callback.message) {
             categories.addNewCategory(req, res, callback);
         }
         else{

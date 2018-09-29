@@ -1,6 +1,7 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 var redis = require("redis");
+let categories = require("../routes/categories");
 var mongoosePaginate = require('mongoose-paginate');
 const autoIncrement = require('mongoose-sequence')(mongoose);
 
@@ -35,6 +36,7 @@ var categorySchema = new Schema({
 //     if(err) throw err;
 //     console.log(resultx);
 // });
+
 
 categorySchema.methods.initialCategoriesInCache = function(mode){
     redisClient.get("categoriesInitialized:"+mode,function(err,value) {
@@ -107,7 +109,7 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                 }
                 
                 let timeEdge = now.getTime() - timeLimit;
-                query.name = categories[n].name;
+                // query.name = categories[n].name;
                 query.updatedAt = {$gt: timeEdge}};
 
                 category.find(query, {
@@ -122,7 +124,7 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                             redisClient.set("categoriesInitialized:"+mode, true);
                             for (let z = 0; z < cats.length; z++) {
                                 let countsX = cats[z].counts;
-                                Category.updateCategoryTrendsInCache(mode,cats[z].name,countsX,function(resultu){
+                                categories.updateCategoryTrendsInCache(mode,cats[z].name,countsX,function(resultu){
                                     if(resultu){
                                         if ((z === cats.length - 1) && (n === 0)) {
                                             console.log("categories initialized for mode = :" + mode  +" in cache.");
@@ -133,8 +135,7 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                                                 redisClient.expire("categoriesInitialized:"+mode, expireTime);
                                             }
                                         }
-                                    }
-                                    
+                                    }   
                                 }); 
                                 
                             }
@@ -148,17 +149,6 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
             }
         });
                 // switch expire time with mode
-};
-categorySchema.methods.updateCategoryTrendsInCache = function(type,categoryName,incValue,callback){
-    let increaseValue = incValue || 1;
-    if((type) && ((type > -1) && type <= 4)) {
-        redisClient.zincrby("categoriesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
-            if (err) throw err;
-            if(counts.toString() === "1"){
-                return callback(true);
-            }
-        });
-    }
 };
 
 categorySchema.methods.Create = function(now,mode,categoryName,callback) {
@@ -245,7 +235,7 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                     }
                     query.updatedAt = {$gt: (nowTime - (timeLimit+(30000)))};
                     
-                    Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),1,function(updateResponse){
+                    categories.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),1,function(updateResponse){
                         category.update(query,
                             {$inc: {counts: 1},$set:{updatedAt:nowTime}
                             }, function (err, resultx) {

@@ -14,7 +14,8 @@ var Rate = new rateSchema();
 var viewSchema = require('../models/view.model');
 var View = new viewSchema();
 var categorySchema = require('../models/category.model');
-var Category = new categorySchema();
+
+var categories = require('./categories');
 var deviceSchema = require('../models/device.model');
 var Device = new deviceSchema();
 var hashtagSchema = require('../models/hashtag.model');
@@ -542,10 +543,10 @@ var posts = {
                                         console.log(postQuery + "post activated"); // post activated successfully   
                                         for (let c = 0; c < categoryx.length; c++) { // create hourly category
                                             if (categoryx[c] && (categoryx[c] !== undefined)) {
-                                                Category.Create(now, 0, categoryx[c],function (callback) {
+                                                categories.addNewCategory(now, 0, categoryx[c],function (callback) {
                                                     if (callback === true) {
                                                         console.log("add hour category");
-                                                        Category.Create(now, 1, categoryx[c],function (callback) {
+                                                        categories.addNewCategory(now, 1, categoryx[c],function (callback) {
                                                             if (callback === true) {
                                                                 // month and yearly objects creates schaduled // for month , yeach 1 week maybe 
                                                                 // console.log("add day category");
