@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 const random = require('randomstring');
 var Float = require('mongoose-float').loadType(mongoose);
 var CryptoJS = require("crypto-js");
-var autoIncrement = require('mongoose-auto-increment');
+const autoIncrement = require('mongoose-sequence')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
 
 var rateSchema = new Schema({
-    id:Number,
+    rate_id:Number,
     rateId : String,
     rater:String, // userId
     value:Number, // 1 to 6
@@ -51,7 +51,7 @@ rateSchema.pre('save', function(next){
     next();
 });
 rateSchema.plugin(mongoosePaginate);
-rateSchema.plugin(autoIncrement.plugin,"id");
+rateSchema.plugin(autoIncrement, {id:"rate_id",inc_field: 'rate_id', disable_hooks: true});
 let Rate = mongoose.model('rates', rateSchema);
 let rate = mongoose.model('rates');
 module.exports = rate;

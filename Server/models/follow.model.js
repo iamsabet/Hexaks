@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const random = require('randomstring');
-require('mongoose-long')(mongoose);
 let mongoosePaginate = require('mongoose-paginate');
+let autoIncrement = require('mongoose-sequence')(mongoose);
 let redis = require("redis");
 let users = require("../routes/users");
 var CryptoJS = require("crypto-js");
@@ -15,6 +14,7 @@ redisClient.select(2,function(){
 });
 
 var followSchema = new Schema({
+    id:Number,
     followId : String,
     follower : String, // userId
     hostType : String, // users , hashtag , category , location , device 
@@ -147,7 +147,8 @@ followSchema.methods.check = function(follower,following,callback){
         }
     })
 };
+followSchema.plugin(mongoosePaginate);
+followSchema.plugin(autoIncrement, {id:"follow_id",inc_field: 'follow_id', disable_hooks: true});
 let Follow = mongoose.model('follows', followSchema);
 let follow = mongoose.model('follows');
-followSchema.plugin(mongoosePaginate);
 module.exports = follow;

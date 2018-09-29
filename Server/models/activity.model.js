@@ -18,7 +18,7 @@ var activitySchema = new Schema({
     subjectId : String , // userId --> maybe null or hexaks userId ...
     referenceId : String,
     activityId:String,
-    link:String,
+    link:String, // 
     icon:String, //
     imageUrl : String,
     activated: Boolean,

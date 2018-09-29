@@ -4,8 +4,8 @@ var redis = require("redis");
 var requestIp = require("request-ip");
 var random = require('randomstring');
 var mongoosePaginate = require('mongoose-paginate');
-var autoIncrement = require('mongoose-auto-increment');
-userSchema.plugin(autoIncrement.plugin,"id");
+var autoIncrement = require('mongoose-sequence')(mongoose);
+
 
 
 
@@ -191,7 +191,7 @@ hashtagSchema.methods.Create = function(now,hashtagName,callback){
     }
 };
 
-
+hashtagSchema.plugin(autoIncrement, {id:"hashtag_id",inc_field: 'hashtag_id', disable_hooks: true});
 hashtagSchema.plugin(mongoosePaginate);
 let Hashtag = mongoose.model('hashtags', hashtagSchema);
 let hashtag = mongoose.model('hashtags');

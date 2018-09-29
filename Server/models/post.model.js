@@ -14,7 +14,7 @@ var Float = require('mongoose-float').loadType(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
 var rateSchema = require('../models/rate.model');
 var postSchema = new Schema({
-    id:Number,
+    post_id:Number,
     album:String,
     postId: String,
     ownerId: String,
@@ -131,7 +131,7 @@ postSchema.pre('save', function(next){
 });
 
 postSchema.plugin(mongoosePaginate);
-postSchema.plugin(autoIncrement, {inc_field: 'id'});
+postSchema.plugin(autoIncrement, {id:"post_id",inc_field: 'post_id', disable_hooks: true});
 let Post = mongoose.model('posts', postSchema);
 let post = mongoose.model('posts');
 module.exports = post;

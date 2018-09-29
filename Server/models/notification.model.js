@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const random = require('randomstring');
 var redis = require("redis");
 let users = require("../routes/users");
-var autoIncrement = require('mongoose-auto-increment');
+var autoIncrement = require('mongoose-sequence')(mongoose);
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -14,7 +14,7 @@ redisClient.select(2,function(){
 var mongoosePaginate = require('mongoose-paginate');
 
 var notificationSchema = new Schema({
-    id:Number,
+    notification_id:Number,
     text:String,
     type:String, // keyword  -->  ( comment , rate , system , curate )
     ownerId : String,
@@ -205,7 +205,7 @@ notificationSchema.pre('save', function(next){
     next();
 });
 notificationSchema.plugin(mongoosePaginate);
-notificationSchema.plugin(autoIncrement.plugin,"id");
+notificationSchema.plugin(autoIncrement, {id:"notification_id",inc_field: 'notification_id', disable_hooks: true});
 let Notification = mongoose.model('notifications', notificationSchema);
 let notification = mongoose.model('notifications');
 module.exports = notification;

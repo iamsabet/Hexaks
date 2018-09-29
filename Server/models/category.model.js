@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 var redis = require("redis");
 var mongoosePaginate = require('mongoose-paginate');
-var autoIncrement = require('mongoose-sequence')(mongoose);
+const autoIncrement = require('mongoose-sequence')(mongoose);
 
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -15,7 +15,7 @@ redisClient.select(2,function(){
 });
 
 var categorySchema = new Schema({
-    id:Number,
+    category_id:Number,
     name : String,
     counts:Number,
     number : Number,
@@ -41,14 +41,15 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
         if(err) throw err;
         console.log(value);
         if(!value){
+            let query = {};
             if((mode) && (mode > -1) && (mode <= 4)){
-                
+                query = {};
                 let now = new Date.now();
                 let thisHour = now.getHours();
                 let thisDay = now.getDay();
                 let thisMonth = now.getMonth();
                 let thisYear = now.getYear() + 1900;
-                let now = new Date.now();
+
                 query.hour = thisHour;
                 
                 let timeLimit = (1 * 3600000);   // 1h
@@ -104,48 +105,46 @@ categorySchema.methods.initialCategoriesInCache = function(mode){
                     query.month = {$exists:true}; // category counts for each month ... last 12 months
                     query.year = {$gte:(thisYear-1)};
                 }
-                if(mode === 0){
-                    query.hour = -1;
-                }
+                
                 let timeEdge = now.getTime() - timeLimit;
                 query.name = categories[n].name;
                 query.updatedAt = {$gt: timeEdge}};
-                for (let n = 0; n < categories.length; n++) {
-                    category.find(query, {
-                        name: 1,
-                        counts: 1,
-                        number:1
-                        }, function (err, cats) {
-                        if (err) throw err;
-                        if (cats.length > 0) {
-                            console.log(cats.length);
-                            redisClient.del("categoriesTrend:"+mode,function(result){
-                                redisClient.set("categoriesInitialized:"+mode, true);
-                                for (let z = 0; z < cats.length; z++) {
-                                    let countsX = cats[z].counts;
-                                    Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),categoriesText.split("\n"),countsX,function(resultu){
-                                        if(resultu){
+
+                category.find(query, {
+                    name: 1,
+                    counts: 1,
+                    number:1
+                    }, function (err, cats) {
+                    if (err) throw err;
+                    if (cats.length > 0) {
+                        console.log(cats.length);
+                        redisClient.del("categoriesTrend:"+mode,function(result){
+                            redisClient.set("categoriesInitialized:"+mode, true);
+                            for (let z = 0; z < cats.length; z++) {
+                                let countsX = cats[z].counts;
+                                Category.updateCategoryTrendsInCache(mode,categoryName.toLowerCase(),categoriesText.split("\n"),countsX,function(resultu){
+                                    if(resultu){
+                                        if ((z === cats.length - 1) && (n === 0)) {
+                                            console.log("categories initialized for mode = :" + mode  +" in cache.");
                                             if ((z === cats.length - 1) && (n === 0)) {
-                                                console.log("categories initialized for mode = :" + mode  +" in cache.");
-                                                if ((z === cats.length - 1) && (n === 0)) {
-                                                    let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
-                                                    redisClient.set("categoriesInitialized:"+mode, true);
-                                                    redisClient.expire("categoriesTrend:"+mode, expireTime); // expire
-                                                    redisClient.expire("categoriesInitialized:"+mode, expireTime);
-                                                }
+                                                let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
+                                                redisClient.set("categoriesInitialized:"+mode, true);
+                                                redisClient.expire("categoriesTrend:"+mode, expireTime); // expire
+                                                redisClient.expire("categoriesInitialized:"+mode, expireTime);
                                             }
                                         }
-                                        
-                                    }); 
+                                    }
                                     
-                                }
-                            });
-                        }
-                        else {
-                            console.log("No categories found in initial mode : " + mode);
-                        }
-                    });
-                }
+                                }); 
+                                
+                            }
+                        });
+                    }
+                    else {
+                        console.log("No categories found in initial mode : " + mode);
+                    }
+                });
+                
             }
         });
                 // switch expire time with mode
@@ -311,7 +310,7 @@ categorySchema.methods.updateCategoryTrendsInCache = function(type,categoryName,
 };
 
 
-categorySchema.plugin(autoIncrement, {inc_field: 'id'});mongoosePaginate
+categorySchema.plugin(autoIncrement, {id:"category_id",inc_field: 'category_id', disable_hooks: true});
 categorySchema.plugin(mongoosePaginate);
 let Category = mongoose.model('categories', categorySchema);
 let category = mongoose.model('categories');

@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
 var postSchema = require('../models/post.model');
-var post = new postSchema();
+
 var rateSchema = new Schema({ // 9 Pixels
+    id:Number,
     rateId : String,
     rater:String, // userId
     value:Number, // 1 to 6
@@ -112,6 +113,6 @@ rateSchema.pre('save', function(next){
     next();
 });
 
-var Rate = mongoose.model('rates', rateSchema);
-var rate = mongoose.model('rates');
+var Rate = mongoose.model('reciepts', rateSchema);
+var rate = mongoose.model('reciepts');
 module.exports = rate;

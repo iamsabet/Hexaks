@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-var autoIncrement = require('mongoose-auto-increment');
+const autoIncrement = require('mongoose-sequence')(mongoose);
 var Float = require('mongoose-float').loadType(mongoose);
 var userSchema = new Schema({
-    id : { type: Schema.Types.ObjectId, ref: 'id' },
+    user_id :Number,
     userId:String,
     username : String,
     email:String,
@@ -96,7 +96,7 @@ userSchema.pre('save', function(next){
     }
     next();
 });
-userSchema.plugin(autoIncrement.plugin,"id");
+userSchema.plugin(autoIncrement, {id:"user_id",inc_field: 'user_id', disable_hooks: true});
 let User = mongoose.model('users', userSchema);
 let user = mongoose.model('users');
 module.exports = user;

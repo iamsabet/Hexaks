@@ -3,9 +3,6 @@ var findHashtags = require('find-hashtags');
 var CryptoJS = require("crypto-js");
 var blockSchema = require('../models/block.model');
 var Block = new blockSchema();
-
-
-
 var blocks = {
 
     paginateBlockList: function(req, res,user,pageNumber) {

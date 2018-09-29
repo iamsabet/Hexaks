@@ -5,6 +5,7 @@ let redis = require("redis");
 let random = require('randomstring');
 let users = require("../routes/users");
 let secret = require("../config/secret");
+const autoIncrement = require("mongoose-sequence")(mongoose);
 var CryptoJS = require("crypto-js");
 let redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -14,6 +15,7 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 var commentSchema = new Schema({
+    id:Number,
     commentId : String,
     postId : String,
     postOwnerId : String,
@@ -110,6 +112,7 @@ commentSchema.methods.Paginate = function(query,options,user,req,res){
 
 
 commentSchema.plugin(mongoosePaginate);
+commentSchema.plugin(autoIncrement, {id:"comment_id",inc_field: 'comment_id', disable_hooks: true});
 var Comment = mongoose.model('comments', commentSchema);
 var comment = mongoose.model('comments');
 module.exports = comment;

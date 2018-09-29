@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
+
 var notificationSchema = new Schema({
     text:String,
     type:String, // keyword  -->  ( comment , rate , follow ( follow requests )(another tab) & follows

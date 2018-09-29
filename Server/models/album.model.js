@@ -8,7 +8,7 @@ var autoIncrement = require('mongoose-sequence')(mongoose);
 var Float = require('mongoose-float').loadType(mongoose);
 
 var albumSchema = new Schema({
-    id:Number,
+    album_id:Number,
     albumId : String, // must have ownerId after Encryption
     ownerId : String,
     thumbnail : String, // 1 post id - default - first one - can be chosen by user
@@ -142,7 +142,7 @@ albumSchema.pre('save', function(next){
 });
 autoIncrement
 albumSchema.plugin(mongoosePaginate);
-viewSchema.plugin(autoIncrement, {inc_field: 'id'});
+albumSchema.plugin(autoIncrement, {id:"album_id",inc_field: 'album_id', disable_hooks: true});
 let Album = mongoose.model('albums', albumSchema);
 let album = mongoose.model('albums');
 module.exports = album;
