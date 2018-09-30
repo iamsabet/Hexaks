@@ -13,7 +13,7 @@ redisClient.select(2,function(){
 /* GET home page. */
 var categories = {
     initialCategoriesInCache = function(mode){
-        Cagtegory.initialCategoriesInCache(mode);
+        Cagtegory.initial(sssmode);
     },
     addNewCategory: function(req, res,user) {
         let now = new Date();

@@ -38,7 +38,7 @@ var categorySchema = new Schema({
 // });
 
 
-categorySchema.methods.initialCategoriesInCache = function(mode){
+categorySchema.methods.initial = function(mode){
     redisClient.get("categoriesInitialized:"+mode,function(err,value) {
         if(err) throw err;
         console.log(value);

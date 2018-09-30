@@ -33,7 +33,7 @@ var deviceSchema = new Schema({
 });
 // index
 
-deviceSchema.methods.initialDevicesInCache = function(){
+deviceSchema.methods.initial = function(){
     redisClient.get("devicesInitialized:"+mode,function(err,value) {
         if(err) throw err;
         console.log(value);
@@ -150,8 +150,8 @@ deviceSchema.methods.initialDevicesInCache = function(){
                 // switch expire time with mode
 };
 
-deviceSchema.methods.Create = function(now,model,brand,callback) {
-    console.log(deviceName);
+deviceSchema.methods.Create = function(now,brand,model,callback) {
+    
     if((model) && (typeof model === "string") && (model.length > 0)&& (brand) && (typeof brand === "string") && (brand.length > 0)) {
         let hours = now.getHours();
         let day = now.getDay();
@@ -161,36 +161,20 @@ deviceSchema.methods.Create = function(now,model,brand,callback) {
         device.updateOne({model:model.toLowerCase(),brand:brand.toLowerCase(),hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
             if(err) throw err;
             if(value.n === 0){
-                let newDevice = new Category({name: query.model,brand:query.brand});
+                let newDevice = new Category({name:model.toLowerCase(),brand: brand.toLowerCase()});
                         newDevice.createdAt = nowTime;
                         newDevice.updatedAt = nowTime;
                         newDevice.counts = 1;
-                        newDevice.name = query.model;
-                        newDevice.name = query.brand;
-                        newDevice.number = devicesDefined.indexOf(query.name);
+                        newDevice.model = model.toLowerCase();
+                        newDevice.brand = brand.toLowerCase(),
                         newDevice.thumbnailUrl=""; // 
-                        newDevice.hours = query.hours;
-                        newDevice.day = query.day;
-                        newDevice.month = query.month;
-                        newDevice.year = query.year;
-                        if(mode === 0){
-                
-                        }
-                        else if(mode === 1 || mode === 2){
-                            newDevice.hours = -1;
-                        }
-                        else if(mode === 3){
-                            newDevice.hours = -1;
-                            newDevice.day = -1;
-                        }
-                        else if ( mode === 4){
-                            newDevice.hours = -1;
-                            newDevice.day = -1;
-                            newDevice.month = -1;
-                        }
+                        newDevice.hours = -1;
+                        newDevice.day = -1;
+                        newDevice.month = -1;
+                        newDevice.year = -1;
                         newDevice.activated = true;
                         newDevice.deleted = false;
-                        newDevice.setNext('category_id', function(err, cmt){
+                        newDevice.setNext('device_id', function(err, cmt){
                             if(err) throw err;
                             newDevice.save(function (err, resultc) {
                                 if(err) throw err;
@@ -198,7 +182,7 @@ deviceSchema.methods.Create = function(now,model,brand,callback) {
                                     console.log("master device item created");
                                 }
                                 else {
-                                    return callback({result:false,message:"create category in mode " + mode +" failed!"});
+                                    console.log("master device item create failed!");
                                 }
                             });
                         });
@@ -237,8 +221,8 @@ deviceSchema.methods.Create = function(now,model,brand,callback) {
             }
             
             query.updatedAt = {$gt: (nowTime - (timeLimit+(30000)))};
-            updateCategoryTrendsInCache(mode,query.name,1,function(updateResponse){
-                category.updateOne(query,
+            updateDeviceTrendsInCache(mode,query.model+"/"+query.brand,1,function(updateResponse){
+                device.updateOne(query,
                     {$inc: {counts: 1},$set:{updatedAt:nowTime}
                     }, function (err, resultx) {
                     if (err) throw err;
@@ -249,7 +233,6 @@ deviceSchema.methods.Create = function(now,model,brand,callback) {
                         newDevice.counts = 1;
                         newDevice.name = query.model;
                         newDevice.name = query.brand;
-                        newDevice.number = devicesDefined.indexOf(query.name);
                         newDevice.thumbnailUrl=""; // 
                         newDevice.hours = query.hours;
                         newDevice.day = query.day;
@@ -272,7 +255,7 @@ deviceSchema.methods.Create = function(now,model,brand,callback) {
                         }
                         newDevice.activated = true;
                         newDevice.deleted = false;
-                        newDevice.setNext('category_id', function(err, cmt){
+                        newDevice.setNext('device_id', function(err, cmt){
                             if(err) throw err;
                             newDevice.save(function (err, resultc) {
                                 if(err) throw err;
@@ -280,7 +263,7 @@ deviceSchema.methods.Create = function(now,model,brand,callback) {
                                     return callback(true);
                                 }
                                 else {
-                                    return callback({result:false,message:"create category in mode " + mode +" failed!"});
+                                    return callback({result:false,message:"create device in mode " + mode +" failed!"});
                                 }
                             });
                         });
@@ -291,7 +274,7 @@ deviceSchema.methods.Create = function(now,model,brand,callback) {
                     return callback(true);
                 }   
                 else{
-                    console.log("update category trends cache in mode " + mode +" failed!");
+                    console.log("update device trends cache in mode " + mode +" failed!");
                 }
 
             });
@@ -303,26 +286,24 @@ deviceSchema.methods.Create = function(now,model,brand,callback) {
     }
 };
 
-function updateDeviceTrendsInCache(type,categoryName,incValue,callback){
+function updateDeviceTrendsInCache(type,key,incValue,callback){
     let increaseValue = incValue || 1;
+        if((type) && ((type > -1) && type <= 4)) {
+            redisClient.zincrby("devicesTrend:"+type, increaseValue, key, function (err, counts) { // 0 = day , 1 = days , 2 = month
+                if (err) throw err;
+                return callback(true);
+            });
+        }
+};
+function updateDeviceBrandsTrendsInCache(type,key,incValue,callback){
+    let increaseValue = incValue || 1;      
     if((type) && ((type > -1) && type <= 4)) {
-        redisClient.zincrby("devicesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
-            if (err) throw err; // 
-            
+        redisClient.zincrby("deviceBrandsTrend:"+type, increaseValue, key, function (err, counts) { // 0 = day , 1 = days , 2 = month
+            if (err) throw err; //
             return callback(true);
         });
     }
-}
-function updateDeviceBrandsTrendsInCache(type,categoryName,incValue,callback){
-    let increaseValue = incValue || 1;
-    if((type) && ((type > -1) && type <= 4)) {
-        redisClient.zincrby("devicesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
-            if (err) throw err; // 
-            
-            return callback(true);
-        });
-    }
-}
+};
 deviceSchema.plugin(autoIncrement, {inc_field: 'device_id', disable_hooks: true});
 deviceSchema.plugin(mongoosePaginate);
 let Device = mongoose.model('devices', deviceSchema);

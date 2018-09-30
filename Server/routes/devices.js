@@ -13,21 +13,15 @@ redisClient.select(2,function(){
 /* GET home page. */
 var devices = {
 
-    initialCategoriesInCache = function(mode){
-        Cagtegory.initialCategoriesInCache(mode);
+    initialDevicesInCache = function(mode){
+        Device.initial(mode);
     },
-    create: function(now,model,brand,callback) {
-        Device.Create(now,model,brand,function(resultC){
+    create: function(brand,model,callback) {
+        let now = new Date();
+        Device.Create(now,brand,model,function(resultC){
             return callback(resultC);
         });
     },
-    getDefinedCategories: function(req,res) {
-        deviceSchema.find({$query:{hour: -1},$orderBy:{counts:1}},{name:1,counts:1,thumbnailUrl:1}, function (err, defCategories) {
-            if (err) res.send([]);
-                res.send(defCategories);
-        });
-
-    }
 };
 
 
