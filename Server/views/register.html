@@ -141,6 +141,7 @@
     });
     $('.loginRegForm').on("click","#regBtn",function(){
         console.log(registerKey);
+        
         var encryptedInfo = CryptoJS.AES.encrypt((($("#username").val().toString())+"/"+($("#email").val().toString())+"/"+($("#password").val().toString())).toString(),registerKey).toString();
         var input = {
             info : encryptedInfo

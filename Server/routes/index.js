@@ -127,7 +127,7 @@ router.get('/users/verifyEmail/:uuid/',function(req,res) {
                     res.redirect("/login");
                 }
                 else{
-                    res.redirect("/settings");
+                    res.redirect("/settings/emailVerifySuccess");
                 }
             }
         });

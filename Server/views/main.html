@@ -1319,9 +1319,11 @@
             beforeSend: function () {
             },
             success: function (res) {
+
                 if(res.message && res.result===false){
-                    alert(res.message);
-                    responseActionHandler(caller, res);
+                    if(res.message !== false && res.message !== "")
+                        alert(res.message);
+                    responseActionHandler(caller, res,input);
                 }
                 else if(res.message && res.result===true){
                     if(res.status !== 401)
@@ -1483,13 +1485,21 @@
             // debugger;
             if(pageName.split("/")[1]){
                 $(".settingsContainer form.show").removeClass("show");
-                $(`#${pageName.split("/")[1]}`).addClass("show");
+                if($(`#${pageName.split("/")[1]}`)[0])
+                    $(`#${pageName.split("/")[1]}`).addClass("show");
+                else
+                    $(`#account`).addClass("show");
                 $(".settingsContainer .menu a").removeClass("selected");
-                $(`#${pageName.split("/")[1]}Btn`).addClass("selected");
+                if($(`#${pageName.split("/")[1]}`)[0])
+                    $(`#${pageName.split("/")[1]}Btn`).addClass("selected");
             }
             let firstTime = false;
-            if(window.location.pathname.split("/")[1] && window.location.pathname.split("/")[1] !== "settings")
+            if(window.location.pathname.split("/")[1] && window.location.pathname.split("/")[1] !== "settings"){
                 firstTime = true;
+            }
+            if(pageName.split("/")[1] === "emailVerifySuccess"){
+                alert("your email "  + Me.email + " successfuly verified");
+            }
             loadUserInfosInForm();
             if(postid)
                 pushHistory("settings", pageName, pageName, firstTime,true); 
@@ -1528,6 +1538,7 @@
     }
     // Actions.js
     function responseActionHandler(caller, res,input) {
+        // debugger;
         switch (caller) {
             case "loginHandler" : {
                 loginResponse(res);
@@ -1535,7 +1546,7 @@
             case "getProfile" : {
                 placeProfileInfo(res);
             }break;
-            case "updateProfileInfo" : {
+            case "users-updateProfileInfo" : {
                 updateProfileResponse(res,input);
             }break;
             case "loadProfile" : {
@@ -1748,6 +1759,7 @@
                 }
                 else {
                     let formName = window.location.pathname.split("/")[2] || "account";
+                    
                     changePage(pageType, pageType+"/"+formName, true,"",true,true);
                 }
             }
@@ -2498,7 +2510,7 @@
     });
     function sendUpdateRequestWithPassword(password){
         updateInfo["password"] = password;
-        requestHandler("/api/v1"+updateInfo.url, "POST", updateInfo,updateInfo.url.split("/").join(""));
+        requestHandler("/api/v1"+updateInfo.url, "POST", updateInfo,updateInfo.url.split("/")[1]+"-"+updateInfo.url.split("/")[2]);
     };
     function sendPhoneVerificationCode(code){
         if(Me && Me.userId){
@@ -2528,7 +2540,7 @@
         },999);
     }
     function hideVerifyBox(){
-
+        changePage("settings","settings/account",true,"",true,true);
     }
     function changePass(old,newPass,confPass){
         let inputc = {
@@ -2548,6 +2560,8 @@
             setTimeout(function(){
                 hideVerifyBox();
             },1000);
+            addSituationToForm("#phoneNumber",true);
+            
         }
         else{
             alert(res.message);
@@ -2580,21 +2594,74 @@
             }
         }
     }
-    
-    function updateProfileResponse(res,input) {
-        // remove loader
-        if(res.message){
-            // add messages 
-            // res.message["username"] , res.message["email"] , res.message["phoneNumber"]
+    function addSituationToForm(selector,situation,message){ // situation false === error , true === success;
+        if(!situation){
+            $(selector).addClass("error");     
+            if(!$(`.messageBox ${selector}Message`)[0]){
+                $(".messageBox").prepend(`
+                    <li id="${selector}Message">${message}</li>
+                `);
+            }
         }
         else{
-            window.location.reload();
+            if($(selector+".error")[0]){
+                $(selector+".error").removeClass("error");     
+            }
+            if($(`.messageBox ${selector}Message`)[0]){
+                $(`.messageBox ${selector}Message`).remove();
+            }
+            $(selector).addClass("success");
+            setTimeout(function(){
+                $(selector).removeClass("success");
+                if($("#phoneNumberStatus").attr("src").split(".svg")[0].split("/")[$("#phoneNumberStatus").attr("src").split("/").length -1] === "tik"){
+                    $("#phoneNumberStatus").removeClass("show");
+                }
+            },3000);    
         }
-
+    }
+    function updateProfileResponse(res,input) {
+        // debugger;
+        // remove loader
+        if(res.message && res.message !== null && Object.keys(res.message).length > 0){
+            var keysx = Object.keys(res.message);
+            var message = res.message;
+            let neccesaryList = ["email","username","phoneNumber"];
+            for(var z = 0 ;z < keysx.length;z++){ 
+                addSituationToForm("#"+keysx[z],false,res.message[keysx[z]]);
+            }
+            
+            if(Me.fullName){
+                addSituationToForm("#fullName",true);
+            }
+            if(Me.birth && Me.birth !== null && Object.keys(Me.birth).length >0){
+                addSituationToForm("#birth",true);
+            }
+            if(Me.city && Me.city !== ""){
+                addSituationToForm("#city",true);
+            }
+            if(Me.bio && Me.bio !== ""){
+                addSituationToForm("#bio",true);
+            }
+            // add messages 
+            // res.message["username"] , res.message["email"] , 
+        }  
+        
+        if(input["password"]){
+            delete updateInfo["password"];
+        }
+        if(input["email"] && (!message || !message["email"])){
+            addSituationToForm("#email",true);
+            alert("Email verification link sent to :"+input.email);
+        }
+        if(input["username"] && !message["username"]){
+            addSituationToForm("#username",true);
+        }
         if(input["phoneNumber"] && (!res.message || !res.message.phoneNumber)){
+            let text = $("#verifyPhone .dialog h4").html();
+            $("#verifyPhone .dialog h4").html(text.split(" :")[0] + " : +" + input["phoneNumber"].split("/").join(""));
             changePage("settings","settings/verifyPhone",true,"",true,false);
         }
-        debugger;
+        
     }
 
     function loadProfileResponse(res) {

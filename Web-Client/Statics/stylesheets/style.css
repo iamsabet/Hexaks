@@ -2237,7 +2237,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 	color:white;
 	border-color:#ff0055;
 }
-.settingsContainer > div form  .form-group input.ok{
+.settingsContainer > div form  .form-group input.success{
 	border-color:rgb(145, 236, 9);
 }
 .settingsContainer > div form  .form-group input.error{

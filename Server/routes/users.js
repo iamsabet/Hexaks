@@ -569,6 +569,7 @@ var users = {
                                 errorMessages["phoneNumber"] = resultp.message;
                                 delete updates["phoneNumber"];
                             }
+  
                             users.doUpdateInfo(query,updates,res,errorMessages);
                         });
                     });
@@ -583,7 +584,7 @@ var users = {
         }
     },
     doUpdateInfo:function(query,updates,res,errorMessages){
-
+        
         console.log(query["password"]);
         if(query["password"]){
             query["password"] = CryptoJS.HmacSHA512(query["userId"],query["password"]).toString();
@@ -649,7 +650,16 @@ var users = {
                     });
                 }
                 // update cache 
-                res.send({result:true,message:errorMessages});
+                users.updateAllUserInfosInCache(query.userId,function(resultuf){
+                    if(!resultuf.message){
+                        if(Object.keys(errorMessages).length ===0){
+                            res.send({result:true,message:false});
+                        }
+                        else{
+                            res.send({result:true,message:errorMessages});
+                        }
+                    }
+                });
             }
             else{
                 errorMessages["result"] = "Wrong Password";
