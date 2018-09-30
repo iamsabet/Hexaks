@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
-var categorySchema = require('../models/category.model');
-var Cagtegory = new categorySchema();
+var locationSchema = require('../models/location.model');
+var Location = new locationSchema();
 var redis = require('redis');
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -11,11 +11,11 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 /* GET home page. */ 
-var categories = {
-    initialCategoriesInCache:function(mode){
+var locations = {
+    initial:function(mode){
         Cagtegory.initial(mode);
     },
-    addNewCategory: function(req, res,user) {
+    initial: function(req, res,user) {
         let now = new Date();
         Cagtegory.Create(now,-1,req.body.category,function(callback){
             res.send(callback);
@@ -36,4 +36,4 @@ var categories = {
 };
 
 
-module.exports = categories;
+module.exports = locations;

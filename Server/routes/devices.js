@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
-var deviceSchema = require('../models/category.model');
-var Device = new categorySchema();
+var deviceSchema = require('../models/device.model');
+var Device = new deviceSchema();
 var redis = require('redis');
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
@@ -13,7 +13,7 @@ redisClient.select(2,function(){
 /* GET home page. */
 var devices = {
 
-    initialDevicesInCache = function(mode){
+    initialDevicesInCache: function(mode){
         Device.initial(mode);
     },
     create: function(brand,model,callback) {

@@ -16,11 +16,12 @@ var mongoosePaginate = require('mongoose-paginate');
 var autoIncrement = require('mongoose-sequence')(mongoose);
 
 
-var deviceSchema = new Schema({
-    device_id:Number,
-    brand:String,
-    model:String,
-    deviceId : String,
+var locationSchema = new Schema({
+    location_id:Number,
+    country:String,
+    city:String,
+    details:{},
+    locationId : String,
     hour:Number, // 0 - 23
     day:Number, // 0 - 31
     month : Number, // 0 - 12
@@ -35,7 +36,7 @@ var deviceSchema = new Schema({
 });
 // index
 
-deviceSchema.methods.initial = function(){
+locationSchema.methods.initial = function(){
     redisClient.get("devicesInitialized:"+mode,function(err,value) {
         if(err) throw err;
         console.log(value);
@@ -152,7 +153,7 @@ deviceSchema.methods.initial = function(){
                 // switch expire time with mode
 };
 
-deviceSchema.methods.Create = function(now,brand,model,callback) {
+locationSchema.methods.Create = function(now,brand,model,callback) {
     
     if((model) && (typeof model === "string") && (model.length > 0)&& (brand) && (typeof brand === "string") && (brand.length > 0)) {
         let hours = now.getHours();
@@ -223,7 +224,7 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
             }
             
             query.updatedAt = {$gt: (nowTime - (timeLimit+(30000)))};
-            updateDeviceTrendsInCache(mode,query.model+"/"+query.brand,1,function(updateResponse){
+            updateLocationTrendsInCache(mode,query.model+"/"+query.brand,1,function(updateResponse){
                 device.updateOne(query,
                     {$inc: {counts: 1},$set:{updatedAt:nowTime}
                     }, function (err, resultx) {
@@ -288,7 +289,7 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
     }
 };
 
-function updateDeviceTrendsInCache(type,key,incValue,callback){
+function updateLocationTrendsInCache(type,key,incValue,callback){
     let increaseValue = incValue || 1;
         if((type) && ((type > -1) && type <= 4)) {
             redisClient.zincrby("devicesTrend:"+type, increaseValue, key, function (err, counts) { // 0 = day , 1 = days , 2 = month
@@ -297,17 +298,9 @@ function updateDeviceTrendsInCache(type,key,incValue,callback){
             });
         }
 };
-function updateDeviceBrandsTrendsInCache(type,key,incValue,callback){
-    let increaseValue = incValue || 1;      
-    if((type) && ((type > -1) && type <= 4)) {
-        redisClient.zincrby("deviceBrandsTrend:"+type, increaseValue, key, function (err, counts) { // 0 = day , 1 = days , 2 = month
-            if (err) throw err; //
-            return callback(true);
-        });
-    }
-};
-deviceSchema.plugin(autoIncrement, {inc_field: 'device_id', disable_hooks: true});
-deviceSchema.plugin(mongoosePaginate);
-let Device = mongoose.model('devices', deviceSchema);
-let device = mongoose.model('devices');
-module.exports = device;
+
+locationSchema.plugin(autoIncrement, {inc_field: 'location_id', disable_hooks: true});
+locationSchema.plugin(mongoosePaginate);
+let Location = mongoose.model('locations', locationSchema);
+let location = mongoose.model('locations');
+module.exports = location;

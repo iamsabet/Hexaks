@@ -14,7 +14,9 @@ var hashtags = {
             }
         });
     },
-
+    initialHashtagsInCache: function(mode){
+        Hashtag.initial(mode);
+    },
     getOne: function(req, res,next,user) {
         var id = req.params.id;
         var user = data[0]; // Spoof a DB call
