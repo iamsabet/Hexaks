@@ -16,7 +16,7 @@ var View = new viewSchema();
 // var categorySchema = require('../models/category.model');
 
 var categories = require('./categories');
-var hashtags = require('./hashtags');
+var hashes = require('./hashtags');
 var devices = require('./devices');
 var locations = require('./locations');
 
@@ -549,7 +549,7 @@ var posts = {
                                                         categories.addCategory(now, 1, categoryx[c],function (callback2) {
                                                             if (callback2 === true) {
                                                                 console.log("add day category");
-                                                                categories.addCategory(now, 2, categoryx[c],function (callback2) {
+                                                                categories.addCategory(now, 3, categoryx[c],function (callback2) {
                                                                     if (callback2 === true) {
                                                                         console.log("add month category");
                                                                     }
@@ -578,6 +578,22 @@ var posts = {
                                                 
                                             }
                                         }
+                                        for (let h = 0; h < hashtags.length; h++) {
+                                            if ((hashtags[h] !== undefined) && (hashtags[h].length > 3)) {
+                                                console.log("hashes:" + hashtags[h]);
+                                                hashes.create(now,0,hashtags[h], function (resulth1) {
+                                                    console.log("master hashtags");
+                                                    hashes.create(now,1,hashtags[h], function (resulth2) {
+                                                        console.log("master hashtags");
+                                                        hashes.create(now,3,hashtags[h], function (resulth3) {
+                                                        
+                                                        });
+                                                    });
+                                                });
+                                            }
+                                        }
+                                        
+
 
                                         // update album
                                         albumSchema.update({
@@ -598,22 +614,6 @@ var posts = {
                                                 console.log("album update failed err : " + JSON.stringify(updates));
                                             }
 
-                                            for (let h = 0; h < hashtags.length; h++) {
-                                                if ((hashtags[h] !== undefined) && (hashtags[h].length > 2)) {
-                                                    console.log("hashes:" + hashtags[h]);
-                                                    Hashtag.Create(now, hashtags[h], function (callback) {
-                                                        if (callback === true) {
-                                                            console.log(hashtags[h] + " : hashtag -> created");
-                                                        }
-                                                        else {
-                                                            callback({
-                                                                result: false,
-                                                                message: "create hashtag failed"
-                                                            });
-                                                        }
-                                                    });
-                                                }
-                                            }
                                             
                                             for (let t in mentions) {
                                                 // push notification to the mentioned user if exists // func()

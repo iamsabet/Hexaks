@@ -16,6 +16,7 @@ var devices = {
     initialDevicesInCache: function(mode){
         Device.initial(mode);
     },
+  
     create: function(brand,model,callback) {
         let now = new Date();
         Device.Create(now,brand,model,function(resultC){

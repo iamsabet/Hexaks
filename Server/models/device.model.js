@@ -272,12 +272,12 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
                     
                     }
                 });
-                if(updateResponse){
-                    return callback(true);
-                }   
-                else{
-                    console.log("update device trends cache in mode " + mode +" failed!");
-                }
+                // if(updateResponse){
+                //     return callback(true);
+                // }   
+                // else{
+                //     console.log("update device trends cache in mode " + mode +" failed!");
+                // }
 
             });
         });

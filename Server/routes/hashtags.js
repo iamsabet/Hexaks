@@ -17,6 +17,11 @@ var hashtags = {
     initialHashtagsInCache: function(mode){
         Hashtag.initial(mode);
     },
+    create: function(now,mode,hashtagName,callback) {
+        Hashtag.Create(now,mode,hashtagName,function(resx){
+            return callback(resx);
+        });
+    },
     getOne: function(req, res,next,user) {
         var id = req.params.id;
         var user = data[0]; // Spoof a DB call

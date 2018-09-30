@@ -117,7 +117,6 @@ hashtagSchema.methods.initial = function(mode){ // counts
                 Hashtag.find(query, {
                     name: 1,
                     counts: 1,
-                    number:1
                     }, function (err, hashs) {
                     if (err) throw err;
                     if (hashs.length > 0) {
@@ -170,7 +169,7 @@ hashtagSchema.methods.search = function(searchText,hours,counts,callback){
         });
     }
 };
-hashtagSchema.methods.Create = function(now,hashtagName,callback){
+hashtagSchema.methods.Create = function(now,mode,hashtagName,callback){
     if((hashtagName) && (typeof hashtagName === "string") && (hashtagName.length > 0)) {
         let hours = now.getHours();
         let day = now.getDay();
@@ -184,7 +183,7 @@ hashtagSchema.methods.Create = function(now,hashtagName,callback){
                 newHashtag.createdAt = Date.now();
                 newHashtag.updatedAt = Date.now();
                 newHashtag.counts = 1;
-                newHashtag.name = hashtagName.toLowerCase;
+                newHashtag.name = hashtagName.toLowerCase();
                 newHashtag.hour = -1;
                 newHashtag.day = -1;
                 newHashtag.month = -1;
@@ -241,7 +240,9 @@ hashtagSchema.methods.Create = function(now,hashtagName,callback){
                     {$inc: {counts: 1},$set:{updatedAt:nowTime}
                     }, function (err, resultx) {
                     if (err) throw err;
+
                     if (resultx.n === 0) {
+
                         let newHashtag = new Hashtag({name: query.name});
                         newHashtag.createdAt = Date.now();
                         newHashtag.updatedAt = Date.now();
@@ -285,17 +286,26 @@ hashtagSchema.methods.Create = function(now,hashtagName,callback){
                     
                     }
                 });
-                if(updateResponse){
-                    return callback(true);
-                }   
-                else{
-                    console.log("update hashtag trends cache in mode " + mode +" failed!");
-                }
+                // if(updateResponse){
+                //     return callback(true);
+                // }   
+                // else{
+                //     console.log("update hashtag trends cache in mode " + mode +" failed!");
+                // }
 
             });
     });
     }
 };
+function updateHashtagTrendsInCache(type,hashtagName,incValue,callback){
+    let increaseValue = incValue || 1;
+    if((type) && ((type > -1) && type <= 4)) {
+        redisClient.zincrby("hashtagsTrend:"+type, increaseValue, hashtagName, function (err, counts) { // 0 = day , 1 = days , 2 = month
+            if (err) throw err; // 
+            return callback(true);
+        });
+    }
+}
 
 hashtagSchema.plugin(autoIncrement, {inc_field: 'hashtag_id', disable_hooks: true});
 hashtagSchema.plugin(mongoosePaginate);

@@ -3266,7 +3266,7 @@ div.cc-picker-flag.ee{
 	}
 	.settingsContainer > div form button{
 		width:90%;
-		width: auto;
+		width: auto;			
 		min-width: 200px;
 		font-size:28px;
 		margin:50px auto;

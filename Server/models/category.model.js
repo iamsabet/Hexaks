@@ -382,3 +382,4 @@ let categoriesDefined = [
     "weather",
     "wedding"
   ];
+  
