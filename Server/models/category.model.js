@@ -214,7 +214,7 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                         
                     }
                     else if(mode === 1 || mode === 2){
-                        query.hours = -1;
+                        query.hour = -1;
                         if(mode === 1){
                             timeLimit = (24 * 3600000);
                         }
@@ -224,12 +224,12 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                     }
                     else if(mode === 3){
                         timeLimit = (30 * 24 * 3600000);
-                        query.hours = -1;
+                        query.hour = -1;
                         query.day = -1;
                     }
                     else if(mode === 4){
                         timeLimit = (12 * 30 * 24 * 3600000);
-                        query.hours = -1;
+                        query.hour = -1;
                         query.day = -1;
                         query.month = -1;
                     }
@@ -248,7 +248,7 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                                 newCategory.name = query.name;
                                 newCategory.number = categoriesDefined.indexOf(query.name);
                                 newCategory.thumbnailUrl=""; // 
-                                newCategory.hours = query.hours;
+                                newCategory.hour = query.hours;
                                 newCategory.day = query.day;
                                 newCategory.month = query.month;
                                 newCategory.year = query.year;
@@ -256,14 +256,14 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
                         
                                 }
                                 else if(mode === 1 || mode === 2){
-                                    newCategory.hours = -1;
+                                    newCategory.hour = -1;
                                 }
                                 else if(mode === 3){
-                                    newCategory.hours = -1;
+                                    newCategory.hour = -1;
                                     newCategory.day = -1;
                                 }
                                 else if ( mode === 4){
-                                    newCategory.hours = -1;
+                                    newCategory.hour = -1;
                                     newCategory.day = -1;
                                     newCategory.month = -1;
                                 }

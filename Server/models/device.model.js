@@ -170,7 +170,7 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
                         newDevice.model = model.toLowerCase();
                         newDevice.brand = brand.toLowerCase(),
                         newDevice.thumbnailUrl=""; // 
-                        newDevice.hours = -1;
+                        newDevice.hour = -1;
                         newDevice.day = -1;
                         newDevice.month = -1;
                         newDevice.year = -1;
@@ -202,7 +202,7 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
                 
             }
             else if(mode === 1 || mode === 2){
-                query.hours = -1;
+                query.hour = -1;
                 if(mode === 1){
                     timeLimit = (24 * 3600000);
                 }
@@ -212,12 +212,12 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
             }
             else if(mode === 3){
                 timeLimit = (30 * 24 * 3600000);
-                query.hours = -1;
+                query.hour = -1;
                 query.day = -1;
             }
             else if(mode === 4){
                 timeLimit = (12 * 30 * 24 * 3600000);
-                query.hours = -1;
+                query.hour = -1;
                 query.day = -1;
                 query.month = -1;
             }
@@ -236,7 +236,7 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
                         newDevice.name = query.model;
                         newDevice.name = query.brand;
                         newDevice.thumbnailUrl=""; // 
-                        newDevice.hours = query.hours;
+                        newDevice.hour = query.hour;
                         newDevice.day = query.day;
                         newDevice.month = query.month;
                         newDevice.year = query.year;
@@ -244,14 +244,14 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
                 
                         }
                         else if(mode === 1 || mode === 2){
-                            newDevice.hours = -1;
+                            newDevice.hour = -1;
                         }
                         else if(mode === 3){
-                            newDevice.hours = -1;
+                            newDevice.hour = -1;
                             newDevice.day = -1;
                         }
                         else if ( mode === 4){
-                            newDevice.hours = -1;
+                            newDevice.hour = -1;
                             newDevice.day = -1;
                             newDevice.month = -1;
                         }
