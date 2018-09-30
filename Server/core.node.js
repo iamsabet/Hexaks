@@ -10,10 +10,8 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var requestIp = require("request-ip");
 var routes = require('./routes/index');
-var categorySchema = require('./models/category.model');
-var Category = new categorySchema();
-var hashtagSchema = require('./models/hashtag.model');
-var Hashtag = new hashtagSchema();
+var categories = require('./routes/categories');
+var hashtags = require('./routes/hashtags');
 var db = mongoose.connection;
 var cron = require('cron');
 var CronJob = require('cron').CronJob;
@@ -39,33 +37,33 @@ client.on('connect', function() {
 });
 
 // Scheduling
-Hashtag.Paginate(6,10000);
-Category.initialCategoriesInCache(0);
+hashtags.Paginate(6,10000);
+categories.initialCategoriesInCache(0);
 console.log("Startup Functions");
 new CronJob('50 59 * * * *', function() { // hourly
     console.log("1h Scheduled");
-    Category.initialCategoriesInCache(0);
-    Hashtag.Paginate(6,10000);
+    categories.initialCategoriesInCache(0);
+    hashtags.Paginate(6,10000);
 }, null, true);
 
 new CronJob('50 59 11 * * *', function() { // daily //
     console.log("12 hours Scheduled");
-    Category.initialCategoriesInCache(1);
-    Hashtag.Paginate(24,50000);
+    categories.initialCategoriesInCache(1);
+    hashtags.Paginate(24,50000);
 }, null, true);
 new CronJob('50 59 3 1 * *', function() { // weekley every day
     console.log("28 hours Scheduled");
-    Category.initialCategoriesInCache(2);
-    Hashtag.Paginate(168,100000);
+    categories.initialCategoriesInCache(2);
+    hashtags.Paginate(168,100000);
 }, null, true);
 new CronJob('50 59 23 6 *', function(){ // 
-    Category.initialCategoriesInCache(3);
-    Hashtag.Paginate(720,200000);
+    categories.initialCategoriesInCache(3);
+    hashtags.Paginate(720,200000);
 });
-new CronJob('50 59 23 6 *', function(){ // yearly
-    Category.initialCategoriesInCache(3);
-    Hashtag.Paginate(720,200000);
-});
+// new CronJob('50 59 23 6 *', function(){ // yearly
+//     categories.initialCategoriesInCache(3);
+//     hashtags.Paginate(720,200000);
+// });
 
 
 

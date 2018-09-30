@@ -199,7 +199,7 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
         else {
                 //
                 
-            category.update({name:categoryName.toLowerCase(),hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
+            category.updateOne({name:categoryName.toLowerCase(),hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
                 if(err) throw err;
                 if(value.n > 0){
                     let query = {

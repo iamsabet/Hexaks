@@ -16,10 +16,10 @@ var View = new viewSchema();
 // var categorySchema = require('../models/category.model');
 
 var categories = require('./categories');
-var deviceSchema = require('../models/device.model');
-var Device = new deviceSchema();
-var hashtagSchema = require('../models/hashtag.model');
-var Hashtag = new hashtagSchema();
+var hashtags = require('./hashtags');
+var devices = require('./devices');
+var locations = require('./locations');
+
 var CryptoJS = require("crypto-js");
 var Float = require('mongoose-float').loadType(mongoose);
 var users = require('./users');

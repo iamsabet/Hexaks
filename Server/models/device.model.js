@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const random = require('randomstring');
 var redis = require("redis");
+var CryptoJS = require("crypto-js");
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -14,63 +15,315 @@ var long = require('mongoose-long')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
 
 var deviceSchema = new Schema({
+    device_id:Number,
     brand:String,
     model:String,
     deviceId : String,
-    used : long,
+    hour:Number, // 0 - 23
+    day:Number, // 0 - 31
+    month : Number, // 0 - 12
+    year:Number, // 0 , 2019 --> 
+    counts : long,
     deleted: Boolean,
     createdAt : Number,
-    updatedAt : Number
+    updatedAt : Number,
+    number : Number, // movazi ba name Unique int 
+    thumbnailUrl:String,
+    activated:Booleanß
 });
 // index
-deviceSchema.methods.Create = function(brand,model,callback){
-    if((brand && typeof brand === "string") && (model && typeof model === "string")) {
-        device.findOneAndUpdate({
-            brand: brand,
-            model: model
-        }, {}, function (err, resultx) {
-            if (err) throw err;
-            if (!resultx) {
-                let newDevice = new Device({brand: brand, model: model});
-                newDevice.createdAt = Date.now();
-                newDevice.updatedAt = Date.now();
-                newDevice.used = 1;
-                newDevice.deviceId = random.generate(6);
 
-                newDevice.save(function (err, result) {
-                    if (result) {
-                        console.log(" Created device");
-                        callback(newDevice.deviceId);
+deviceSchema.methods.initialDevicesInCache = function(){
+    redisClient.get("devicesInitialized:"+mode,function(err,value) {
+        if(err) throw err;
+        console.log(value);
+        if(!value){
+            let query = {};
+            if((mode) && (mode > -1) && (mode <= 4)){
+                query = {};
+                let now = new Date();
+                let thisHour = now.getHours();
+                let thisDay = now.getDay();
+                let thisMonth = now.getMonth();
+                let thisYear = now.getYear() + 1900;
+
+                query.hour = thisHour;
+                
+                let timeLimit = (1 * 3600000);   // 1h
+                if(mode === 0){
+                    if(thisHour > 0){
+                        query.hour = {$in:[thisHour,thisHour-1]};
+                    }
+                    else{
+                        query.hour = {$in:[thisHour,23]};
+                    }
+                }
+                else if(mode===1){ // day
+                    timeLimit = (24 * 3600000);
+                    query.hour = -1;
+                    if(thisDay > 1){
+                        query.day = {$in:[thisDay,thisDay-1]};
+                    }
+                    else{
+                        query.day = {$in:[thisDay,30]};
+                    }
+                }
+                else if(mode===2){ // week // 1/3 hafte bzane 
+                    timeLimit = (7 * 24 * 3600000);
+                    query.hour = -1;
+                    var days = [];
+                    for(var z = 0 ; z < 7 ;z++){
+                        if(thisDay > z){
+                            days.push(thisDay - z);
+                        }
+                        else{
+                            days.push(30 - (z - thisDay));
+                        }
+                    }
+                    query.day = {$in:days};
+                }
+                else if(mode===3){ // (har hafte bzane) startings 1/4 month initial bzane amalan ke unke akhare mahe ruze 30 akhario bzane record
+                    query.hour = -1;
+                    query.day = -1;
+                    timeLimit = (30 * 24 * 3600000);
+                    if(thisMonth > 1){
+                        query.month = {$in:[thisMonth, (thisMonth-1)]};
+                    }
+                    else{
+                        query.month = {$in:[thisMonth, 12]};
+                        query.year = {$in:[thisYear,(thisYear-1)]};
+                    }
+         
+                }
+                else if(mode===4){ // year not initial at first
+                    timeLimit = (12 * 30 * 24 * 3600000);
+                    query.hour = -1;
+                    query.day = -1;
+                    query.month = {$exists:true}; // category counts for each month ... last 12 months
+                    query.year = {$gte:(thisYear-1)};
+                }
+                
+                let timeEdge = now.getTime() - timeLimit;
+                // query.name = devices[n].name;
+                query.updatedAt = {$gt: timeEdge}};
+
+                device.find(query, {
+                    model: 1,
+                    brand:1,
+                    counts: 1,
+                    number:1
+                    }, function (err, devs) {
+                    if (err) throw err;
+                    if (devs.length > 0) {
+                        console.log(devs.length);
+                        redisClient.del("devicesTrend:"+mode,function(result){
+                            redisClient.set("devicesInitialized:"+mode, true);
+                            for (let z = 0; z < devs.length; z++) {
+                                let countsX = devs[z].counts;
+                                updateDeviceTrendsInCache(mode,devs[z].brand+"/"+devs[z].model,countsX,function(resultu){
+                                    if(resultu){
+                                        updateDeviceBrandsTrendsInCache(mode,devs[z].brand,countsX,function(resultux){
+                                            if(resultux){
+                                                if ((z === devs.length - 1) && (n === 0)) {
+                                                    console.log("devices initialized for mode = :" + mode  +" in cache.");
+                                                    if ((z === devs.length - 1) && (n === 0)) {
+                                                        let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
+                                                        redisClient.set("devicesInitialized:"+mode, true);
+                                                        redisClient.expire("devicesTrend:"+mode, expireTime); // expire
+                                                        redisClient.expire("devicesInitialized:"+mode, expireTime);
+                                                    }
+                                                }   
+                                            }
+                                        }); 
+                                    }
+                                });
+                            }
+                        });
                     }
                     else {
-                        callback({result: false, message: "Create device failed"});
+                        console.log("No devices found in initial mode : " + mode);
                     }
                 });
-            }
-            else {
-                console.log("updated device : " + resultx.deviceId);
-                callback(resultx.deviceId);
+                
             }
         });
+                // switch expire time with mode
+};
+
+deviceSchema.methods.Create = function(now,model,brand,callback) {
+    console.log(deviceName);
+    if((model) && (typeof model === "string") && (model.length > 0)&& (brand) && (typeof brand === "string") && (brand.length > 0)) {
+        let hours = now.getHours();
+        let day = now.getDay();
+        let month = now.getMonth();
+        let year = now.getYear() + 1900;
+        let nowTime = now.getTime();
+        device.updateOne({model:model.toLowerCase(),brand:brand.toLowerCase(),hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
+            if(err) throw err;
+            if(value.n === 0){
+                let newDevice = new Category({name: query.model,brand:query.brand});
+                        newDevice.createdAt = nowTime;
+                        newDevice.updatedAt = nowTime;
+                        newDevice.counts = 1;
+                        newDevice.name = query.model;
+                        newDevice.name = query.brand;
+                        newDevice.number = devicesDefined.indexOf(query.name);
+                        newDevice.thumbnailUrl=""; // 
+                        newDevice.hours = query.hours;
+                        newDevice.day = query.day;
+                        newDevice.month = query.month;
+                        newDevice.year = query.year;
+                        if(mode === 0){
+                
+                        }
+                        else if(mode === 1 || mode === 2){
+                            newDevice.hours = -1;
+                        }
+                        else if(mode === 3){
+                            newDevice.hours = -1;
+                            newDevice.day = -1;
+                        }
+                        else if ( mode === 4){
+                            newDevice.hours = -1;
+                            newDevice.day = -1;
+                            newDevice.month = -1;
+                        }
+                        newDevice.activated = true;
+                        newDevice.deleted = false;
+                        newDevice.setNext('category_id', function(err, cmt){
+                            if(err) throw err;
+                            newDevice.save(function (err, resultc) {
+                                if(err) throw err;
+                                if (resultc) {
+                                    console.log("master device item created");
+                                }
+                                else {
+                                    return callback({result:false,message:"create category in mode " + mode +" failed!"});
+                                }
+                            });
+                        });
+            }
+            let query = {
+                model: model.toLowerCase(),
+                brand: brand.toLowerCase(),
+                hour: hours,
+                day:day,
+                month:month,
+                year:year
+            };
+            let timeLimit = (1 * 3600000);
+            if(mode === 0){
+                
+            }
+            else if(mode === 1 || mode === 2){
+                query.hours = -1;
+                if(mode === 1){
+                    timeLimit = (24 * 3600000);
+                }
+                else{
+                    timeLimit = (7 * 24 * 3600000);
+                }
+            }
+            else if(mode === 3){
+                timeLimit = (30 * 24 * 3600000);
+                query.hours = -1;
+                query.day = -1;
+            }
+            else if(mode === 4){
+                timeLimit = (12 * 30 * 24 * 3600000);
+                query.hours = -1;
+                query.day = -1;
+                query.month = -1;
+            }
+            
+            query.updatedAt = {$gt: (nowTime - (timeLimit+(30000)))};
+            updateCategoryTrendsInCache(mode,query.name,1,function(updateResponse){
+                category.updateOne(query,
+                    {$inc: {counts: 1},$set:{updatedAt:nowTime}
+                    }, function (err, resultx) {
+                    if (err) throw err;
+                    if (resultx.n === 0) {
+                        let newDevice = new Device({name: query.model,brand:query.brand});
+                        newDevice.createdAt = nowTime;
+                        newDevice.updatedAt = nowTime;
+                        newDevice.counts = 1;
+                        newDevice.name = query.model;
+                        newDevice.name = query.brand;
+                        newDevice.number = devicesDefined.indexOf(query.name);
+                        newDevice.thumbnailUrl=""; // 
+                        newDevice.hours = query.hours;
+                        newDevice.day = query.day;
+                        newDevice.month = query.month;
+                        newDevice.year = query.year;
+                        if(mode === 0){
+                
+                        }
+                        else if(mode === 1 || mode === 2){
+                            newDevice.hours = -1;
+                        }
+                        else if(mode === 3){
+                            newDevice.hours = -1;
+                            newDevice.day = -1;
+                        }
+                        else if ( mode === 4){
+                            newDevice.hours = -1;
+                            newDevice.day = -1;
+                            newDevice.month = -1;
+                        }
+                        newDevice.activated = true;
+                        newDevice.deleted = false;
+                        newDevice.setNext('category_id', function(err, cmt){
+                            if(err) throw err;
+                            newDevice.save(function (err, resultc) {
+                                if(err) throw err;
+                                if (resultc) {
+                                    return callback(true);
+                                }
+                                else {
+                                    return callback({result:false,message:"create category in mode " + mode +" failed!"});
+                                }
+                            });
+                        });
+                    
+                    }
+                });
+                if(updateResponse){
+                    return callback(true);
+                }   
+                else{
+                    console.log("update category trends cache in mode " + mode +" failed!");
+                }
+
+            });
+        });
+        
     }
     else{
-        callback(null);
+        callback({result:false,message:"Bad Input"});
     }
 };
 
-
-
-deviceSchema.pre('save', function(next){
-    if(this.updatedAt) {
-        this.updatedAt = Date.now();
+function updateDeviceTrendsInCache(type,categoryName,incValue,callback){
+    let increaseValue = incValue || 1;
+    if((type) && ((type > -1) && type <= 4)) {
+        redisClient.zincrby("devicesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
+            if (err) throw err; // 
+            
+            return callback(true);
+        });
     }
-    else{
-        let now = Date.now();
-        this.createdAt = now;
-        this.updatedAt = now;
+}
+function updateDeviceBrandsTrendsInCache(type,categoryName,incValue,callback){
+    let increaseValue = incValue || 1;
+    if((type) && ((type > -1) && type <= 4)) {
+        redisClient.zincrby("devicesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
+            if (err) throw err; // 
+            
+            return callback(true);
+        });
     }
-    next();
-});
+}
+deviceSchema.plugin(autoIncrement, {inc_field: 'device_id', disable_hooks: true});
 deviceSchema.plugin(mongoosePaginate);
 let Device = mongoose.model('devices', deviceSchema);
 let device = mongoose.model('devices');

@@ -2240,6 +2240,9 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .settingsContainer > div form  .form-group input.success{
 	border-color:rgb(145, 236, 9);
 }
+.settingsContainer > div form  .form-group input.success + label{
+	border-color:rgb(145, 236, 9);
+} 
 .settingsContainer > div form  .form-group input.error{
 	border-color:red;
 }
@@ -3272,6 +3275,10 @@ div.cc-picker-flag.ee{
 		left:0;
 		width:90%;
 	}
+}
+.settingsContainer > div #changePass .form-group {
+	float: none;
+	margin: 25px;
 }
 .settingsContainer > div #verifyPhone .form-group .dialog{
 	padding:10px 20px;

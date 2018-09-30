@@ -272,19 +272,19 @@
             <form id="changePass" action="/users/changePass" >
                 <div class="form-group">
                     <input type="password" id="password"/>
-                    <label for="password">Password</label>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="password"/>
-                    <label for="password">Password</label>
-                    <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+                    <label for="password">New Password</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="password" />
                 </div>
                 <div class="form-group">
                     <input type="password" id="confPassword"/>
-                    <label for="confPassword">Confirm Password</label>
+                    <label for="confPassword">Confirm New Password</label>
                     <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
                 </div>
-                <button id="changePassBtn">Register</button>
+                <div class="form-group">
+                    <input type="password" id="oldPassword"/>
+                    <label for="oldPassword">Old Password</label>
+                </div>
+                <button id="changePassBtn">Change Password</button>
                 <ul class="messageBox">
     
                 </ul>
@@ -1483,7 +1483,13 @@
         }
         else if(pageName.startsWith("settings")){
             // debugger;
+            
             if(pageName.split("/")[1]){
+                if(pageName.split("/")[1] === "emailVerifySuccess"){
+                    alert("your email "  + Me.email + " successfuly verified");
+                    pageName = "settings/account";
+                }
+
                 $(".settingsContainer form.show").removeClass("show");
                 if($(`#${pageName.split("/")[1]}`)[0])
                     $(`#${pageName.split("/")[1]}`).addClass("show");
@@ -1494,12 +1500,10 @@
                     $(`#${pageName.split("/")[1]}Btn`).addClass("selected");
             }
             let firstTime = false;
-            if(window.location.pathname.split("/")[1] && window.location.pathname.split("/")[1] !== "settings"){
+            if(window.location.pathname.split("/")[1] && (window.location.pathname.split("/")[1] !== "settings" || window.location.pathname.split("/")[1] !== "users")){
                 firstTime = true;
             }
-            if(pageName.split("/")[1] === "emailVerifySuccess"){
-                alert("your email "  + Me.email + " successfuly verified");
-            }
+            
             loadUserInfosInForm();
             if(postid)
                 pushHistory("settings", pageName, pageName, firstTime,true); 
@@ -1726,7 +1730,7 @@
             }
         }
         if(pageType === "home" || pageType === "" || pageType === "explore" || pageType === "following" || pageType === "followings" || pageType === "followers" ||
-            pageType=== "post"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" ||
+            pageType=== "post"|| pageType === "curated" || pageType === "latest" || pageType ==="settings" || pageType ==="about" || pageType ==="users" || 
             pageType === "top" || pageType ==="contact" || pageType==="newpost" || pageType==="policy") {
             if (pageType === "home" || pageType === "" || pageType === "explore" || pageType === "following") {
                 if (pageType === "") {
@@ -1753,13 +1757,13 @@
                 }
             }
 
-            else if (pageType === "settings" || pageType === "post" || pageType === "contact" || pageType === "people" || pageType === "newpost" || pageType === "policy") {
+            else if (pageType === "settings" || pageType === "users" || pageType === "post" || pageType === "contact" || pageType === "people" || pageType === "newpost" || pageType === "policy") {
                 if (postId && (pageType === "post")) {
                     changePage(pageType + "/" + postId, pageType + "/" + postId, writeState, postId);
                 }
                 else {
                     let formName = window.location.pathname.split("/")[2] || "account";
-                    
+                    // debugger;
                     changePage(pageType, pageType+"/"+formName, true,"",true,true);
                 }
             }
@@ -1969,7 +1973,7 @@
                     pushHistory(pageName, pageType, pageType, newHistory,writeUrl);  
                 
             }
-            else if (pageName === "settings" || pageName.toLowerCase() === "newpost" || pageName === "post" || pageName === "people" || pageName === "contact") {
+            else if (pageName === "settings" || pageName === "users" || pageName.toLowerCase() === "newpost" || pageName === "post" || pageName === "people" || pageName === "contact") {
                 // debugger;
                 if (pageName !== currentPage) {
                     if (pageName === "post") {
@@ -1980,7 +1984,12 @@
                         if($(".postFooter.show")[0])
                             $(".postFooter.show").removeClass("show");
                     }
-                    if(pageName.toLowerCase()==="settings"){
+                    // debugger;
+                    if(pageName.toLowerCase()==="settings" || pageName.toLowerCase()==="users"){
+                        if(pageName.toLowerCase()==="users"){
+                            pageName = "settings";
+                            pageType = "settings/"+pageType.split("/")[1];
+                        }
                         if(!pageType.split("/")[1]){
                             pageType += "account";
                         }
@@ -2015,8 +2024,7 @@
 
     function pushHistory(newPageName,url,data,writeHistory,changeUrl) {
         if (changeUrl || false) {
-            window.history.replaceState("", "", "/");
-            window.history.replaceState("", "", url);
+            window.history.pushState("", "","/"+url);
         }
         if (writeHistory && (historyPointer === historyList.length - 1)) {
             historyList.push({pageName: newPageName, urlData: url, data: data, hashtag: window.location.hash});
@@ -2428,7 +2436,7 @@
     });
     $("body").on("click","#verifyPhone .send",function(e){
         e.preventDefault(); // fetch input 
-        debugger
+        // debugger
         var inputs = $(".digits input.digit");
         var code = "";
         var valueNumber = "s";

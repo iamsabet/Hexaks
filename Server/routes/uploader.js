@@ -7,14 +7,14 @@ var userSchema = require('../models/user.model');
 
 var posts = require('../routes/posts.js');
 var users = require('./users');
+var devices = require('./devices');
 var multiparty = require('multiparty');
 var random = require("randomstring");
 var redis = require('redis');
 var fs = require('fs');
 var gm = require('gm');
 var CryptoJS = require('crypto-js');
-var deviceSchema = require('../models/device.model');
-var Device = new deviceSchema();
+
 let secret = require("../config/secret");
 
 var ExifImage = require('exif').ExifImage;
@@ -289,7 +289,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                             if (exif && exifData.image !== {} && exifData.image) {
                                                 let gpsLocation = exifData.gps || {};
                                                 
-                                                Device.Create(exifData.image.Make, exifData.image.Model, function (resultId) {
+                                                devices.create(exifData.image.Make, exifData.image.Model, function (resultId) {
                                                     if (resultId !== null) {
                                                         device = {
                                                             brand: exifData.image.Make,

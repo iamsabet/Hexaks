@@ -112,6 +112,16 @@ router.get('/terms', function(req,res){
         }
     });
 });
+router.get('/users',function(req,res) {
+    validateRequest(req,res,function(callback){
+        if(callback.message) {
+            res.redirect("/");
+        }
+        else {
+            res.render("main.html");
+        }
+    });
+});
 router.get('/users/verifyEmail/:uuid/',function(req,res) {
     let emailKey = req.params.uuid.toString();
     validateRequest(req,res,function(callback){
