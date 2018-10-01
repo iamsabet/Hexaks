@@ -798,6 +798,7 @@ var users = {
         });
     },
     checkEmailVerification:function(userId,key,callback){
+        
         if(userId){
             users.doVerifyEmail(userId,key,function(resultv){
                 return callback(resultv);
@@ -827,6 +828,7 @@ var users = {
         }
     },
     doVerifyEmail:function(userId,key,callback){
+        
         userSchema.updateOne({userId:userId,"verified.email.key":key},{$set:{"verified.emailVerified":true}},function(err,resultu){
             if(err) throw err;
             if(resultu.n > 0){

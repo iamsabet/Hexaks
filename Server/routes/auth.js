@@ -94,13 +94,13 @@ var auth = {
                 if (user.password === hashPassword) {
                     // logged in 
                     usrs.getEmailKeyFromCache(user.userId,function(key){
-                        if(callback && !callback.message){
+                        if(!key.message){
                             usrs.doVerifyEmail(user.userId,key,function(callback){
-                                res.send(user);
+                                return callback(user);
                             })
                         }
                         else{
-                            res.send(user);
+                            return callback(user);
                         }
                     })
                 }
