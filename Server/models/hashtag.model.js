@@ -5,12 +5,6 @@ var requestIp = require("request-ip");
 var random = require('randomstring');
 var mongoosePaginate = require('mongoose-paginate');
 var autoIncrement = require('mongoose-sequence')(mongoose);
-
-
-
-
-
-
 var redisClient = redis.createClient({
     password:"c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna",
 
@@ -125,12 +119,12 @@ hashtagSchema.methods.initial = function(mode){ // counts
                             redisClient.set("hashtagsInitialized:"+mode, true);
                             for (let z = 0; z < hashs.length; z++) {
                                 let countsX = hashs[z].counts;
-                              
                                 updateHashtagTrendsInCache(mode,hashs[z].name,countsX,function(resultu){
+
                                     if(resultu){
-                                        if ((z === hashs.length - 1) && (n === 0)) {
+                                        if ((z === hashs.length - 1)) {
                                             console.log("hashtags initialized for mode = :" + mode  +" in cache.");
-                                            if ((z === hashs.length - 1) && (n === 0)) {
+                                            if ((z === hashs.length - 1)) {
                                                 let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
                                                 redisClient.set("hashtagsInitialized:"+mode, true);
                                                 redisClient.expire("hashtagsTrend:"+mode, expireTime); // expire
@@ -170,15 +164,20 @@ hashtagSchema.methods.search = function(searchText,hours,counts,callback){
     }
 };
 hashtagSchema.methods.Create = function(now,mode,hashtagName,callback){
+
     if((hashtagName) && (typeof hashtagName === "string") && (hashtagName.length > 0)) {
         let hours = now.getHours();
         let day = now.getDay();
         let month = now.getMonth();
         let year = now.getYear() + 1900;
         let nowTime = now.getTime();
-        hashtag.updateOne({name:hashtagName.toLowerCase(),hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
+        let x = -2;
+        if(mode===0){
+            x= -1;
+        }
+        hashtag.updateOne({name:hashtagName.toLowerCase(),hour:x,day:x,month:x,year:x},{$inc:{counts:1}},function(err,value){ 
             if(err) throw err;
-            if(value.n === 0){
+            if((value.n === 0) && (x=== -1)){
                 let newHashtag = new Hashtag({name:hashtagName.toLowerCase()});
                 newHashtag.createdAt = Date.now();
                 newHashtag.updatedAt = Date.now();
@@ -213,7 +212,7 @@ hashtagSchema.methods.Create = function(now,mode,hashtagName,callback){
             if(mode === 0){
                 
             }
-            else if(mode === 1 || mode === 2){
+            else if(mode === 1 || (mode === 2)){
                 query.hour = -1;
                 if(mode === 1){
                     timeLimit = (24 * 3600000);
@@ -285,6 +284,9 @@ hashtagSchema.methods.Create = function(now,mode,hashtagName,callback){
                         });
                     
                     }
+                    else{
+                        return callback(true); // increased
+                    }
                 });
                 // if(updateResponse){
                 //     return callback(true);
@@ -298,8 +300,9 @@ hashtagSchema.methods.Create = function(now,mode,hashtagName,callback){
     }
 };
 function updateHashtagTrendsInCache(type,hashtagName,incValue,callback){
+
     let increaseValue = incValue || 1;
-    if((type) && ((type > -1) && type <= 4)) {
+    if(((type > -1) && type <= 4)) {
         redisClient.zincrby("hashtagsTrend:"+type, increaseValue, hashtagName, function (err, counts) { // 0 = day , 1 = days , 2 = month
             if (err) throw err; // 
             return callback(true);

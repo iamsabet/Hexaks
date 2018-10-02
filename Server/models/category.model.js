@@ -127,9 +127,9 @@ categorySchema.methods.initial = function(mode){
                               
                                 updateCategoryTrendsInCache(mode,cats[z].name,countsX,function(resultu){
                                     if(resultu){
-                                        if ((z === cats.length - 1) && (n === 0)) {
+                                        if ((z === cats.length - 1)) {
                                             console.log("categories initialized for mode = :" + mode  +" in cache.");
-                                            if ((z === cats.length - 1) && (n === 0)) {
+                                            if ((z === cats.length - 1)) {
                                                 let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
                                                 redisClient.set("categoriesInitialized:"+mode, true);
                                                 redisClient.expire("categoriesTrend:"+mode, expireTime); // expire
@@ -160,7 +160,6 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
         let month = now.getMonth();
         let year = now.getYear() + 1900;
         let nowTime = now.getTime();
-        
         if (mode === -1) {
             category.findOne({name:categoryName.toLowerCase(),hour:mode,day:mode,year:mode,month:mode},function(err,resultc){
                 if(err) throw err;
@@ -198,8 +197,11 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
         }
         else {
                 //
-                
-            category.updateOne({name:categoryName.toLowerCase(),hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
+            let x = -2;
+            if(mode===0){
+                x= -1;
+            }
+            category.updateOne({name:categoryName.toLowerCase(),hour:x,day:x,month:x,year:x},{$inc:{counts:1}},function(err,value){ 
                 if(err) throw err;
                 if(value.n > 0){
                     let query = {
@@ -306,10 +308,9 @@ categorySchema.methods.Create = function(now,mode,categoryName,callback) {
 
 function updateCategoryTrendsInCache(type,categoryName,incValue,callback){
     let increaseValue = incValue || 1;
-    if((type) && ((type > -1) && type <= 4)) {
+    if(((type > -1) && (type <= 4))) {
         redisClient.zincrby("categoriesTrend:"+type, increaseValue, categoryName, function (err, counts) { // 0 = day , 1 = days , 2 = month
             if (err) throw err; // 
-            
             return callback(true);
         });
     }

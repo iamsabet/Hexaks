@@ -17,9 +17,22 @@ var hashtags = {
     initialHashtagsInCache: function(mode){
         Hashtag.initial(mode);
     },
-    create: function(now,mode,hashtagName,callback) {
-        Hashtag.Create(now,mode,hashtagName,function(resx){
-            return callback(resx);
+    create: function(now,hashtagName,callback) {
+        Hashtag.Create(now,0,hashtagName,function(result1){
+            if(result1){
+                console.log("hour record hashtag = " + hashtagName);
+                Hashtag.Create(now,1,hashtagName,function(result2){
+                    if(result2){
+                        console.log("day record hashtag = " + hashtagName);
+                        Hashtag.Create(now,3,hashtagName,function(result3){
+                            if(result3){
+                                console.log("month record hashtag = " + hashtagName);
+                                return callback(true);
+                            }
+                        });
+                    }
+                });
+            }
         });
     },
     getOne: function(req, res,next,user) {

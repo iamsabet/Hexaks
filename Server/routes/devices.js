@@ -19,8 +19,12 @@ var devices = {
   
     create: function(brand,model,callback) {
         let now = new Date();
-        Device.Create(now,brand,model,function(resultC){
-            return callback(resultC);
+        Device.Create(now,0,brand,model,function(resultC){
+            Device.Create(now,1,brand,model,function(resultC){
+                Device.Create(now,3,brand,model,function(resultC){
+                    return callback(true);
+                });
+            });
         });
     },
 };

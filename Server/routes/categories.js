@@ -21,9 +21,22 @@ var categories = {
             res.send(callback);
         });
     },
-    addCategory: function(now,mode,categoryName,callback) {
-        Cagtegory.Create(now,mode,categoryName,function(resultC){
-            return callback(resultC);
+    addCategory: function(now,categoryName,callback) {
+        Cagtegory.Create(now,0,categoryName,function(result1){
+            if(result1){
+                console.log("hour record category = " + categoryName);
+                Cagtegory.Create(now,1,categoryName,function(result2){
+                    if(result2){
+                        console.log("day record category = " + categoryName);
+                        Cagtegory.Create(now,3,categoryName,function(result3){
+                            if(result3){
+                                console.log("month record category = " + categoryName);
+                                return callback(true);
+                            }
+                        });
+                    }
+                });
+            }
         });
     },
     getDefinedCategories: function(req,res) {

@@ -540,7 +540,6 @@ var posts = {
                                     if (err) throw err;
                                     if (resultx.n===1) {
                                         console.log(postQuery + "post activated"); // post activated successfully   
-                                        accepteds += 1;
                                         let responseObject = {}
                                         let categoriesReq = false;
                                         let hashtagsReq = false;
@@ -551,57 +550,23 @@ var posts = {
                                         if(categoryx.length > 0){
                                             categoriesReq = true;
                                             categoriesRes = false;
-                                            for (let c = 0; c < categoryx.length; c++) { // create hourly category
+                                            let affected = 0;
+                                            for (let c = 0 ; c < categoryx.length; c++) { // create hourly category
                                                 if (categoryx[c] && (categoryx[c] !== undefined)) {
-                                                    categories.addCategory(now, 0, categoryx[c],function (callback) {
-                                                        if (callback === true) {
-                                                            console.log("add hour category");
-                                                            categories.addCategory(now, 1, categoryx[c],function (callback2) {
-                                                                if (callback2 === true) {
-                                                                    console.log("add day category");
-                                                                    categories.addCategory(now, 3, categoryx[c],function (callback2) {
-                                                                        if (callback2 === true) {
-                                                                            console.log("add month category");
-                                                                            if(c === categoryx.length -1){
-                                                                                
-                                                                                if (postsItterator === 19 || (postsItterator === keys.length -1)){
-                                                                                    categoriesRes = true;
-                                                                                        // check response condition
-                                                                                    if((categoriesReq && categoriesRes) &&  (hashtagsReq && hashtagsRes) && (       albumReq && albumRes)){
-                                                                                        res.send(true);
-                                                                                    }
-                                                                                    
-                                    
-                                                                                    
-                                                                                }
-                                                                            
-                                                                               
-
-                                                                          
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                    // month and yearly objects creates schaduled // for month , yeach 1 week maybe 
-                                                                    // console.log("add day category");
-                                                                    // Category.Create(now, 2, categoryx[c],function (callback) { // month
-                                                                    //     if (callback === true) {
-                                                                    //         console.log("add month category");
-                                                                    //     }
-                                                                    //     else{
-                        
-                                                                    //     }
-                                                                    // });
-                                                                    
+                                                    categories.addCategory(now,categoryx[c],function (callback) {
+                                                        if (callback === true) { 
+                                                            affected = affected+1;
+                                                            if((affected === categoryx.length)){
+                                                                if (postsItterator === 19 || (postsItterator === keys.length -1)){
+                                                                    categoriesRes = true;
+                                                                        // check response condition
+                                                                    if((categoriesReq && categoriesRes) &&  (hashtagsReq && hashtagsRes) && (       albumReq && albumRes)){
+                                                                        res.send(true);
+                                                                    }   
                                                                 }
-                                                                else{
-                
-                                                                }
-                                                            });
+                                                            }
                                                         }
-                                                        else{
-        
-                                                        }
-                                                    });
+                                                    });              
                                                 }
                                             }
                                         }
@@ -612,29 +577,27 @@ var posts = {
                                         if(hashtags.length > 0){
                                             hashtagsReq = true;
                                             hashtagsRes = false;
+                                            let affectedHashtags = 0;
                                             for (let h = 0 ;h < hashtags.length; h++) {
-                                                if ((hashtags[h] !== undefined) && (hashtags[h].length > 3)) {
-                                                    console.log("hashes:" + hashtags[h]);
-                                                    hashes.create(now,0,hashtags[h], function (resulth1) {
-                                                        console.log("add day category");
-                                                        hashes.create(now,1,hashtags[h], function (resulth2) {
-                                                            console.log("add month category");
-                                                            hashes.create(now,3,hashtags[h], function (resulth3) {
-                                                                if(h === hashtags.length -1){
-                                                                    if (postsItterator === 19 || (postsItterator === keys.length -1)){
-
-                                                                        hashtagsRes = true;
-                                                                        // check response condition
-                                                                    if((categoriesReq && categoriesRes) &&  (hashtagsReq && hashtagsRes) && (       albumRes && albumReq)){
+                                                if ((hashtags[h] !== undefined) && (hashtags[h].length > 2)) {
+                                                    console.log("X = hashes:" + hashtags[h]);
+                                                    hashes.create(now,hashtags[h], function (resulth) {
+                                                        if(resulth){
+                                                            affectedHashtags = affectedHashtags+1;
+                                                            if(affectedHashtags === hashtags.length){
+                                                                if (postsItterator === 19 || (postsItterator === keys.length -1)){
+                                                                    hashtagsRes = true;
+                                                                    // check response condition
+                                                                    if((categoriesReq && categoriesRes) &&  (hashtagsReq && hashtagsRes) && (albumRes && albumReq)){
                                                                         res.send(true);
                                                                     }
-                                                                    
-                                                                    }
-                                                                    
+                                                                
                                                                 }
-                                                            });
-                                                        });
+                                                                
+                                                            }
+                                                        }
                                                     });
+                                                
                                                 }
                                             }
                                         }
@@ -660,27 +623,27 @@ var posts = {
                                             else {
                                                 console.log("album update failed err : " + JSON.stringify(updates));
                                             }
-
-                                            
+                                            albumRes = true;
+                                            albumReq = true;
                                             for (let t in mentions) {
                                                 // push notification to the mentioned user if exists // func()
                                             }
-                                            if (postsItterator === 19 || (postsItterator === keys.length -1)){
+                                            accepteds = accepteds + 1;
+                                            if (accepteds === 19 || (accepteds === keys.length)){
 
                                                 userSchema.update({userId:user.userId,activated:true,deleted:false},{
                                                     $inc:{postsCount:accepteds}
                                                 },function(err,resultx){
                                                     
                                                     if(resultx.n>0){
-                                                        users.updateSingleUserInfoInCache(user.userId,"postsCount",accepteds,"incr",function(result){
+                                                        users.updateAllUserInfosInCache(user.userId,function(result){
                                                             users.removeUploading(user);
                                                             console.log("activation complete");
                                                             albumRes = true;
-                                                             
 
                                                             // check response condition
-                                                            if((categoriesReq && categoriesRes) &&  (hashtagsReq && hashtagsRes) && (       albumRes && albumReq)){
-                                                                res.send(result);
+                                                            if((categoriesReq && categoriesRes) &&  (hashtagsReq && hashtagsRes) && (albumRes && albumReq)){
+                                                                res.send(true);
                                                             }
                                                             
                                                  

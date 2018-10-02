@@ -126,9 +126,9 @@ deviceSchema.methods.initial = function(){
                                     if(resultu){
                                         updateDeviceBrandsTrendsInCache(mode,devs[z].brand,countsX,function(resultux){
                                             if(resultux){
-                                                if ((z === devs.length - 1) && (n === 0)) {
+                                                if ((z === devs.length - 1)) {
                                                     console.log("devices initialized for mode = :" + mode  +" in cache.");
-                                                    if ((z === devs.length - 1) && (n === 0)) {
+                                                    if ((z === devs.length - 1)) {
                                                         let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now
                                                         redisClient.set("devicesInitialized:"+mode, true);
                                                         redisClient.expire("devicesTrend:"+mode, expireTime); // expire
@@ -152,7 +152,7 @@ deviceSchema.methods.initial = function(){
                 // switch expire time with mode
 };
 
-deviceSchema.methods.Create = function(now,brand,model,callback) {
+deviceSchema.methods.Create = function(now,mode,brand,model,callback) {
     
     if((model) && (typeof model === "string") && (model.length > 0)&& (brand) && (typeof brand === "string") && (brand.length > 0)) {
         let hours = now.getHours();
@@ -160,10 +160,14 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
         let month = now.getMonth();
         let year = now.getYear() + 1900;
         let nowTime = now.getTime();
-        device.updateOne({model:model.toLowerCase(),brand:brand.toLowerCase(),hour:-1,day:-1,month:-1,year:-1},{$inc:{counts:1}},function(err,value){ 
+        let x = -2;
+        if(mode===0){
+            x= -1;
+        }
+        device.updateOne({model:model.toLowerCase(),brand:brand.toLowerCase(),hour:x,day:x,month:x,year:x},{$inc:{counts:1}},function(err,value){ 
             if(err) throw err;
-            if(value.n === 0){
-                let newDevice = new Category({name:model.toLowerCase(),brand: brand.toLowerCase()});
+            if((value.n === 0) && (x === -1)){
+                let newDevice = new Device({model:model.toLowerCase(),brand: brand.toLowerCase()});
                         newDevice.createdAt = nowTime;
                         newDevice.updatedAt = nowTime;
                         newDevice.counts = 1;
@@ -290,7 +294,7 @@ deviceSchema.methods.Create = function(now,brand,model,callback) {
 
 function updateDeviceTrendsInCache(type,key,incValue,callback){
     let increaseValue = incValue || 1;
-        if((type) && ((type > -1) && type <= 4)) {
+        if(((type > -1) && (type <= 4))) {
             redisClient.zincrby("devicesTrend:"+type, increaseValue, key, function (err, counts) { // 0 = day , 1 = days , 2 = month
                 if (err) throw err;
                 return callback(true);
@@ -299,7 +303,7 @@ function updateDeviceTrendsInCache(type,key,incValue,callback){
 };
 function updateDeviceBrandsTrendsInCache(type,key,incValue,callback){
     let increaseValue = incValue || 1;      
-    if((type) && ((type > -1) && type <= 4)) {
+    if(((type > -1) && (type <= 4))) {
         redisClient.zincrby("deviceBrandsTrend:"+type, increaseValue, key, function (err, counts) { // 0 = day , 1 = days , 2 = month
             if (err) throw err; //
             return callback(true);
