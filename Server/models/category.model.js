@@ -106,6 +106,8 @@ categorySchema.methods.initial = function(mode){
                     query.day = -1;
                     query.month = {$exists:true}; // category counts for each month ... last 12 months
                     query.year = {$gte:(thisYear-1)};
+                    
+
                 }
                 
                 let timeEdge = now.getTime() - timeLimit;
