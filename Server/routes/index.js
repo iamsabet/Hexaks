@@ -844,7 +844,45 @@ router.post('/api/v1/users/view',function(req,res){
     });
 });
 router.delete('/api/v1/admin/user/:id', users.delete);
+router.post('/api/v1/admin/posts/queue',function(req,res){
 
+    validateRequest(req,res,function(user) {
+        var userId = null;
+        if(!user.message && user.roles && (user.roles.indexOf("admin") > -1)) {
+
+            if(err) throw err;
+            let pageNumber = parseInt(req.body.pageNumber) || 1;
+            let counts = req.body.counts || 30;
+            let isCurated = req.body.isCurated || undefined;
+            let timeEdge = req.body.timeEdge || 1;
+            if(isNaN(pageNumber)){
+                res.send({result:false,message:"Bad Input"});
+            }
+            else{
+                let orderBy = undefined;
+                if(req.body.order==="latest")
+                    orderBy = "createdAt";
+                else if(req.body.order==="top") { 
+                    orderBy = req.body.orderBy || "rate.value"; 
+                }
+                else if(req.body.order==="curated") {
+                    orderBy = "updatedAt"; // ignore order by by now
+                }
+                else if(req.body.order==="reports") {
+                    orderBy = "reportsCount"; // ignore order by by now
+                }
+                else if(req.body.order==="queue") {
+                    orderBy = "queue"; // ignore order by by now
+                }
+                else{
+                    orderBy = "createdAt"
+                }
+                let curator = req.body.curator || undefined; 
+                posts.getPostsByFiltersAndOrders(req, res, user, "all", orderBy, isCurated, hashtags, category, curator ,true, true, true, 0,1000000,null, null ,counts, pageNumber);  
+            }
+        }
+    });
+});
 router.post('/api/v1/admin/createCategory/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(!callback.message) {
@@ -855,6 +893,25 @@ router.post('/api/v1/admin/createCategory/', function(req,res){
         }
     });
 });
-
+router.post('/api/v1/admin/accept/post', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(!callback.message) {
+            posts.accept(req, res, callback);
+        }
+        else{
+            res.send({result:false,message:"Unauthorized"});
+        }
+    });
+});
+router.post('/api/v1/admin/reject/post', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(!callback.message) {
+            posts.reject(req, res, callback);
+        }
+        else{
+            res.send({result:false,message:"Unauthorized"});
+        }
+    });
+});
 
 module.exports = router;

@@ -44,10 +44,6 @@ var posts = {
         var left = leftCost || 0;
         var orderedBy = orderBy || "createdAt";
         var privateOrNot = isPrivate || false;
-        var reject = null;
-        if(rejected){
-            reject = {$ne:null};
-        }
         var hashtagQuery = {$exists:true};
         var categoryQuery = {$exists:true};
         if(hashtags && hashtags.length > 0){
@@ -58,8 +54,10 @@ var posts = {
             if(category[0] !== "" && category[0] !== "All")
                 categoryQuery = {$in:category};
         }
-        let timeEdge = parseInt(timeEdgeIn);
-        if (orderedBy === "createdAt"|| orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.number" || orderedBy === "rate.value" ||  orderedBy === "rate"  || orderedBy === "views") {
+        let timeEdge = null;
+        if(timeEdgeIn !== null)
+            timeEdgeIn = parseInt(timeEdgeIn);
+        if (orderedBy === "createdAt"|| orderedBy === "queue" || orderedBy === "reportsCount" || orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.number" || orderedBy === "rate.value" ||  orderedBy === "rate"  || orderedBy === "views") {
             // timeWindow
 
             let costQuery = {cost: {$gte: left, $lte: right}};
@@ -75,7 +73,7 @@ var posts = {
             }
             let notIncludeThese = [];
             if(userIds ==="all"){
-                if((user) && (!user.message) && (user.blockList.length > 0)) {
+                if((user) && (!user.message) && (user.blockList.length > 0) &&( user.roles.indexOf("admin") === -1)) {
                     notIncludeThese = user.blockList;
                     userId = {$nin: notIncludeThese};
                 }
@@ -86,23 +84,14 @@ var posts = {
             let query = {
                 ownerId : userId,
                 activated: (activated || true),
-                rejected:reject,
+                rejected:null,
                 hashtags:hashtagQuery,
                 categories:categoryQuery,
                 "originalImage.cost":costQuery,
                 isPrivate: privateOrNot,
                 deleted:false
             };
-            if((userIds.length === 1) && user && (userIds[0] === user.userId)){
-                query.rejected = {$exists:true};
-            }
-            else if((userIds.length > 1) && user){
-                delete query.rejected;
-                query["rejected.value"] = {$exists:false};
-            }
-            if(userIds==="all"){
-                query.rejected = null;
-            }
+            
             if(albumOrPost){
                 if(albumOrPost === "album"){
                     query["album"] = {$ne:null};
@@ -111,18 +100,21 @@ var posts = {
                     query["album"]  = null;
                 }
             }
-
-            if (timeEdge <= (31 * 24) && timeEdge > -1) {
-                if (timeEdge !== 0) {
-                    timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
+            if(timeEdge !== null){
+                if (timeEdge <= (31 * 24) && timeEdge > -1) {
+                    if (timeEdge !== 0) {
+                        timeEdge = (timeOrigin - (timeEdge * 3600 * 1000));
+                        query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
+                    }
+                }
+                else {
+                    timeEdge = (timeOrigin - (744 * 3600 * 1000)); // 1day
                     query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
                 }
             }
-            else {
-                timeEdge = (timeOrigin - (744 * 3600 * 1000)); // 1day
-                query.createdAt = {$gte: timeEdge, $lt: timeOrigin} // time edge up to 31 days
-            }
+            else{
 
+            }
             if (JSON.parse(isCurated) === true) {
                 if(curator !== undefined && curator !== "") {
                     query.curatorId = curator;
@@ -135,11 +127,52 @@ var posts = {
                 query.curatorId =  {$exists:true};
             }
             let options = {
-                select: 'album postId createdAt ownerId mentions fileName caption largeImage device location gps views isPrivate rejected activated updatedAt hashtags categories exifData originalImage ext advertise rate curatorId',
+                select: 'album postId createdAt ownerId mentions fileName caption rejected largeImage device location gps views isPrivate activated updatedAt hashtags categories exifData originalImage ext advertise rate curatorId',
                 sort: {createdAt: -1},
                 page: parseInt(pageNumber),
                 limit: parseInt(counts)
             };
+            if(rejected){
+                if(user && user.role.indexOf("admin") > -1){
+                    delete query.rejected;
+                    query["rejected.value"] = false; // not reject neither accepted yet
+                    options.select += " rejected";
+                    if(orderBy === "queue"){
+                        options.sort = {
+                            createdAt : +1
+                        }
+                    }
+                    else if(orderBy === "reportsCount"){
+                        options.sort = {
+                            reportsCount : +1 // top most reporteds
+                        }
+                    }
+                }
+            }
+            else{
+                if((userIds.length === 1) && user && (userIds[0] === user.userId)){
+                    query.rejected = {$exists:true};
+                    options.select += " rejected";
+                }
+                if((userIds.length === 1) && user && (userIds[0] !== user.userId)){
+                    query.rejected = {$exists:true};
+                    options.select += " rejected";
+                }
+                if((userIds.length === 1) && !user){
+
+                }
+                if(user && user.roles.indexOf("admin") > -1){
+                    options.select += " rejected";
+                }
+                if((userIds.length > 1) && user){
+                    delete query.rejected;
+                    query["rejected.reason"] = {$exists:false};
+                }
+                if(userIds==="all"){
+                    query.rejected = null;
+                }
+            }
+
             if (orderedBy === "originalImage.cost") {
                 options.sort = {"originalImage.cost": -1};
             }
@@ -283,7 +316,6 @@ var posts = {
                 reportsCount : 0,
                 rejected : {
                     value:false,
-                    reason : "In Queue",
                     updatedAt:Date.now()
                 },
                 advertise: null,
@@ -614,6 +646,7 @@ var posts = {
                                         }
                                         else{
                                             hashtagsRes = true;
+                                            hashtagsReq = true;
                                         }
                                       
                                         // update album
@@ -846,25 +879,20 @@ var posts = {
     accept: function(req, res,user) {
         if(req.body && req.body.postId && typeof req.body.postId === "string") {
             let postId = req.body.postId;
-            let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
-            if((user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
-                if(req.body.reject && typeof req.body.reject === "string") {
+            if(user && (user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
                     postSchema.update({
-                        postId: req.body.postId,
-                        ownerId: postOwnerId,
+                        postId: postId,
                     }, {
                         $set: {
-                            reject:null,
+                            rejected:null,
                         }
                     }, function (err, result) {
                         if (err) throw err;
-                        console.log(result);
-                        res.send(true);
+                        if(result.n > 0)
+                            res.send(true);
+                        else
+                            res.send({result:false,message:"accept failed"});
                     });
-                }
-                else{
-                    res.send({result:false,message:"bad request"});
-                }
             }
             else{
                 res.send({result:false,message:"401 Unauthorized"});
@@ -881,19 +909,21 @@ var posts = {
             if((user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
                 if(req.body.reject && typeof req.body.reject === "string") {
                     postSchema.update({
-                        postId: req.body.postId,
-                        ownerId: postOwnerId,
+                        postId: postId,
                     }, {
                         $set: {
-                            reject: {
-                                value:true,
-                                reason : req.body.reason
-                            },
+                            rejected:{ 
+                                "value":true,
+                                "reason":req.body.reject,
+                                "updatedAt" : Date.now()
+                            }
                         }
                     }, function (err, result) {
                         if (err) throw err;
-                        console.log(result);
-                        res.send(true);
+                        if(result.n > 0)
+                            res.send(true);
+                        else
+                            res.send({result:false,message:"reject failed"});
                     });
                 }
                 else{

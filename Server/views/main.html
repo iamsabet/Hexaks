@@ -3859,8 +3859,8 @@
             else {
                 date = timeAgo;
             }
-            if (postsList[index].rejected === null) {
-                postsList[index].rejected = "";
+            if ((postsList[index].rejected === null) || !postsList[index].rejected.reason) {
+                postsList[index].rejected = {reason:""};
             }
             let curated = "white"; // false
             if (postsList[index].curatorId !== "") {
@@ -3889,7 +3889,7 @@
                     <li class="eachPost" id="post-${postsList[index].postId.split("|").join("-").split("+").join("-")}">
                     <p hidden>${lastLength}</p>
                         <div class="header">
-                            <h3 class="reject">${postsList[index].rejected}</h3>
+                            <h3 class="reject">${postsList[index].rejected.reason}</h3>
                         </div>
                         <div class="imgContainer">
                             <img src="../pictures/${postsList[index].postId}--Small===.${postsList[index].ext}" />

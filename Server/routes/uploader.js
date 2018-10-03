@@ -290,9 +290,13 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                     if (err) console.log("ERR "+err);
                                     if (data) {
                                         console.log(data.size.width, data.size.height);
-                                        let rejectReason = null;
-                                        if (data.size.width < 500 || data.size.height < 500) {
-                                            rejectReason = "Low Resolution";
+                                        let rejected = {
+                                            value:false,
+                                            updatedAt:Date.now()
+                                        };
+                                        if (data.size.width < 600 || data.size.height < 600) {
+                                            rejected.value = true;
+                                            rejected.reason = "Low Resolution";
                                         }
                                         new ExifImage({image: destinationDir +"/"+ fileName}, function (error, exifData) {
 
@@ -317,7 +321,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                             postId: postId,
                                                         }, {
                                                             $set: {
-                                                                rejected: rejectReason,
+                                                                rejected: rejected,
                                                                 exifData: exif,
                                                                 device: device,
                                                                 "originalImage.resolution.x": data.size.width,
@@ -348,7 +352,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                             "originalImage.resolution.x": data.size.width,
                                                             "originalImage.resolution.y": data.size.height,
                                                             gps: null,
-                                                            rejected: rejectReason
+                                                            rejected: rejected
                                                         }
                                                     }
                                                     , function (err, result) {

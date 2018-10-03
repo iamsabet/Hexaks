@@ -78,7 +78,7 @@ var postSchema = new Schema({
     isPrivate:Boolean,
     rejected:{
         value : Boolean,
-        reson : String,
+        reason : String,
         updatedAt : Number 
     },
     advertise:{
@@ -94,11 +94,6 @@ postSchema.methods.create = function(postObject,user,callback){
 
     let newPost = new Post(postObject);
     let now = Date.now();
-    newPost.rejected = {
-        value:false,
-        reason : "In Queue",
-        updatedAt:now
-    };
     newPost.createdAt = now;
     newPost.updatedAt = now;
     newPost.deleted = false;
