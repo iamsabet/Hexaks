@@ -8,6 +8,7 @@ var comments = require('./comments');
 var albums = require('./albums');
 var uploader = require('./uploader');
 var follows = require('./follows');
+var admins = require('./admins');
 var users = require('./users');
 var categories = require('./categories');
 var hashtags = require('./hashtags');
@@ -64,7 +65,6 @@ router.get('/register', function(req,res){
         }
     });
 });
-
 router.get('/register/getKey', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
@@ -75,6 +75,43 @@ router.get('/register/getKey', function(req,res){
         }
     });
 });
+router.get('/admin', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            res.render("admin.html");
+        }
+        else {
+            res.send("403 Forbidden");
+        }
+    });
+});
+router.get('/admin/getKey', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            users.generateAccessKey("admin",req,res,callback);
+        }
+        else{
+            res.send({result:false,message:" You are already logged in "});
+        }
+    });
+});
+router.post('/admin/users/search',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            admins.decryptData(req,res,callback,function(decryptedData){
+                if(!decryptedData.message){
+                    let input = decryptedData;
+                    admins.searchUsers(input,callback,res); // do update
+                }
+            });
+            
+        }
+        else{
+            res.send({result:false,message:" You are already logged in "});
+        }
+    });
+});
+
 router.post('/register/checkIsTaken', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
@@ -883,6 +920,7 @@ router.post('/api/v1/admin/posts/queue',function(req,res){
         }
     });
 });
+
 router.post('/api/v1/admin/createCategory/', function(req,res){
     validateRequest(req,res,function(callback) {
         if(!callback.message) {

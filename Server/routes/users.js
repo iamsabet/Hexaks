@@ -46,11 +46,19 @@ var users = {
             return callback(userx);
         })
     },
-    generateAccessKey(type,req,res){
+    generateAccessKey(type,req,res,user){
         let clientIp = requestIp.getClientIp(req);
-        let encryptionKey = CryptoJS.AES.encrypt(clientIp,"IP Key Encryption").toString();
-        redisClient.set(type+"Key:"+ clientIp,encryptionKey);
-        redisClient.expire(type+"Key:"+ clientIp,300000); //5 minutes
+        let encryptionKey ="";
+        if(user){
+            encryptionKey = CryptoJS.AES.encrypt(clientIp,secret.ipKey+secret.adminKey).toString();
+            redisClient.set(type+"Key:"+ user.userId,encryptionKey);
+            redisClient.expire(type+"Key:"+ user.userId,300); //5 minutes
+        }
+        else{
+            encryptionKey = CryptoJS.AES.encrypt(clientIp,secret.ipKey).toString();
+            redisClient.set(type+"Key:"+ clientIp,encryptionKey);
+            redisClient.expire(type+"Key:"+ clientIp,3000); //50 minutes
+        }
         res.send(encryptionKey);
     },
     checkValidationAndTaken : function(text,type,user,callback) {
@@ -1242,6 +1250,9 @@ var users = {
         else{
             res.send({result:true,message:"not followed yet"});
         }
+    },
+    search:function(text){
+        
     },
     pushNotification:function(type,text,ownerId,creatorId,referenceId,link,icon,imageUrl,now,fn){
         

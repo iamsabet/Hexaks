@@ -56,11 +56,11 @@
 
 
 <script>
-    let registerKey = "none"; // fill with server response on initial register
+    let adminKey = "none"; // fill with server response on initial register
     // Events.js
 
     $(document).ready(function(event){
-        requestHandler("/register/getKey", "GET", {}, "getKey");
+        requestHandler("/admin/getKey", "GET", {}, "getKey");
 
         let fields = document.querySelectorAll('.form-group input');
         debugger;
@@ -139,12 +139,7 @@
         event.preventDefault();
     });
     $('.loginRegForm').on("click","#regBtn",function(){
-        console.log(registerKey);
-        
-        var encryptedInfo = CryptoJS.AES.encrypt((($("#username").val().toString())+"/"+($("#email").val().toString())+"/"+($("#password").val().toString())).toString(),registerKey).toString();
-        var input = {
-            info : encryptedInfo
-        };
+    
         requestHandler("/register", "POST", input,"registerHandler");
     });
 
@@ -158,6 +153,14 @@
 
 
     function requestHandler(url, method, input,caller) {
+
+         console.log(adminKey);
+        
+        var encryptedInfo = CryptoJS.AES.encrypt(JSON.stringify(input),adminKey).toString();
+        var input = {
+            input : encryptedInfo
+        };
+
         $.ajax({
             url: url || "/",
             method: method || "POST",
@@ -205,7 +208,7 @@
                 }
             }break;
             case "getKey":{
-                registerKey = res;
+                adminKey = res;
                 $("#loginBtn").addClass("enable");
             }break;
             case "checkemail":{
