@@ -1,16 +1,252 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
+<script src="../Statics/javascripts/jquery.min.js"></script>
+<script src="../Statics/javascripts/cookies.js"></script>
+<script src="../Statics/javascripts/crypto-js/crypto-js.min.js"></script>
+<link rel="stylesheet" href="../Statics/stylesheets/account.css">
+<link rel="stylesheet" href="../Statics/stylesheets/bootstrap.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+
+    <title>Admin - Hexaks</title>
 </head>
+
 <body>
+<div id="homeContainer" class="containerDiv">
+    <div class="accountCard">
 
+    </div>
+    <div class="loginRegForm">
+        <h2>Register</h2>
+        <form action="/admin">
+            <div class="form-group">
+                <input type="text" id="username"/>
+                <label for="username">Username</label>
+                <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
+            </div>
+            <div class="form-group">
+                <input type="email" id="email"/>
+                <label for="email">Email</label>
+                <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
+            </div>
+            <div class="form-group">
+                <input type="password" id="password"/>
+                <label for="password">Password</label>
+                <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+            </div>
+            <div class="form-group">
+                <input type="password" id="confPassword"/>
+                <label for="confPassword">Confirm Password</label>
+                <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
+            </div>
+            <button id="regBtn">Register</button>
+            <ul class="messageBox">
+
+            </ul>
+        </form>
+    </div>
+</div>
+    <div class="footer">
+        <a href="/faq">FAQ</a>
+        <a href="/tutorials">Tutorials</a>
+        <a href="/about">About Us</a>
+    </div>
+</div>
 </body>
-<script>
 
-    function createCategory(input) {
-        requestHandler("/api/v1/admin/createCategory", "POST", input, "submitPost");
+
+
+<script>
+    let registerKey = "none"; // fill with server response on initial register
+    // Events.js
+
+    $(document).ready(function(event){
+        requestHandler("/register/getKey", "GET", {}, "getKey");
+
+        let fields = document.querySelectorAll('.form-group input');
+        debugger;
+        fields.forEach(field=>{
+            field.addEventListener('blur',()=>{
+                if(field.value.trim().length){
+                    field.classList.add("blurred");
+                }
+                else{
+                    field.classList.remove("blurred");
+                }
+            });
+        });
+
+    });
+    let usernameInterval = null;
+    $("body").on("keyup","#username",function(e){
+        if($(this).val().toString().length > 3) {
+            let text = $(this).val().toString();
+            window.clearInterval(usernameInterval);
+            usernameInterval = setInterval(function(){
+                checkInputValidation("username",text);
+                window.clearInterval(usernameInterval);
+            },300);
+        }
+    });
+    let emailInterval = null;
+    $("body").on("keyup","#email",function(e){
+        if($(this).val().toString().length > 6) {
+            if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
+                let text = $(this).val().toString();
+                window.clearInterval(emailInterval);
+                emailInterval = setInterval(function(){
+                    checkInputValidation("email", text);
+                    window.clearInterval(emailInterval);
+                },300);
+            }
+        }
+    });
+    $("body").on("keyup","#confPassword",function(e){
+        if(($(this).val().toString().length >= 6)) {
+            if($("#confPassword").val().toString() === $("#password").val().toString()){
+                $("#confirmPasswordStatus").attr("src","../Statics/images/newIcons/tik.svg");
+                $("#confirmPasswordStatus").addClass("show");
+            }
+            else{
+                $("#confirmPasswordStatus").attr("src","../Statics/images/newIcons/cross.svg");
+                $("#confirmPasswordStatus").addClass("show");
+                $(".loginRegForm form ul").append(`
+                    <li class="confirmPasswordError">passwords does not match</li>
+                `);
+            }
+        }
+    });
+    $("body").on("keyup","#password",function(e){
+        console.log($(this).val());
+        if(($(this).val().toString().length < 6)) {
+            $("#passwordStatus").attr("src","../Statics/images/newIcons/cross.svg");
+            $("#passwordStatus").addClass("show");
+            if($(".loginRegForm form ul .passwordError")[0]===undefined){
+                $(".loginRegForm form ul").append(`
+                    <li class="passwordError">password must have at least 6 characters</li>
+                `);
+            }
+        }
+        else{
+            $("#passwordStatus").attr("src","../Statics/images/newIcons/tik.svg");
+            $("#passwordStatus").addClass("show");
+            if($(".loginRegForm form ul .passwordError")[0]!==undefined){
+                $(".loginRegForm form ul .passwordError").remove();
+            }
+        }
+    });
+
+    $('body').on("submit",".loginRegForm form",function(event) {
+        event.preventDefault();
+    });
+    $('.loginRegForm').on("click","#regBtn",function(){
+        console.log(registerKey);
+        
+        var encryptedInfo = CryptoJS.AES.encrypt((($("#username").val().toString())+"/"+($("#email").val().toString())+"/"+($("#password").val().toString())).toString(),registerKey).toString();
+        var input = {
+            info : encryptedInfo
+        };
+        requestHandler("/register", "POST", input,"registerHandler");
+    });
+
+
+
+
+
+
+
+
+
+
+    function requestHandler(url, method, input,caller) {
+        $.ajax({
+            url: url || "/",
+            method: method || "POST",
+            data: input || {},
+            before: function () {
+            },
+            success: function (res) {
+                responseActionHandler(res,caller);
+            },
+            timeout: function () {
+                window.alert("time out");
+            },
+            fail: function () {
+                window.alert("failed");
+            },
+            err: function () {
+                window.alert("err");
+            }
+        });
+    }
+    function checkInputValidation(type,text){
+
+        // characteric limiations -- check both sides later then => {
+        requestHandler("/register/checkIsTaken/","POST",{text:text,type:type},"check"+type);
+    }
+
+    // Response Actions Handler
+    function responseActionHandler(res,caller) {
+        switch (caller) {
+            case "registerHandler" : {
+                if(!res.message) {
+                    createCookie("X-ACCESS-TOKEN",res["token"],1);
+                    createCookie("KEY",res["key"],1);
+                    window.location.pathname = "/settings";
+                }
+                else{
+                    if($(".loginRegForm ul .attemptError")[0]===undefined) {
+                        $(".loginRegForm ul").append(`
+                        <li class="attemptError">${res.message}</li>
+                    `);
+                    }
+                    else{
+                        $(".loginRegForm ul .attemptError").html(`${res.message}`);
+                    }
+                }
+            }break;
+            case "getKey":{
+                registerKey = res;
+                $("#loginBtn").addClass("enable");
+            }break;
+            case "checkemail":{
+                if(!res.message){
+                    $("#emailStatus").attr("src","../Statics/images/newIcons/tik.svg");
+                    $("#emailStatus").addClass("show");
+                    $(".loginRegForm ul .emailError").remove();
+                }
+                else{
+                    $("#emailStatus").attr("src","../Statics/images/newIcons/cross.svg");
+                    $("#emailStatus").addClass("show");
+                    if($(".loginRegForm ul .mailError")[0]===undefined) {
+                        $(".loginRegForm ul").append(`
+                        <li class="mailError">${res.message}</li>
+                    `);
+                    }
+                    else{
+                        $(".loginRegForm ul .mailError").html(`${res.message}`);
+                    }
+                }
+            }break;
+            case "checkusername":{
+                if(!res.message){
+                    $("#usernameStatus").attr("src","../Statics/images/newIcons/tik.svg");
+                    $("#usernameStatus").addClass("show");
+                    $(".loginRegForm ul .usernameError").remove();
+                }
+                else{
+                    $("#usernameStatus").attr("src","../Statics/images/newIcons/cross.svg");
+                    $("#usernameStatus").addClass("show");
+                    if($(".loginRegForm ul .usernameError")[0]===undefined) {
+                        $(".loginRegForm ul").append(`
+                        <li class="usernameError">${res.message}</li>
+                    `);
+                    }
+                    else{
+                        $(".loginRegForm ul .usernameError").html(`${res.message}`);
+                    }
+                }
+            }
+        }
     }
 </script>
 </html>
