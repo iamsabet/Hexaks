@@ -1251,6 +1251,7 @@ var users = {
             res.send({result:true,message:"not followed yet"});
         }
     },
+    
     search:function(text){
         
     },
