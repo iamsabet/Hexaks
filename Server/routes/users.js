@@ -1251,9 +1251,32 @@ var users = {
             res.send({result:true,message:"not followed yet"});
         }
     },
-    
-    search:function(text){
-        
+    paginate:function(query,options,user,res){
+        if(user.message){
+            query.privacy = false;
+        }
+        User.Paginate(query, options,function(usersList){
+            if(usersList){
+                if(usersList.docs.length > 0) {
+                    let userIds = [];
+                    for (let x = 0; x < usersList.docs.length; x++) {
+                        userIds.push(usersList.docs[x].userId);
+                        if (x === usersList.docs.length - 1) {
+                            res.send(postsList);
+                        }
+                    }
+                }
+                else{
+                    res.send({docs:[],total:0});
+                }
+            }
+            else{
+                res.send(postsList);
+            }
+        });
+    },
+    search:function(text,user,res,callback){
+
     },
     pushNotification:function(type,text,ownerId,creatorId,referenceId,link,icon,imageUrl,now,fn){
         

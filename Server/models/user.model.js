@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const autoIncrement = require('mongoose-sequence')(mongoose);
 var Float = require('mongoose-float').loadType(mongoose);
+var mongoosePaginate = require('mongoose-paginate');
+
 var userSchema = new Schema({
     user_id :Number,
     userId:String,
@@ -99,7 +101,17 @@ userSchema.pre('save', function(next){
     }
     next();
 });
-
+userSchema.methods.Paginate = function(query,options,user,callback){
+    user.paginate(query,options,function(err,usersList){
+        if(err) {
+            throw err;
+        }
+        else {
+            return callback(usersList);
+        }
+    });
+};
+userSchema.plugin(mongoosePaginate);
 userSchema.plugin(autoIncrement, {inc_field: 'user_id' , disable_hooks: true});
 let User = mongoose.model('users', userSchema);
 let user = mongoose.model('users');
