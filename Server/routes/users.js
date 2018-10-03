@@ -1048,6 +1048,17 @@ var users = {
             }
         });
     },
+    getUserInfo:function(userId,callback){ // admin usage
+        userSchema.findOne({userId: userId}, {
+            _id: 0,
+            password:0
+        }, function (err, userObj) {
+            if (err) throw err;
+            if (userObj) {
+                return callback(userObj);
+            }
+        });
+    },
     updateAllUserInfosInCache:function(userId,callback){
         userSchema.findOne({userId: userId}, {
             _id: 0,

@@ -56,9 +56,9 @@ var admins = {
         // manipulate or change security stuff , blind attrs 
         res.send(user);
     },
-    searchUsers : function(input,res,user,callback){
+    searchUsers : function(input,user,callback){
         if(user.roles.indexOf("admin") > -1){
-            if(input.text && (input.text.length > 0) && input.text.pageNumber && (input.text.pageNumber > 0)){
+            if(input.text && (input.text.length > 0) && input.pageNumber && (input.pageNumber > 0)){
                 users.search(input.text,input.pageNumber,user,function(usersList){
                     return callback(usersList);
                 });
@@ -71,14 +71,22 @@ var admins = {
             return callback({result:false,message:"401 Not Authorized"});
         }
     },
-    pushNotification:function(type,text,ownerId,creatorId,referenceId,link,icon,imageUrl,now,fn){
-        
+    getUserInfos:function(input,user,callback){
+        if(user.roles.indexOf("admin") > -1){
+            if(input.userId && (input.userId.length > 0) && input.userId){
+                users.getUserInfos(input.userId,function(userInfo){
+                    return callback(userInfo);
+                });
+            }
+            else{
+                return callback({result:false,message:"504 bad request"});
+            }
+        }
+        else{
+            return callback({result:false,message:"401 Not Authorized"});
+        }
     },
-    update: function(req, res,next,data) {
-
-    },
-
-    delete: function(req, res,next) {
+    deleteUser: function(req, res,next) {
 
         res.send(false);
     }

@@ -815,61 +815,49 @@ var posts = {
         }
     },
     delete: function(req, res,user) {
-        if(req.body && req.body.postId && typeof req.body.postId === "string") {
-            let postId = req.body.postId.split("%7C").join("|");
-            let postOwnerId = postId.split("|-p-|")[0];
-            if(user.userId === postOwnerId || ( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1)){ // owner access + superuser access
-
+        if(req.postId && typeof (req.postId === "string") && (req.postId.length > 10)) {
+            var postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
+            if(( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
                 postSchema.update({
-                    postId: req.body.postId,
-                    ownerId:postOwnerId,
-                    delete:false,
+                    postId: req.ostId,
+                    ownerId: postOwnerId,
+                    deleted:false
                 }, {
                     $set: {
-                        delete:true,
+                        deleted:true,
                     }
                 }, function (err, result) {
                     if (err) throw err;
-                    console.log(result);
                     res.send(true);
                 });
-
             }
             else{
-                res.send({result:false,message:"401 Unauthorized"});
+                res.send({result:false,message:"401 Not Authorized"});
             }
         }
         else{
             res.send({result:false,message:"504 Bad request"});
         }
     },
-    deactive: function(req, res,user,postId) {
-
-        if(postId && typeof postId === "string") {
-            let postId = postId.split("%7C").join("|");
-            let postOwnerId = postId.split("|-p-|")[0];
+    deactive: function(req,res,user) {
+        if(req.postId && typeof (req.postId === "string") && (req.postId.length > 10)) {
+            var postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
             if(( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
-                if(req.body.reject && typeof req.body.reject === "string") {
-                    postSchema.update({
-                        postId: postId,
-                        ownerId: postOwnerId,
-                        activated:true,
-                    }, {
-                        $set: {
-                            activated:false,
-                        }
-                    }, function (err, result) {
-                        if (err) throw err;
-                        console.log(result);
-                        res.send(true);
-                    });
-                }
-                else{
-                    res.send({result:false,message:"bad request"});
-                }
+                postSchema.update({
+                    postId: req.ostId,
+                    ownerId: postOwnerId,
+                    activated:true,
+                }, {
+                    $set: {
+                        activated:false,
+                    }
+                }, function (err, result) {
+                    if (err) throw err;
+                    res.send(true);
+                });
             }
             else{
-                res.send({result:false,message:"401 Unauthorized"});
+                res.send({result:false,message:"401 Not Authorized"});
             }
         }
         else{

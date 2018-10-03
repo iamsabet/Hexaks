@@ -85,34 +85,7 @@ router.get('/admin', function(req,res){
         }
     });
 });
-router.get('/api/v1/admin/getKey', function(req,res){
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            users.generateAccessKey("admin",req,res,callback);
-        }
-        else{
-            res.send({result:false,message:" You are already logged in "});
-        }
-    });
-});
-router.post('/api/v1/admin/users/search',function(req,res){
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            admins.decryptData(req,callback,function(decryptedData){
-                if(!decryptedData.message){
-                    let input = decryptedData;
-                    admins.searchUsers(input,callback,function(usersList){
-                        
-                    }); // do update
-                }
-            });
-            
-        }
-        else{
-            res.send({result:false,message:" You are already logged in "});
-        }
-    });
-});
+
 
 router.post('/register/checkIsTaken', function(req,res){
     validateRequest(req,res,function(callback){
@@ -204,21 +177,6 @@ router.post('/api/v1/users/search/',function(req,res) {
     }
 });
 
-router.get('/api/v1/admin/', function(req,res){
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            if (callback.roles.indexOf("admin") > -1) {
-                res.render('admin.html');
-            }
-            else {
-                res.send(callback);
-            }
-        }
-        else{
-            res.send(callback);
-        }
-    });
-});
 
 
 router.get('/post/:uuid', function(req,res){
@@ -504,16 +462,7 @@ router.get('/api/v1/users/getMe',function(req,res){
     });
 });
 
-router.get('/api/v1/admin/getMe',function(req,res){
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            admins.getMe(req,res,callback);
-       }
-       else {
-           res.send(callback);
-       }
-    });
-});
+
 
 router.post('/api/v1/users/getHostProfile',function(req,res){
     validateRequest(req,res,function(callback){
@@ -911,7 +860,7 @@ router.post('/api/v1/users/view',function(req,res){
         }
     });
 });
-router.delete('/api/v1/admin/user/:id', users.delete);
+router.post('/api/v1/admin/user/:id', users.delete);
 router.post('/api/v1/admin/posts/queue',function(req,res){
 
     validateRequest(req,res,function(user) {
@@ -958,7 +907,7 @@ router.post('/api/v1/admin/createCategory/', function(req,res){
             categories.addNewCategory(req, res, callback);
         }
         else{
-            res.send({result:false,message:"Unauthorized"});
+            res.send(callback);
         }
     });
 });
@@ -970,7 +919,7 @@ router.post('/api/v1/admin/accept/post', function(req,res){
             });
         }
         else{
-            res.send({result:false,message:"Unauthorized"});
+            res.send(callback);
         }
     });
 });
@@ -982,9 +931,88 @@ router.post('/api/v1/admin/reject/post', function(req,res){
             });
         }
         else{
-            res.send({result:false,message:"Unauthorized"});
+            res.send(callback);
         }
     });
 });
-
+router.post('/api/v1/admin/deactive/post', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(!callback.message) {
+            admins.decryptData(req,callback,function(decryptedData){
+                posts.deactive(decryptedData, res, callback);
+            });
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+router.post('/api/v1/admin/delete/post', function(req,res){
+    validateRequest(req,res,function(callback) {
+        if(!callback.message) {
+            admins.decryptData(req,callback,function(decryptedData){
+                posts.delete(decryptedData, res, callback);
+            });
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+router.get('/api/v1/admin/getMe',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            admins.getMe(req,res,callback);
+       }
+       else {
+           res.send(callback);
+       }
+    });
+});
+router.get('/api/v1/admin/getKey', function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            users.generateAccessKey("admin",req,res,callback);
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+router.post('/api/v1/admin/users/search',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            admins.decryptData(req,callback,function(decryptedData){
+                if(!decryptedData.message){
+                    let input = decryptedData;
+                    admins.searchUsers(input,callback,function(usersList){
+                       res.send(usersList); // encrypt data and send to client -> for later
+                    }); // do update
+                }
+            });
+            
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
+router.post('/api/v1/admin/users/getInfo',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            admins.decryptData(req,callback,function(decryptedData){
+                if(!decryptedData.message){
+                    let input = decryptedData;
+                    admins.getUserInfos(input,callback,function(userInfos){
+                       res.send(userInfos); 
+                    }); // do update
+                }
+            });
+            
+        }
+        else{
+            res.send(callback);
+        }
+    });
+});
 module.exports = router;
