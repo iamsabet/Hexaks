@@ -1251,7 +1251,7 @@ var users = {
             res.send({result:true,message:"not followed yet"});
         }
     },
-    paginate:function(query,options,user,res){
+    paginate:function(query,options,user,callback){
         if(user.message){
             query.privacy = false;
         }
@@ -1262,21 +1262,41 @@ var users = {
                     for (let x = 0; x < usersList.docs.length; x++) {
                         userIds.push(usersList.docs[x].userId);
                         if (x === usersList.docs.length - 1) {
-                            res.send(postsList);
+                            return callback(postsList);
                         }
                     }
                 }
                 else{
-                    res.send({docs:[],total:0});
+                    return callback({docs:[],total:0});
                 }
             }
             else{
-                res.send(postsList);
+                return callback(postsList);
             }
         });
     },
-    search:function(text,user,res,callback){
+    search:function(text,pageNumber,user,callback){
 
+        let regex = string.replace(new RegExp(`/${testVal}/`),text);
+        let query = {
+            username : regex,
+            deleted : false,
+            activated : true
+        };
+        let options = {
+            select: 'userId profilePictureSet views roles username postsCount rate privacy city country',
+            sort: {username: -1},
+            page: parseInt(pageNumber),
+            limit: 10
+        };
+        if(user && user.roles.indexOf("admin") > -1){
+            options.select += ' activated deleted reportsCount verified user_id';
+            delete query.deleted;
+            delete query.activated;
+        }
+        users.paginate(query,options,user,function(usersList){
+            return callback(usersList);
+        });
     },
     pushNotification:function(type,text,ownerId,creatorId,referenceId,link,icon,imageUrl,now,fn){
         

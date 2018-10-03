@@ -1,11 +1,7 @@
-var userSchema = require('../models/user.model');
-var User = new userSchema();
-var jwt = require('jwt-simple');
-var followSchema = require('../models/follow.model');
-var Follow = new followSchema();
-var notificationSchema = require('../models/notification.model');
-var Notification = new notificationSchema();
+
 var flw = require("./follows");
+var users = require("./users");
+var posts = require("./posts");
 var blocks = require("./blocks");
 var blockSchema = require("../models/block.model");
 var Block = new blockSchema();
@@ -39,22 +35,37 @@ var admins = {
     decryptData : function(req,res,user,callback){
         redisClient.get("adminKey:"+user.userId, function (err, key) {
             console.log(key);
-            if (err) res.send({result: false, message: "key did not found in cache"});
+            if (err) return callback({result: false, message: "key did not found in cache"});
             if (!key) {
-                res.send({result: false, message: "login key expired", status: 400});
+                return callback({result: false, message: "login key expired", status: 400});
             }
             else {
                 let bytes  = CryptoJS.AES.decrypt(req.body.input, key);
                 let decrypted = bytes.toString(CryptoJS.enc.Utf8);
                 if(decrypted) {
-                    return (JSON.parse(decrypted));
+                    return callback(JSON.parse(decrypted));
                 }
                 else{
                     console.log(decrypted);
-                    return({result:false,message:"Admin Key Not Found , or Expired"});
+                    return callback({result:false,message:"Admin Key Not Found , or Expired"});
                 }
             }
         })
+    },
+    searchUsers : function(input,res,user,callback){
+        if(user.roles.indexOf("admin") > -1){
+            if(input.text && (input.text.length > 0) && input.text.pageNumber && (input.text.pageNumber > 0)){
+                users.search(input.text,input.pageNumber,user,function(usersList){
+                    return callback(usersList);
+                });
+            }
+            else{
+                return callback({result:false,message:"504 bad request"});
+            }
+        }
+        else{
+            return callback({result:false,message:"401 Not Authorized"});
+        }
     },
     pushNotification:function(type,text,ownerId,creatorId,referenceId,link,icon,imageUrl,now,fn){
         

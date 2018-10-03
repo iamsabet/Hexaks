@@ -101,7 +101,9 @@ router.post('/admin/users/search',function(req,res){
             admins.decryptData(req,res,callback,function(decryptedData){
                 if(!decryptedData.message){
                     let input = decryptedData;
-                    admins.searchUsers(input,callback,res); // do update
+                    admins.searchUsers(input,callback,function(usersList){
+                        
+                    }); // do update
                 }
             });
             
@@ -180,9 +182,27 @@ router.get('/users/verifyEmail/:uuid/',function(req,res) {
         });
     });
 });
-
-
-
+router.post('/api/v1/users/search/',function(req,res) {
+    let text = req.body.text || undefined;
+    if(text && (typeof text === "string") && (text.length > 3) && (text.length < 16)){
+        let pageNumber = 1  
+        if(req.body.pageNumber)
+            pageNumber = parseInt(req.body.pageNumber) || 1;
+        if(isNaN(pageNumber)){
+            pageNumber = 1;
+        }
+        if(pageNumber < 11){
+            validateRequest(req,res,function(callback){
+                users.search(text,pageNumber,callback,function(usersList){
+                    res.send(usersList);
+                });
+            });
+        }
+        else{
+            res.send({result:false,message:"Thats Enough :)"})
+        }
+    }
+});
 
 router.get('/api/v1/admin/', function(req,res){
     validateRequest(req,res,function(callback){
