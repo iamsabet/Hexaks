@@ -202,17 +202,32 @@
             
             <div class="menu">
             <div class="profPic">
-                    <svg class="clip-svg">
-                        <defs>
-                            <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
-                                <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
-                            </clipPath>
-                        </defs>
-                    </svg>
-                    <div class="polygon-each-img-wrap">
-                        <img class="ownerProfilePicture polygon-clip-hexagon image" src="../profilePics/avatar.png"/>
+                <svg class="clip-svg">
+                    <defs>
+                        <clipPath id="polygon-clip-hexagon" clipPathUnits="objectBoundingBox">
+                            <polygon points="0.5 0, 1 0.23, 1 0.77, 0.5 1, 0 0.77, 0 0.23" />
+                        </clipPath>
+                    </defs>
+                </svg>
+                <div class="polygon-each-img-wrap">
+                    <div class="progressHex">
+                        <svg data-progress="55" x="0px" y="0px" viewBox="0 0 776 628">
+                            <path class="track" d="M723 314L543 625.77 183 625.77 3 314 183 2.23 543 2.23 723 314z"></path>
+                            <path class="fill" d="M723 314L543 625.77 183 625.77 3 314 183 2.23 543 2.23 723 314z"></path>
+                            <text class="value" x="50%" y="61%">0%</text>
+                            <text class="text" x="50%" y="122%">Blue</text>
+                        </svg>
                     </div>
+                    <img class="ownerProfilePicture polygon-clip-hexagon image" id="profilePicturePlace" src="../profilePics/avatar.png"/>
                 </div>
+                <form id="uploadImageForm" action="/api/v1/upload/profPics" enctype="multipart/form-data">
+                    <input name="imagefile[]" type="file" id="uploadPictureField" accept="image/*"/>
+                </form>
+            </div>
+            <div class="profilePictureButtons">
+                <button id="uploadProfilePicture"></button>
+                <button id="removeProfilePicture"></button>
+            </div>
                 <a href="/account" id="accountBtn">Account Settings</a>
                 <a href="/changePass" id="changePassBtn">Change Password</a>
                 <a href="/badges" id="badgesBtn">Badges</a>
@@ -688,8 +703,12 @@
     });
     $("body").on("click","#newPostBtn",function(event){
         event.preventDefault();
-        changePage("newPost","newPost",true);
+        changePage("newPost","newPost",true,"",true,true);
     });
+    $("#newPost").on("click",".closeNewPost",function(event){
+        backward();
+    });
+    
     $("body").on("click","#notifBtn",function(event){
         event.preventDefault();
         
@@ -1467,6 +1486,7 @@
     function sendPagesInitialRequest(pageName,postid,act){
 
         if(pageName.toLowerCase() === "newpost"){
+            pushHistory("newPost", "newPost", pageName, true,true); 
             requestHandler("/api/v1/post/initial","POST",{type:"post"},pageName); 
         }
         else if(pageName.toLowerCase() === "post"){
@@ -1798,7 +1818,7 @@
         originalUploader = new qq.FineUploader({
             element: document.getElementById("uploadArea"),
             request: {
-                endpoint: '/api/v1/upload',
+                endpoint: '/api/v1/upload/post',
                 customHeaders: {
                     size:"Original"
                 }
@@ -1857,8 +1877,12 @@
                 ]
             },
         });
+        
+        
 
     }
+
+
     function onDragMoveNavHorizontaly(){
         let moveLogo = false;
         
@@ -2140,7 +2164,7 @@
 
 
 
-            onDragMoveNavHorizontaly();
+            // onDragMoveNavHorizontaly();
         }
         else{
 
@@ -2274,6 +2298,74 @@
             updateDateInput(Me.birth.day,Me.birth.month,Me.birth.year);
         }
     }
+    function resizeSelectedImage(inputFile,maxSize,callback){
+        var file = inputFile;
+        // Ensure it's an image
+        if(file.type.match(/image.*/)) {
+            console.log('An image has been loaded');
+            // Load the image
+            var reader = new FileReader();
+            reader.onload = function (readerEvent) {
+                var image = new Image();
+                image.onload = function (imageEvent) {
+                    // Resize the image
+                    var canvas = document.createElement('canvas'),
+                        max_size = maxSize,// TODO : pull max size from a site config
+                        width = image.width,
+                        height = image.height;
+                    if (width > height) {
+                        if (width > max_size) {
+                            height *= max_size / width;
+                            width = max_size;
+                        }
+                    } else {
+                        if (height > max_size) {
+                            width *= max_size / height;
+                            height = max_size;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+                    var dataUrl = canvas.toDataURL('image/jpeg');
+                    var resizedImage = dataURLToBlob(dataUrl);
+                    debugger;
+                    return callback({
+                                type: "imageResized",
+                                blob: resizedImage,
+                                url: dataUrl
+                            });
+                }
+                image.src = readerEvent.target.result;
+                $("#profilePicturePlace").attr("src",readerEvent.target.result);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+    function dataURLToBlob(dataURL) {
+        var BASE64_MARKER = ';base64,';
+        if (dataURL.indexOf(BASE64_MARKER) == -1) {
+            var parts = dataURL.split(',');
+            var contentType = parts[0].split(':')[1];
+            var raw = parts[1];
+
+            return new Blob([raw], {type: contentType});
+        }
+
+        var parts = dataURL.split(BASE64_MARKER);
+        var contentType = parts[0].split(':')[1];
+        var raw = window.atob(parts[1]);
+        var rawLength = raw.length;
+
+        var uInt8Array = new Uint8Array(rawLength);
+
+        for (var i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+
+        return new Blob([uInt8Array], {type: contentType});
+    } 
+
     function showTargetForm(formName){
 
         $(".settingsContainer form").removeClass("show");
@@ -2299,7 +2391,64 @@
         $(".settingsContainer .menu a").removeClass("selected");
         $(this).addClass("selected");
     });
-    
+    $("#settings").on("click","#uploadProfilePicture",function(e){
+        $("#uploadPictureField").click();
+    });
+    $("#settings").on("change","#uploadPictureField",function(event){
+        event.preventDefault();
+        let inputFile = this.files[0];
+        resizeSelectedImage(inputFile,700,function(resizedImageUrlData){
+            var data = new FormData($("#uploadImageForm")[0]);
+            if (resizedImageUrlData.blob && resizedImageUrlData.url) {
+                data.append('image_data', resizedImageUrlData.blob);
+                $.ajax({
+                    xhr:function(){
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function(evt){
+                            if (evt.lengthComputable) {  
+                                var percentComplete = evt.loaded / evt.total;
+                                var max = 2160;
+                                let progressVal = (((100 - percent) / 100) * max);
+                                $(".progressHex svg .fill").css({
+                                    "stroke-dashoffset": progressVal
+                                });
+                                $(".progressHex svg .value").innerHTML = percent + "%";
+                            }
+                        },false);
+                        return xhr;
+                    },
+
+                    type: 'POST',
+                    url: "/api/v1/upload/profPics",
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function(){
+                        //Upload progress
+                        
+                        if(!$(".progressHex.show")[0]){
+                            $(".progressHex").addClass("show");
+                            $(".progressHex svg .fill").css({
+                                "stroke-dashoffset": 2160
+                            });
+                            $(".progressHex svg .value").innerHTML = 0 + "%";
+                        }
+                    },
+
+                    success: function(data){
+                        $(".progressHex").removeClass("show");
+                    },
+                    fail:function(resp){
+
+                    }
+                });
+            }
+        });
+    });
+    $("#settings").on("submit","#uploadImageForm",function(event){
+        event.preventDefault();
+    });
     let usernameInterval = null;
     $("body").on("keyup","#username",function(e){
         if($(this).val().length > 3){
@@ -2694,7 +2843,7 @@
             $(".profileTop .profileTopContainer .userInfo .followersBtn").html((res.user.followersCount) + " Followers");
             $(".profileTop .profileTopContainer .userInfo .photos").html(res.user.postsCount +" Posts");
             $(".profileTop .profileTopContainer .userInfo .hostLocation").html(res.user.location);
-            $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.profilePictureSet);
+            $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.userId+"/"+res.user.profilePictureSet);
 
             if(typeof res.user.roles === "string") {
                 host.roles = JSON.parse(res.user.roles) || [];
@@ -4085,7 +4234,7 @@
         }
     }
 
-
+    
 
     function loadUploadingPostDatasInForm(currentUploadingSelected) {
 

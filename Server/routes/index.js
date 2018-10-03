@@ -487,7 +487,7 @@ router.post('/api/v1/users/follow',function(req,res){
 
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            users.follow(req, res, callback)
+            users.follow(req, res, callback);
         }
         else{
             res.send(callback);
@@ -498,7 +498,7 @@ router.post('/api/v1/users/unfollow',function(req,res){
 
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            users.unfollow(req, res, callback)
+            users.unfollow(req, res, callback);
         }
         else{
             res.send(callback);
@@ -509,17 +509,26 @@ router.post('/api/v1/users/unfollow',function(req,res){
 
 
 
-router.post('/api/v1/upload',function(req,res){
+router.post('/api/v1/upload/post',function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            uploader.onUpload(req,res,callback)
+            uploader.onUpload(req,res,"post",callback);
         }
         else {
             res.send(callback);
         }
     });
 });
-
+router.post('/api/v1/upload/profPics',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            uploader.onUpload(req,res,"profPics",callback);
+        }
+        else {
+            res.send(callback);
+        }
+    });
+});
 
 
 

@@ -829,7 +829,7 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .accountCard{
     position: fixed;
     top: 0;
-    z-index: 10000; 
+    z-index: 1000001; 
     right: 110px;
     width: auto;
     min-width: 300px;
@@ -869,6 +869,9 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 }
 .accountCard #profileBtn:hover{
 	color: #ff0055;
+}
+.accountCard #profileBtn{
+	float: right;
 }
 @media (max-width:768px){
 	.accountCard {
@@ -1958,6 +1961,23 @@ a,h1,h2,h3,h4,h5,h6,p,span,input,button,textarea{
 .settingsContainer > div .profPic .polygon-each-img-wrap{
 	width: 100%;
 	height: 100%;
+}
+.settingsContainer > div .profPic #uploadImageForm{
+	display: none;
+}
+.settingsContainer > div .profilePictureButtons{
+	position: relative;
+	width: 50px;
+	float: left;
+	margin: 10px 40px;
+	display: block;
+	overflow: hidden;
+	height: 100%;
+}
+.settingsContainer > div .profilePictureButtons button{
+	border-radius: 99px;
+	height: 50px;
+	margin-top:10px;
 }
 .settingsContainer .menu{
 	background-color: rgba(50,50,50,0.90);
@@ -5417,15 +5437,26 @@ div.cc-picker-flag.ee{
 }
 
 /*===== The CSS =====*/
-.qq-progress-bar-container {
+.qq-progress-bar-container,.progressHex{
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	z-index: 100;
 	left: 0;
+	-webkit-transition: all 0.4s ease-in;
+	-moz-transition: all 0.4s ease-in;
+	-ms-transition: all 0.4s ease-in;
+	-o-transition: all 0.4s ease-in;
 	background-color: rgba(20,20,20,0.5);
 }
-.qq-progress-bar-selector {
+.progressHex{
+	opacity: 0;
+}
+
+.progressHex.show{
+	opacity: 1;
+}
+.qq-progress-bar-selector,.progressHex svg{
 	width: 100%;
 	position: absolute;
 	top: 0;
@@ -5438,22 +5469,22 @@ div.cc-picker-flag.ee{
 	-o-transform: translate(-50%,+50%);
 	transform: translate(-50%,+30%);
 }
-.qq-progress-bar-selector .track,.qq-progress-bar-selector .fill{
+.qq-progress-bar-selector .track,.qq-progress-bar-selector .fill,.progressHex svg .fill,.progressHex svg .track{
 	fill: rgba(0, 0, 0, 0);
 	stroke-width: 42;
 	transform: translate(290px, 800px)rotate(-120deg);
 }
-.qq-progress-bar-selector .track{
+.qq-progress-bar-selector .track,.progressHex svg .track{
 	stroke: rgb(56, 71, 83);
 }
-.qq-progress-bar-selector .fill {
+.qq-progress-bar-selector .fill,.progressHex svg .fill{
 	stroke: rgb(255, 255, 255);
 	stroke-linecap: round;
 	stroke-dasharray: 2160;
 	stroke-dashoffset: 2160;
 	transition: stroke-dashoffset 1s;
 }
-.qq-progress-bar-selector .fill {
+.qq-progress-bar-selector .fill,.progressHex svg .fill{
 	stroke: #ff0088;
 }
 .qq-progress-bar-selector .value,.qq-progress-bar-selector .text {
@@ -5464,6 +5495,9 @@ div.cc-picker-flag.ee{
 }
 .qq-progress-bar-selector .value {
 	font-size: 180px;
+}
+.qq-progress-bar-selector .text {
+	font-size: 120px;
 }
 .qq-progress-bar-selector .text {
 	font-size: 120px;

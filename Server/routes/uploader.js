@@ -36,118 +36,125 @@ var fileInputName = process.env.FILE_INPUT_NAME || "qqfile",
 
 var uploader = {
 
-    onUpload: function (req, res,user) {
+    onUpload: function (req, res,type,user) {
         let form = new multiparty.Form();
         form.parse(req, function (err, fields, files) {
             if (err) throw err;
             // text/plain is required to ensure support for IE9 and older
             if (files) {
-                console.log(user);
-                redisClient.get("uploading:"+user.userId, function (err, value) {
-                    if(err) throw err;
-                    if(value) {
-                        let format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
-                        if(value==="post") {
-                            redisClient.get("uploadCounts:"+user.userId, function (err, countsx) {
-                                let counts = parseInt(countsx);
-                                if (counts && counts > 0) {
-                                    counts++;
-                                }
-                                else if(isNaN(counts) || !counts){
-                                    counts = 1;
-                                }
+                let format = "";
+                if(files.image_data[0] && (Object.keys(fields).length === 0)){
+                    format = "jpg";
+                }
+                else{
+                    format = fields.qqfilename[0].split(".")[fields.qqfilename[0].split(".").length - 1];
+                }
+                if(type === "post"){
+                    redisClient.get("uploading:"+user.userId, function (err, value) {
+                        if(err) throw err;
+                        if(value) {
+                            if(value==="post") {
+                                redisClient.get("uploadCounts:"+user.userId, function (err, countsx) {
+                                    let counts = parseInt(countsx);
+                                    if (counts && counts > 0) {
+                                        counts++;
+                                    }
+                                    else if(isNaN(counts) || !counts){
+                                        counts = 1;
+                                    }
 
-                                if(counts < 20) {
+                                    if(counts < 20) {
 
-                                    let pathis = "";
-                                    let size = "";
-                                    redisClient.get("uploadingPost:"+user.userId, function (err, postIdx) {
-                                        if (err) throw err;
-                                        let uploadingPost = "";
-                                        if((postIdx===null || !postIdx)){
+                                        let pathis = "";
+                                        let size = "";
+                                        redisClient.get("uploadingPost:"+user.userId, function (err, postIdx) {
+                                            if (err) throw err;
+                                            let uploadingPost = "";
+                                            if((postIdx===null || !postIdx)){
 
-                                        }
-                                        uploadingPost = postIdx;
-                                        console.log(uploadingPost);
-                                        if (fields.qqfilename[0]) {
-                                            if (fields.qqfilename[0].split("sss").length > 1) {
-
-                                                size = "-Small";
-                                                pathis = smallAndMediumPath;
                                             }
-                                            else if (fields.qqfilename[0].split("mmm").length > 1) {
-                                                size = "-Medium";
-                                                pathis = smallAndMediumPath;
+                                            uploadingPost = postIdx;
+                                            console.log(uploadingPost);
+                                            if (fields.qqfilename[0]) {
+                                                if (fields.qqfilename[0].split("sss").length > 1) {
+
+                                                    size = "-Small";
+                                                    pathis = smallAndMediumPath;
+                                                }
+                                                else if (fields.qqfilename[0].split("mmm").length > 1) {
+                                                    size = "-Medium";
+                                                    pathis = smallAndMediumPath;
+                                                }
+                                                else {
+                                                    size = "";
+                                                    pathis = originalPath;
+
+                                                }
+
+                                                let extra = `${counts}`;
+                                                if ((counts === 1) && (uploadingPost === null)) {
+                                                    uploadingPost = CryptoJS.AES.encrypt((user.userId + "|-p-|" + counts + ":" + random.generate(10)).toString(), secret.postIdKey).toString();
+                                                    uploadingPost = uploadingPost.split("/").join("|");
+                                                    console.log("postId : " + uploadingPost);
+                                                    redisClient.set("uploadingPost:"+user.userId, uploadingPost + "===." + format);
+                                                    redisClient.expire("uploadCounts:"+user.userId, (5 * 60000));
+                                                    redisClient.expire("uploadingPost:"+user.userId, (5 * 60000));
+                                                    redisClient.expire("uploading:"+user.userId, (5 * 60000));
+
+                                                }
+
+                                                if (size === "") {
+                                                    pathis = originalPath;
+                                                    console.log("counts" + counts);
+                                                    redisClient.set("uploadCounts:"+user.userId, counts.toString());
+                                                    // image data extraction
+                                                    console.log("post object creation");
+                                                    posts.Create(user, format, uploadingPost.split("===.")[0], fields.qqfilename[0], counts, function (callback) {
+                                                        if(!callback || callback.message){
+                                                            res.send(callback);
+                                                        }
+                                                        else{
+                                                            uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split("===.")[0] + "-" + extra + "-===." + format, res, uploadingPost.split("===.")[0] + "-" + extra);
+
+                                                        }
+                                                        console.log(callback);
+                                                    });
+                                                }
+                                                else {
+                                                    uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split("===.")[0] + "-" + extra + "-"+ size + "===." + format, res, "");
+
+                                                }
                                             }
                                             else {
-                                                size = "";
-                                                pathis = originalPath;
-
+                                                res.send({result: false, message: "File has no name"});
                                             }
-
-                                            let extra = `${counts}`;
-                                            console.log("this is motherfucking " + uploadingPost);
-                                            if ((counts === 1) && (uploadingPost === null)) {
-                                                console.log("im here mothofuckaaa");
-                                                uploadingPost = CryptoJS.AES.encrypt((user.userId + "|-p-|" + counts + ":" + random.generate(10)).toString(), secret.postIdKey).toString();
-                                                uploadingPost = uploadingPost.split("/").join("|");
-                                                console.log("postId : " + uploadingPost);
-                                                redisClient.set("uploadingPost:"+user.userId, uploadingPost + "===." + format);
-                                                redisClient.expire("uploadCounts:"+user.userId, (5 * 60000));
-                                                redisClient.expire("uploadingPost:"+user.userId, (5 * 60000));
-                                                redisClient.expire("uploading:"+user.userId, (5 * 60000));
-
-                                            }
-
-                                            if (size === "") {
-                                                pathis = originalPath;
-                                                console.log("counts" + counts);
-                                                redisClient.set("uploadCounts:"+user.userId, counts.toString());
-                                                // image data extraction
-                                                console.log("post object creation");
-                                                posts.Create(user, format, uploadingPost.split("===.")[0], fields.qqfilename[0], counts, function (callback) {
-                                                    if(!callback || callback.message){
-                                                        res.send(callback);
-                                                    }
-                                                    else{
-                                                        uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split("===.")[0] + "-" + extra + "-===." + format, res, uploadingPost.split("===.")[0] + "-" + extra);
-
-                                                    }
-                                                    console.log(callback);
-                                                });
-                                            }
-                                            else {
-                                                uploader.onSimpleUpload(fields, files[fileInputName][0], pathis, uploadingPost.split("===.")[0] + "-" + extra + "-"+ size + "===." + format, res, "");
-
-                                            }
-                                        }
-                                        else {
-                                            res.send({result: false, message: "File has no name"});
-                                        }
-                                    });
-                                }
-                                else{
-                                    res.send({result:false,message:"Maximum upload counts per request reached : 20 , submit your Posts and continue again"});
-                                }
-                            });
+                                        });
+                                    }
+                                    else{
+                                        res.send({result:false,message:"Maximum upload counts per request reached : 20 , submit your Posts and continue again"});
+                                    }
+                                });
+                            }
+                            
                         }
-                        else if(value === "profilePicture"){
-                            let randomPart = random.generate(6);
-                            uploader.onSimpleUpload(fields, files[fileInputName][0], profilePicturesPath, user.userId + "-"+ randomPart +"."+format, res);
+                    });
+                }
+                else if(type === "profPics"){
+         
+                    let randomPart = random.generate(6);
+                    uploader.onSimpleUpload(fields, files.image_data[0], profilePicturesPath,user.userId+ "-"+ randomPart +"."+format, res,"");
 
-                        }
-                        else if(value === "badge"){
+                }
+                else if(type === "badge"){
 
-                        }
-                        else if(value === "category"){
+                }
+                else if(type === "category"){
 
-                        }
-
-                    }
-                    else{
-                        res.send({result:false,message:"Did not initialized for upload"});
-                    }
-                });
+                }
+                else{
+                    res.send({result:false,message:"Did not initialized for upload"});
+                }
+                    
             }
             else {
                 res.send("403 bad request");
@@ -156,13 +163,18 @@ var uploader = {
     },
 
 onSimpleUpload: function (fields, file, path,fileName ,res,postId) {
-    let uuid = fields.qquuid,
+    let uuid;
+    if(fields.qquuid)
+        uuid = fields.qquuid;
     responseData = {
         success: false
     };
-
-    file.name = fields.qqfilename;
+    if(fields.qqfilename)
+        file.name = fields.qqfilename;
+    else
+        file.name = fields.qqfilename;
     file.fullName = fileName;
+
     if (uploader.isValid(file.size)) {
         uploader.moveUploadedFile(fileName,file,uuid,path,postId, function () {
         responseData.success = true;
@@ -248,6 +260,9 @@ isValid:function (size) {
 },
 
 moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, success, failure) {
+        if(fileName.split(".".length) ===1){
+            fileName = fileName+".jpg";
+        }
 
         mkdirp(destinationDir, sourceFile.fullName , function (error) {
             let sourceStream, destStream;
@@ -297,7 +312,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                         };
                                                     }
                                                     console.log("postId" + postId);
-                                                    postSchema.update({
+                                                    postSchema.updateOne({
                                                             postId: postId,
                                                         }, {
                                                             $set: {
@@ -351,20 +366,20 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                 });
                         }
                         else{
-                            if(destinationDir.endsWith("ProfilePics/")){
-
-                                gm(destinationDir + fileName)
+                            if(destinationDir.split("ProfilePics").length > 1){
+                                
+                                gm(destinationDir + fileName.split("-")[1])
                                     .blur(15, 15)
-                                    .write(destinationDir + fileName.split(".")[0] + "-blur." + fileName.split(".")[1], function (err) {
+                                    .write(destinationDir + fileName.split("-")[1].split(".")[0] + "-blur." + fileName.split(".")[1], function (err) {
                                         if (!err) {
                                             console.log('created blur image');
                                         }
                                         else console.log("blur image failed :" + err);
                                     });
-                                userSchema.update({userId:fileName.split("-")[0]},{$set:{profilePictureSet:fileName}},function(err,resx){
+                                userSchema.updateOne({userId:fileName.split("-")[0]},{$set:{profilePictureSet:fileName.split("-")[1]}},function(err,resx){
                                    if(resx.n > 0){
                                     console.log("profilePicture updated");
-                                    users.updateSingleUserInfoInCache(fileName.split("-")[0],"profilePictureSet",fileName,function(callback){
+                                    users.updateSingleUserInfoInCache(fileName.split("-")[0],"profilePictureSet",fileName.split("-")[1],"set",function(callback){
                                         if(!callback.message){
                                             console.log("updated profilePictureSet in cache");
                                         }
@@ -401,6 +416,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
 
 moveUploadedFile : function(fileName,file, uuid, path,postId,success, failure) {
     let destinationDir = path;
+
     if(postId !== ""){
         console.log("postID :" +postId);
         let changedPostId = postId.split("|").join("/").slice(0,-2); // rooted
@@ -409,7 +425,13 @@ moveUploadedFile : function(fileName,file, uuid, path,postId,success, failure) {
         let decrypted = bytes.toString(CryptoJS.enc.Utf8);
         destinationDir = path+decrypted.split("|-p")[0].toString() + "/";
     }
-    let fileDestination = destinationDir + fileName;
+    else{
+        if(fileName.split("-").length > 1){ // profile picture condition
+            let userId = fileName.split("-")[0];
+            destinationDir = path+userId + "/";
+        }
+    }
+    let fileDestination = destinationDir + fileName.split("-")[1];
     uploader.moveFile(fileName,destinationDir, file.path, fileDestination,postId,success, failure);
 },
 

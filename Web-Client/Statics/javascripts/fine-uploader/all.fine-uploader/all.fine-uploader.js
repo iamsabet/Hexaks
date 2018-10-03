@@ -6921,7 +6921,6 @@
             }
             if (bar) {
 
-
                 // manipulate the percentage
                 if(id===null){
                     // total progressbar it is
