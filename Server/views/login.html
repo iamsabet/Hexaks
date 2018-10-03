@@ -54,7 +54,7 @@
 
 
     $(document).ready(function(event){
-        requestHandler("/login/getKey", "GET", {}, "getKey");
+        requestHandler("/api/v1/login/getKey", "GET", {}, "getKey");
         let fields = document.querySelectorAll('.form-group input');
         fields.forEach(field=>{
             field.addEventListener('blur',()=>{

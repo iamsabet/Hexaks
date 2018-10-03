@@ -44,7 +44,7 @@ router.get('/login', function(req,res){
         }
     });
 });
-router.get('/login/getKey', function(req,res){
+router.get('/api/v1/login/getKey', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
             users.generateAccessKey("login",req,res);
@@ -65,7 +65,7 @@ router.get('/register', function(req,res){
         }
     });
 });
-router.get('/register/getKey', function(req,res){
+router.get('/api/v1/register/getKey', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
             users.generateAccessKey("register",req,res);
@@ -85,7 +85,7 @@ router.get('/admin', function(req,res){
         }
     });
 });
-router.get('/admin/getKey', function(req,res){
+router.get('/api/v1/admin/getKey', function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
             users.generateAccessKey("admin",req,res,callback);
@@ -95,10 +95,10 @@ router.get('/admin/getKey', function(req,res){
         }
     });
 });
-router.post('/admin/users/search',function(req,res){
+router.post('/api/v1/admin/users/search',function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
-            admins.decryptData(req,res,callback,function(decryptedData){
+            admins.decryptData(req,callback,function(decryptedData){
                 if(!decryptedData.message){
                     let input = decryptedData;
                     admins.searchUsers(input,callback,function(usersList){
@@ -497,6 +497,17 @@ router.get('/api/v1/users/getMe',function(req,res){
     validateRequest(req,res,function(callback){
         if(!callback.message) {
             users.getMe(req,res,callback);
+       }
+       else {
+           res.send(callback);
+       }
+    });
+});
+
+router.get('/api/v1/admin/getMe',function(req,res){
+    validateRequest(req,res,function(callback){
+        if(!callback.message) {
+            admins.getMe(req,res,callback);
        }
        else {
            res.send(callback);
@@ -954,7 +965,9 @@ router.post('/api/v1/admin/createCategory/', function(req,res){
 router.post('/api/v1/admin/accept/post', function(req,res){
     validateRequest(req,res,function(callback) {
         if(!callback.message) {
-            posts.accept(req, res, callback);
+            admins.decryptData(req,callback,function(decryptedData){
+                posts.accept(decryptedData, res, callback);
+            });
         }
         else{
             res.send({result:false,message:"Unauthorized"});
@@ -964,7 +977,9 @@ router.post('/api/v1/admin/accept/post', function(req,res){
 router.post('/api/v1/admin/reject/post', function(req,res){
     validateRequest(req,res,function(callback) {
         if(!callback.message) {
-            posts.reject(req, res, callback);
+            admins.decryptData(req,callback,function(decryptedData){
+                posts.reject(decryptedData, res, callback);
+            });
         }
         else{
             res.send({result:false,message:"Unauthorized"});

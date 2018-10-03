@@ -2,8 +2,7 @@
 <script src="../Statics/javascripts/jquery.min.js"></script>
 <script src="../Statics/javascripts/cookies.js"></script>
 <script src="../Statics/javascripts/crypto-js/crypto-js.min.js"></script>
-<link rel="stylesheet" href="../Statics/stylesheets/account.css">
-<link rel="stylesheet" href="../Statics/stylesheets/bootstrap.css">
+<link rel="stylesheet" href="../Statics/stylesheets/style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
 
@@ -11,59 +10,84 @@
 </head>
 
 <body>
-<div id="homeContainer" class="containerDiv">
+<div id="adminContainer" class="containerDiv">
     <div class="accountCard">
 
     </div>
-    <div class="loginRegForm">
-        <h2>Register</h2>
-        <form action="/admin">
-            <div class="form-group">
-                <input type="text" id="username"/>
-                <label for="username">Username</label>
-                <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
-            </div>
-            <div class="form-group">
-                <input type="email" id="email"/>
-                <label for="email">Email</label>
-                <img src="../Statics/images/newIcons/tik.svg" id="emailStatus" />
-            </div>
-            <div class="form-group">
-                <input type="password" id="password"/>
-                <label for="password">Password</label>
-                <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
-            </div>
-            <div class="form-group">
-                <input type="password" id="confPassword"/>
-                <label for="confPassword">Confirm Password</label>
-                <img src="../Statics/images/newIcons/tik.svg" id="confirmPasswordStatus" />
-            </div>
-            <button id="regBtn">Register</button>
-            <ul class="messageBox">
+    <div class="adminPanel">
+        <h2>Admin</h2>
+        
+    </div>
+    <div class="topNav">
+        <ul>
+            <li>Admin Panel</li>
+            <li>Reports Count</li>
+            <li>Curated</li>
+        </ul>
+    </div>
+    <div id="search-box">
+        <input type="text" class="searchInput"/>
+        <ul class="autoComplete">
+            <li>Latest</li>
+            <li>Top</li>
+            <li>Curated</li>
+        </ul>
 
+    </div>
+    <div class="nav show">
+            <img id="logo" src="../Statics/images/images/LOGO.png">
+            <!--// parse dynamicly for clients - authenticated - and role based-->
+            <ul>
+                <li class="navRightButtons">
+                    <a href="/home">
+                        <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="navRightButtons">
+                    <a href="/explore">
+                        <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
+                        <span>Explore</span>
+                    </a>
+                </li>
+                <li class="navRightButtons">
+                    <a href="/following">
+                        <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
+                        <span>Following</span>
+                    </a>
+                </li>
+                <li class="navRightButtons">
+                    <a href="/settings">
+                        <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="navRightButtons">
+                    <a href="/about">
+                        <img src="../Statics/images/newIcons/About.svg" class="navIcon">
+                        <span>About</span>
+                    </a>
+                </li>
+                
+    
+                
             </ul>
-        </form>
-    </div>
+        </div>
 </div>
-    <div class="footer">
-        <a href="/faq">FAQ</a>
-        <a href="/tutorials">Tutorials</a>
-        <a href="/about">About Us</a>
-    </div>
 </div>
 </body>
 
 
 
 <script>
-    let adminKey = "none"; // fill with server response on initial register
+    let adminKey = "none";
+    let Me = null;
     // Events.js
 
     $(document).ready(function(event){
         requestHandler("/admin/getKey", "GET", {}, "getKey");
-
+        requestHandler("/admin/getMe", "GET", {}, "getMe");
         let fields = document.querySelectorAll('.form-group input');
-        debugger;
         fields.forEach(field=>{
             field.addEventListener('blur',()=>{
                 if(field.value.trim().length){
@@ -77,7 +101,7 @@
 
     });
     let usernameInterval = null;
-    $("body").on("keyup","#username",function(e){
+    $("body").on("keyup","#searchInput",function(e){
         if($(this).val().toString().length > 3) {
             let text = $(this).val().toString();
             window.clearInterval(usernameInterval);
@@ -87,62 +111,6 @@
             },300);
         }
     });
-    let emailInterval = null;
-    $("body").on("keyup","#email",function(e){
-        if($(this).val().toString().length > 6) {
-            if($(this).val().toString().split("@")[1] && $(this).val().toString().split(".")[1]) {
-                let text = $(this).val().toString();
-                window.clearInterval(emailInterval);
-                emailInterval = setInterval(function(){
-                    checkInputValidation("email", text);
-                    window.clearInterval(emailInterval);
-                },300);
-            }
-        }
-    });
-    $("body").on("keyup","#confPassword",function(e){
-        if(($(this).val().toString().length >= 6)) {
-            if($("#confPassword").val().toString() === $("#password").val().toString()){
-                $("#confirmPasswordStatus").attr("src","../Statics/images/newIcons/tik.svg");
-                $("#confirmPasswordStatus").addClass("show");
-            }
-            else{
-                $("#confirmPasswordStatus").attr("src","../Statics/images/newIcons/cross.svg");
-                $("#confirmPasswordStatus").addClass("show");
-                $(".loginRegForm form ul").append(`
-                    <li class="confirmPasswordError">passwords does not match</li>
-                `);
-            }
-        }
-    });
-    $("body").on("keyup","#password",function(e){
-        console.log($(this).val());
-        if(($(this).val().toString().length < 6)) {
-            $("#passwordStatus").attr("src","../Statics/images/newIcons/cross.svg");
-            $("#passwordStatus").addClass("show");
-            if($(".loginRegForm form ul .passwordError")[0]===undefined){
-                $(".loginRegForm form ul").append(`
-                    <li class="passwordError">password must have at least 6 characters</li>
-                `);
-            }
-        }
-        else{
-            $("#passwordStatus").attr("src","../Statics/images/newIcons/tik.svg");
-            $("#passwordStatus").addClass("show");
-            if($(".loginRegForm form ul .passwordError")[0]!==undefined){
-                $(".loginRegForm form ul .passwordError").remove();
-            }
-        }
-    });
-
-    $('body').on("submit",".loginRegForm form",function(event) {
-        event.preventDefault();
-    });
-    $('.loginRegForm').on("click","#regBtn",function(){
-    
-        requestHandler("/register", "POST", input,"registerHandler");
-    });
-
 
 
 
@@ -153,14 +121,17 @@
 
 
     function requestHandler(url, method, input,caller) {
-
-         console.log(adminKey);
-        
-        var encryptedInfo = CryptoJS.AES.encrypt(JSON.stringify(input),adminKey).toString();
-        var input = {
-            input : encryptedInfo
-        };
-
+        let encryptedInfo;
+        if(method === "POST"){
+            encryptedInfo = CryptoJS.AES.encrypt(JSON.stringify(input),adminKey).toString();
+            input = {
+                input : encryptedInfo
+            };
+        }
+        else{
+            delete input;
+        }
+        url = "api/v1"+url;
         $.ajax({
             url: url || "/",
             method: method || "POST",
@@ -184,72 +155,67 @@
     function checkInputValidation(type,text){
 
         // characteric limiations -- check both sides later then => {
-        requestHandler("/register/checkIsTaken/","POST",{text:text,type:type},"check"+type);
+        
     }
 
     // Response Actions Handler
     function responseActionHandler(res,caller) {
         switch (caller) {
-            case "registerHandler" : {
-                if(!res.message) {
-                    createCookie("X-ACCESS-TOKEN",res["token"],1);
-                    createCookie("KEY",res["key"],1);
-                    window.location.pathname = "/settings";
-                }
-                else{
-                    if($(".loginRegForm ul .attemptError")[0]===undefined) {
-                        $(".loginRegForm ul").append(`
-                        <li class="attemptError">${res.message}</li>
-                    `);
-                    }
-                    else{
-                        $(".loginRegForm ul .attemptError").html(`${res.message}`);
-                    }
-                }
+            case "getMe" : {
+                getMeResponseAction(res);
             }break;
             case "getKey":{
                 adminKey = res;
-                $("#loginBtn").addClass("enable");
             }break;
-            case "checkemail":{
-                if(!res.message){
-                    $("#emailStatus").attr("src","../Statics/images/newIcons/tik.svg");
-                    $("#emailStatus").addClass("show");
-                    $(".loginRegForm ul .emailError").remove();
-                }
-                else{
-                    $("#emailStatus").attr("src","../Statics/images/newIcons/cross.svg");
-                    $("#emailStatus").addClass("show");
-                    if($(".loginRegForm ul .mailError")[0]===undefined) {
-                        $(".loginRegForm ul").append(`
-                        <li class="mailError">${res.message}</li>
-                    `);
-                    }
-                    else{
-                        $(".loginRegForm ul .mailError").html(`${res.message}`);
-                    }
-                }
-            }break;
-            case "checkusername":{
-                if(!res.message){
-                    $("#usernameStatus").attr("src","../Statics/images/newIcons/tik.svg");
-                    $("#usernameStatus").addClass("show");
-                    $(".loginRegForm ul .usernameError").remove();
-                }
-                else{
-                    $("#usernameStatus").attr("src","../Statics/images/newIcons/cross.svg");
-                    $("#usernameStatus").addClass("show");
-                    if($(".loginRegForm ul .usernameError")[0]===undefined) {
-                        $(".loginRegForm ul").append(`
-                        <li class="usernameError">${res.message}</li>
-                    `);
-                    }
-                    else{
-                        $(".loginRegForm ul .usernameError").html(`${res.message}`);
-                    }
-                }
-            }
         }
     }
+
+
+     function getMeResponseAction(res){
+        if(!res.message) {
+            Me = res;
+        }
+        else{
+            Me = null;
+        }
+        if(Me !== null && Me !== {}) {
+
+            showCard(res.username);
+            
+            if(window.location.pathname.split("settings").length > 1){ // fill user infos in user infos form
+                loadUserInfosInForm();
+            }
+            let pageName = window.location.pathname.split("/")[1].toString();
+            selectRightNavItem(pageName);
+
+
+
+
+            // onDragMoveNavHorizontaly();
+        }
+        else{
+
+
+            $(".nav").removeClass("show");
+            showCard();
+        }
+    }
+    function showCard(username){
+        if(username){
+            $(".accountCard").html(`
+                <a href="" id="profileBtn">${username}</a>
+                <a href="" id="newPostBtn"></a>
+                <a href="" id="notifBtn"></a>
+                <a href="" id="searchButton"></a>
+            `);
+        }
+        else{
+            $(".accountCard").html(`
+                <a href="/login" id="loginBtn">Login</a>
+                <a href="/register">Register</a>
+            `);
+        }
+    }
+
 </script>
 </html>

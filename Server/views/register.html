@@ -61,10 +61,9 @@
     // Events.js
 
     $(document).ready(function(event){
-        requestHandler("/register/getKey", "GET", {}, "getKey");
+        requestHandler("/api/v1/register/getKey", "GET", {}, "getKey");
 
         let fields = document.querySelectorAll('.form-group input');
-        debugger;
         fields.forEach(field=>{
             field.addEventListener('blur',()=>{
                 if(field.value.trim().length){

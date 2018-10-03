@@ -32,7 +32,7 @@ redisClient.select(2,function(){
 
 /* GET home page. */
 var admins = {
-    decryptData : function(req,res,user,callback){
+    decryptData : function(req,user,callback){
         redisClient.get("adminKey:"+user.userId, function (err, key) {
             console.log(key);
             if (err) return callback({result: false, message: "key did not found in cache"});
@@ -51,6 +51,10 @@ var admins = {
                 }
             }
         })
+    },
+    getMe:function(req,res,user){
+        // manipulate or change security stuff , blind attrs 
+        res.send(user);
     },
     searchUsers : function(input,res,user,callback){
         if(user.roles.indexOf("admin") > -1){

@@ -877,8 +877,8 @@ var posts = {
         }
     },
     accept: function(req, res,user) {
-        if(req.body && req.body.postId && typeof req.body.postId === "string") {
-            let postId = req.body.postId;
+        if(req.postId && typeof req.postId === "string") {
+            let postId = req.postId;
             if(user && (user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
                     postSchema.update({
                         postId: postId,
@@ -903,18 +903,18 @@ var posts = {
         }
     },
     reject: function(req, res,user) {
-        if(req.body && req.body.postId && typeof req.body.postId === "string") {
-            let postId = req.body.postId;
-            let postOwnerId =posts.getPostOwnerIdByDecrypt(postId);
+        if(req.postId && typeof req.postId === "string") {
+            let postId = req.postId;
+            let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
             if((user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
-                if(req.body.reject && typeof req.body.reject === "string") {
+                if(req.reject && typeof req.reject === "string") {
                     postSchema.update({
                         postId: postId,
                     }, {
                         $set: {
                             rejected:{ 
                                 "value":true,
-                                "reason":req.body.reject,
+                                "reason":req.reject,
                                 "updatedAt" : Date.now()
                             }
                         }
