@@ -43,7 +43,7 @@ var uploader = {
             // text/plain is required to ensure support for IE9 and older
             if (files) {
                 let format = "";
-                if(files.image_data[0] && (Object.keys(fields).length === 0)){
+                if(files.image_data && files.image_data[0] && (Object.keys(fields).length === 0)){
                     format = "jpg";
                 }
                 else{
@@ -260,7 +260,8 @@ isValid:function (size) {
 },
 
 moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, success, failure) {
-        if(fileName.split(".".length) ===1){
+
+        if((destinationDir.split("ProfilePics").length === 2) && (fileName.split(".").length === 1)){
             fileName = fileName+".jpg";
         }
 
@@ -416,7 +417,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
 
 moveUploadedFile : function(fileName,file, uuid, path,postId,success, failure) {
     let destinationDir = path;
-
+    let fileDestination = destinationDir + fileName;
     if(postId !== ""){
         console.log("postID :" +postId);
         let changedPostId = postId.split("|").join("/").slice(0,-2); // rooted
@@ -424,14 +425,15 @@ moveUploadedFile : function(fileName,file, uuid, path,postId,success, failure) {
         let bytes = CryptoJS.AES.decrypt(changedPostId,secret.postIdKey);
         let decrypted = bytes.toString(CryptoJS.enc.Utf8);
         destinationDir = path+decrypted.split("|-p")[0].toString() + "/";
+        fileDestination = destinationDir + fileName;
     }
     else{
-        if(fileName.split("-").length > 1){ // profile picture condition
+        if(path.split("ProfilePics").length > 1){ // profile picture condition
             let userId = fileName.split("-")[0];
             destinationDir = path+userId + "/";
+            fileDestination = destinationDir + fileName.split("-")[1];
         }
     }
-    let fileDestination = destinationDir + fileName.split("-")[1];
     uploader.moveFile(fileName,destinationDir, file.path, fileDestination,postId,success, failure);
 },
 

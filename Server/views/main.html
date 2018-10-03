@@ -173,7 +173,7 @@
                     </defs>
                 </svg>
                 <div class="polygon-each-img-wrap">
-                    <img class="ownerProfilePicture polygon-clip-hexagon image" src="../profilePics/avatar.png"/>
+                    <img class="ownerProfilePicture polygon-clip-hexagon image" src="../profilePics/male.png"/>
                 </div>
             </div>
             <div class="userInfo">
@@ -218,7 +218,7 @@
                             <text class="text" x="50%" y="122%">Blue</text>
                         </svg>
                     </div>
-                    <img class="ownerProfilePicture polygon-clip-hexagon image" id="profilePicturePlace" src="../profilePics/avatar.png"/>
+                    <img class="ownerProfilePicture polygon-clip-hexagon image" id="profilePicturePlace" src="../profilePics/male.png"/>
                 </div>
                 <form id="uploadImageForm" action="/api/v1/upload/profPics" enctype="multipart/form-data">
                     <input name="imagefile[]" type="file" id="uploadPictureField" accept="image/*"/>
@@ -1525,6 +1525,7 @@
                 $(".settingsContainer .menu a").removeClass("selected");
                 if($(`#${pageName.split("/")[1]}`)[0])
                     $(`#${pageName.split("/")[1]}Btn`).addClass("selected");
+
             }
             let firstTime = false;
             if(window.location.pathname.split("/")[1] && (window.location.pathname.split("/")[1] !== "settings" || window.location.pathname.split("/")[1] !== "users")){
@@ -2219,6 +2220,7 @@
     function loadUserInfosInForm(){
         // profile picture
         let fields = document.querySelectorAll('.form-group input');
+        
         // autoResizeTextArea(true,'#bio');
         fields.forEach(field=>{
             field.addEventListener('blur',()=>{
@@ -2247,7 +2249,7 @@
             }
         });
         initialDates();
-        
+        $("#profilePicturePlace").attr("src","../profilePics/"+Me.userId+"/"+Me.profilePictureSet+"?");
         $("#username").val(Me.username);
         $("#email").val(Me.email);
         if(!$("#username.blurred")[0])
@@ -2843,7 +2845,7 @@
             $(".profileTop .profileTopContainer .userInfo .followersBtn").html((res.user.followersCount) + " Followers");
             $(".profileTop .profileTopContainer .userInfo .photos").html(res.user.postsCount +" Posts");
             $(".profileTop .profileTopContainer .userInfo .hostLocation").html(res.user.location);
-            $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.userId+"/"+res.user.profilePictureSet);
+            $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.userId+"/"+res.user.profilePictureSet+"?");
 
             if(typeof res.user.roles === "string") {
                 host.roles = JSON.parse(res.user.roles) || [];
@@ -3228,7 +3230,7 @@
             $(".postFooter .caption .notEditable").val(postObject.caption);
             $(".postFooter .caption").addClass("show");
             $(".postFooter .ownerUsername").html(usersInfo[postObject.ownerId].username);
-            $(".postFooter .ownerProfilePicture").attr("src", "../profilePics/" + usersInfo[postObject.ownerId].profilePictureSet);
+            $(".postFooter .ownerProfilePicture").attr("src", "../profilePics/"+postObject.ownerId+"/"+usersInfo[postObject.ownerId].profilePictureSet+"?");
             $(".post .infoContainer ul").html("");
             $(".post .infoContainer ul").append(`
                                                 <li>
@@ -3387,7 +3389,7 @@
             else if (res.docs === []) {
                 $(".post .commentsContainer .header").html(" No comments yet ");
                 $(".post .commentsContainer .commentsList").html("");
-            }
+            } 
             else if (res === []) {
                 $(".post .commentsContainer .header").html(" Oops Something Went Wrong ");
                 $(".post .commentsContainer .commentsList").html("");
@@ -3475,7 +3477,7 @@
                                                                         </defs>
                                                                     </svg>
                                                                     <div class="polygon-each-img-wrap">
-                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${usersInfo[Me.userId].profilePictureSet}"/>
+                                                <img class="ownerProfilePicture polygon-clip-hexagon" src="../profilePics/${Me.userId}/${usersInfo[Me.userId].profilePictureSet}"/>
                                                                     </div>
                                                                     <a href="/${usersInfo[Me.userId].username}" class="ownerUsername usernameLink">${usersInfo[Me.userId].username}</a>
                                                                 <button class="commentMoreButton"></button>
