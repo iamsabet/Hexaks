@@ -51,8 +51,7 @@ albumSchema.methods.Create = function(albumObject,callback){
         newAlbum.views = 0;
         newAlbum.deleted = false;
         newAlbum.ownerId = albumObject.ownerId;
-        newAlbum.save();
-        newAlbum.setNext('block_id', function(err, blk){
+        newAlbum.setNext('album_id', function(err, blk){
             if(err) throw err;
             newAlbum.save(function (err) {
                 if (err) 

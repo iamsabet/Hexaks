@@ -4,7 +4,7 @@ var Hashtag = new hashtagSchema();
 var hashtags = {
 
     autoCompleteHashtags : function(req, res,user) {
-        
+        // db.inventory.find( { tags: { $in: [ /^be/, /^st/ ] } } )
         hashtagSchema.search(req.body.text, 12, 5, function (autoCompletedList) {
             if(autoCompletedList !== false) {
                 res.send(autoCompletedList);

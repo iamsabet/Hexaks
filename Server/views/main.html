@@ -2249,7 +2249,12 @@
             }
         });
         initialDates();
-        $("#profilePicturePlace").attr("src","../profilePics/"+Me.userId+"/"+Me.profilePictureSet+"?");
+        if(Me.profilePictureSet === "male.png" || Me.profilePictureSet === "female.png"){
+            $("#profilePicturePlace").attr("src","../profilePics/"+Me.profilePictureSet+"?");
+        }
+        else{
+            $("#profilePicturePlace").attr("src","../profilePics/"+Me.userId+"/"+Me.profilePictureSet+"?");
+        }
         $("#username").val(Me.username);
         $("#email").val(Me.email);
         if(!$("#username.blurred")[0])
@@ -2845,7 +2850,13 @@
             $(".profileTop .profileTopContainer .userInfo .followersBtn").html((res.user.followersCount) + " Followers");
             $(".profileTop .profileTopContainer .userInfo .photos").html(res.user.postsCount +" Posts");
             $(".profileTop .profileTopContainer .userInfo .hostLocation").html(res.user.location);
-            $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.userId+"/"+res.user.profilePictureSet+"?");
+            if((res.user.profilePictureSet === "male.png") || (res.user.profilePictureSet === "female.png")){
+                $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.profilePictureSet+"?");
+            }
+            else{
+                $(".profileTop .profileTopContainer .profPic .ownerProfilePicture").attr("src","../profilePics/"+res.user.userId+"/"+res.user.profilePictureSet+"?");
+            }
+            
 
             if(typeof res.user.roles === "string") {
                 host.roles = JSON.parse(res.user.roles) || [];
@@ -3230,7 +3241,12 @@
             $(".postFooter .caption .notEditable").val(postObject.caption);
             $(".postFooter .caption").addClass("show");
             $(".postFooter .ownerUsername").html(usersInfo[postObject.ownerId].username);
-            $(".postFooter .ownerProfilePicture").attr("src", "../profilePics/"+postObject.ownerId+"/"+usersInfo[postObject.ownerId].profilePictureSet+"?");
+            if((usersInfo[postObject.ownerId].profilePictureSet === "male.png") || (usersInfo[postObject.ownerId].profilePictureSet === "female.png")){
+                $(".postFooter .ownerProfilePicture").attr("src", "../profilePics/"+usersInfo[postObject.ownerId].profilePictureSet+"?");
+            }
+            else{
+                $(".postFooter .ownerProfilePicture").attr("src", "../profilePics/"+postObject.ownerId+"/"+usersInfo[postObject.ownerId].profilePictureSet+"?");
+            }
             $(".post .infoContainer ul").html("");
             $(".post .infoContainer ul").append(`
                                                 <li>

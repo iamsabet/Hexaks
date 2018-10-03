@@ -71,7 +71,7 @@ var posts = {
             }
             let userId = {$in:userIds};
             if(userIds.length === 1){
-                userId = userIds[0];
+                userId = userIds[0]; // rejected , in queue 
             }
             let notIncludeThese = [];
             if(userIds ==="all"){
@@ -93,8 +93,15 @@ var posts = {
                 isPrivate: privateOrNot,
                 deleted:false
             };
-            if(userIds.length === 1 && user && (userIds[0] === user.userId)){
+            if((userIds.length === 1) && user && (userIds[0] === user.userId)){
                 query.rejected = {$exists:true};
+            }
+            else if((userIds.length > 1) && user){
+                delete query.rejected;
+                query["rejected.value"] = {$exists:false};
+            }
+            if(userIds==="all"){
+                query.rejected = null;
             }
             if(albumOrPost){
                 if(albumOrPost === "album"){
@@ -274,7 +281,11 @@ var posts = {
                 curatorId: "",
                 isPrivate: false,
                 reportsCount : 0,
-                rejected: null,
+                rejected : {
+                    value:false,
+                    reason : "In Queue",
+                    updatedAt:Date.now()
+                },
                 advertise: null,
                 activated: false,
                 deleted: false
@@ -832,11 +843,42 @@ var posts = {
             res.send({result:false,message:"504 Bad request"});
         }
     },
+    accept: function(req, res,user) {
+        if(req.body && req.body.postId && typeof req.body.postId === "string") {
+            let postId = req.body.postId;
+            let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
+            if((user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
+                if(req.body.reject && typeof req.body.reject === "string") {
+                    postSchema.update({
+                        postId: req.body.postId,
+                        ownerId: postOwnerId,
+                    }, {
+                        $set: {
+                            reject:null,
+                        }
+                    }, function (err, result) {
+                        if (err) throw err;
+                        console.log(result);
+                        res.send(true);
+                    });
+                }
+                else{
+                    res.send({result:false,message:"bad request"});
+                }
+            }
+            else{
+                res.send({result:false,message:"401 Unauthorized"});
+            }
+        }
+        else{
+            res.send({result:false,message:"504 Bad request"});
+        }
+    },
     reject: function(req, res,user) {
         if(req.body && req.body.postId && typeof req.body.postId === "string") {
-            let postId = req.body.postId.split("%7C").join("|");
-            let postOwnerId = postId.split("|-p-|")[0];
-            if(user.userId === postOwnerId || ( user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
+            let postId = req.body.postId;
+            let postOwnerId =posts.getPostOwnerIdByDecrypt(postId);
+            if((user.roles.indexOf("superuser") > -1 ) || (user.roles.indexOf("sabet") > -1) || (user.roles.indexOf("admin") > -1)){ // owner access + superuser access
                 if(req.body.reject && typeof req.body.reject === "string") {
                     postSchema.update({
                         postId: req.body.postId,

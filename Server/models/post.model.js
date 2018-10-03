@@ -76,7 +76,11 @@ var postSchema = new Schema({
     views : Number ,     // viewers.length length
     curatorId:String,
     isPrivate:Boolean,
-    rejected:String,
+    rejected:{
+        value : Boolean,
+        reson : String,
+        updatedAt : Number 
+    },
     advertise:{
         link:String,
     },
@@ -90,6 +94,11 @@ postSchema.methods.create = function(postObject,user,callback){
 
     let newPost = new Post(postObject);
     let now = Date.now();
+    newPost.rejected = {
+        value:false,
+        reason : "In Queue",
+        updatedAt:now
+    };
     newPost.createdAt = now;
     newPost.updatedAt = now;
     newPost.deleted = false;
