@@ -233,7 +233,7 @@ deviceSchema.methods.Create = function(now,mode,brand,model,callback) {
                     }, function (err, resultx) {
                     if (err) throw err;
                     if (resultx.n === 0) {
-                        let newDevice = new Device({name: query.model,brand:query.brand});
+                        let newDevice = new Device({model: query.model,brand:query.brand});
                         newDevice.createdAt = nowTime;
                         newDevice.updatedAt = nowTime;
                         newDevice.counts = 1;

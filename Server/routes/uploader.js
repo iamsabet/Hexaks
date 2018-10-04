@@ -289,14 +289,23 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                 function (err, data) {
                                     if (err) console.log("ERR "+err);
                                     if (data) {
-                                        console.log(data.size.width, data.size.height);
                                         let rejected = {
                                             value:false,
                                             updatedAt:Date.now()
                                         };
-                                        if (data.size.width < 600 || data.size.height < 600) {
-                                            rejected.value = true;
-                                            rejected.reason = "Low Resolution";
+                                        let witdth = 0;
+                                        let height = 0;
+                                        if(!data.size){
+
+                                        }
+                                        else{
+                                            console.log(data.size.width, data.size.height);
+                                            if (data.size.width < 600 || data.size.height < 600) {
+                                                rejected.value = true;
+                                                rejected.reason = "Low Resolution";
+                                            }
+                                            height = data.size.height;
+                                            width = data.size.width;
                                         }
                                         new ExifImage({image: destinationDir +"/"+ fileName}, function (error, exifData) {
 
@@ -324,8 +333,8 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                                 rejected: rejected,
                                                                 exifData: exif,
                                                                 device: device,
-                                                                "originalImage.resolution.x": data.size.width,
-                                                                "originalImage.resolution.y": data.size.height,
+                                                                "originalImage.resolution.x": width,
+                                                                "originalImage.resolution.y": height,
                                                                 gps: gpsLocation
                                                             }
                                                         }
@@ -349,8 +358,8 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                         $set: {
                                                             exifData: null,
                                                             device: null,
-                                                            "originalImage.resolution.x": data.size.width,
-                                                            "originalImage.resolution.y": data.size.height,
+                                                            "originalImage.resolution.x": width,
+                                                            "originalImage.resolution.y": height,
                                                             gps: null,
                                                             rejected: rejected
                                                         }
