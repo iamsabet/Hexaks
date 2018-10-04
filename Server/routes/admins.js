@@ -86,10 +86,7 @@ var admins = {
             return callback({result:false,message:"401 Not Authorized"});
         }
     },
-    deleteUser: function(req, res,next) {
-
-        res.send(false);
-    }
+    
     
 
 };

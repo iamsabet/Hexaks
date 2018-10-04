@@ -31,7 +31,7 @@
             <li>Latest</li>
             <li>Top</li>
             <li>Curated</li>
-            
+
         </ul>
 
     </div>
@@ -201,6 +201,38 @@
             showCard();
         }
     }
+    $("body").on("click",".nav ul li a",function(e){
+        $(".nav ul li.selected").removeClass("selected");
+        $(this).parents("li").addClass("selected");
+        let txt = this.href.split("/")[this.href.split("/").length -1];
+        Filters = {
+            username:pageType,
+            pageNumber : 1,
+            counts: 10,
+            isCurated : false,
+            curator : "" ,
+            hashtag : "",
+            order : "latest",
+            orderBy : "createdAt",
+            timeEdge: 31*24, // hours
+            leftCost:0,
+            rightCost:1000000,
+            category : "",
+        };
+        // slideNav();
+        changePage(txt,txt+"/",true,"",true,true);
+        // re initial variables
+        e.preventDefault();
+        // remove all filters in UI for a selected page
+
+    });
+    function selectRightNavItem(pageName){
+        if(!pageName || pageName === ""){
+            pageName === "explore";
+        }
+        $(`.navRightButtons a[href="/${pageName}"]`).parents("li").addClass("selected");
+        $(`.navRightButtons`).parents("li").addClass("selected");
+    }
     function showCard(username){
         if(username){
             $(".accountCard").html(`
@@ -218,5 +250,48 @@
         }
     }
 
+    function slideNav(){
+        if(Me){
+            if(!$(".nav.show")[0]){
+                $(".nav").addClass("show");
+            }
+            else{
+                $(".nav.show").removeClass("show");
+            }
+        }
+        else{
+            showLoginOrReg("You must Login first to access tools","User Actions"); // modal full view middle
+        }
+        
+        
+    }
+
+    // settings functions
+    function loadUserInfosInForm(userData){
+        // profile picture
+        
+        if(Target.profilePictureSet === "male.png" || Target.profilePictureSet === "female.png"){
+            $("#profilePicturePlace").attr("src","../profilePics/"+Target.profilePictureSet+"?");
+        }
+        else{
+            $("#profilePicturePlace").attr("src","../profilePics/"+Target.userId+"/"+Target.profilePictureSet+"?");
+        }
+        $("#username").val(Target.username);
+        $("#email").val(Target.email);
+        $("#jsonArea").html(userData);
+    }
+
+    function showTargetForm(formName){
+        $(".settingsContainer form").removeClass("show");
+        $(`#${formName}`).addClass("show");
+    }
+    function udateDateInput(day,month,year){
+        if(!day || !month || !year){
+            $("#birth").val(`${month}/${day}/${year}`);
+        }
+        else{
+            $("#birth").val("");
+        }
+    }
 </script>
 </html>
