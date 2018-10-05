@@ -113,6 +113,27 @@ app.all('/*', function(req, res, next) {
 
 
 
+const imageHash = require('image-hash');
+const hexToBinary = require('hex-to-binary');
+// remote file simple
+
+imageHash('python/7.jpg', 8, true, (error, data) => {
+    if (error) throw error;
+    console.log(data + "  |  " + hexToBinary(data));
+    imageHash('python/8.jpg', 8, true, (error, data) => {
+        if (error) throw error;
+        console.log(data + "  |  " + hexToBinary(data));
+        imageHash('python/9.jpg', 8, true, (error, data) => {
+            if (error) throw error;
+            console.log(data + "  |  " + hexToBinary(data));
+            imageHash('python/10.jpg', 8, true, (error, data) => {
+                if (error) throw error;
+                console.log(data + "  |  " + hexToBinary(data));
+                });
+            });
+        });
+      });
+
 
 
 
