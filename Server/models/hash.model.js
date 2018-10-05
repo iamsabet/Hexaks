@@ -14,26 +14,25 @@ var Float = require('mongoose-float').loadType(mongoose);
 var long = require('mongoose-long')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
 var autoIncrement = require('mongoose-sequence')(mongoose);
-var deviceSchema = new Schema({
-    device_id:Number,
-    brand:String,
-    model:String,
-    deviceId : String,
-    hour:Number, // 0 - 23
-    day:Number, // 0 - 31
-    month : Number, // 0 - 12
-    year:Number, // 0 , 2019 --> 
-    counts : long,
+
+
+var hashesSchema = new Schema({ // create index on onesPositionString --> to query here db.hashes.find({$text:{$search:"positionString"}},{score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}}).limit(3).pretty();
+ 
+    hash_id:Number,
+    value:String, // hash value
+    biranyHashString:String, // " 0 1 1 0 1 1 0 "
+    onesPositionString:String, // " 1 2 4 5 "
+    ownerId : String,
+    referenceId:String, // postId , ... 
+    referenceType:String, // post(image / clrearly) ,  not sure what im thinking right now //blog , new ... message ... feedback anyshit 
+    activated:Boolean,
     deleted: Boolean,
     createdAt : Number,
-    updatedAt : Number,
-    number : Number, // movazi ba name Unique int 
-    thumbnailUrl:String,
-    activated:Boolean
+    updatedAt : Number
 });
 // index
 
-deviceSchema.methods.initial = function(){
+hashesSchema.methods.initial = function(){
     redisClient.get("devicesInitialized:"+mode,function(err,value) {
         if(err) throw err;
         console.log(value);
@@ -290,24 +289,6 @@ deviceSchema.methods.Create = function(now,mode,brand,model,callback) {
     }
 };
 
-function updateDeviceTrendsInCache(type,key,incValue,callback){
-    let increaseValue = incValue || 1;
-        if(((type > -1) && (type <= 4))) {
-            redisClient.zincrby("devicesTrend:"+type, increaseValue, key, function (err, counts) { // 0 = day , 1 = days , 2 = month
-                if (err) throw err;
-                return callback(true);
-            });
-        }
-};
-function updateDeviceBrandsTrendsInCache(type,key,incValue,callback){
-    let increaseValue = incValue || 1;      
-    if(((type > -1) && (type <= 4))) {
-        redisClient.zincrby("deviceBrandsTrend:"+type, increaseValue, key, function (err, counts) { // 0 = day , 1 = days , 2 = month
-            if (err) throw err; //
-            return callback(true);
-        });
-    }
-};
 deviceSchema.plugin(autoIncrement, {inc_field: 'device_id', disable_hooks: true});
 deviceSchema.plugin(mongoosePaginate);
 let Device = mongoose.model('devices', deviceSchema);

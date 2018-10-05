@@ -14,6 +14,9 @@ var Float = require('mongoose-float').loadType(mongoose);
 var long = require('mongoose-long')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');
 var autoIncrement = require('mongoose-sequence')(mongoose);
+
+db.hashes.find({$text:{$search:"positionString"}},{score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}}).limit(3).pretty()
+
 var deviceSchema = new Schema({
     device_id:Number,
     brand:String,
