@@ -16,6 +16,7 @@ var mongoosePaginate = require('mongoose-paginate');
 var autoIncrement = require('mongoose-sequence')(mongoose);
 
 
+
 var deviceSchema = new Schema({
     device_id:Number,
     brand:String,
