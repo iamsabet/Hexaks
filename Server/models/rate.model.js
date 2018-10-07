@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const random = require('randomstring');
-var Float = require('mongoose-float').loadType(mongoose);
 var CryptoJS = require("crypto-js");
 const autoIncrement = require('mongoose-sequence')(mongoose);
 var mongoosePaginate = require('mongoose-paginate');

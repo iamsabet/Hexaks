@@ -1060,10 +1060,9 @@ var posts = {
             res.send({result:true,message:"Not Authenticated - view"});
         }
     },
-    doView:function(userId,referenceId,privacyStat,referenceType,res){
+    doView:function(userId,postId,privacyStat,referenceType,res){
         let query = {
-            referenceType:referenceId,
-            referenceType : referenceType, // post , blog , new , message ... 
+            postId:postId,
             rejected:null,
             activated:true,
             deleted:false,
@@ -1073,7 +1072,7 @@ var posts = {
             query.isPrivate = false;
         }
         // if type === post 
-        postSchema.findOneAndUpdate(query,{"$inc":{views:1}},{
+        postSchema.updateOne(query,{"$inc":{views:1}},{
             "fields":{
                 "album":1,
                 "isPrivate":1,
@@ -1123,7 +1122,7 @@ var posts = {
                 rateSchema.findOne({rater:user.userId,referenceId:postId,referenceType:"post"},{rateId:1,changes:1,rater:1,postId:1,value:1},function(err,ratex) {
                     if (err) throw err;
                     let rateObject = ratex;
-                    if(!ratex || ratex.changes < 3){
+                    if(!rateObject || rateObject.changes < 3){
                         let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
                         if(user.blockList.indexOf(postOwnerId) > -1) {
                             res.send({result:false,message:"You Blocked the post owner"});
@@ -1131,7 +1130,7 @@ var posts = {
                         else{
                             let postOwnerId = posts.getPostOwnerIdByDecrypt(postId);
                             if(user.followings.indexOf(postOwnerId) > -1){
-                                posts.doRate(user.userId,postId,"post",rateValue,rateObject,true,res); // post and account privacy bypass
+                                posts.doRate(user.userId,postId,rateValue,rateObject,true,"post",res); // post and account privacy bypass
                             }
                             else if(user.userId === postOwnerId){
                                 res.send({result:true,message:"You cant rate your own post"});
@@ -1177,7 +1176,7 @@ var posts = {
                     rateSchema.update({referenceId:rateObject.referenceId,rater:userId,referenceType:"post",value:{$ne:rateNumber}},{ // last rate value
                         $set:{
                             value:rateNumber,
-                            changes : (newChanges),
+                            changes : newChanges,
                             updatedAt : now
                         },
                     },function(err,resultr){
