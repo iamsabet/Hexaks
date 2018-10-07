@@ -8,6 +8,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var socket = require('socket.io');
+var net = require('net');
 var requestIp = require("request-ip");
 var routes = require('./routes/index');
 var categories = require('./routes/categories');
@@ -110,30 +112,6 @@ app.all('/*', function(req, res, next) {
 });
 
 // Scheduling :
-
-
-
-const imageHash = require('image-hash');
-const hexToBinary = require('hex-to-binary');
-// remote file simple
-
-imageHash('python/7.jpg', 8, true, (error, data) => {
-    if (error) throw error;
-    console.log(data + "  |  " + hexToBinary(data));
-    imageHash('python/8.jpg', 8, true, (error, data) => {
-        if (error) throw error;
-        console.log(data + "  |  " + hexToBinary(data));
-        imageHash('python/9.jpg', 8, true, (error, data) => {
-            if (error) throw error;
-            console.log(data + "  |  " + hexToBinary(data));
-            imageHash('python/10.jpg', 8, true, (error, data) => {
-                if (error) throw error;
-                console.log(data + "  |  " + hexToBinary(data));
-                });
-            });
-        });
-      });
-
 
 
 

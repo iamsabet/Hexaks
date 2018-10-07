@@ -7,8 +7,12 @@ var post = new postSchema();
 var userSchema = require('../models/user.model');
 var User = new userSchema();
 var albumSchema = require('../models/album.model');
+var net = require('net');
+var client = new net.Socket();
 var album = new albumSchema();
 var Jimp = require("jimp");
+const imageHash = require('image-hash');
+const hexToBinary = require('hex-to-binary');
 var rateSchema = require('../models/rate.model');
 var Rate = new rateSchema();
 var viewSchema = require('../models/view.model');
@@ -19,7 +23,7 @@ var categories = require('./categories');
 var hashes = require('./hashtags');
 var devices = require('./devices');
 var locations = require('./locations');
-
+var captionGeneratorConnection = false;
 var CryptoJS = require("crypto-js");
 var Float = require('mongoose-float').loadType(mongoose);
 var users = require('./users');
@@ -30,6 +34,34 @@ var requestIp = require("request-ip");
 var redisClient = redis.createClient({
 
 });    // Create the client
+
+
+var socketInterval = setInterval(function(){
+    client.connect(8586, '127.0.0.1', function(err) {
+        if(err){
+            captionGeneratorConnection = false;
+            console.log(err);
+        }
+        else{
+            captionGeneratorConnection = true;
+            console.log('Connected to caption generator');
+            clearInterval(socketInterval);
+        }
+    });    
+},10000);
+client.on('error', function(ex) {
+    console.log("handled error");
+    console.log(ex);
+  });
+client.on('data', function(data) {
+	posts.assignGeneratedCaption(data);
+});
+
+client.on('close', function() {
+	console.log('Connection closed');
+});
+
+
 redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
@@ -150,18 +182,18 @@ var posts = {
                 }
             }
             else{
-                if((userIds.length === 1) && user && (userIds[0] === user.userId)){
+                if((userIds.length === 1) && !user.message && (userIds[0] === user.userId)){
                     query.rejected = {$exists:true};
                     options.select += " rejected";
                 }
-                if((userIds.length === 1) && user && (userIds[0] !== user.userId)){
+                if((userIds.length === 1) && !user.message && (userIds[0] !== user.userId)){
                     query.rejected = {$exists:true};
                     options.select += " rejected";
                 }
                 if((userIds.length === 1) && !user){
 
                 }
-                if(user && user.roles.indexOf("admin") > -1){
+                if(user && user.roles && user.roles.indexOf("admin") > -1){
                     options.select += " rejected";
                 }
                 if((userIds.length > 1) && user){
@@ -929,9 +961,21 @@ var posts = {
 
 
 
+    assignGeneratedCaption:function(data){
 
-    imageProcessing:function(postId,imageUrl){ // image processing on medium size
-        console.log(imageUrl + " -- > image processing starts");
+    },
+    imageProcessing:function(postId,imageUrl){ // image processing on small size
+        console.log(postId + " / "+imageUrl + " -- > image processing starts");
+        if(captionGeneratorConnection)
+            client.write(imageUrl);
+        else
+            console.log("No Connection to caption generator server");
+        // remote file simple
+
+        imageHash('python/7.jpg', 8, true, (error, data) => {
+            if (error) throw error;
+            console.log(data + "  |  " + hexToBinary(data));
+        });
 
         // Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
         //

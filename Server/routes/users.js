@@ -1342,6 +1342,7 @@ function genToken(userId) {
         token: token,
     };
 }
+
 function parseCookies (request) {
     let list = {},
         rc = request.headers.cookie;

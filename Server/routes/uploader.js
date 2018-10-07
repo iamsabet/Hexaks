@@ -374,6 +374,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                             console.log("Post Datas Failed To Update");
                                                         }
                                                     });
+                                                    
                                             }
                                         });
                                     }

@@ -17,6 +17,7 @@ var autoIncrement = require('mongoose-sequence')(mongoose);
 
 db.hashes.find({$text:{$search:"positionString"}},{score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}}).limit(3).pretty()
 
+
 var deviceSchema = new Schema({
     device_id:Number,
     brand:String,

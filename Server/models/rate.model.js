@@ -20,6 +20,7 @@ var rateSchema = new Schema({
     updatedAt:Number
 });
 
+
 rateSchema.methods.create = function(rateObject,callback){
 
     let newRate = new Rate(rateObject);
