@@ -96,6 +96,34 @@ var follows = {
             return callback(resultx);
         });
     },
+    acceptAll:function(ownerId,callback){
+        let now = Date.now();
+        followObject.following = ownerId; 
+        followObject.activated = true;
+        followObject.accepted = false;
+        followSchema.updateMany(followObject,{
+            $set:{
+                accepted:true,
+                updatedAt:now
+            }
+        },{
+            "fields":{
+                "follower":1,
+                "accepted":1
+            }
+        },function(err,resultf){
+            if(err) throw err;
+            if(resultf){
+                return callback(resultf);
+            }
+            else{
+                return callback({result:false,message:"update follow object to accept true failed / or follow object not found"});
+            }
+        });
+    },
+    rejectAll:function(followObject,ownerId,callback){
+
+    },
     accept:function(followObject,ownerId,callback){
         let now = Date.now();
         followObject.following = ownerId; 

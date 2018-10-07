@@ -1002,8 +1002,14 @@ var users = {
         },function(err,result){
             if(err) throw err;
             if(result.n > 0) {
-                users.updateSingleUserInfoInCache(userId, "privacy", true,"set",function (callback2) {
-                    callback(callback2);
+                users.updateSingleUserInfoInCache(userId, "privacy", situation,"set",function (resx) {
+                    if(!resx.message){
+                        if(situation){
+                        }
+                        else{
+
+                        }
+                    }
                 });
             }
             else{

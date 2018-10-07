@@ -33,8 +33,6 @@ var hashesSchema = new Schema({ // create index on onesPositionString --> to que
 // index
 
 hashesSchema.methods.findSimilars = function(postId,hash){
-
-    
     hashesSchema.aggregate([{$match:{array:{$in:onesPositionArray}}},{"$project":{"array":1,"order":{"$size":{"$setIntersection":[onesPositionArray,"$array"]}}}},{$sort:{"order":-1}}])
 },
 

@@ -88,7 +88,7 @@ var posts = {
         }
         let timeEdge = null;
         if(timeEdgeIn !== null)
-            timeEdgeIn = parseInt(timeEdgeIn);
+            timeEdge = parseInt(timeEdgeIn);
         if (orderedBy === "createdAt"|| orderedBy === "queue" || orderedBy === "reportsCount" || orderedBy === "updatedAt" || orderedBy === "originalImage.cost" || orderedBy === "rate.number" || orderedBy === "rate.value" ||  orderedBy === "rate"  || orderedBy === "views") {
             // timeWindow
 
@@ -182,23 +182,24 @@ var posts = {
                 }
             }
             else{
-                if((userIds.length === 1) && !user.message && (userIds[0] === user.userId)){
+                if((userIds.length === 1) && user && (userIds[0] === user.userId)){
                     query.rejected = {$exists:true};
                     options.select += " rejected";
                 }
-                if((userIds.length === 1) && !user.message && (userIds[0] !== user.userId)){
+                if((userIds.length === 1) && user && (userIds[0] !== user.userId)){
                     query.rejected = {$exists:true};
                     options.select += " rejected";
                 }
                 if((userIds.length === 1) && !user){
 
                 }
-                if(user && user.roles && user.roles.indexOf("admin") > -1){
-                    options.select += " rejected";
-                }
                 if((userIds.length > 1) && user){
                     delete query.rejected;
                     query["rejected.reason"] = {$exists:false};
+                }
+                if(user && user.roles && user.roles.indexOf("admin") > -1){
+                    options.select += " rejected";
+                    delete query.rejected;
                 }
                 if(userIds==="all"){
                     query.rejected = null;
@@ -972,7 +973,7 @@ var posts = {
             console.log("No Connection to caption generator server");
         // remote file simple
 
-        imageHash('python/7.jpg', 8, true, (error, data) => {
+        imageHash(imageUrl, 8, true, (error, data) => {
             if (error) throw error;
             console.log(data + "  |  " + hexToBinary(data));
         });
