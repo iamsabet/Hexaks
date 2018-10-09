@@ -8,7 +8,7 @@ var userSchema = require('../models/user.model');
 var User = new userSchema();
 var albumSchema = require('../models/album.model');
 var net = require('net');
-var client = new net.Socket();
+var captionGeneratorSocket = new net.Socket();
 var album = new albumSchema();
 var Jimp = require("jimp");
 const imageHash = require('image-hash');
@@ -37,7 +37,7 @@ var redisClient = redis.createClient({
 
 
 var socketInterval = setInterval(function(){
-    client.connect(8586, '127.0.0.1', function(err) {
+    captionGeneratorSocket.connect(8586, '127.0.0.1', function(err) {
         if(err){
             captionGeneratorConnection = false;
             console.log(err);
@@ -47,18 +47,21 @@ var socketInterval = setInterval(function(){
             console.log('Connected to caption generator');
             clearInterval(socketInterval);
         }
-    });    
+    });
+    
 },10000);
-client.on('error', function(ex) {
+captionGeneratorSocket.on('error', function(ex) {
     console.log("handled error");
     console.log(ex);
+    captionGeneratorConnection = false;
   });
-client.on('data', function(data) {
+captionGeneratorSocket.on('data', function(data) {
 	posts.assignGeneratedCaption(data);
 });
 
-client.on('close', function() {
-	console.log('Connection closed');
+captionGeneratorSocket.on('close', function() {
+    console.log('Connection closed');
+    captionGeneratorConnection = false;
 });
 
 
@@ -968,15 +971,15 @@ var posts = {
     imageProcessing:function(postId,imageUrl){ // image processing on small size
         console.log(postId + " / "+imageUrl + " -- > image processing starts");
         if(captionGeneratorConnection)
-            client.write(imageUrl);
+            captionGeneratorSocket.write(imageUrl);
         else
             console.log("No Connection to caption generator server");
         // remote file simple
 
-        imageHash(imageUrl, 8, true, (error, data) => {
-            if (error) throw error;
-            console.log(data + "  |  " + hexToBinary(data));
-        });
+        // imageHash(imageUrl, 8, true, (error, data) => {
+        //     if (error) throw error;
+        //     console.log(data + "  |  " + hexToBinary(data));
+        // });
 
         // Jimp.read("../Private Files/x-large/"+Storage.filename(req,req.body.file),function (err, image) {
         //
@@ -1245,7 +1248,8 @@ var posts = {
             if(err) throw err;
             if(result.n > 0){
                 if(input.ownerId){
-                    users.updateUserRates(input,function(resultu){
+                    
+                    users.updatePostOwnerRates(input,function(resultu){
                         if(!resultu.message){
                             if(input.albumId){
                                 albums.updateAlbumRates(input,function(resulta){

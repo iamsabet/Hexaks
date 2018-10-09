@@ -1118,6 +1118,38 @@ var users = {
             }
         });
     },
+    updatePostOwnerRates:function(input,callback){
+        //input sample {albumId:post.album,rateDiff:differance,ownerId:post.ownerId,postRateCounts:counts,postViews:post.views}
+        let counts = parseInt(post.rate.counts) + 1;
+        let avg = parseFloat(post.rate.number);
+        let differance = parseFloat(rateNumber - avg); // + , - 0.change
+        let numberChange = parseFloat(differance/(counts));
+        let valueChange =  parseFloat (numberChange / post.views)*100; //
+        users.getUserInfosFromCache(postOwnerId,function(hostUser){
+            if(!hostUser.message){
+                let rate = JSON.parse(hostUser["rate"]);
+                let views = parseInt(hostUser["views"]);
+
+            }
+            else{
+                return callback(hostUser);
+            }
+        });
+        userSchema.update({userId:postOwnerId,activated:true},{
+            $inc: {
+                views: 1
+            }
+        },function(err,result){
+            if(err) throw err;
+            console.log(result);
+            if(result.n > 0){
+                return callback(true);
+            }
+            else{
+                return callback({result:false,message:"post owner views didnt increase"});
+            }
+        });
+    },
     updateSingleUserInfoInCache:function(userId,attr,value,mode,callback){ // mongodb must change before or after this function updates cache without considering master db
         if(mode==="set"){
             redisClient.hset("info:"+userId,attr,value); // must add to a zset --> points

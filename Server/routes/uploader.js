@@ -351,7 +351,7 @@ moveFile:function(fileName,destinationDir, sourceFile, destinationFile,postId, s
                                                 });
                                             }
                                             else {
-                                                postSchema.update({
+                                                postSchema.updateOne({
                                                         postId: postId,
 
                                                     }, {
