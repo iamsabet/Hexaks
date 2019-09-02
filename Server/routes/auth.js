@@ -54,7 +54,7 @@ var auth = {
                                                     status:401,
                                                     message: "username (or email) / password is incorrect"
                                                 });
-                                                return;
+
                                             }
                                             else{
                                                 redisClient.set("userId:"+userDbObject.username, userDbObject.userId);

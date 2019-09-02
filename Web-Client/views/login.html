@@ -1,0 +1,133 @@
+<html>
+<script src="../Statics/javascripts/jquery.min.js"></script>
+<script src="../Statics/javascripts/cookies.js"></script>
+<script src="../Statics/javascripts/crypto-js/crypto-js.min.js"></script>
+<link rel="stylesheet" href="../Statics/stylesheets/account.css">
+<link rel="stylesheet" href="../Statics/stylesheets/bootstrap.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+
+    <title>Hexaks</title>
+</head>
+<body>
+<div id="homeContainer" class="containerDiv">
+    <div class="loginRegForm">
+        <h2>Login to Hexaks </h2>
+        <form action="/login">
+            <div class="form-group">
+                    <input type="text" id="username"/>
+                    <label for="username">Username or Email</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="usernameStatus" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password"/>
+                    <label for="password">Password</label>
+                    <img src="../Statics/images/newIcons/tik.svg" id="passwordStatus" />
+                </div>
+            <button id="logBtn">Login</button>
+            <ul class="messageBox">
+
+            </ul>
+            <div class="socialBox">
+                <button id="insta"></button>
+                <button id="google"></button>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer">
+        <a href="/faq">FAQ</a>
+        <a href="/tutorials">Tutorials</a>
+        <a href="/about">About Us</a>
+    </div>
+</div>
+</body>
+
+
+
+<script>
+    // Events.js
+    let loginKey = "none";
+
+
+
+
+
+    $(document).ready(function(event){
+        requestHandler("/api/v1/login/getKey", "GET", {}, "getKey");
+        let fields = document.querySelectorAll('.form-group input');
+        fields.forEach(field=>{
+            field.addEventListener('blur',()=>{
+                if(field.value.trim().length){
+                    field.classList.add("blurred");
+                }
+                else{
+                    field.classList.remove("blurred");
+                }
+            });
+        });
+    });
+
+
+    $('.loginRegForm').on("submit",".loginRegForm form",function(event) {
+        event.preventDefault();
+    });
+
+    $('.loginRegForm').on("click","#logBtn",function(event){
+        event.preventDefault();
+        let encryptedInfo = CryptoJS.AES.encrypt(($("#username").val().toString()+"/"+$("#password").val().toString()),loginKey).toString();
+        var input = {
+            info : encryptedInfo
+        };
+        requestHandler("/login", "POST", input, "loginHandler");
+    });
+    function requestHandler(url, method, input, caller) {
+        $.ajax({
+            url: url || "/",
+            method: method || "GET",
+            data: input || {},
+            before: function () {
+            },
+            success: function (res) {
+                responseActionHandler(caller,res);
+            },
+            timeout: function () {
+                window.alert("time out");// get from developer
+            },
+            fail: function () {
+                window.alert("failed");
+            },
+            err: function () {
+                window.alert("err");
+            }
+        });
+    }
+    // Response Actions Handler
+    function responseActionHandler(caller, res) {
+        switch (caller) {
+            case "loginHandler" : {
+                debugger;
+              if(!res.message){
+                createCookie("X-ACCESS-TOKEN",res["token"],1);
+                window.location.pathname = "/explore";
+              }
+              else{
+                  showLoginError(res.message);
+                  $("#password").val("");
+              }
+            }break;
+            case "getKey":{
+                loginKey = res;
+                $("#loginBtn").addClass("enable");
+            }
+        }
+    }
+    function showLoginError(message){
+      $(".messageBox").html(`
+          <li>
+            ${message}
+          </li>
+        `);
+    }
+</script>
+</html>

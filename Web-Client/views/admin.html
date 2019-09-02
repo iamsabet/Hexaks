@@ -1,0 +1,297 @@
+<html>
+<script src="../Statics/javascripts/jquery.min.js"></script>
+<script src="../Statics/javascripts/cookies.js"></script>
+<script src="../Statics/javascripts/crypto-js/crypto-js.min.js"></script>
+<link rel="stylesheet" href="../Statics/stylesheets/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+
+    <title>Admin - Hexaks</title>
+</head>
+
+<body>
+<div id="adminContainer" class="containerDiv">
+    <div class="accountCard">
+
+    </div>
+    <div class="adminPanel">
+        <h2>Admin</h2>
+        
+    </div>
+    <div class="topNav">
+        <ul>
+            <li>Admin Panel</li>
+            <li>Reports Count</li>
+            <li>Curated</li>
+        </ul>
+    </div>
+    <div id="search-box">
+        <input type="text" class="searchInput"/>
+        <ul class="autoComplete">
+            <li>Latest</li>
+            <li>Top</li>
+            <li>Curated</li>
+
+        </ul>
+
+    </div>
+    <div class="nav show">
+            <img id="logo" src="../Statics/images/images/LOGO.png">
+            <!--// parse dynamicly for clients - authenticated - and role based-->
+            <ul>
+                <li class="navRightButtons">
+                    <a href="/home">
+                        <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="navRightButtons">
+                    <a href="/explore">
+                        <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
+                        <span>Explore</span>
+                    </a>
+                </li>
+                <li class="navRightButtons">
+                    <a href="/following">
+                        <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
+                        <span>Following</span>
+                    </a>
+                </li>
+                <li class="navRightButtons">
+                    <a href="/settings">
+                        <img src="../Statics/images/newIcons/settings.svg" class="navIcon">
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="navRightButtons">
+                    <a href="/about">
+                        <img src="../Statics/images/newIcons/About.svg" class="navIcon">
+                        <span>About</span>
+                    </a>
+                </li>
+                
+    
+                
+            </ul>
+        </div>
+</div>
+</div>
+</body>
+
+
+
+<script>
+    let adminKey = "none";
+    let Me = null;
+    // Events.js
+
+    $(document).ready(function(event){
+        requestHandler("/admin/getKey", "GET", {}, "getKey");
+        requestHandler("/admin/getMe", "GET", {}, "getMe");
+        let fields = document.querySelectorAll('.form-group input');
+        fields.forEach(field=>{
+            field.addEventListener('blur',()=>{
+                if(field.value.trim().length){
+                    field.classList.add("blurred");
+                }
+                else{
+                    field.classList.remove("blurred");
+                }
+            });
+        });
+
+    });
+    let usernameInterval = null;
+    $("body").on("keyup","#searchInput",function(e){
+        if($(this).val().toString().length > 3) {
+            let text = $(this).val().toString();
+            window.clearInterval(usernameInterval);
+            usernameInterval = setInterval(function(){
+                checkInputValidation("username",text);
+                window.clearInterval(usernameInterval);
+            },300);
+        }
+    });
+
+
+
+
+
+
+
+
+
+    function requestHandler(url, method, input,caller) {
+        let encryptedInfo;
+        if(method === "POST"){
+            encryptedInfo = CryptoJS.AES.encrypt(JSON.stringify(input),adminKey).toString();
+            input = {
+                input : encryptedInfo
+            };
+        }
+        else{
+            delete input;
+        }
+        url = "api/v1"+url;
+        $.ajax({
+            url: url || "/",
+            method: method || "POST",
+            data: input || {},
+            before: function () {
+            },
+            success: function (res) {
+                responseActionHandler(res,caller);
+            },
+            timeout: function () {
+                window.alert("time out");
+            },
+            fail: function () {
+                window.alert("failed");
+            },
+            err: function () {
+                window.alert("err");
+            }
+        });
+    }
+    function checkInputValidation(type,text){
+
+        // characteric limiations -- check both sides later then => {
+        
+    }
+
+    // Response Actions Handler
+    function responseActionHandler(res,caller) {
+        switch (caller) {
+            case "getMe" : {
+                getMeResponseAction(res);
+            }break;
+            case "getKey":{
+                adminKey = res;
+            }break;
+        }
+    }
+
+
+     function getMeResponseAction(res){
+        if(!res.message) {
+            Me = res;
+        }
+        else{
+            Me = null;
+        }
+        if(Me !== null && Me !== {}) {
+
+            showCard(res.username);
+            
+            if(window.location.pathname.split("settings").length > 1){ // fill user infos in user infos form
+                loadUserInfosInForm();
+            }
+            let pageName = window.location.pathname.split("/")[1].toString();
+            selectRightNavItem(pageName);
+
+
+
+
+            // onDragMoveNavHorizontaly();
+        }
+        else{
+
+
+            $(".nav").removeClass("show");
+            showCard();
+        }
+    }
+    $("body").on("click",".nav ul li a",function(e){
+        $(".nav ul li.selected").removeClass("selected");
+        $(this).parents("li").addClass("selected");
+        let txt = this.href.split("/")[this.href.split("/").length -1];
+        Filters = {
+            username:pageType,
+            pageNumber : 1,
+            counts: 10,
+            isCurated : false,
+            curator : "" ,
+            hashtag : "",
+            order : "latest",
+            orderBy : "createdAt",
+            timeEdge: 31*24, // hours
+            leftCost:0,
+            rightCost:1000000,
+            category : "",
+        };
+        // slideNav();
+        changePage(txt,txt+"/",true,"",true,true);
+        // re initial variables
+        e.preventDefault();
+        // remove all filters in UI for a selected page
+
+    });
+    function selectRightNavItem(pageName){
+        if(!pageName || pageName === ""){
+            pageName === "explore";
+        }
+        $(`.navRightButtons a[href="/${pageName}"]`).parents("li").addClass("selected");
+        $(`.navRightButtons`).parents("li").addClass("selected");
+    }
+    function showCard(username){
+        if(username){
+            $(".accountCard").html(`
+                <a href="" id="profileBtn">${username}</a>
+                <a href="" id="newPostBtn"></a>
+                <a href="" id="notifBtn"></a>
+                <a href="" id="searchButton"></a>
+            `);
+        }
+        else{
+            $(".accountCard").html(`
+                <a href="/login" id="loginBtn">Login</a>
+                <a href="/register">Register</a>
+            `);
+        }
+    }
+
+    function slideNav(){
+        if(Me){
+            if(!$(".nav.show")[0]){
+                $(".nav").addClass("show");
+            }
+            else{
+                $(".nav.show").removeClass("show");
+            }
+        }
+        else{
+            showLoginOrReg("You must Login first to access tools","User Actions"); // modal full view middle
+        }
+        
+        
+    }
+
+    // settings functions
+    function loadUserInfosInForm(userData){
+        // profile picture
+        
+        if(Target.profilePictureSet === "male.png" || Target.profilePictureSet === "female.png"){
+            $("#profilePicturePlace").attr("src","../profilePics/"+Target.profilePictureSet+"?");
+        }
+        else{
+            $("#profilePicturePlace").attr("src","../profilePics/"+Target.userId+"/"+Target.profilePictureSet+"?");
+        }
+        $("#username").val(Target.username);
+        $("#email").val(Target.email);
+        $("#jsonArea").html(userData);
+    }
+
+    function showTargetForm(formName){
+        $(".settingsContainer form").removeClass("show");
+        $(`#${formName}`).addClass("show");
+    }
+    function udateDateInput(day,month,year){
+        if(!day || !month || !year){
+            $("#birth").val(`${month}/${day}/${year}`);
+        }
+        else{
+            $("#birth").val("");
+        }
+    }
+</script>
+</html>

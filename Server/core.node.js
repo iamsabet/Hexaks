@@ -1,6 +1,6 @@
 var express  = require('express');
-process.env.PORT = 3000;
-var port = process.env.PORT || 3000;
+process.env.PORT = 8000;
+var port = process.env.PORT || 8000;
 var app      = express();
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -17,19 +17,23 @@ var hashtags = require('./routes/hashtags');
 var db = mongoose.connection;
 var cron = require('cron');
 var CronJob = require('cron').CronJob;
-
-
-
-
 var redis = require('redis');
 var client = redis.createClient(6379, 'localhost', {no_ready_check: true});
 
+mongoose.connect('mongodb://localhost:27017/hexaks_db', {
+        keepAlive: true,
+        keepAliveInitialDelay: 300000,
+        socketTimeoutMS: 0,
+        reconnectTries: 30
+    }
+    ).then((res)=>{
 
-mongoose.connect('mongodb://localhost:27017/hexaks_db');
-db.on('error', console.error.bind(console, 'connection error:'));
-db.openUri("mongodb://localhost:27017/hexaks_db",function() {
-    console.log("connected to hexaks_db");
-});
+    }
+).catch((err)=>{
+
+}).finally({});
+
+
 client.auth('c120fec02d55hdxpc38st676nkf84v9d5f59e41cbdhju793cxna', function (err) {
     if (err) throw err;
 });
@@ -74,7 +78,7 @@ new CronJob('50 59 23 6 *', function(){ //
 // routes ======================================================================
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public

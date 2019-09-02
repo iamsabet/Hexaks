@@ -23,8 +23,7 @@ viewSchema.methods.create = function(viewObject,callback){
     newView.viewer = viewObject.viewer;
     newView.viewer = viewObject.referenceType || "post";
     newView.refrenceId = viewObject.refrenceId;
-    let hashed = CryptoJS.SHA1(viewObject.viewer, viewObject.refrenceId); //("content","key")
-    newView.viewId = hashed;
+    newView.viewId = CryptoJS.SHA1(viewObject.viewer, viewObject.refrenceId); //("content","key");
     newView.deleted = false;
     newView.activated = true;
     newView.setNext('view_id', function(err, view){
@@ -35,7 +34,6 @@ viewSchema.methods.create = function(viewObject,callback){
         });
     });
 };
-
 
 viewSchema.pre('save', function(next){
     if(this.updatedAt) {

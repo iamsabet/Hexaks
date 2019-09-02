@@ -123,6 +123,7 @@ hashtagSchema.methods.initial = function(mode){ // counts
 
                                     if(resultu){
                                         if ((z === hashs.length - 1)) {
+                                            let timeLimit = (6 * 3600000); // last 24 hours default --> change to 6hours 24hours 1week and 31days for all trends
                                             console.log("hashtags initialized for mode = :" + mode  +" in cache.");
                                             if ((z === hashs.length - 1)) {
                                                 let expireTime = (timeLimit + 30000); // + 30 seconds --> maximum code delay or shit for now

@@ -1,6 +1,6 @@
 var express  = require('express');
-process.env.PORT = 3001;
-var port     = process.env.PORT || 3001;
+process.env.PORT = 8001;
+var port     = process.env.PORT || 8001;
 var app      = express();
 var path = require('path');
 var favicon = require('serve-favicon');

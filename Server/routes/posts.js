@@ -35,34 +35,34 @@ var redisClient = redis.createClient({
 
 });    // Create the client
 
-
-var socketInterval = setInterval(function(){
-    captionGeneratorSocket.connect(8586, '127.0.0.1', function(err) {
-        if(err){
-            captionGeneratorConnection = false;
-            console.log(err);
-        }
-        else{
-            captionGeneratorConnection = true;
-            console.log('Connected to caption generator');
-            clearInterval(socketInterval);
-        }
-    });
-    
-},10000);
-captionGeneratorSocket.on('error', function(ex) {
-    console.log("handled error");
-    console.log(ex);
-    captionGeneratorConnection = false;
-  });
-captionGeneratorSocket.on('data', function(data) {
-	posts.assignGeneratedCaption(data);
-});
-
-captionGeneratorSocket.on('close', function() {
-    console.log('Connection closed');
-    captionGeneratorConnection = false;
-});
+//
+// var socketInterval = setInterval(function(){
+//     captionGeneratorSocket.connect(8586, '127.0.0.1', function(err) {
+//         if(err){
+//             captionGeneratorConnection = false;
+//             console.log(err);
+//         }
+//         else{
+//             captionGeneratorConnection = true;
+//             console.log('Connected to caption generator');
+//             clearInterval(socketInterval);
+//         }
+//     });
+//
+// },10000);
+// captionGeneratorSocket.on('error', function(ex) {
+//     console.log("handled error");
+//     console.log(ex);
+//     captionGeneratorConnection = false;
+//   });
+// captionGeneratorSocket.on('data', function(data) {
+// 	posts.assignGeneratedCaption(data);
+// });
+//
+// captionGeneratorSocket.on('close', function() {
+//     console.log('Connection closed');
+//     captionGeneratorConnection = false;
+// });
 
 
 redisClient.select(2,function(){
