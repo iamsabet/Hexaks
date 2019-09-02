@@ -79,7 +79,7 @@
         var input = {
             info : encryptedInfo
         };
-        requestHandler("/login", "POST", input, "loginHandler");
+        requestHandler("/api/v1/login", "POST", input, "loginHandler");
     });
     function requestHandler(url, method, input, caller) {
         $.ajax({

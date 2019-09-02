@@ -25,8 +25,8 @@ redisClient.select(2,function(){
     console.log("Connected to redis Database");
 });
 
-router.post('/login',auth.login);
-router.post('/register', users.register);
+router.post('/api/v1/login',auth.login);
+router.post('/api/v1/register', users.register);
 
 
 router.get('/', function(req,res){
@@ -34,16 +34,7 @@ router.get('/', function(req,res){
     res.render("main.html");
 
 });
-router.get('/login', function(req,res){
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            res.render("main.html");
-        }
-        else {
-            res.render("login.html");
-        }
-    });
-});
+
 router.get('/api/v1/login/getKey', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
@@ -55,16 +46,6 @@ router.get('/api/v1/login/getKey', function(req,res){
     });
 });
 
-router.get('/register', function(req,res){
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            res.render("main.html");
-        }
-        else {
-            res.render("register.html");
-        }
-    });
-});
 router.get('/api/v1/register/getKey', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
@@ -75,19 +56,10 @@ router.get('/api/v1/register/getKey', function(req,res){
         }
     });
 });
-router.get('/admin', function(req,res){
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            res.render("admin.html");
-        }
-        else {
-            res.send("403 Forbidden");
-        }
-    });
-});
 
 
-router.post('/register/checkIsTaken', function(req,res){
+
+router.post('/api/v1/users/checkIsTaken', function(req,res){
     validateRequest(req,res,function(callback){
         if(callback.message) {
             let type = req.body.type || null;
@@ -158,7 +130,7 @@ router.get('/users/verifyEmail/:uuid/',function(req,res) {
 router.post('/api/v1/users/search/',function(req,res) {
     let text = req.body.text || undefined;
     if(text && (typeof text === "string") && (text.length > 3) && (text.length < 16)){
-        let pageNumber = 1  
+        let pageNumber = 1;
         if(req.body.pageNumber)
             pageNumber = parseInt(req.body.pageNumber) || 1;
         if(isNaN(pageNumber)){
@@ -836,20 +808,7 @@ router.post('/api/v1/users/rate',function(req,res){
         }
     });
 });
-router.post('/api/v1/users/checkIsTaken', function(req,res){
-    validateRequest(req,res,function(callback){
-        if(!callback.message) {
-            let type = req.body.type || "";
-            let text = req.body.text || "";
-            users.checkValidationAndTaken(text,type,callback,function(resultv){
-                res.send(resultv);
-            });
-        }
-        else{
-            res.send(callback);
-        }
-    });
-});
+
 router.post('/api/v1/users/view',function(req,res){
     validateRequest(req,res,function(callback){
         if(callback) {

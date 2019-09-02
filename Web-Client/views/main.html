@@ -724,8 +724,8 @@
 
     $("body").on("click",".usernameLink",function(event){
         event.preventDefault();
-        let changeusername = $(this).attr("href").toString().split("/")[1];
-        changePage("profile",changeusername+"/latest",true,"",true,true);
+        let changeusername = $(this).attr("href").toString().split("/")[2];
+        changePage("profile","users/"+changeusername+"/latest",true,"",true,true);
 
     });
 
@@ -773,7 +773,7 @@
         if(order === "following")
             order="following/"+Filters.order;
         else if(["following","explore","home","latest","curated","top"].indexOf(window.location.pathname.split("/")[1]) === -1)
-            order="profile/"+order;
+            order=""+order;
 
         makeUrl(order);
     });
@@ -1372,7 +1372,7 @@
         eraseCookie("X-ACCESS-TOKEN");
     }
     function login(input) {
-        requestHandler("/login", "POST", input, "loginHandler");
+        requestHandler("/api/v1/login", "POST", input, "loginHandler");
     }
     function getMe(){
         requestHandler("/api/v1/users/getMe","GET",{},"getMe");
@@ -1682,7 +1682,7 @@
                 else if(pageName.split("following/").length > 1){
                     changePage("following","following/"+pageName.split("/")[1],true,"",true,true);
                 }
-                else if(pageName.split("profile/").length > 1){
+                else if(pageName.split("").length > 1){
                     // debugger;
                     changePage("profile",window.location.pathname.split("/")[1]+"/"+pageName.split("/")[1],true,"",true,true);
                 }
@@ -1984,7 +1984,7 @@
                 host.username = pageType.split("/")[0];
                 selectTopNav(pageType.split("/")[1]);
                 if(!$("#postsContainer.show")[0])
-                    $("#postsContainer").addClass("show")
+                    $("#postsContainer").addClass("show");
                 if(!$("#profileTop.show")[0])
                     $("#profileTop").addClass("show")[0]; 
                 if (pageName !== currentPage) {
@@ -2019,11 +2019,11 @@
                     // debugger;
                     if(pageName.toLowerCase()==="settings" || pageName.toLowerCase()==="users"){
                         if(pageName.toLowerCase()==="users"){
-                            pageName = "settings";
-                            pageType = "settings/"+pageType.split("/")[1];
+                            // pageName = "settings";
+                            // pageType = "settings/"+pageType.split("/")[1];
                         }
                         if(!pageType.split("/")[1]){
-                            pageType += "account";
+                            // pageType += "account";
                         }
                         sendPagesInitialRequest(pageType,writeHistory);
                     }

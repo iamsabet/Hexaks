@@ -145,7 +145,7 @@
         var input = {
             info : encryptedInfo
         };
-        requestHandler("/register", "POST", input,"registerHandler");
+        requestHandler("/api/v1/register", "POST", input,"registerHandler");
     });
 
 
@@ -181,7 +181,7 @@
     function checkInputValidation(type,text){
 
         // characteric limiations -- check both sides later then => {
-        requestHandler("/register/checkIsTaken/","POST",{text:text,type:type},"check"+type);
+        requestHandler("/api/v1/register/checkIsTaken/","POST",{text:text,type:type},"check"+type);
     }
 
     // Response Actions Handler

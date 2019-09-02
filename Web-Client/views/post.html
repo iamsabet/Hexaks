@@ -658,7 +658,7 @@
         eraseCookie("X-ACCESS-TOKEN");
     }
     function login(input) {
-        requestHandler("/login", "POST", input, "loginHandler");
+        requestHandler("/api/v1/login", "POST", input, "loginHandler");
     }
     function getMe(){
         requestHandler("/api/v1/users/getMe","GET",{},"getMe");
